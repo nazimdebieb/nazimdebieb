@@ -19,7 +19,7 @@ Sur téléphone, le jeu est toujours en paysage : si l'écran est tenu droit, le
 
 ## Modes
 
-- **Aventure** : 24 niveaux sur une carte, à jouer un par un. Chaque niveau réussi débloque le suivant et la progression est sauvegardée. On a 3 cœurs par niveau (une bulle touchée = un cœur en moins) ; sans cœur ou sans temps, on recommence **juste ce niveau**. Étoiles :
+- **Aventure** : 48 niveaux répartis en 4 mondes de 12, à jouer un par un depuis une carte. Chaque niveau réussi débloque le suivant et la progression est sauvegardée. On a 3 cœurs par niveau (une bulle touchée = un cœur en moins) ; sans cœur ou sans temps, on recommence **juste ce niveau**. Étoiles :
   - ★ niveau fini ;
   - ★★ niveau fini sans être touché ;
   - ★★★ sans être touché et avec plus de la moitié du temps restant.
@@ -35,4 +35,4 @@ Les deux modes se jouent à 1 ou 2 joueurs (choix dans le menu).
   - **plateformes en métal** : les bulles rebondissent dessus et le harpon s'y arrête (le harpon collant reste accroché dessous) ;
   - **briques** : les bulles rebondissent dessus, un coup de harpon les casse (+20) ;
   - **barrières** : elles coupent l'écran en zones et se lèvent quand toutes les bulles à leur gauche ont éclaté.
-- 12 niveaux dessinés à la main, puis des niveaux générés de plus en plus chargés, avec obstacles. Le record est gardé dans le navigateur.
+- 24 niveaux dessinés à la main (escaliers, étagères, damier de briques, tunnel, quatre barrières…), puis des niveaux générés de plus en plus chargés à partir de 11 dispositions d'obstacles. Le record est gardé dans le navigateur.

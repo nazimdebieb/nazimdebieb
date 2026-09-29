@@ -154,7 +154,11 @@ kbd{font-family:var(--body);font-weight:800;font-size:.95em;background:var(--cab
 .map-head{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:2cqw;width:min(100%,92cqw)}
 .map-head .btn{justify-self:start}
 .star-total{justify-self:end;font-family:var(--display);font-size:min(3cqw,6cqh);color:var(--gold);white-space:nowrap}
-.grid{display:grid;grid-template-columns:repeat(8,1fr);gap:1.4cqw;width:min(100%,92cqw)}
+.grid{display:grid;grid-template-columns:repeat(6,1fr);gap:1.6cqw;width:min(100%,80cqw)}
+.world{display:flex;align-items:center;gap:1.5cqw}
+.world .title2{font-size:min(4.6cqw,8.5cqh);white-space:nowrap}
+.world .iconbtn:disabled{opacity:.35;cursor:default}
+.world-stars{font-family:var(--body);font-weight:800;font-size:min(2.4cqw,4.8cqh);color:var(--muted);margin:0}
 .lv{
   aspect-ratio:1.2;padding:0;border:0;border-radius:1.4cqw;cursor:pointer;
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.15em;
@@ -241,9 +245,14 @@ kbd{font-family:var(--body);font-weight:800;font-size:.95em;background:var(--cab
         <div class="overlay" id="mapO" hidden>
           <div class="map-head">
             <button class="btn ghost sm" id="bMapBack" type="button">Menu</button>
-            <h2 class="title2">Aventure</h2>
+            <div class="world">
+              <button class="iconbtn" id="wPrev" type="button" aria-label="Monde précédent"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M13 3v14L4 10z"/></svg></button>
+              <h2 class="title2" id="worldName">Monde 1</h2>
+              <button class="iconbtn" id="wNext" type="button" aria-label="Monde suivant"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 3v14l9-7z"/></svg></button>
+            </div>
             <span class="star-total" id="starTotal"></span>
           </div>
+          <p class="world-stars" id="worldStars"></p>
           <div class="grid" id="grid"></div>
         </div>
 
@@ -321,25 +330,53 @@ const LEVELS = [
   { b: [[3, .15, 1], [3, .38, -1], [3, .62, 1], [3, .85, -1]], k: [S(0, 130, 120), S(520, 130, 120), ...B(240, 130, 4)] },
   { b: [[2, .1, 1], [2, .37, -1], [2, .63, 1], [2, .9, -1]], k: [G(160), G(320), G(480)] },
   { b: [[3, .3, 1, 60], [2, .7, -1, 60]], k: brickFloor(200) },
+  // Monde 2
+  { b: [[2, .1, 1], [2, .9, -1]], k: stairs() },
+  { b: [[3, .25, 1, 80], [2, .75, -1]], k: [G(320), ...B(40, 180, 6)] },
+  { b: [[2, .3, 1, 60], [2, .7, -1, 60]], k: [...B(80, 120, 12), ...B(80, 220, 12)] },
+  { b: [[3, .16, 1], [3, .5, -1], [3, .84, 1]], k: [G(213), G(427), S(40, 200, 130), S(255, 200, 130), S(470, 200, 130)] },
+  { b: [[1, .1, 1, 120], [1, .25, 1, 120], [1, .75, -1, 120], [1, .9, -1, 120], [2, .5, 1]], k: shelves() },
+  { b: [[3, .2, 1], [3, .8, -1]], k: [S(300, 60, 40, 180)] },
+  { b: [[2, .2, 1, 60], [2, .5, -1, 60], [2, .8, 1, 60]], k: checker(150, 230) },
+  { b: [[3, .12, 1], [3, .38, -1], [3, .62, 1], [3, .88, -1]], k: [G(320)] },
+  { b: [[2, .2, 1, 260], [2, .8, -1, 260], [1, .5, 1, 260]], k: [S(0, 200, 640)] },
+  { b: [[3, .15, 1, 60], [2, .6, -1], [2, .85, 1]], k: [G(427), ...B(40, 160, 5), S(240, 160, 40, 16)] },
+  { b: [[2, .1, 1], [2, .3, -1], [2, .5, 1], [2, .7, -1], [2, .9, 1]], k: [G(128), G(256), G(384), G(512)] },
+  { b: [[3, .2, 1, 50], [3, .5, -1, 50], [3, .8, 1, 50]], k: brickFloor(170) },
 ];
+function stairs() { return [S(40, 250, 100), S(180, 200, 100), S(320, 150, 100), S(460, 100, 100)]; }
+function shelves() { return [S(0, 170, 260), S(380, 170, 260)]; }
+function checker(y1, y2) {
+  const out = [];
+  for (let i = 0; i < 16; i += 2) out.push(...B(i * 40, y1), ...B((i + 1) * 40, y2));
+  return out;
+}
 
 function levelDef(n) {
   if (n <= LEVELS.length) return LEVELS[n - 1];
   let seed = (n * 2654435761) >>> 0;
   const rnd = () => (seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296;
-  const count = Math.min(3 + Math.floor((n - 13) / 3), 6);
-  const big = Math.min(.35 + (n - 12) * .05, .85);
+  const count = Math.min(2 + Math.floor((n - 20) / 5), 6);
+  const big = Math.min(.4 + (n - 24) * .02, .9);
   const b = [];
   for (let i = 0; i < count; i++) b.push([rnd() < big ? 3 : 2, (i + .5) / count, i % 2 ? -1 : 1]);
-  const k = [
-    [],
-    [G(320)],
-    [S(60, 190, 130), S(450, 190, 130)],
-    B(160, 190, 8),
-    [G(213), G(427)],
-    brickFloor(210),
-  ][Math.floor(rnd() * 6)];
-  if (k.length && k[0].t === 's' && k[0].x === 0) b.forEach(d => { d[3] = 60; });
+  const layouts = [
+    () => [G(320)],
+    () => [S(60, 190, 130), S(450, 190, 130)],
+    () => B(160, 190, 8),
+    () => [G(213), G(427)],
+    () => brickFloor(210),
+    () => stairs(),
+    () => checker(150, 230),
+    () => [G(160), G(320), G(480)],
+    () => shelves(),
+    () => [S(0, 200, 640)],
+    () => [G(320), S(70, 205, 120), S(450, 205, 120)],
+  ];
+  const pick = Math.floor(rnd() * layouts.length);
+  const k = layouts[pick]();
+  if (pick === 4) b.forEach(d => { d[3] = 60; });
+  if (pick === 9) b.forEach(d => { d[3] = 262; });
   return { b, k };
 }
 const timeFor = def => Math.round(18 + def.b.reduce((t, [s]) => t + (2 ** (s + 1) - 1) * 1.7, 0)
@@ -427,7 +464,9 @@ function paintSound() {
 let mode = 0, level = 1, state = 'menu', stateT = 0, paused = false;
 // kind : 'arcade' (5 vies, retour au niveau 1) ou 'adv' (Aventure : niveau par niveau, 3 cœurs, étoiles)
 let kind = 'arcade', pcount = store.get('players', 1) === 2 ? 2 : 1;
-const ADV_COUNT = 24, ADV_HEARTS = 3;
+const ADV_COUNT = 48, ADV_HEARTS = 3, WORLD = 12;
+const worldOf = n => Math.floor((n - 1) / WORLD);
+let mapWorld = 0;
 let adv = store.get('adv', {});
 let levelHit = false, lastStars = 0, prevStars = 0, clearTime = 0;
 const starsOf = n => adv[n] || 0;
@@ -508,12 +547,19 @@ function toMenu() {
   show(menuO);
 }
 const LOCK = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 8V6a4 4 0 0 1 8 0v2h1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1zm2 0h4V6a2 2 0 0 0-4 0z"/></svg>';
-function openMap() {
+function openMap(world) {
+  if (world == null) {
+    let n = 1;
+    while (n < ADV_COUNT && starsOf(n)) n++;
+    world = worldOf(n);
+  }
+  mapWorld = clamp(world, 0, ADV_COUNT / WORLD - 1);
   menuScene();
   const grid = $('grid');
   grid.replaceChildren();
   let next = null;
-  for (let n = 1; n <= ADV_COUNT; n++) {
+  const first = mapWorld * WORLD + 1;
+  for (let n = first; n < first + WORLD; n++) {
     const b = document.createElement('button');
     b.type = 'button'; b.className = 'lv';
     const st = starsOf(n);
@@ -528,15 +574,22 @@ function openMap() {
     }
     grid.append(b);
   }
+  let ws = 0;
+  for (let n = first; n < first + WORLD; n++) ws += starsOf(n);
+  $('worldName').textContent = `Monde ${mapWorld + 1}`;
+  $('worldStars').textContent = `★ ${ws}/${WORLD * 3} dans ce monde`;
+  $('wPrev').disabled = mapWorld === 0;
+  $('wNext').disabled = mapWorld === ADV_COUNT / WORLD - 1;
   $('starTotal').textContent = `★ ${totalStars()}/${ADV_COUNT * 3}`;
   show(mapO);
-  (next || grid.querySelector('.lv:not(:disabled)')).focus({ preventScroll: true });
+  const focus = next || grid.querySelector('.lv:not(:disabled)');
+  if (focus) focus.focus({ preventScroll: true });
 }
 function paintPcount() {
   $('pc1').setAttribute('aria-pressed', pcount === 1);
   $('pc2').setAttribute('aria-pressed', pcount === 2);
 }
-function quitRun() { if (kind === 'adv') openMap(); else toMenu(); }
+function quitRun() { if (kind === 'adv') openMap(worldOf(level)); else toMenu(); }
 
 function setState(s, t) { state = s; stateT = t; document.body.dataset.state = s; }
 function show(el) { for (const o of [menuO, mapO, pauseO, overO]) o.hidden = o !== el; }
@@ -708,7 +761,9 @@ function popBall(j, p) {
   if (b.s > 0) {
     const s = b.s - 1, r = RAD[s];
     for (const dir of [-1, 1]) {
-      balls.push({ s, x: clamp(b.x + dir * r * .6, r, W - r), y: Math.max(b.y, r), vx: dir * VX[s], vy: -230, c: b.c });
+      let x = clamp(b.x + dir * r * .6, r, W - r);
+      if (blocks.some(k => overlaps(x, b.y, r, k))) x = b.x;
+      balls.push({ s, x, y: Math.max(b.y, r), vx: dir * VX[s], vy: -230, c: b.c });
     }
   }
   if (Math.random() < .15) dropItem(b.x, b.y);
@@ -1272,9 +1327,11 @@ $('btnFlip').addEventListener('click', () => { flip = !flip; store.set('flip', f
 layout();
 
 for (const n of [1, 2]) $('pc' + n).addEventListener('click', () => { pcount = n; store.set('players', n); paintPcount(); });
-$('bAdv').addEventListener('click', openMap);
+$('bAdv').addEventListener('click', () => openMap());
 $('bArc').addEventListener('click', () => startRun(pcount, 'arcade', 1));
 $('bMapBack').addEventListener('click', toMenu);
+$('wPrev').addEventListener('click', () => { openMap(mapWorld - 1); $('wPrev').focus({ preventScroll: true }); });
+$('wNext').addEventListener('click', () => { openMap(mapWorld + 1); $('wNext').focus({ preventScroll: true }); });
 $('bResume').addEventListener('click', () => togglePause(false));
 $('bQuit').addEventListener('click', quitRun);
 $('bNext').addEventListener('click', () => startRun(mode, 'adv', level + 1));
