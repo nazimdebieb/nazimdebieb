@@ -62,3 +62,33 @@ Le jeu se joue à 1 joueur (le mode à 2 joueurs a été retiré : trop compliqu
   - **briques** : les bulles rebondissent dessus, un coup de harpon les casse (+20) ;
   - **barrières** : elles coupent l'écran en zones et se lèvent quand toutes les bulles à leur gauche ont éclaté.
 - 24 niveaux dessinés à la main (escaliers, étagères, damier de briques, tunnel, quatre barrières…), puis des niveaux générés de plus en plus chargés à partir de 11 dispositions d'obstacles. Le record est gardé dans le navigateur.
+
+## Monétisation (version de test)
+
+Règle d'or : **aucune pub pendant qu'on joue**. Les pubs et les achats sont **simulés** dans cette version : une fausse pub (écran « AD · TEST » de 3 à 5 s) et un faux paiement (une fenêtre de confirmation, sans argent réel). Dans l'appli Android, seules les deux fonctions `showAd` (AdMob) et `buyProduct` (Google Play Billing) seront remplacées.
+
+- **Pièces** 🪙, gardées sur l'appareil, visibles en haut à droite hors partie :
+  - 1 par petite bulle éclatée en Aventure ;
+  - 20 par niveau réussi, plus 10 par étoile ;
+  - 100 par boss vaincu ;
+  - 1 pour 100 points en Survie ;
+  - cadeau du jour : 50, plus 25 par jour d'affilée (jusqu'à 200 au 7e jour), doublable avec une pub.
+- **Pubs récompensées** (le joueur choisit) :
+  - **Continuer** après un échec ou un game over : +1 cœur, +15 s si le temps était écoulé, ou +1 vie en Survie. Une seule fois par partie. Un score de Survie « continué » est marqué ↻ dans le classement ;
+  - **Doubler les pièces** en fin de niveau ;
+  - **Bouclier gratuit** avant une partie ;
+  - **Coffre gratuit** au menu, 3 par jour : des pièces ou un boost au hasard.
+  - Chaque récompense existe aussi sans pub : continuer coûte 150 pièces, un boost 100 pièces.
+- **Pubs imposées**, seulement en quittant l'écran de fin :
+  - un niveau réussi sur trois en Aventure, une partie sur deux en Survie ;
+  - jamais après un échec, jamais juste avant un boss, jamais pendant les 10 premières minutes de jeu ni avant le niveau 6 ;
+  - au plus une toutes les 3 minutes, pub récompensée comprise ;
+  - pas de bannière.
+- **Écran avant la partie** : un seul boost au choix (Bouclier ou Double flèche), pris dans le stock, acheté 100 pièces, ou bouclier contre une pub.
+- **Boutique** (bouton *Shop* du menu) :
+  - **costumes** faits sur Canva, chacun en 3 poses : Red Hood (de base), Robin 800, Nomad 1 200, Sailor 1 500, Astronaut 2 000, Royal (pack de départ uniquement) ;
+  - **flèches** : Fire et Ice 300, Rainbow 600 (couleur de la corde et étincelles) ;
+  - **boosts** : 100 pièces l'unité ;
+  - **achats** : Sans pub 2,99 €, Pack de départ 3,99 € (sans pub + 1 000 pièces + costume Royal), 500 pièces 0,99 €, 2 000 pièces 2,99 €, 6 000 pièces 6,99 €. L'achat « sans pub » retire les pubs imposées ; les pubs récompensées restent au choix.
+
+Les réglages (gains, prix, rythme des pubs) sont regroupés en haut du bloc « Monétisation » dans `index.html` (`EARN`, `SKINS`, `TRAILS`, `PRODUCTS`, `interstitialDue`).

@@ -188,6 +188,46 @@ kbd{font-family:var(--body);font-weight:800;font-size:.95em;background:var(--cab
 @container (max-height:600px){ .overlay .tagline{display:none} }
 @container (max-height:250px){ .overlay .help{display:none} }
 @container (max-height:230px){ .overlay .board{display:none} }
+/* Monétisation : pièces, boutique, boosts, pubs simulées */
+.coin{display:inline-block;width:1em;height:1em;border-radius:50%;vertical-align:-.14em;flex:none;
+  background:radial-gradient(circle at 35% 30%,#fff4b8,#ffc83d 48%,#d08e14);box-shadow:inset 0 0 0 .09em #9a6508}
+.coinpill{display:flex;align-items:center;gap:6px;height:36px;padding:0 10px;border-radius:10px;background:var(--cab-hi);
+  box-shadow:inset 0 0 0 2px var(--edge);font-family:var(--display);font-size:14px;color:var(--gold);font-variant-numeric:tabular-nums}
+.land .coinpill{height:32px}
+body[data-state="ready"] .coinpill,body[data-state="play"] .coinpill,body[data-state="dying"] .coinpill,body[data-state="clear"] .coinpill{visibility:hidden}
+.earned{margin:0;font-family:var(--display);font-size:min(2.8cqw,5.6cqh);color:var(--gold)}
+.tabs{display:flex;gap:1.2cqw;flex-wrap:wrap;justify-content:center}
+.tab{font-family:var(--display);font-size:min(2.2cqw,4.4cqh);padding:.45em .9em .35em;border:0;border-radius:99px;cursor:pointer;
+  background:var(--cab-hi);color:var(--muted);box-shadow:inset 0 0 0 2px var(--edge)}
+.tab[aria-selected="true"]{background:var(--gold);color:var(--cab);box-shadow:none}
+.tab:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.shop{justify-content:flex-start;gap:2.4cqh}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(17cqw,1fr));gap:1.4cqw;width:min(100%,90cqw);
+  overflow-y:auto;max-height:62cqh;padding:.6cqh .4cqw;scrollbar-width:thin}
+.cards.boosts{grid-template-columns:repeat(2,minmax(0,24cqw));width:auto;max-height:none}
+.card{display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:.8cqh;padding:1.4cqh 1cqw;border-radius:1.6cqw;
+  background:var(--cab-hi);box-shadow:inset 0 0 0 2px var(--edge);font-weight:800;font-size:min(2.1cqw,4.2cqh);line-height:1.2}
+.card.on{box-shadow:inset 0 0 0 3px var(--gold)}
+.card .art{height:min(11cqw,19cqh);flex:none;display:flex;justify-content:center;align-items:center}
+.card .art img{height:min(11cqw,19cqh);width:auto;max-width:100%;object-fit:contain;display:block}
+.card .name{font-family:var(--display);font-weight:400;color:var(--ink);font-size:1.05em}
+.card .desc{color:var(--muted);font-size:.9em}
+.card .acts{display:flex;gap:.6cqw;flex-wrap:wrap;justify-content:center}
+.card .btn{font-size:min(2cqw,4cqh);padding:.45em .75em .35em;display:inline-flex;align-items:center;gap:.3em}
+.btn:disabled{opacity:.45;cursor:default;transform:none}
+.swatch{width:1.1em;height:100%;border-radius:99px;box-shadow:inset 0 0 0 2px rgba(0,0,0,.3)}
+.coinstack{font-size:min(5cqw,9cqh);display:flex;align-items:flex-end}
+.coinstack .coin+.coin{margin-left:-.45em}
+.noad{font-family:var(--display);font-size:min(4cqw,7cqh);color:var(--p1);position:relative;padding:0 .2em}
+.noad::after{content:"";position:absolute;left:-.1em;right:-.1em;top:50%;height:.14em;background:var(--p1);transform:rotate(-20deg);border-radius:99px}
+.modal{z-index:5;background:rgba(20,10,30,.9)}
+.msg-art:empty{display:none}
+.msg-art{font-size:min(7cqw,12cqh);display:flex;gap:.3em;align-items:center}
+.msg-art img{height:min(16cqw,26cqh);width:auto}
+.adfake{z-index:6;background:linear-gradient(135deg,#1c2b52,#46205f)}
+.adtag{position:absolute;top:2.5cqh;left:2.5cqw;font-weight:800;font-size:min(2cqw,4cqh);background:var(--gold);color:var(--cab);border-radius:6px;padding:.1em .5em}
+.board li .cont{color:var(--muted);font-size:.85em;margin-left:.2em}
+@container (max-height:300px){ .overlay .earned{font-size:min(2.4cqw,4.8cqh)} }
 @media (prefers-reduced-motion:reduce){ .btn:active,.fire.on{transform:none} .stars i.on{animation:none} }
 </style>
 </head>
@@ -203,6 +243,7 @@ kbd{font-family:var(--body);font-weight:800;font-size:.95em;background:var(--cab
       <div class="timer" id="timer"><i id="tbar"></i></div>
     </div>
     <div class="tools">
+      <span class="coinpill" id="coinPill" title="Coins"><i class="coin" aria-hidden="true"></i><b id="coinN">0</b></span>
       <button class="iconbtn" id="btnFlip" type="button" aria-label="Flip screen" hidden>
         <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3a7 7 0 0 1 6.6 4.7l1.4-.8-.6 4.2-3.6-2.2 1.3-.7A5 5 0 0 0 5.2 8.6L3.3 8A7 7 0 0 1 10 3zm-6.6 9.3 3.6 2.2-1.3.7a5 5 0 0 0 9.1-1.4l1.9.6A7 7 0 0 1 3.4 12.3l-1.4.8z"/></svg>
       </button>
@@ -225,6 +266,10 @@ kbd{font-family:var(--body);font-weight:800;font-size:.95em;background:var(--cab
           <div class="row">
             <button class="btn" id="bAdv" type="button">Adventure <small id="advStars"></small></button>
             <button class="btn alt" id="bArc" type="button">Survival</button>
+          </div>
+          <div class="row">
+            <button class="btn ghost sm" id="bShop" type="button">Shop</button>
+            <button class="btn ghost sm" id="bChest" type="button">Free chest <small id="chestLeft"></small></button>
           </div>
           <p class="help kb-help">
             <kbd>←</kbd> <kbd>→</kbd> or <kbd id="kA">A</kbd> <kbd id="kD">D</kbd> move ·
@@ -249,6 +294,31 @@ kbd{font-family:var(--body);font-weight:800;font-size:.95em;background:var(--cab
           <div class="grid" id="grid"></div>
         </div>
 
+        <div class="overlay" id="prepO" hidden>
+          <h2 class="title2" id="prepTitle">Level 1</h2>
+          <p class="help">Take one boost into this run, or just play.</p>
+          <div class="cards boosts" id="prepCards"></div>
+          <div class="row">
+            <button class="btn" id="bPlay" type="button">Play</button>
+            <button class="btn ghost" id="bPrepBack" type="button">Back</button>
+          </div>
+        </div>
+
+        <div class="overlay shop" id="shopO" hidden>
+          <div class="map-head">
+            <button class="btn ghost sm" id="bShopBack" type="button">Back</button>
+            <h2 class="title2">Shop</h2>
+            <span class="star-total"><i class="coin" aria-hidden="true"></i> <span id="shopCoins">0</span></span>
+          </div>
+          <div class="tabs" id="shopTabs" role="tablist">
+            <button class="tab" type="button" role="tab" data-tab="outfits">Outfits</button>
+            <button class="tab" type="button" role="tab" data-tab="trails">Arrows</button>
+            <button class="tab" type="button" role="tab" data-tab="boosts">Boosts</button>
+            <button class="tab" type="button" role="tab" data-tab="coins">Coins &amp; no ads</button>
+          </div>
+          <div class="cards" id="shopCards" role="tabpanel"></div>
+        </div>
+
         <div class="overlay" id="pauseO" hidden>
           <h2 class="title2">Pause</h2>
           <div class="row">
@@ -264,11 +334,27 @@ kbd{font-family:var(--body);font-weight:800;font-size:.95em;background:var(--cab
           <p class="result" id="result"></p>
           <p class="record" id="newRecord" hidden></p>
           <ol class="board" id="board" hidden></ol>
+          <p class="earned" id="resCoins" hidden></p>
+          <div class="row" id="rewardRow" hidden></div>
           <div class="row">
             <button class="btn" id="bNext" type="button" hidden>Next level</button>
             <button class="btn" id="bAgain" type="button">Play again</button>
             <button class="btn ghost" id="bMenu" type="button">Menu</button>
           </div>
+        </div>
+
+        <div class="overlay modal" id="msgO" hidden role="dialog" aria-modal="true" aria-labelledby="msgTitle">
+          <h2 class="title2" id="msgTitle"></h2>
+          <div class="msg-art" id="msgArt"></div>
+          <p class="result" id="msgText"></p>
+          <div class="row" id="msgBtns"></div>
+        </div>
+
+        <div class="overlay modal adfake" id="adO" hidden role="dialog" aria-modal="true" aria-labelledby="adTitle">
+          <span class="adtag">AD · TEST</span>
+          <h2 class="title2" id="adTitle">Ad</h2>
+          <p class="help" id="adText"></p>
+          <button class="btn sm" id="bAdClose" type="button">Close</button>
         </div>
       </div>
     </div>
@@ -548,6 +634,7 @@ function loadLevel() {
 function startRun(k, lv) {
   audio();
   kind = k; mode = 1; level = lv;
+  runCoins = 0; survPaid = 0; continued = false;
   players = [makePlayer(0)];
   buildControls();
   paused = false; show(null);
@@ -568,6 +655,8 @@ function toMenu() {
   paintBest();
   $('advStars').textContent = `★ ${totalStars()}/${ADV_COUNT * 3}`;
   show(menuO);
+  saveMoney(); paintChest();
+  if ($('msgO').hidden) dailyGift();
 }
 const LOCK = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 8V6a4 4 0 0 1 8 0v2h1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1zm2 0h4V6a2 2 0 0 0-4 0z"/></svg>';
 function openMap(world) {
@@ -593,7 +682,7 @@ function openMap(world) {
       if (n % 12 === 0) b.classList.add('boss');
       b.innerHTML = `<span>${n % 12 === 0 ? `<img src="${BOSS_ART[levelDef(n).boss][0]}" alt="">Boss` : n}</span><span class="st">${[0, 1, 2].map(i => `<i${i < st ? ' class="on"' : ''}>★</i>`).join('')}</span>`;
       b.setAttribute('aria-label', `Level ${n}, ${st} of 3 stars`);
-      b.addEventListener('click', () => startRun('adv', n));
+      b.addEventListener('click', () => prep('adv', n));
       if (!st && !next) { next = b; b.classList.add('next'); }
     }
     grid.append(b);
@@ -612,7 +701,7 @@ function openMap(world) {
 function quitRun() { if (kind === 'adv') openMap(worldOf(level)); else toMenu(); }
 
 function setState(s, t) { state = s; stateT = t; document.body.dataset.state = s; }
-function show(el) { for (const o of [menuO, mapO, pauseO, overO]) o.hidden = o !== el; }
+function show(el) { for (const o of [menuO, mapO, pauseO, overO, prepO, shopO]) o.hidden = o !== el; }
 
 function togglePause(force) {
   if (state === 'menu' || state === 'over') return;
@@ -632,6 +721,7 @@ function update(dt) {
     movePlayers(dt, false);
     if (stateT <= 0) { setState('play', 0); fireQueued = false; }
   } else if (state === 'play') {
+    MONEY.playT += dt;
     if (kind === 'surv') updateSurvival(dt); else { timeLeft -= dt; if (dropCd > 0) dropCd -= dt; }
     const frozen = freezeT > 0, slow = slowT > 0 ? .45 : 1;
     if (slowT > 0) slowT -= dt;
@@ -804,6 +894,7 @@ function popBall(j, p, noDrop) {
     p.mult = mult;
   }
   if (p.x2 > 0) mult *= 2;
+  if (kind === 'adv' && b.s === 0) runCoins += EARN.pop;
   p.score += PTS[b.s] * mult;
   float(b.x, b.y - RAD[b.s], '+' + PTS[b.s] * mult, COL[p.id].main);
   burst(b.x, b.y, b.c, RAD[b.s]);
@@ -936,6 +1027,7 @@ function levelClear() {
   lastStars = 1 + (levelHit ? 0 : 1) + (!levelHit && clearTime > timeMax / 2 ? 1 : 0);
   prevStars = starsOf(level);
   if (lastStars > prevStars) { adv[level] = lastStars; store.set('adv', adv); }
+  runCoins += EARN.clear + EARN.star * lastStars;
   for (const p of players) p.harpoons = [];
   setState('clear', 1.4);
   sfx.clear();
@@ -946,7 +1038,11 @@ const boardOf = () => store.get('surv1', []);
 const clock = t => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
 function gameOver() {
   const total = players.reduce((t, p) => t + p.score, 0);
-  const entry = { score: total, time: Math.floor(survT) };
+  const due = Math.floor(total / EARN.survPer);
+  runCoins += due - survPaid; survPaid = due;
+  lastOver = 'surv'; ADS.survOvers++;
+  lastEntryId = Date.now();
+  const entry = { score: total, time: Math.floor(survT), id: lastEntryId, cont: continued };
   const board = [...boardOf(), entry].sort((a, b) => b.score - a.score || b.time - a.time).slice(0, 5);
   store.set('surv1', board);
   const rank = board.indexOf(entry);
@@ -955,7 +1051,7 @@ function gameOver() {
     result: `Score ${fmt(total)}`
       + ` · survived ${clock(survT)}`,
     record: rank === 0 ? 'New record!' : rank > 0 ? `#${rank + 1} best score` : '',
-    board, rank,
+    board, rank, coins: payRun(),
     again: 'Play again', menu: 'Menu',
   });
   sfx.over();
@@ -963,7 +1059,9 @@ function gameOver() {
 
 function showResult() {
   const fast = !levelHit && clearTime > timeMax / 2;
+  lastOver = 'clear'; ADS.clears++;
   paintOver({
+    coins: payRun(),
     title: `Level ${level} cleared!`,
     stars: lastStars,
     crit: [['Level cleared', true], ['No hits taken', !levelHit], ['No hits, with over half the time left', fast]],
@@ -973,7 +1071,9 @@ function showResult() {
 }
 
 function showFail() {
+  lastOver = 'fail';
   paintOver({
+    coins: payRun(),
     title: 'Failed!',
     result: deathMsg === "Time's up!" ? 'Time ran out.' : 'You ran out of hearts.',
     again: 'Try again', menu: 'Map',
@@ -991,12 +1091,21 @@ function paintOver(o) {
   cr.replaceChildren(...(o.crit || []).map(([txt, ok]) => { const li = document.createElement('li'); li.textContent = txt; if (ok) li.className = 'ok'; return li; }));
   $('result').textContent = o.result || ''; $('result').hidden = !o.result;
   $('newRecord').textContent = o.record || ''; $('newRecord').hidden = !o.record;
+  $('resCoins').innerHTML = coinHTML(o.coins || 0) + ' earned'; $('resCoins').hidden = o.coins == null;
+  const rw = rewardButtons();
+  $('rewardRow').replaceChildren(...rw.map(([label, fn, cls]) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'btn sm' + (cls ? ' ' + cls : ''); b.innerHTML = label;
+    b.addEventListener('click', fn);
+    return b;
+  }));
+  $('rewardRow').hidden = !rw.length;
   const bd = $('board');
   bd.hidden = !o.board;
   bd.replaceChildren(...(o.board || []).map((e, i) => {
     const li = document.createElement('li');
     if (i === o.rank) li.className = 'me';
-    li.innerHTML = `<span>${i + 1}.</span><span>${fmt(e.score)}</span><span>${clock(e.time)}</span>`;
+    li.innerHTML = `<span>${i + 1}.</span><span>${fmt(e.score)}${e.cont ? '<small class="cont" title="Continued">↻</small>' : ''}</span><span>${clock(e.time)}</span>`;
     return li;
   }));
   $('bNext').hidden = !o.next;
@@ -1233,6 +1342,7 @@ function finishBoss() {
   for (const b of balls) { burst(b.x, b.y, b.c, RAD[b.s]); p.score += PTS[b.s]; }
   balls = []; drops = [];
   boss = null;
+  runCoins += EARN.boss;
   if (kind === 'surv') { bossKills++; waveT = 4; }
 }
 function bossTouch() {
@@ -1656,8 +1766,24 @@ function drawArrow(x, y, len, shaft, fletch) {
   ctx.beginPath(); ctx.moveTo(x, y - 6); ctx.lineTo(x - 4.2, y + 3.5); ctx.lineTo(x, y + 2); ctx.lineTo(x + 4.2, y + 3.5); ctx.closePath();
   ctx.fill(); ctx.stroke();
 }
+// Flèches de la boutique : couleur de la corde et étincelles sous la pointe.
+const TRAIL_FX = {
+  fire: { rope: '#ffb347', sparks: ['#ffe066', '#ff9a3d', '#ff5a1f'] },
+  ice: { rope: '#c9f5ff', sparks: ['#ffffff', '#9fe8ff', '#5fc8ff'] },
+  rainbow: { rope: null, sparks: ['#ff5a4e', '#ffc83d', '#63d68f', '#2ec4e6', '#b45cff'] },
+};
+function drawTrail(h, fx) {
+  const t = performance.now() / 1000;
+  for (let i = 0; i < 8; i++) {
+    const y = h.top + 20 + i * 7 + ((t * 70) % 7), r = 3.4 - i * .32;
+    ctx.globalAlpha = 1 - i * .1;
+    ctx.fillStyle = fx.sparks[(i + Math.floor(t * 8)) % fx.sparks.length];
+    ctx.beginPath(); ctx.arc(h.x + Math.sin(t * 11 + i * 1.7) * 2.5, y, r, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+}
 function drawHarpoon(h, p) {
-  const fletch = COL[p.id].main;
+  const fletch = COL[p.id].main, fx = TRAIL_FX[MONEY.trail];
   if (h.bullet) { drawArrow(h.x, h.top + 2, 12, '#c8934f', fletch); return; }
   ctx.beginPath();
   let k = 0;
@@ -1666,7 +1792,13 @@ function drawHarpoon(h, p) {
   ctx.lineTo(h.x, h.top + 18);
   ctx.lineJoin = 'round';
   ctx.lineWidth = 2.6; ctx.strokeStyle = 'rgba(25,15,25,.6)'; ctx.stroke();
-  ctx.lineWidth = 1.2; ctx.strokeStyle = h.sticky ? '#ffd35a' : '#efe3c8'; ctx.stroke();
+  let rope = h.sticky ? '#ffd35a' : '#efe3c8';
+  if (fx && !h.sticky) {
+    if (fx.rope) rope = fx.rope;
+    else { rope = ctx.createLinearGradient(0, FLOOR, 0, h.top); fx.sparks.forEach((c, i) => rope.addColorStop(i / (fx.sparks.length - 1), c)); }
+  }
+  ctx.lineWidth = fx && !h.sticky ? 1.8 : 1.2; ctx.strokeStyle = rope; ctx.stroke();
+  if (fx) drawTrail(h, fx);
   drawArrow(h.x, h.top, 18, h.sticky ? '#ffd35a' : '#b07a3f', fletch);
 }
 
@@ -1680,12 +1812,29 @@ const ARCHER_POSES = {
   walk: ['img/archer-walk.webp', 35, .537],
   shoot: ['img/archer-shoot.webp', 36, .501],
 };
+// Costumes de la boutique : mêmes 3 poses, [hauteur affichée, position des pieds] par pose.
+const SKIN_FIT = {
+  robin: { idle: [36.0, 0.508], walk: [36.8, 0.529], shoot: [35.4, 0.536] },
+  nomad: { idle: [36.6, 0.48], walk: [36.3, 0.542], shoot: [35.8, 0.404] },
+  sailor: { idle: [36.0, 0.507], walk: [35.1, 0.528], shoot: [36.1, 0.544] },
+  astro: { idle: [36.9, 0.447], walk: [35.9, 0.453], shoot: [36.8, 0.496] },
+  royal: { idle: [38.0, 0.502], walk: [37.2, 0.53], shoot: [36.2, 0.528] },
+};
+const POSES = ['idle', 'walk', 'shoot'];
+const skinSrc = (id, pose) => id === 'classic' ? ARCHER_POSES[pose][0] : `img/archer-${id}-${pose}.webp`;
 const ARCHER_ART = {};
-for (const [pose, [src]] of Object.entries(ARCHER_POSES)) {
-  const img = new Image();
-  img.onload = () => { ARCHER_ART[pose] = img; };
-  img.src = src;
+function loadSkin(id) {
+  for (const pose of POSES) {
+    const key = id + '/' + pose;
+    if (key in ARCHER_ART) continue;
+    ARCHER_ART[key] = null;
+    const img = new Image();
+    img.onload = () => { ARCHER_ART[key] = img; };
+    img.src = skinSrc(id, pose);
+  }
 }
+loadSkin('classic');
+const skinReady = id => POSES.every(q => ARCHER_ART[id + '/' + q]);
 function drawArcher(p) {
   const c = COL[p.id], f = p.face, now = performance.now();
   ctx.save();
@@ -1696,9 +1845,10 @@ function drawArcher(p) {
   const flap = p.moving ? Math.sin(p.walk * 1.3) * 2 : Math.sin(now / 350);
   const shooting = p.shootT > 0 && !p.dead;
   const pose = shooting ? 'shoot' : p.moving && ph > 0 ? 'walk' : 'idle';
-  const art = ARCHER_ART.idle && ARCHER_ART.walk && ARCHER_ART.shoot && ARCHER_ART[pose];
+  const sk = skinReady(MONEY.skin) ? MONEY.skin : 'classic';
+  const art = skinReady(sk) && ARCHER_ART[sk + '/' + pose];
   if (art) {
-    const [, h, feet] = ARCHER_POSES[pose], w = h * art.width / art.height;
+    const [h, feet] = (SKIN_FIT[sk] && SKIN_FIT[sk][pose]) || ARCHER_POSES[pose].slice(1), w = h * art.width / art.height;
     ctx.scale(f, 1);
     ctx.drawImage(art, -w * feet, -h - bob, w, h);
     ctx.restore();
@@ -2143,15 +2293,15 @@ $('btnFlip').addEventListener('click', () => { flip = !flip; store.set('flip', f
 layout();
 
 $('bAdv').addEventListener('click', () => openMap());
-$('bArc').addEventListener('click', () => startRun('surv', 1));
+$('bArc').addEventListener('click', () => prep('surv', 1));
 $('bMapBack').addEventListener('click', toMenu);
 $('wPrev').addEventListener('click', () => { openMap(mapWorld - 1); $('wPrev').focus({ preventScroll: true }); });
 $('wNext').addEventListener('click', () => { openMap(mapWorld + 1); $('wNext').focus({ preventScroll: true }); });
 $('bResume').addEventListener('click', () => togglePause(false));
 $('bQuit').addEventListener('click', quitRun);
-$('bNext').addEventListener('click', () => startRun('adv', level + 1));
-$('bAgain').addEventListener('click', () => startRun(kind, level));
-$('bMenu').addEventListener('click', quitRun);
+$('bNext').addEventListener('click', () => leaveResults(() => prep('adv', level + 1)));
+$('bAgain').addEventListener('click', () => leaveResults(() => prep(kind, level)));
+$('bMenu').addEventListener('click', () => leaveResults(quitRun));
 $('btnPause').addEventListener('click', () => togglePause());
 $('btnSound').addEventListener('click', () => { muted = !muted; store.set('muted', muted); paintSound(); if (!muted) sfx.pick(); });
 
@@ -2159,6 +2309,307 @@ const logoImg = document.querySelector('.logo img');
 const noLogo = () => logoImg.parentNode.classList.add('noimg');
 logoImg.addEventListener('error', noLogo);
 if (logoImg.complete && !logoImg.naturalWidth) noLogo();
+
+/* ---------- Monétisation : pièces, boutique, pubs et achats ---------- */
+// Les pubs (showAd) et les achats (buyProduct) sont simulés ici : faux écran de pub, faux paiement.
+// Dans l'appli Android, seules ces deux fonctions changent (AdMob et Google Play Billing).
+const EARN = { pop: 1, clear: 20, star: 10, boss: 100, survPer: 100, cont: 150, daily: 50, dailyStep: 25, boost: 100 };
+const SKINS = [
+  { id: 'classic', name: 'Red Hood', price: 0 },
+  { id: 'robin', name: 'Robin', price: 800 },
+  { id: 'nomad', name: 'Nomad', price: 1200 },
+  { id: 'sailor', name: 'Sailor', price: 1500 },
+  { id: 'astro', name: 'Astronaut', price: 2000 },
+  { id: 'royal', name: 'Royal', pack: true },
+];
+const TRAILS = [
+  { id: 'none', name: 'Classic', price: 0, css: 'linear-gradient(#efe3c8,#b07a3f)' },
+  { id: 'fire', name: 'Fire', price: 300, css: 'linear-gradient(#ffe066,#ff7a1f,#d6301a)' },
+  { id: 'ice', name: 'Ice', price: 300, css: 'linear-gradient(#ffffff,#9fe8ff,#3fa9e0)' },
+  { id: 'rainbow', name: 'Rainbow', price: 600, css: 'linear-gradient(#ff5a4e,#ffc83d,#63d68f,#2ec4e6,#b45cff)' },
+];
+const BOOSTS = ['shield', 'double'];
+const PRODUCTS = [
+  { id: 'noads', name: 'No ads', price: '€2.99', desc: 'No more ads between levels' },
+  { id: 'starter', name: 'Starter pack', price: '€3.99', desc: 'No ads + 1,000 coins + Royal outfit' },
+  { id: 'c500', name: 'Pouch', price: '€0.99', coins: 500, desc: '500 coins' },
+  { id: 'c2000', name: 'Chest', price: '€2.99', coins: 2000, desc: '2,000 coins' },
+  { id: 'c6000', name: 'Treasure', price: '€6.99', coins: 6000, desc: '6,000 coins' },
+];
+const MONEY = {
+  coins: store.get('coins', 0), owned: store.get('owned', ['classic', 'none']),
+  skin: store.get('skin', 'classic'), trail: store.get('trail', 'none'),
+  boosts: store.get('boosts', { shield: 0, double: 0 }),
+  noAds: store.get('noAds', false), starter: store.get('starter', false), playT: store.get('playT', 0),
+};
+function saveMoney() {
+  for (const k of Object.keys(MONEY)) store.set(k, MONEY[k]);
+  paintCoins();
+}
+function paintCoins() {
+  $('coinN').textContent = fmt(MONEY.coins);
+  $('shopCoins').textContent = fmt(MONEY.coins);
+}
+loadSkin(MONEY.skin);
+const coinHTML = n => `<i class="coin" aria-hidden="true"></i> ${fmt(n)}`;
+const owns = id => MONEY.owned.includes(id);
+
+// Pièces de la partie en cours, versées au joueur sur l'écran de fin.
+let runCoins = 0, lastEarn = 0, survPaid = 0, continued = false, lastOver = '', lastEntryId = 0;
+function payRun() {
+  lastEarn = runCoins; runCoins = 0;
+  MONEY.coins += lastEarn; saveMoney();
+  return lastEarn;
+}
+
+// Rythme des pubs imposées : jamais en jeu, jamais après un échec, pas avant 10 min de jeu,
+// au plus une toutes les 3 min (pub récompensée comprise).
+const ADS = { last: -1e9, clears: 0, survOvers: 0 };
+const nowS = () => performance.now() / 1000;
+function interstitialDue() {
+  if (MONEY.noAds || MONEY.playT < 600 || nowS() - ADS.last < 180) return false;
+  if (lastOver === 'clear') return ADS.clears % 3 === 0 && level > 5 && (level + 1) % WORLD !== 0;
+  if (lastOver === 'surv') return ADS.survOvers % 2 === 0;
+  return false;
+}
+function leaveResults(go) {
+  if (interstitialDue()) showAd(false).then(go); else go();
+}
+
+// Fausse pub : 5 s pour une pub récompensée (la fermer avant = pas de récompense), 3 s sinon.
+function showAd(rewarded) {
+  return new Promise(done => {
+    const o = $('adO'), btn = $('bAdClose');
+    let t = rewarded ? 5 : 3;
+    $('adTitle').textContent = rewarded ? 'Rewarded ad' : 'Ad break';
+    const paint = () => {
+      $('adText').textContent = t > 0 ? (rewarded ? `Reward in ${t} s…` : `The game continues in ${t} s…`)
+        : (rewarded ? 'Reward unlocked!' : 'Thanks for playing!');
+      btn.textContent = t > 0 ? (rewarded ? 'Skip (no reward)' : `Wait ${t}`) : (rewarded ? 'Get reward' : 'Close');
+      btn.disabled = !rewarded && t > 0;
+    };
+    const timer = setInterval(() => { t--; paint(); if (t <= 0) clearInterval(timer); }, 1000);
+    btn.onclick = () => {
+      clearInterval(timer); o.hidden = true; ADS.last = nowS();
+      done(rewarded ? t <= 0 : true);
+    };
+    paint(); o.hidden = false; btn.focus({ preventScroll: true });
+  });
+}
+
+// Faux paiement : une fenêtre de confirmation, sans argent réel.
+function buyProduct(prod) {
+  return new Promise(done => message('Test purchase',
+    `${prod.name} · ${prod.price}. This is a simulation: no real payment.`,
+    [['Buy', () => done(true)], ['Cancel', () => done(false), 'ghost']]));
+}
+function grant(prod) {
+  if (prod.id === 'noads') MONEY.noAds = true;
+  if (prod.id === 'starter') {
+    MONEY.noAds = true; MONEY.starter = true; MONEY.coins += 1000;
+    if (!owns('royal')) MONEY.owned.push('royal');
+  }
+  if (prod.coins) MONEY.coins += prod.coins;
+  saveMoney();
+}
+
+// Fenêtre de message : titre, texte, image facultative, boutons [libellé, action, style].
+function message(title, text, buttons, art) {
+  $('msgTitle').textContent = title;
+  $('msgText').textContent = text;
+  $('msgArt').innerHTML = art || '';
+  const row = $('msgBtns');
+  row.replaceChildren(...buttons.map(([label, fn, cls]) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'btn sm' + (cls ? ' ' + cls : ''); b.innerHTML = label;
+    b.addEventListener('click', () => { $('msgO').hidden = true; if (fn) fn(); });
+    return b;
+  }));
+  $('msgO').hidden = false;
+  row.firstChild.focus({ preventScroll: true });
+}
+function notEnough(n) {
+  message('Not enough coins', `You need ${fmt(n - MONEY.coins)} more coins.`,
+    [['Get coins', () => openShop('coins')], ['OK', null, 'ghost']]);
+}
+function spend(n) {
+  if (MONEY.coins < n) { notEnough(n); return false; }
+  MONEY.coins -= n; saveMoney(); sfx.pick();
+  return true;
+}
+
+// Cadeau du jour : 50 pièces, +25 par jour d'affilée (jusqu'au 7e jour), doublé avec une pub.
+function dailyGift() {
+  const d = store.get('daily', { day: '', streak: 0 });
+  const today = new Date().toDateString(), yesterday = new Date(Date.now() - 864e5).toDateString();
+  if (d.day === today) return;
+  const streak = d.day === yesterday ? d.streak + 1 : 1;
+  store.set('daily', { day: today, streak });
+  const gift = EARN.daily + EARN.dailyStep * (Math.min(streak, 7) - 1);
+  MONEY.coins += gift; saveMoney();
+  message('Daily gift', `Day ${streak}: +${fmt(gift)} coins. Come back tomorrow for more!`, [
+    ['▶ Double it', async () => { if (await showAd(true)) { MONEY.coins += gift; saveMoney(); message('Doubled!', `+${fmt(gift)} more coins.`, [['Nice!']], coinArt(3)); } }, 'alt'],
+    ['Collect', null],
+  ], coinArt(3));
+}
+const coinArt = n => '<span class="coinstack">' + '<i class="coin"></i>'.repeat(n) + '</span>';
+
+// Coffre gratuit : 3 par jour, contre une pub.
+function chestState() {
+  const c = store.get('chest', { day: '', n: 0 }), today = new Date().toDateString();
+  return c.day === today ? c : { day: today, n: 0 };
+}
+function paintChest() {
+  const left = 3 - chestState().n;
+  $('chestLeft').textContent = `${left}/3`;
+  $('bChest').disabled = left <= 0;
+}
+async function openChest() {
+  const c = chestState();
+  if (c.n >= 3 || !(await showAd(true))) return;
+  c.n++; store.set('chest', c); paintChest();
+  if (Math.random() < .6) {
+    const n = 30 + Math.floor(Math.random() * 8) * 10;
+    MONEY.coins += n; saveMoney();
+    message('Chest opened!', `+${n} coins`, [['Great!']], coinArt(2));
+  } else {
+    const t = BOOSTS[Math.floor(Math.random() * BOOSTS.length)];
+    MONEY.boosts[t]++; saveMoney();
+    message('Chest opened!', `+1 ${ITEM_BY[t][3]} boost`, [['Great!']], `<img src="img/item-${t}.webp" alt="">`);
+  }
+}
+
+// Écran avant la partie : un seul boost au choix (stock, pièces, ou bouclier contre une pub).
+let prepKind = 'adv', prepLevel = 1, armed = null;
+function prep(k, lv) {
+  prepKind = k; prepLevel = lv; armed = null;
+  $('prepTitle').textContent = k === 'surv' ? 'Survival' : `Level ${lv}` + (lv % WORLD === 0 ? ' · Boss' : '');
+  renderPrep();
+  show(prepO);
+  $('bPlay').focus({ preventScroll: true });
+}
+function renderPrep() {
+  $('prepCards').replaceChildren(...BOOSTS.map(t => {
+    const have = MONEY.boosts[t], on = armed && armed.t === t;
+    const acts = on ? [['✓ Ready — tap to remove', () => { armed = null; renderPrep(); }, 'alt']]
+      : [
+        have ? [`Use (${have})`, () => { armed = { t, stock: true }; renderPrep(); }]
+          : [coinHTML(EARN.boost), () => { if (spend(EARN.boost)) { MONEY.boosts[t]++; saveMoney(); armed = { t, stock: true }; renderPrep(); } }],
+        ...(t === 'shield' ? [['▶ Free', async () => { if (await showAd(true)) { armed = { t, stock: false }; renderPrep(); } }, 'alt']] : []),
+      ];
+    return card({ art: `<img src="img/item-${t}.webp" alt="">`, name: ITEM_BY[t][3], desc: have ? `You have ${have}` : 'One run', on, acts });
+  }));
+}
+function play() {
+  startRun(prepKind, prepLevel);
+  if (armed) {
+    if (armed.stock) { MONEY.boosts[armed.t]--; saveMoney(); }
+    applyItem(players[0], armed.t);
+    armed = null;
+  }
+}
+function card({ art, name, desc, on, acts }) {
+  const el = document.createElement('div');
+  el.className = 'card' + (on ? ' on' : '');
+  el.innerHTML = `<div class="art">${art}</div><div class="name">${name}</div>` + (desc ? `<div class="desc">${desc}</div>` : '') + '<div class="acts"></div>';
+  el.querySelector('.acts').append(...acts.map(([label, fn, cls, dis]) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'btn' + (cls ? ' ' + cls : ''); b.innerHTML = label; b.disabled = !!dis;
+    if (fn) b.addEventListener('click', fn);
+    return b;
+  }));
+  return el;
+}
+
+// Boutique : costumes, flèches, boosts, pièces et « sans pub ».
+let shopTab = 'outfits', shopBack = null;
+function openShop(tab) {
+  if ($('shopO').hidden) shopBack = [menuO, mapO, overO, prepO].find(o => !o.hidden) || menuO;
+  shopTab = tab || shopTab;
+  renderShop();
+  show(shopO);
+}
+function closeShop() {
+  if (shopBack === prepO) renderPrep();
+  show(shopBack || menuO);
+}
+function renderShop() {
+  for (const b of $('shopTabs').children) b.setAttribute('aria-selected', b.dataset.tab === shopTab);
+  const cards = [];
+  if (shopTab === 'outfits') for (const k of SKINS) {
+    const own = owns(k.id), on = MONEY.skin === k.id;
+    cards.push(card({
+      art: `<img src="${skinSrc(k.id, 'idle')}" alt="">`, name: k.name, on,
+      desc: k.pack && !own ? 'Starter pack only' : '',
+      acts: [own ? [on ? 'Equipped' : 'Equip', () => { MONEY.skin = k.id; loadSkin(k.id); saveMoney(); renderShop(); }, on ? 'ghost' : '', on]
+        : k.pack ? ['See pack', () => { shopTab = 'coins'; renderShop(); }, 'alt']
+        : [coinHTML(k.price), () => { if (spend(k.price)) { MONEY.owned.push(k.id); MONEY.skin = k.id; loadSkin(k.id); saveMoney(); renderShop(); } }]],
+    }));
+  }
+  if (shopTab === 'trails') for (const k of TRAILS) {
+    const own = owns(k.id), on = MONEY.trail === k.id;
+    cards.push(card({
+      art: `<span class="swatch" style="background:${k.css}"></span>`, name: k.name, on,
+      acts: [own ? [on ? 'Equipped' : 'Equip', () => { MONEY.trail = k.id; saveMoney(); renderShop(); }, on ? 'ghost' : '', on]
+        : [coinHTML(k.price), () => { if (spend(k.price)) { MONEY.owned.push(k.id); MONEY.trail = k.id; saveMoney(); renderShop(); } }]],
+    }));
+  }
+  if (shopTab === 'boosts') for (const t of BOOSTS) {
+    cards.push(card({
+      art: `<img src="img/item-${t}.webp" alt="">`, name: ITEM_BY[t][3], desc: `You have ${MONEY.boosts[t]}`,
+      acts: [[coinHTML(EARN.boost), () => { if (spend(EARN.boost)) { MONEY.boosts[t]++; saveMoney(); renderShop(); } }]],
+    }));
+  }
+  if (shopTab === 'coins') for (const prod of PRODUCTS) {
+    const done = (prod.id === 'noads' && MONEY.noAds) || (prod.id === 'starter' && MONEY.starter);
+    const art = prod.id === 'noads' ? '<span class="noad">AD</span>' : prod.id === 'starter' ? `<img src="${skinSrc('royal', 'idle')}" alt="">`
+      : coinArt(prod.coins >= 6000 ? 4 : prod.coins >= 2000 ? 3 : 2);
+    cards.push(card({
+      art, name: prod.name, desc: prod.desc,
+      acts: [[done ? 'Owned' : prod.price, async () => {
+        if (!(await buyProduct(prod))) return;
+        grant(prod); sfx.clear(); renderShop();
+        message('Thank you!', prod.coins ? `+${fmt(prod.coins)} coins` : prod.id === 'noads' ? 'Ads between levels are gone for good.' : 'No ads, 1,000 coins and the Royal outfit are yours.', [['OK']]);
+      }, 'alt', done]],
+    }));
+  }
+  $('shopCards').replaceChildren(...cards);
+  $('shopCards').scrollTop = 0;
+}
+
+// Boutons de récompense sur l'écran de fin.
+function rewardButtons() {
+  if (lastOver === 'clear') {
+    return lastEarn > 0 ? [['▶ Double coins', async function () {
+      if (!(await showAd(true))) return;
+      MONEY.coins += lastEarn; saveMoney(); this.remove();
+      $('resCoins').innerHTML = coinHTML(lastEarn * 2) + ' earned (doubled!)';
+    }, 'alt']] : [];
+  }
+  if (continued) return [];
+  const timeout = deathMsg === "Time's up!";
+  const what = kind === 'surv' ? '+1 life' : timeout ? '+15 s' : '+1 heart';
+  return [
+    [`▶ Continue (${what})`, async () => { if (await showAd(true)) revive(); }, 'alt'],
+    [`Continue · ${coinHTML(EARN.cont)}`, () => { if (spend(EARN.cont)) revive(); }, 'ghost'],
+  ];
+}
+function revive() {
+  continued = true;
+  if (kind === 'surv') store.set('surv1', boardOf().filter(e => e.id !== lastEntryId));
+  for (const p of players) { p.dead = false; p.dy = 0; p.dvy = 0; p.lives = Math.max(p.lives, 1); p.inv = 2.5; p.harpoons = []; }
+  if (kind === 'adv' && timeLeft < 15) timeLeft = 15;
+  shots = []; beams = [];
+  show(null);
+  setState('ready', 1.2);
+}
+
+$('bShop').addEventListener('click', () => openShop('outfits'));
+$('bShopBack').addEventListener('click', closeShop);
+for (const b of $('shopTabs').children) b.addEventListener('click', () => { shopTab = b.dataset.tab; renderShop(); b.focus(); });
+$('bChest').addEventListener('click', openChest);
+$('bPlay').addEventListener('click', play);
+$('bPrepBack').addEventListener('click', () => { if (prepKind === 'adv') openMap(worldOf(prepLevel)); else toMenu(); });
 
 /* ---------- Taille de l'écran ---------- */
 function fit() {
@@ -2189,7 +2640,7 @@ function snapshot() {
   return { kind, mode, level, players: players.map(p => ({ score: p.score, lives: p.lives, out: p.out, weapon: p.weapon })) };
 }
 function boot(data) {
-  paintSound();
+  paintSound(); paintCoins();
   fit();
   if (data && data.kind === 'adv' && data.mode && Array.isArray(data.players) && data.players.some(p => !p.out)) {
     kind = 'adv'; mode = 1; level = data.level || 1;
