@@ -7,6 +7,7 @@ Jeu d'arcade dans l'esprit de Pang / Bubble Trouble : on tire un harpon vers le 
 - le logo « Pop Archer » ;
 - les décors des 4 mondes, 2 ambiances chacun : forêt de jour et au couchant, désert de jour et au crépuscule, fonds marins clairs et grand fond, cosmos violet et bleu nuit ;
 - les 4 boss : Bubble King, Great Storm, Ink Octopus et Void Eye. Leur portrait apparaît aussi sur la case « Boss » de la carte.
+- les 12 icônes de bonus (`item-*.webp`), dans le même style : pastille arrondie brillante avec un symbole blanc. Elles servent pour les bonus qui tombent et pour les pastilles d'effet en haut à gauche.
 
 Si une image manque, le dessin fait par le code prend le relais.
 
