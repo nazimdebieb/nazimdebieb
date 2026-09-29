@@ -223,6 +223,27 @@ kbd{font-family:var(--body);font-weight:800;font-size:.95em;background:var(--cab
 /* Tutoriel : la commande à utiliser clignote */
 .hint{animation:hint 1s ease-in-out infinite}
 @keyframes hint{50%{box-shadow:0 0 0 4px var(--gold),0 0 18px var(--gold)}}
+/* Défi du jour, trophées et bandeau « trophée débloqué » */
+.btn.daily{background:#b45cff;color:#fff;box-shadow:0 4px 0 #6b2aa3}
+.btn.daily:active{box-shadow:0 1px 0 #6b2aa3}
+.btn small.badge{display:inline-block;min-width:1.5em;padding:0 .35em;border-radius:99px;background:var(--p1);color:#fff;font-family:var(--body);font-weight:800;opacity:1}
+.btn small.badge:empty{display:none}
+.card .bar{width:86%;height:.55em;margin:.25em auto 0;border-radius:99px;background:var(--cab);box-shadow:inset 0 0 0 1px var(--edge);overflow:hidden}
+.card .bar i{display:block;height:100%;background:var(--gold);border-radius:99px}
+.card .num{font-size:.85em;color:var(--muted);font-variant-numeric:tabular-nums}
+.card .pips{display:flex;gap:.25em;justify-content:center;margin-top:.2em}
+.card .pips i{width:.6em;height:.6em;border-radius:50%;background:var(--cab);box-shadow:inset 0 0 0 1px var(--edge)}
+.card .pips i.on{background:var(--gold);box-shadow:none}
+.card.done{opacity:.75}
+#achCards .name{font-size:.88em}
+.card.ready{box-shadow:inset 0 0 0 3px var(--gold)}
+.toast{position:absolute;z-index:7;left:50%;top:4px;display:flex;align-items:center;gap:10px;padding:6px 16px 6px 6px;border-radius:14px;
+  background:rgba(33,17,48,.94);box-shadow:0 0 0 2px var(--gold),0 8px 20px rgba(0,0,0,.4);white-space:nowrap;pointer-events:none;
+  opacity:0;transform:translate(-50%,-16px);transition:opacity .25s,transform .25s}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.toast img{width:38px;height:38px}
+.toast b{display:block;font-family:var(--display);font-weight:400;font-size:11px;letter-spacing:.06em;color:var(--gold)}
+.toast span{font-weight:800;font-size:15px;color:var(--ink)}
 /* Monétisation : pièces, boutique, boosts, pubs simulées */
 .coin{display:inline-block;width:1em;height:1em;border-radius:50%;vertical-align:-.14em;flex:none;
   background:radial-gradient(circle at 35% 30%,#fff4b8,#ffc83d 48%,#d08e14);box-shadow:inset 0 0 0 .09em #9a6508}
@@ -295,6 +316,7 @@ body[data-state="ready"] .coinpill,body[data-state="play"] .coinpill,body[data-s
         <canvas id="cv" aria-label="Game area"></canvas>
         <div class="joy" id="joy" aria-hidden="true"><i></i></div>
         <div class="tap" id="tap" aria-hidden="true"></div>
+        <div class="toast" id="toast" role="status" aria-live="polite"><img src="img/ach-trophy.webp" alt=""><div><b>Trophy unlocked</b><span id="toastTxt"></span></div></div>
         <div class="joy hintpad" id="ghostL" aria-hidden="true"><i></i></div>
         <div class="hintpad" id="ghostR" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M6 25 Q20 3 34 25" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round"/><path d="M6 25 L20 31 L34 25" fill="none" stroke="#fff" stroke-width="1.4"/><path d="M20 35 V8" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><path d="M20 2 L15 10 H25 Z" fill="#fff"/></svg></div>
 
@@ -304,10 +326,12 @@ body[data-state="ready"] .coinpill,body[data-state="play"] .coinpill,body[data-s
           <div class="row">
             <button class="btn" id="bAdv" type="button">Adventure <small id="advStars"></small></button>
             <button class="btn alt" id="bArc" type="button">Survival</button>
+            <button class="btn daily" id="bDaily" type="button">Daily <small id="dailyMark"></small></button>
           </div>
           <div class="row">
             <button class="btn ghost sm" id="bShop" type="button">Shop</button>
             <button class="btn ghost sm" id="bChest" type="button">Free chest <small id="chestLeft"></small></button>
+            <button class="btn ghost sm" id="bAch" type="button">Trophies <small class="badge" id="achBadge"></small></button>
           </div>
           <p class="help kb-help">
             <kbd>←</kbd> <kbd>→</kbd> or <kbd id="kA">A</kbd> <kbd id="kD">D</kbd> move ·
@@ -334,7 +358,7 @@ body[data-state="ready"] .coinpill,body[data-state="play"] .coinpill,body[data-s
 
         <div class="overlay" id="prepO" hidden>
           <h2 class="title2" id="prepTitle">Level 1</h2>
-          <p class="help">Take one boost into this run, or just play.</p>
+          <p class="help" id="prepHelp">Take one boost into this run, or just play.</p>
           <div class="cards boosts" id="prepCards"></div>
           <div class="row">
             <button class="btn" id="bPlay" type="button">Play</button>
@@ -355,6 +379,15 @@ body[data-state="ready"] .coinpill,body[data-state="play"] .coinpill,body[data-s
             <button class="tab" type="button" role="tab" data-tab="coins">Coins &amp; no ads</button>
           </div>
           <div class="cards" id="shopCards" role="tabpanel"></div>
+        </div>
+
+        <div class="overlay shop" id="achO" hidden>
+          <div class="map-head">
+            <button class="btn ghost sm" id="bAchBack" type="button">Back</button>
+            <h2 class="title2">Trophies</h2>
+            <span class="star-total" id="achCount"></span>
+          </div>
+          <div class="cards" id="achCards"></div>
         </div>
 
         <div class="overlay" id="setO" hidden>
@@ -620,7 +653,7 @@ const POWER_TIME = { gun: 8, triple: 10, star: 6, x2: 10, slow: 8 };
 // bombe, étoile et points x2 restent réservés à la Survie.
 const ADV_UNLOCK = { triple: 2, slow: 3, gun: 4 };
 const ADV_TIME = { triple: 6, slow: 5, gun: 5 };
-const powerTime = t => (kind === 'adv' && ADV_TIME[t]) || POWER_TIME[t];
+const powerTime = t => (kind !== 'surv' && ADV_TIME[t]) || POWER_TIME[t];
 // Budget de bonus par niveau d'Aventure : 1 à 3 selon le nombre de bulles, 3 pour un boss,
 // au moins 5 s entre deux bonus, et une seule vie en plus par niveau.
 let dropBudget = 0, dropCd = 0, lifeDropped = false, unlockTxt = '';
@@ -869,7 +902,7 @@ function firstLevelOf(v) {
 }
 function loadLevel() {
   useWidth();
-  const def = levelDef(level);
+  const def = kind === 'daily' ? dailyDef() : levelDef(level);
   scene = SCENES[def.boss ? BOSSES[def.boss].scene : (worldOf(level) % WORLDS) * 2 + (level - 1) % 2];
   blocks = (def.k || []).map(wide);
   boss = def.boss ? makeBoss(def.boss) : null; shots = []; beams = []; shake = 0; slowT = 0; geyserT = 3;
@@ -893,6 +926,7 @@ function loadLevel() {
   if (level % WORLD === 1 && WORLD_TIPS[worldOf(level)]) unlockTxt = WORLD_TIPS[worldOf(level)];
   const fresh = def.b.map(d => d[4]).find(v => v && firstLevelOf(v) === level);
   if (fresh) unlockTxt = `${VARIANTS[fresh].name}: ${VARIANTS[fresh].tip}`;
+  if (kind === 'daily') unlockTxt = `${dailyPick().mod.name}: ${dailyPick().mod.tip}`;
   setState('ready', unlockTxt ? 2.6 : 1.7);
   renderBg();
 }
@@ -929,6 +963,7 @@ function startRun(k, lv) {
   releaseJoy();
   paused = false; show(null);
   if (k === 'surv') startSurvival(); else loadLevel();
+  if (k === 'daily' && dailyPick().mod.id === 'glass') players[0].lives = 1;
   tut = null;
   if (k === 'adv' && lv === 1) startTutorial(); else paintHint();
 }
@@ -948,7 +983,7 @@ function toMenu() {
   paintBest();
   $('advStars').textContent = `★ ${totalStars()}/${ADV_COUNT * 3}`;
   show(menuO);
-  saveMoney(); paintChest();
+  saveMoney(); paintChest(); paintDaily();
   if ($('msgO').hidden) dailyGift();
 }
 const LOCK = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 8V6a4 4 0 0 1 8 0v2h1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1zm2 0h4V6a2 2 0 0 0-4 0z"/></svg>';
@@ -994,7 +1029,7 @@ function openMap(world) {
 function quitRun() { if (kind === 'adv') openMap(worldOf(level)); else toMenu(); }
 
 function setState(s, t) { state = s; stateT = t; document.body.dataset.state = s; }
-function show(el) { for (const o of [menuO, mapO, pauseO, overO, prepO, shopO, setO]) o.hidden = o !== el; if (el) releaseJoy(); }
+function show(el) { for (const o of [menuO, mapO, pauseO, overO, prepO, shopO, achO, setO]) o.hidden = o !== el; if (el) releaseJoy(); }
 
 function togglePause(force) {
   if (state === 'menu' || state === 'over') return;
@@ -1032,7 +1067,7 @@ function update(dt) {
     moveItems(dt);
     touchPlayers();
     if (boss || shots.length || beams.length) bossTouch();
-    if (state === 'play' && kind === 'adv') {
+    if (state === 'play' && kind !== 'surv') {
       if (balls.length === 0 && !boss) levelClear();
       else if (timeLeft <= 0) timeUp();
     }
@@ -1205,12 +1240,13 @@ function popBall(j, p, noDrop) {
   if (kind === 'surv') {
     p.combo = p.comboT > 0 ? p.combo + 1 : 1; p.comboT = 2;
     mult = comboMult(p.combo);
-    if (mult > p.mult) { float(p.x, FLOOR - 58, 'Combo x' + mult, '#ffc83d'); sfx.pick(); }
+    if (mult > p.mult) { float(p.x, FLOOR - 58, 'Combo x' + mult, '#ffc83d'); sfx.pick(); best('combo', mult); }
     p.mult = mult;
   }
   if (p.x2 > 0) mult *= 2;
   if (b.v === 'gold') { mult *= 3; runCoins += 3; }
-  if (kind === 'adv' && b.s === 0) runCoins += EARN.pop;
+  if (kind !== 'surv' && b.s === 0) runCoins += EARN.pop;
+  bump('pops'); if (b.v === 'gold' || b.v === 'steel' || b.v === 'bomb') bump(b.v);
   p.score += PTS[b.s] * mult;
   float(b.x, b.y - RAD[b.s], '+' + PTS[b.s] * mult, b.v === 'gold' ? '#ffc83d' : COL[p.id].main);
   burst(b.x, b.y, b.v ? VARIANTS[b.v].c : b.c, RAD[b.s]);
@@ -1359,15 +1395,21 @@ function timeUp() {
 }
 
 function afterDeath() {
-  if (kind === 'adv') showFail(); else gameOver();
+  if (kind !== 'surv') showFail(); else gameOver();
 }
 
 function levelClear() {
   clearTime = timeLeft;
   lastStars = 1 + (levelHit ? 0 : 1) + (!levelHit && clearTime > timeMax / 2 ? 1 : 0);
-  prevStars = starsOf(level);
-  if (lastStars > prevStars) { adv[level] = lastStars; store.set('adv', adv); }
+  if (kind === 'daily') {
+    prevStars = 0; dailyStreak = winDaily();
+    if (dailyStreak) runCoins += EARN.dailyWin + EARN.dailyStep * (Math.min(dailyStreak, 7) - 1);
+  } else {
+    prevStars = starsOf(level);
+    if (lastStars > prevStars) { adv[level] = lastStars; store.set('adv', adv); }
+  }
   runCoins += EARN.clear + EARN.star * lastStars;
+  if (!levelHit) bump('flawless'); else checkAch();
   for (const p of players) p.harpoons = [];
   setState('clear', 1.4); vibe([30, 60, 30]);
   sfx.clear();
@@ -1386,6 +1428,7 @@ function gameOver() {
   const board = [...boardOf(), entry].sort((a, b) => b.score - a.score || b.time - a.time).slice(0, 5);
   store.set('surv1', board);
   const rank = board.indexOf(entry);
+  best('surv', Math.floor(survT));
   paintOver({
     title: 'Game over',
     result: `Score ${fmt(total)}`
@@ -1402,11 +1445,12 @@ function showResult() {
   lastOver = 'clear'; ADS.clears++;
   paintOver({
     coins: payRun(),
-    title: `Level ${level} cleared!`,
+    title: kind === 'daily' ? 'Daily challenge done!' : `Level ${level} cleared!`,
     stars: lastStars,
     crit: [['Level cleared', true], ['No hits taken', !levelHit], ['No hits, with over half the time left', fast]],
-    record: prevStars && lastStars > prevStars ? 'New star record!' : '',
-    next: level < ADV_COUNT, again: 'Play again', menu: 'Map',
+    record: kind === 'daily' ? (dailyStreak ? `Daily streak: ${dailyStreak} day${dailyStreak > 1 ? 's' : ''}!` : 'Already done today: come back tomorrow!')
+      : prevStars && lastStars > prevStars ? 'New star record!' : '',
+    next: kind === 'adv' && level < ADV_COUNT, again: 'Play again', menu: kind === 'daily' ? 'Menu' : 'Map',
   });
 }
 
@@ -1416,7 +1460,7 @@ function showFail() {
     coins: payRun(),
     title: 'Failed!',
     result: deathMsg === "Time's up!" ? 'Time ran out.' : deathMsg.startsWith('The black') ? 'You touched a black bubble.' : 'You ran out of hearts.',
-    again: 'Try again', menu: 'Map',
+    again: 'Try again', menu: kind === 'daily' ? 'Menu' : 'Map',
   });
   sfx.over();
 }
@@ -1494,6 +1538,7 @@ function startSurvival() {
 
 function updateSurvival(dt) {
   survT += dt;
+  if ((survT | 0) > STATS.surv) best('surv', survT | 0);
   if (ann && (ann.t -= dt) <= 0) ann = null;
   // Vagues : une marque clignote en haut, puis la bulle tombe.
   drops = drops.filter(d => {
@@ -2720,7 +2765,7 @@ function draw() {
   if (state !== 'menu') drawPowers();
   if (state === 'ready') {
     if (kind === 'surv') banner('Survival', stateT > .45 ? 'Ready?' : 'Go!');
-    else banner(boss ? 'Boss!' : 'Level ' + level, boss ? boss.name : unlockTxt && stateT > .45 ? unlockTxt : stateT > .45 ? 'Ready?' : 'Go!');
+    else banner(boss ? 'Boss!' : kind === 'daily' ? 'Daily challenge' : 'Level ' + level, boss ? boss.name : unlockTxt && stateT > .45 ? unlockTxt : stateT > .45 ? 'Ready?' : 'Go!');
   } else if (state === 'clear') banner('Well done!', '');
   else if (state === 'dying') banner(deathMsg, '');
   else if (state === 'play' && ann) banner(ann.big, ann.small);
@@ -2801,7 +2846,7 @@ function hud() {
   }
   const surv = kind === 'surv' && state !== 'menu';
   setHud('lvl', v => $('lvl').textContent = v, state === 'menu' ? 'Pop Archer'
-    : surv ? 'Survival · ' + clock(survT) : 'Level ' + level + (level % 12 === 0 ? ' · Boss' : ''));
+    : surv ? 'Survival · ' + clock(survT) : kind === 'daily' ? 'Daily · ' + dailyPick().mod.name : 'Level ' + level + (level % 12 === 0 ? ' · Boss' : ''));
   // En Survie, la jauge se remplit jusqu'au prochain boss.
   const frac = state === 'menu' ? 1 : surv ? (boss ? 1 : 1 - bossT / BOSS_EVERY) : clamp(timeLeft / timeMax, 0, 1);
   setHud('t', v => $('tbar').style.transform = `scaleX(${v})`, frac.toFixed(3));
@@ -2941,7 +2986,7 @@ let setBack = null;
 $('btnSound').addEventListener('click', () => {
   if (!setO.hidden) { closeSettings(); return; }
   if (mode && !paused && state !== 'menu' && state !== 'over') togglePause(true);
-  setBack = [menuO, mapO, pauseO, overO, prepO, shopO].find(o => !o.hidden) || null;
+  setBack = [menuO, mapO, pauseO, overO, prepO, shopO, achO].find(o => !o.hidden) || null;
   paintSound(); show(setO); $('tSfx').focus({ preventScroll: true });
 });
 function closeSettings() { show(setBack); }
@@ -2965,7 +3010,7 @@ if (logoImg.complete && !logoImg.naturalWidth) noLogo();
 /* ---------- Monétisation : pièces, boutique, pubs et achats ---------- */
 // Les pubs (showAd) et les achats (buyProduct) sont simulés ici : faux écran de pub, faux paiement.
 // Dans l'appli Android, seules ces deux fonctions changent (AdMob et Google Play Billing).
-const EARN = { pop: 1, clear: 20, star: 10, boss: 100, survPer: 100, cont: 150, daily: 50, dailyStep: 25, boost: 100 };
+const EARN = { pop: 1, clear: 20, star: 10, boss: 100, survPer: 100, cont: 150, daily: 50, dailyStep: 25, boost: 100, dailyWin: 150 };
 const SKINS = [
   { id: 'classic', name: 'Red Hood', price: 0 },
   { id: 'robin', name: 'Robin', price: 800 },
@@ -2996,7 +3041,7 @@ const MONEY = {
 };
 function saveMoney() {
   for (const k of Object.keys(MONEY)) store.set(k, MONEY[k]);
-  paintCoins();
+  paintCoins(); checkAch();
 }
 function paintCoins() {
   $('coinN').textContent = fmt(MONEY.coins);
@@ -3135,7 +3180,10 @@ async function openChest() {
 let prepKind = 'adv', prepLevel = 1, armed = null;
 function prep(k, lv) {
   prepKind = k; prepLevel = lv; armed = null;
-  $('prepTitle').textContent = k === 'surv' ? 'Survival' : `Level ${lv}` + (lv % WORLD === 0 ? ' · Boss' : '');
+  $('prepTitle').textContent = k === 'surv' ? 'Survival' : k === 'daily' ? 'Daily challenge' : `Level ${lv}` + (lv % WORLD === 0 ? ' · Boss' : '');
+  const m = k === 'daily' && dailyPick().mod;
+  $('prepHelp').textContent = m ? `${m.name}: ${m.tip} ` + (dailyDone() ? 'Already done today: play for fun!' : `Reward: ${fmt(dailyReward())} coins.`)
+    : 'Take one boost into this run, or just play.';
   renderPrep();
   show(prepO);
   $('bPlay').focus({ preventScroll: true });
@@ -3171,6 +3219,138 @@ function card({ art, name, desc, on, acts }) {
     return b;
   }));
   return el;
+}
+
+/* ---------- Défi du jour et trophées ---------- */
+// Défi du jour : un niveau déjà connu (jusqu'où le joueur est arrivé), tiré au sort pour la journée,
+// avec une règle spéciale. La première victoire du jour rapporte un bonus qui grandit avec la série.
+const dayKey = (t = Date.now()) => new Date(t).toDateString();
+const DAILY_MODS = [
+  { id: 'gold', v: 'gold', name: 'Gold Rush', tip: 'every bubble is gold!' },
+  { id: 'giant', name: 'Giants', tip: 'the biggest bubble grows one size!' },
+  { id: 'ghost', v: 'ghost', name: 'Ghost Night', tip: 'every bubble floats through platforms!' },
+  { id: 'steel', v: 'steel', name: 'Iron Rain', tip: 'every bubble is steel: two hits each!' },
+  { id: 'green', v: 'green', name: 'Split Party', tip: 'every bubble splits into three!' },
+  { id: 'bouncy', v: 'bouncy', name: 'Bounce House', tip: 'every bubble is bouncy and fast!' },
+  { id: 'glass', name: 'Glass Heart', tip: 'only one heart, so don\'t get hit!' },
+];
+let dailyStreak = 0;
+function dailyPick() {
+  const key = dayKey(), saved = store.get('dailyPick', null);
+  if (saved && saved.key === key && DAILY_MODS.some(m => m.id === saved.mod)) return { level: saved.level, mod: DAILY_MODS.find(m => m.id === saved.mod) };
+  let h = 2166136261;
+  for (const c of key) h = Math.imul(h ^ c.charCodeAt(0), 16777619) >>> 0;
+  const rnd = () => (h = (Math.imul(h, 1664525) + 1013904223) >>> 0) / 4294967296;
+  const reached = Math.max(0, ...Object.keys(adv).filter(n => adv[n] > 0).map(Number));
+  const top = clamp(reached + 2, 8, ADV_COUNT - 1);
+  let level;
+  do level = 3 + Math.floor(rnd() * (top - 2)); while (level % WORLD === 0);
+  const mod = DAILY_MODS[Math.floor(rnd() * DAILY_MODS.length)];
+  store.set('dailyPick', { key, level, mod: mod.id });
+  return { level, mod };
+}
+function dailyDef() {
+  const { level: n, mod } = dailyPick(), base = levelDef(n);
+  const b = base.b.map(d => [...d]);
+  if (mod.v) for (const d of b) if (d[4] !== 'black') d[4] = mod.v;
+  // en trois morceaux, une bulle donne vite beaucoup de bulles : on les prend une taille plus petites
+  if (mod.id === 'green') for (const d of b) d[0] = Math.max(1, d[0] - 1);
+  if (mod.id === 'giant') {
+    const i = b.reduce((m, d, j) => d[0] > b[m][0] ? j : m, 0);
+    b[i][0] = Math.min((base.k || []).some(k => k.t === 's') ? 4 : 5, b[i][0] + 1);
+  }
+  return { ...base, b };
+}
+const dailyWins = () => store.get('dailyWin', { day: '', streak: 0, total: 0, best: 0 });
+const dailyDone = () => dailyWins().day === dayKey();
+function dailyReward() {
+  const w = dailyWins(), streak = w.day === dayKey(Date.now() - 864e5) ? w.streak + 1 : 1;
+  return EARN.dailyWin + EARN.dailyStep * (Math.min(streak, 7) - 1);
+}
+// Première victoire du jour : renvoie la série (jours d'affilée), 0 si le défi était déjà fait.
+function winDaily() {
+  const w = dailyWins();
+  if (w.day === dayKey()) return 0;
+  const streak = w.day === dayKey(Date.now() - 864e5) ? w.streak + 1 : 1;
+  store.set('dailyWin', { day: dayKey(), streak, total: w.total + 1, best: Math.max(w.best || 0, streak) });
+  paintDaily(); checkAch();
+  return streak;
+}
+function paintDaily() { $('dailyMark').textContent = dailyDone() ? '✓' : '★'; }
+
+// Trophées : chaque trophée a plusieurs paliers, chacun rapporte des pièces à réclamer.
+const STATS = Object.assign({ pops: 0, gold: 0, steel: 0, bomb: 0, flawless: 0, surv: 0, combo: 0 }, store.get('stats', {}));
+STATS.surv = Math.max(STATS.surv, ...boardOf().map(e => e.time));   // record déjà tenu avant les trophées
+function bump(k, n = 1) { STATS[k] += n; store.set('stats', STATS); checkAch(); }
+function best(k, v) { if (v > STATS[k]) { STATS[k] = v; store.set('stats', STATS); checkAch(); } }
+const plural = (n, one, many) => `${fmt(n)} ${n === 1 ? one : many}`;
+const ACH = [
+  { id: 'pops', icon: 'ach-bubbles', name: 'Bubble Popper', goal: n => `Pop ${plural(n, 'bubble', 'bubbles')}`, tiers: [100, 1000, 10000], pay: [50, 150, 500], val: () => STATS.pops },
+  { id: 'stars', icon: 'item-star', name: 'Star Collector', goal: n => `Earn ${plural(n, 'star', 'stars')} in Adventure`, tiers: [30, 100, ADV_COUNT * 3], pay: [100, 300, 1000], val: totalStars },
+  { id: 'bosses', icon: 'ach-crown', name: 'Boss Hunter', goal: n => n === 1 ? 'Defeat a boss in Adventure' : `Defeat ${n} different bosses`, tiers: [1, 3, BOSS_ORDER.length], pay: [100, 300, 800],
+    val: () => BOSS_ORDER.filter((_, i) => starsOf((i + 1) * WORLD) > 0).length },
+  { id: 'flawless', icon: 'item-shield', name: 'Untouchable', goal: n => `Clear ${plural(n, 'level', 'levels')} without a hit`, tiers: [5, 25, 60], pay: [80, 250, 600], val: () => STATS.flawless },
+  { id: 'daily', icon: 'ach-calendar', name: 'Daily Hero', goal: n => n === 1 ? 'Win a daily challenge' : `Win ${n} daily challenges`, tiers: [1, 7, 30], pay: [100, 300, 1000], val: () => dailyWins().total },
+  { id: 'streak', icon: 'ach-flame', name: 'On a Roll', goal: n => `Win the daily challenge ${n} days in a row`, tiers: [3, 7], pay: [200, 600], val: () => dailyWins().best || 0 },
+  { id: 'surv', icon: 'item-slow', name: 'Survivor', goal: n => `Last ${clock(n)} in Survival`, tiers: [60, 180, 420], pay: [80, 250, 700], val: () => STATS.surv, show: clock },
+  { id: 'combo', icon: 'item-x2', name: 'Combo Master', goal: n => `Reach a x${n} combo in Survival`, tiers: [3, 5], pay: [80, 300], val: () => STATS.combo, show: n => 'x' + Math.max(1, n) },
+  { id: 'gold', icon: 'item-bonus', name: 'Golden Touch', goal: n => `Pop ${plural(n, 'gold bubble', 'gold bubbles')}`, tiers: [10, 100], pay: [60, 250], val: () => STATS.gold },
+  { id: 'steel', icon: 'ach-steel', name: 'Metal Breaker', goal: n => `Pop ${plural(n, 'steel bubble', 'steel bubbles')}`, tiers: [10, 100], pay: [60, 250], val: () => STATS.steel },
+  { id: 'bomb', icon: 'item-bomb', name: 'Demolition', goal: n => `Pop ${plural(n, 'bomb bubble', 'bomb bubbles')}`, tiers: [10, 50], pay: [60, 250], val: () => STATS.bomb },
+  { id: 'style', icon: 'ach-hanger', name: 'Fashionista', goal: n => `Own ${n} outfits`, tiers: [2, 4], pay: [100, 300], val: () => SKINS.filter(k => owns(k.id)).length },
+];
+const ROMAN = ['', ' I', ' II', ' III'];
+const achName = (a, t) => a.name + (a.tiers.length > 1 ? ROMAN[t] : '');
+const reached = a => a.tiers.filter(t => a.val() >= t).length;
+const ACHS = store.get('ach', {});                 // paliers déjà réclamés
+let achSeen = store.get('achSeen', null);          // paliers déjà annoncés
+const toastQ = [];
+function checkAch() {
+  const first = !achSeen;
+  if (first) achSeen = {};
+  for (const a of ACH) {
+    const r = reached(a), seen = achSeen[a.id] || 0;
+    if (r > seen) { achSeen[a.id] = r; if (!first) toastQ.push(achName(a, r)); }
+  }
+  store.set('achSeen', achSeen);
+  paintAchBadge();
+  if (toastQ.length && !toastOn) nextToast();
+}
+let toastOn = false;
+function nextToast() {
+  const txt = toastQ.shift();
+  if (!txt) { toastOn = false; return; }
+  toastOn = true;
+  $('toastTxt').textContent = txt; $('toast').classList.add('on'); sfx.pick(); vibe(30);
+  setTimeout(() => { $('toast').classList.remove('on'); setTimeout(nextToast, 350); }, 2600);
+}
+const claimable = () => ACH.reduce((t, a) => t + reached(a) - (ACHS[a.id] || 0), 0);
+function paintAchBadge() { const n = claimable(); $('achBadge').textContent = n > 0 ? n : ''; }
+function openAch() { renderAch(); show(achO); }
+function renderAch() {
+  const total = ACH.reduce((t, a) => t + a.tiers.length, 0), got = ACH.reduce((t, a) => t + (ACHS[a.id] || 0), 0);
+  $('achCount').innerHTML = `<img src="img/ach-trophy.webp" alt="" style="height:1.1em;vertical-align:-.2em"> ${got}/${total}`;
+  const cards = ACH.map(a => {
+    const r = reached(a), c = ACHS[a.id] || 0, done = c >= a.tiers.length;
+    const t = Math.min(c, a.tiers.length - 1), goal = a.tiers[t], v = a.val(), show = a.show || fmt;
+    const pips = `<div class="pips">${a.tiers.map((_, i) => `<i${i < c ? ' class="on"' : ''}></i>`).join('')}</div>`;
+    const prog = done ? '' : `<div class="bar"><i style="width:${Math.min(100, v / goal * 100).toFixed(1)}%"></i></div><div class="num">${show(Math.min(v, goal))} / ${show(goal)}</div>`;
+    const el = card({
+      art: `<img src="img/${a.icon}.webp" alt="">`, name: achName(a, done ? a.tiers.length : t + 1),
+      desc: a.goal(goal) + prog + pips,
+      acts: [done ? ['✓ Done', null, 'ghost', true]
+        : r > c ? [`Claim ${coinHTML(a.pay[c])}`, () => {
+          ACHS[a.id] = c + 1; store.set('ach', ACHS);
+          MONEY.coins += a.pay[c]; saveMoney(); sfx.clear(); vibe(40);
+          renderAch();
+        }, 'alt']
+        : [coinHTML(a.pay[c]), null, 'ghost', true]],
+    });
+    el.classList.toggle('ready', !done && r > c);
+    el.classList.toggle('done', done);
+    return el;
+  });
+  $('achCards').replaceChildren(...cards);
 }
 
 // Boutique : costumes, flèches, boosts, pièces et « sans pub ».
@@ -3250,7 +3430,7 @@ function revive() {
   continued = true;
   if (kind === 'surv') store.set('surv1', boardOf().filter(e => e.id !== lastEntryId));
   for (const p of players) { p.dead = false; p.dy = 0; p.dvy = 0; p.lives = Math.max(p.lives, 1); p.inv = 2.5; p.harpoons = []; }
-  if (kind === 'adv' && timeLeft < 15) timeLeft = 15;
+  if (kind !== 'surv' && timeLeft < 15) timeLeft = 15;
   shots = []; beams = [];
   show(null);
   setState('ready', 1.2);
@@ -3260,6 +3440,9 @@ $('bShop').addEventListener('click', () => openShop('outfits'));
 $('bShopBack').addEventListener('click', closeShop);
 for (const b of $('shopTabs').children) b.addEventListener('click', () => { shopTab = b.dataset.tab; renderShop(); b.focus(); });
 $('bChest').addEventListener('click', openChest);
+$('bDaily').addEventListener('click', () => prep('daily', dailyPick().level));
+$('bAch').addEventListener('click', openAch);
+$('bAchBack').addEventListener('click', () => { show(menuO); paintAchBadge(); });
 $('bPlay').addEventListener('click', play);
 $('bPrepBack').addEventListener('click', () => { if (prepKind === 'adv') openMap(worldOf(prepLevel)); else toMenu(); });
 
