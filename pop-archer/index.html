@@ -167,7 +167,8 @@ kbd{font-family:var(--body);font-weight:800;font-size:.95em;background:var(--cab
 .lv .st i.on{color:var(--gold)}
 .lv.next{box-shadow:inset 0 0 0 2px var(--gold)}
 .lv.boss{color:var(--p1);box-shadow:inset 0 0 0 2px var(--p1)}
-.lv.boss span:first-child{font-size:.8em}
+.lv.boss span:first-child{font-size:.8em;display:flex;flex-direction:column;align-items:center;gap:.1em}
+.lv.boss img{height:2.1em;width:auto}
 .lv:disabled{cursor:default;opacity:.45}
 .lv svg{width:1em;height:1em;fill:var(--muted)}
 .lv:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
@@ -590,7 +591,7 @@ function openMap(world) {
       b.setAttribute('aria-label', `Level ${n}, locked`);
     } else {
       if (n % 12 === 0) b.classList.add('boss');
-      b.innerHTML = `<span>${n % 12 === 0 ? 'Boss' : n}</span><span class="st">${[0, 1, 2].map(i => `<i${i < st ? ' class="on"' : ''}>★</i>`).join('')}</span>`;
+      b.innerHTML = `<span>${n % 12 === 0 ? `<img src="${BOSS_ART[levelDef(n).boss][0]}" alt="">Boss` : n}</span><span class="st">${[0, 1, 2].map(i => `<i${i < st ? ' class="on"' : ''}>★</i>`).join('')}</span>`;
       b.setAttribute('aria-label', `Level ${n}, ${st} of 3 stars`);
       b.addEventListener('click', () => startRun('adv', n));
       if (!st && !next) { next = b; b.classList.add('next'); }
@@ -1260,6 +1261,15 @@ function drawEyes(x, y, s, look, angry) {
     }
   }
 }
+function drawOrbs(b) {
+  for (const o of b.orbs) {
+    if (!o.alive) continue;
+    const [ox, oy] = orbPos(b, o);
+    const g = ctx.createRadialGradient(ox - 3, oy - 3, 1, ox, oy, 10);
+    g.addColorStop(0, '#ffe3f1'); g.addColorStop(1, '#ff4fa3');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(ox, oy, 9, 0, Math.PI * 2); ctx.fill();
+  }
+}
 function drawBoss() {
   const b = boss;
   const tgt = nearestPlayer(b.x), look = tgt ? clamp((tgt.x - b.x) / 120, -1, 1) : 0;
@@ -1268,6 +1278,27 @@ function drawBoss() {
   if (b.dead) { sc = Math.max(.05, b.deadT / 1.6); ctx.globalAlpha = Math.floor(b.deadT * 12) % 2 ? .5 : 1; }
   const wob = b.mode === 'windup' ? (Math.random() - .5) * 4 : 0;
   ctx.translate(b.x + wob, b.y); ctx.scale(sc, sc); ctx.translate(-b.x, -b.y);
+  const spr = BOSS_SPRITES[b.type];
+  if (spr) {
+    if (b.type === 'eye') drawOrbs(b);
+    const [, w, dy] = BOSS_ART[b.type], h = w * spr.img.height / spr.img.width;
+    ctx.save();
+    // la pieuvre s'enfonce dans le sol quand elle frappe
+    if (b.type === 'squid') { ctx.beginPath(); ctx.rect(0, 0, W, FLOOR + 3); ctx.clip(); }
+    ctx.translate(b.x + (b.type === 'eye' ? look * 2 : 0), b.y + dy);
+    if (b.type === 'squid') ctx.rotate(Math.sin(b.t * 2.2) * .05);
+    if (rage(b) >= .5) { ctx.shadowColor = 'rgba(255,60,60,.85)'; ctx.shadowBlur = 10 + Math.sin(b.t * 8) * 5; }
+    ctx.drawImage(spr.img, -w / 2, -h / 2, w, h);
+    ctx.shadowBlur = 0;
+    if (b.flash > 0) { ctx.globalAlpha *= .7; ctx.drawImage(spr.white, -w / 2, -h / 2, w, h); }
+    ctx.restore();
+    if (b.type === 'storm' && rage(b) >= .5 && Math.floor(b.t * 6) % 5 === 0) {
+      ctx.strokeStyle = '#ffe066'; ctx.lineWidth = 2.5; ctx.beginPath();
+      ctx.moveTo(b.x - 4, b.y + 38); ctx.lineTo(b.x + 3, b.y + 50); ctx.lineTo(b.x - 5, b.y + 52); ctx.lineTo(b.x + 1, b.y + 68); ctx.stroke();
+    }
+    ctx.restore();
+    return;
+  }
   if (b.type === 'king') {
     const c = '#8b3dff', sh = shades(c), r = b.r;
     const g = ctx.createRadialGradient(b.x - r * .35, b.y - r * .4, r * .1, b.x, b.y, r);
@@ -1312,13 +1343,7 @@ function drawBoss() {
     for (const [dx, dy] of [[-16, -22], [12, -26], [22, -8]]) { ctx.beginPath(); ctx.arc(b.x + dx, b.y + dy, 4, 0, Math.PI * 2); ctx.fill(); }
     drawEyes(b.x, b.y, 9, look, b.mode !== 'idle');
   } else {
-    for (const o of b.orbs) {
-      if (!o.alive) continue;
-      const [ox, oy] = orbPos(b, o);
-      const g = ctx.createRadialGradient(ox - 3, oy - 3, 1, ox, oy, 10);
-      g.addColorStop(0, '#ffe3f1'); g.addColorStop(1, '#ff4fa3');
-      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(ox, oy, 9, 0, Math.PI * 2); ctx.fill();
-    }
+    drawOrbs(b);
     ctx.fillStyle = '#2b1840'; ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2); ctx.fill();
     ctx.lineWidth = 3; ctx.strokeStyle = '#ff4fa3'; ctx.stroke();
     ctx.fillStyle = '#fff3e6'; ctx.beginPath(); ctx.ellipse(b.x, b.y, b.r * .8, b.r * .55, 0, 0, Math.PI * 2); ctx.fill();
@@ -1424,6 +1449,27 @@ loadArt('seaShallow', 'img/sea-shallow.webp', .907);
 loadArt('seaDeep', 'img/sea-deep.webp', .907);
 loadArt('spacePurple', 'img/space-purple.webp', .918);
 loadArt('spaceBlue', 'img/space-blue.webp', .918);
+// Boss peints (Canva) : [fichier, largeur affichée, décalage vertical du centre de l'image]
+const BOSS_ART = {
+  king: ['img/boss-king.webp', 110, -8],
+  storm: ['img/boss-storm.webp', 140, 15],
+  squid: ['img/boss-squid.webp', 104, 24],
+  eye: ['img/boss-eye.webp', 90, -3],
+};
+const BOSS_SPRITES = {};
+for (const [type, [src]] of Object.entries(BOSS_ART)) {
+  const img = new Image();
+  img.onload = () => {
+    // silhouette blanche pour le flash quand le boss est touché
+    const white = document.createElement('canvas');
+    white.width = img.width; white.height = img.height;
+    const w = white.getContext('2d');
+    w.drawImage(img, 0, 0); w.globalCompositeOperation = 'source-in';
+    w.fillStyle = '#ffffff'; w.fillRect(0, 0, img.width, img.height);
+    BOSS_SPRITES[type] = { img, white };
+  };
+  img.src = src;
+}
 
 const disc = (b, x, y, r, c) => { b.fillStyle = c; b.beginPath(); b.arc(x, y, r, 0, Math.PI * 2); b.fill(); };
 function hillLine(b, rnd, base, amp, color, f1, f2) {
