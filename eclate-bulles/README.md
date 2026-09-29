@@ -15,6 +15,8 @@ Ouvrir `index.html` dans un navigateur (double-clic suffit), sur ordinateur ou t
 
 `P` ou `Échap` : pause. Sur téléphone, un pavé ◀ ▶ et un bouton **Tir** s'affichent ; à deux, chaque joueur a son côté de l'écran.
 
+Sur téléphone, le jeu est toujours en paysage : si l'écran est tenu droit, le jeu s'affiche couché et il suffit de tourner le téléphone vers la gauche. Le bouton ⟳ retourne l'affichage pour ceux qui le tournent vers la droite.
+
 ## Règles
 
 - 5 vies par joueur. Toucher une bulle ou laisser filer le temps coûte une vie et relance le niveau.

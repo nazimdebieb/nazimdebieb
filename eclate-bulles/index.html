@@ -27,7 +27,8 @@
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
-html,body{height:100%}
+html,body{height:100%;overflow:hidden}
+.turned body{position:fixed;inset:0;overflow:clip}
 body{
   margin:0;background:var(--cab);color:var(--ink);font-family:var(--body);font-size:15px;
   overflow:hidden;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;
@@ -97,12 +98,24 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
 .fire.pb{background:radial-gradient(circle at 35% 30%,#9eeaff,var(--p2) 60%);box-shadow:0 5px 0 var(--p2-dark)}
 .fire.on{transform:translateY(4px);box-shadow:0 1px 0 var(--p1-dark)}
 .fire.pb.on{box-shadow:0 1px 0 var(--p2-dark)}
-@media (orientation:landscape){
-  .touch .game{grid-template-columns:auto minmax(0,1fr) auto;grid-template-rows:minmax(0,1fr);grid-template-areas:"L stage R"}
-  .touch .ctrl,.touch #ctrlL,.touch #ctrlR{flex-direction:column;justify-content:center;width:clamp(92px,15vw,140px)}
-  .touch .move{flex:none;width:100%;height:84px}
-  .touch .fire{width:80px;height:80px}
+/* Paysage tactile : pads sur les côtés, bandeau des scores sur une ligne. */
+.land .game{grid-template-columns:auto minmax(0,1fr) auto;grid-template-rows:minmax(0,1fr);grid-template-areas:"L stage R"}
+.land .ctrl,.land #ctrlL,.land #ctrlR{flex-direction:column;justify-content:flex-end;padding-bottom:6px;width:clamp(88px,13vw,140px)}
+.land .move{flex:none;width:100%;height:84px}
+.land .fire{width:78px;height:78px}
+.land .app{gap:6px;padding-block:6px}
+.land .pl{flex-direction:row;align-items:center;gap:8px}
+.land .pl.p2{flex-direction:row-reverse}
+.land .score{font-size:16px}
+.land .mid{flex-direction:row;gap:10px}
+.land .iconbtn{width:32px;height:32px}
+/* Téléphone tenu droit : le jeu est dessiné couché, il suffit de tourner le téléphone. */
+.turned .app{
+  position:fixed;top:0;left:0;max-width:none;margin:0;transform-origin:top left;
+  padding-inline:max(12px,env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-bottom,0px));
 }
+.turned.cw .app{transform:rotate(90deg) translateY(-100%)}
+.turned.ccw .app{transform:rotate(-90deg) translateX(-100%)}
 
 /* Écrans (menu, pause, fin) */
 .overlay{
@@ -131,11 +144,10 @@ kbd{font-family:var(--body);font-weight:800;font-size:.95em;background:var(--cab
 .best b{color:var(--gold);font-family:var(--display);font-weight:400}
 .result{margin:0;font-size:min(3cqw,6cqh);font-weight:700;font-variant-numeric:tabular-nums}
 .record{margin:0;font-family:var(--display);font-size:min(2.8cqw,5.6cqh);color:var(--gold)}
-.touch-help,.rot{display:none}
+.touch-help{display:none}
 .touch .touch-help{display:block}
 .touch .kb-help{display:none}
-@media (orientation:portrait){ .touch .rot{display:block} }
-@container (max-height:250px){ .overlay .tagline,.overlay .help:not(.rot){display:none} }
+@container (max-height:250px){ .overlay .tagline,.overlay .help{display:none} }
 @media (prefers-reduced-motion:reduce){ .btn:active,.fire.on{transform:none} }
 </style>
 </head>
@@ -155,6 +167,9 @@ kbd{font-family:var(--body);font-weight:800;font-size:.95em;background:var(--cab
       <div class="lives" id="l1"></div>
     </div>
     <div class="tools">
+      <button class="iconbtn" id="btnFlip" type="button" aria-label="Retourner l'écran" hidden>
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3a7 7 0 0 1 6.6 4.7l1.4-.8-.6 4.2-3.6-2.2 1.3-.7A5 5 0 0 0 5.2 8.6L3.3 8A7 7 0 0 1 10 3zm-6.6 9.3 3.6 2.2-1.3.7a5 5 0 0 0 9.1-1.4l1.9.6A7 7 0 0 1 3.4 12.3l-1.4.8z"/></svg>
+      </button>
       <button class="iconbtn" id="btnSound" type="button" aria-label="Couper le son"></button>
       <button class="iconbtn" id="btnPause" type="button" aria-label="Pause">
         <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="4" y="3" width="4.5" height="14" rx="1.2"/><rect x="11.5" y="3" width="4.5" height="14" rx="1.2"/></svg>
@@ -181,7 +196,6 @@ kbd{font-family:var(--body);font-weight:800;font-size:.95em;background:var(--cab
             <kbd>P</kbd> pause
           </p>
           <p class="help touch-help">Pavé ◀ ▶ pour bouger, gros bouton pour tirer. À deux, chacun son côté de l'écran.</p>
-          <p class="help rot">Astuce : tourne le téléphone à l'horizontale pour un écran plus grand.</p>
           <p class="best" id="bestLine">Record : <b id="best">0</b></p>
         </div>
 
@@ -1035,7 +1049,12 @@ function moveEl(p) {
   el.className = 'move'; el.dataset.p = p;
   el.setAttribute('aria-hidden', 'true');
   el.innerHTML = `<span>${ARROW(-1)}</span><span>${ARROW(1)}</span>`;
-  const side = e => { const r = el.getBoundingClientRect(); return e.clientX < r.left + r.width / 2 ? 'l' : 'r'; };
+  const side = e => {
+    const r = el.getBoundingClientRect();
+    if (turned === 'cw') return e.clientY < r.top + r.height / 2 ? 'l' : 'r';
+    if (turned === 'ccw') return e.clientY > r.top + r.height / 2 ? 'l' : 'r';
+    return e.clientX < r.left + r.width / 2 ? 'l' : 'r';
+  };
   el.addEventListener('pointerdown', e => {
     e.preventDefault(); audio();
     try { el.setPointerCapture(e.pointerId); } catch (err) {}
@@ -1061,9 +1080,31 @@ function buildControls() {
   if (mode === 2) { ctrlL.append(moveEl(0), fireEl(0)); ctrlR.append(fireEl(1), moveEl(1)); }
   else { ctrlL.append(moveEl(0)); ctrlR.append(fireEl(0)); }
 }
-function enableTouch() { document.documentElement.classList.add('touch'); }
-if (matchMedia('(pointer: coarse)').matches) enableTouch();
+/* ---------- Orientation : toujours en paysage sur écran tactile ---------- */
+const root = document.documentElement, app = document.querySelector('.app');
+let isTouch = false, turned = '', flip = store.get('flip', false);
+function layout() {
+  const vw = innerWidth, vh = innerHeight;
+  const upright = isTouch && vh > vw;
+  turned = upright ? (flip ? 'ccw' : 'cw') : '';
+  root.classList.toggle('touch', isTouch);
+  root.classList.toggle('land', isTouch);
+  root.classList.toggle('turned', upright);
+  root.classList.toggle('cw', turned === 'cw');
+  root.classList.toggle('ccw', turned === 'ccw');
+  app.style.width = upright ? vh + 'px' : '';
+  app.style.height = upright ? vw + 'px' : '';
+  if (upright && (innerWidth !== vw || innerHeight !== vh)) requestAnimationFrame(layout);
+  $('btnFlip').hidden = !upright;
+  if (ptrs.size) { ptrs.clear(); refreshTouch(); }
+}
+function enableTouch() { if (!isTouch) { isTouch = true; layout(); } }
+if (matchMedia('(pointer: coarse)').matches) isTouch = true;
 addEventListener('pointerdown', e => { if (e.pointerType === 'touch') enableTouch(); }, { capture: true });
+addEventListener('resize', layout);
+addEventListener('orientationchange', () => setTimeout(layout, 120));
+$('btnFlip').addEventListener('click', () => { flip = !flip; store.set('flip', flip); layout(); });
+layout();
 
 $('b1').addEventListener('click', () => startGame(1));
 $('b2').addEventListener('click', () => startGame(2));
@@ -1076,7 +1117,7 @@ $('btnSound').addEventListener('click', () => { muted = !muted; store.set('muted
 
 /* ---------- Taille de l'écran ---------- */
 function fit() {
-  const r = wrap.getBoundingClientRect();
+  const r = { width: wrap.clientWidth, height: wrap.clientHeight };
   let w = r.width, h = w * 9 / 16;
   if (h > r.height) { h = r.height; w = h * 16 / 9; }
   w = Math.max(160, Math.floor(w)); h = Math.max(90, Math.floor(h));
