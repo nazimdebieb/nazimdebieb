@@ -20,4 +20,8 @@ Ouvrir `index.html` dans un navigateur (double-clic suffit), sur ordinateur ou t
 - 5 vies par joueur. Toucher une bulle ou laisser filer le temps coûte une vie et relance le niveau.
 - Les petites bulles rapportent plus (30 → 100 points) ; le temps restant donne un bonus en fin de niveau.
 - Bonus qui tombent parfois : double harpon, harpon collant (reste accroché au plafond), bouclier, bulles gelées, +500, +1 vie.
-- 10 niveaux dessinés à la main, puis des niveaux générés de plus en plus chargés. Le record est gardé dans le navigateur.
+- Obstacles, dans l'esprit de Bubble Trouble 2 :
+  - **plateformes en métal** : les bulles rebondissent dessus et le harpon s'y arrête (le harpon collant reste accroché dessous) ;
+  - **briques** : les bulles rebondissent dessus, un coup de harpon les casse (+20) ;
+  - **barrières** : elles coupent l'écran en zones et se lèvent quand toutes les bulles à leur gauche ont éclaté.
+- 12 niveaux dessinés à la main, puis des niveaux générés de plus en plus chargés, avec obstacles. Le record est gardé dans le navigateur.

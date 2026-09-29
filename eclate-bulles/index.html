@@ -235,31 +235,50 @@ const SCENES = [
   { sky: ['#8fcaff', '#effaff'], sun: '#ffffff', far: '#d3e9fb', near: '#a9cbe8', ground: '#4f6f92', ball: '#ff5a1f', clouds: true },
 ];
 
-// [taille, position x (0..1), direction]
+// Obstacles : S = plateforme en métal (arrête le harpon), B = rangée de briques (cassées par le harpon),
+// G = barrière qui se lève quand toutes les bulles à sa gauche ont éclaté.
+const S = (x, y, w, h = 14) => ({ t: 's', x, y, w, h });
+const B = (x, y, n = 1) => Array.from({ length: n }, (_, i) => ({ t: 'b', x: x + i * 40, y, w: 40, h: 16 }));
+const G = x => ({ t: 'g', x: x - 6, y: 0, w: 12, h: FLOOR });
+const brickFloor = y => Array.from({ length: 16 }, (_, i) => i % 5 === 0 ? S(i * 40, y, 40, 16) : B(i * 40, y)[0]);
+
+// b : [taille, position x (0..1), direction, y facultatif] · k : obstacles
 const LEVELS = [
-  [[2, .25, 1]],
-  [[3, .22, 1]],
-  [[2, .18, 1], [2, .82, -1]],
-  [[3, .25, 1], [1, .78, -1], [1, .9, -1]],
-  [[3, .18, 1], [3, .82, -1]],
-  [[1, .08, 1], [1, .2, 1], [1, .32, 1], [1, .68, -1], [1, .8, -1], [1, .92, -1]],
-  [[3, .3, -1], [2, .12, 1], [2, .88, -1]],
-  [[3, .14, 1], [3, .86, -1], [2, .3, -1], [2, .7, 1]],
-  [[2, .1, 1], [2, .3, -1], [2, .7, 1], [2, .9, -1], [1, .2, 1], [1, .8, -1]],
-  [[3, .15, 1], [3, .38, -1], [3, .62, 1], [3, .85, -1]],
+  { b: [[2, .25, 1]] },
+  { b: [[3, .22, 1]] },
+  { b: [[2, .18, 1], [2, .82, -1]], k: [S(250, 170, 140)] },
+  { b: [[2, .25, 1], [2, .75, -1]], k: [G(320)] },
+  { b: [[2, .12, 1], [2, .88, -1], [1, .5, 1, 120]], k: B(160, 196, 8) },
+  { b: [[1, .08, 1], [1, .2, 1], [1, .32, 1], [1, .68, -1], [1, .8, -1], [1, .92, -1]], k: [S(60, 190, 130), S(450, 190, 130)] },
+  { b: [[2, .16, 1], [2, .5, 1], [2, .84, -1]], k: [G(213), G(427)] },
+  { b: [[3, .3, -1], [2, .12, 1], [2, .88, -1]], k: B(120, 150, 10) },
+  { b: [[3, .25, 1], [3, .75, -1]], k: [G(320), S(70, 205, 120), S(450, 205, 120)] },
+  { b: [[3, .15, 1], [3, .38, -1], [3, .62, 1], [3, .85, -1]], k: [S(0, 130, 120), S(520, 130, 120), ...B(240, 130, 4)] },
+  { b: [[2, .1, 1], [2, .37, -1], [2, .63, 1], [2, .9, -1]], k: [G(160), G(320), G(480)] },
+  { b: [[3, .3, 1, 60], [2, .7, -1, 60]], k: brickFloor(200) },
 ];
 
 function levelDef(n) {
   if (n <= LEVELS.length) return LEVELS[n - 1];
   let seed = (n * 2654435761) >>> 0;
   const rnd = () => (seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296;
-  const count = Math.min(3 + Math.floor((n - 11) / 3), 6);
-  const big = Math.min(.35 + (n - 10) * .05, .85);
-  const out = [];
-  for (let i = 0; i < count; i++) out.push([rnd() < big ? 3 : 2, (i + .5) / count, i % 2 ? -1 : 1]);
-  return out;
+  const count = Math.min(3 + Math.floor((n - 13) / 3), 6);
+  const big = Math.min(.35 + (n - 12) * .05, .85);
+  const b = [];
+  for (let i = 0; i < count; i++) b.push([rnd() < big ? 3 : 2, (i + .5) / count, i % 2 ? -1 : 1]);
+  const k = [
+    [],
+    [G(320)],
+    [S(60, 190, 130), S(450, 190, 130)],
+    B(160, 190, 8),
+    [G(213), G(427)],
+    brickFloor(210),
+  ][Math.floor(rnd() * 6)];
+  if (k.length && k[0].t === 's' && k[0].x === 0) b.forEach(d => { d[3] = 60; });
+  return { b, k };
 }
-const timeFor = def => Math.round(18 + def.reduce((t, [s]) => t + (2 ** (s + 1) - 1) * 1.7, 0));
+const timeFor = def => Math.round(18 + def.b.reduce((t, [s]) => t + (2 ** (s + 1) - 1) * 1.7, 0)
+  + (def.k || []).reduce((t, k) => t + (k.t === 'g' ? 6 : k.t === 'b' ? .6 : 0), 0));
 
 const ITEMS = [
   ['double', 3, '#ff8a3d', 'Double harpon'],
@@ -328,6 +347,8 @@ const sfx = {
   shield: () => tone(900, .3, 'sine', .12, 280),
   pick: () => [660, 880, 1320].forEach((f, i) => tone(f, .09, 'square', .045, 0, i * .07)),
   clear: () => [523, 659, 784, 1047].forEach((f, i) => tone(f, .18, 'triangle', .14, 0, i * .11)),
+  brick: () => { noise(.12, .14, 900); tone(180, .1, 'square', .05, 90); },
+  gate: () => { tone(140, .5, 'sawtooth', .06, 420); noise(.4, .05, 300); },
   over: () => [392, 330, 262, 196].forEach((f, i) => tone(f, .25, 'triangle', .13, 0, i * .18)),
 };
 const ICON_ON = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 7.5h3l4.5-4v13L6 12.5H3z"/><path d="M13 6.5a5 5 0 0 1 0 7M15.2 4.3a8 8 0 0 1 0 11.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
@@ -339,7 +360,7 @@ function paintSound() {
 
 /* ---------- État du jeu ---------- */
 let mode = 0, level = 1, state = 'menu', stateT = 0, paused = false;
-let players = [], balls = [], items = [], parts = [], texts = [];
+let players = [], balls = [], items = [], parts = [], texts = [], blocks = [];
 let timeLeft = 1, timeMax = 1, freezeT = 0, bonusTxt = '', deathMsg = '', scene = SCENES[0];
 const fireQ = [false, false];
 
@@ -350,20 +371,34 @@ function makePlayer(id) {
 const active = () => players.filter(p => !p.out);
 const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
 
-function makeBall([s, fx, dir], color) {
+function makeBall([s, fx, dir, y], color) {
   const r = RAD[s];
-  return { s, x: clamp(fx * W, r, W - r), y: FLOOR - HOP[s] - r, vx: dir * VX[s], vy: 0, c: color };
+  const b = { s, x: clamp(fx * W, r, W - r), y: y != null ? y : FLOOR - HOP[s] - r, vx: dir * VX[s], vy: 0, c: color };
+  // Ne jamais faire naître une bulle dans un obstacle.
+  for (const k of blocks) {
+    if (!overlaps(b.x, b.y, r, k)) continue;
+    if (k.t === 'g') b.x = k.x - r - 2;
+    else b.y = k.y - r - 2 > r ? k.y - r - 2 : k.y + k.h + r + 2;
+  }
+  return b;
+}
+function overlaps(x, y, r, k) {
+  const dx = x - clamp(x, k.x, k.x + k.w), dy = y - clamp(y, k.y, k.y + k.h);
+  return dx * dx + dy * dy < r * r;
 }
 
 function loadLevel() {
   scene = SCENES[(level - 1) % SCENES.length];
   const def = levelDef(level);
-  balls = def.map(d => makeBall(d, scene.ball));
+  blocks = (def.k || []).map(k => ({ ...k }));
+  balls = def.b.map(d => makeBall(d, scene.ball));
   items = []; parts = []; texts = []; freezeT = 0;
   timeMax = timeLeft = timeFor(def);
   const act = active();
+  const gate = blocks.filter(k => k.t === 'g').sort((a, b) => a.x - b.x)[0];
+  const zone = gate ? gate.x : W;
   act.forEach((p, i) => {
-    p.x = act.length === 1 ? W / 2 : (i + 1) * W / 3;
+    p.x = zone * (act.length === 1 ? .5 : (i + 1) / 3);
     p.harpoons = []; p.inv = 0; p.dead = false; p.dy = 0; p.dvy = 0; p.moving = false;
   });
   fireQ[0] = fireQ[1] = false;
@@ -385,7 +420,7 @@ function toMenu() {
   mode = 0; paused = false; players = [];
   level = 1; scene = SCENES[1];
   balls = [[3, .2, 1], [2, .65, -1], [1, .45, 1], [1, .85, -1]].map(d => makeBall(d, scene.ball));
-  items = []; parts = []; texts = [];
+  items = []; parts = []; texts = []; blocks = [];
   setState('menu', 0);
   document.body.dataset.mode = 1;
   buildControls();
@@ -417,6 +452,7 @@ function update(dt) {
     timeLeft -= dt;
     if (freezeT > 0) freezeT -= dt; else moveBalls(dt);
     movePlayers(dt, true);
+    moveGates(dt);
     moveHarpoons(dt);
     hitBalls();
     moveItems(dt);
@@ -443,7 +479,39 @@ function moveBalls(dt) {
     if (b.x > W - r) { b.x = W - r; b.vx = -Math.abs(b.vx); }
     if (b.y > FLOOR - r) { b.y = FLOOR - r; b.vy = -Math.sqrt(2 * GRAV * HOP[b.s]); }
     if (b.y < r) { b.y = r; b.vy = Math.abs(b.vy); }
+    for (const k of blocks) bounceOff(b, k);
   }
+}
+
+function bounceOff(b, k) {
+  const r = RAD[b.s];
+  const px = clamp(b.x, k.x, k.x + k.w), py = clamp(b.y, k.y, k.y + k.h);
+  let nx = b.x - px, ny = b.y - py;
+  const d2 = nx * nx + ny * ny;
+  if (d2 >= r * r) return;
+  if (d2 === 0) {
+    // Centre à l'intérieur : sortir par le côté le plus proche.
+    const m = [b.x - k.x, k.x + k.w - b.x, b.y - k.y, k.y + k.h - b.y];
+    const i = m.indexOf(Math.min(...m));
+    nx = i === 0 ? -1 : i === 1 ? 1 : 0; ny = i === 2 ? -1 : i === 3 ? 1 : 0;
+    if (nx) b.x = nx < 0 ? k.x - r : k.x + k.w + r; else b.y = ny < 0 ? k.y - r : k.y + k.h + r;
+  } else {
+    const d = Math.sqrt(d2);
+    nx /= d; ny /= d;
+    b.x = px + nx * r; b.y = py + ny * r;
+  }
+  if (Math.abs(nx) > Math.abs(ny)) b.vx = Math.sign(nx) * Math.abs(b.vx);
+  else if (ny < 0) { if (b.vy > 0) b.vy = -Math.sqrt(2 * GRAV * HOP[b.s]); }
+  else if (b.vy < 0) b.vy = -b.vy;
+}
+
+function moveGates(dt) {
+  for (const g of blocks) {
+    if (g.t !== 'g') continue;
+    if (!g.opening && !balls.some(b => b.x < g.x + g.w / 2)) { g.opening = true; sfx.gate(); }
+    if (g.opening) g.h -= 520 * dt;
+  }
+  blocks = blocks.filter(k => k.h > 0);
 }
 
 function movePlayers(dt, canFire) {
@@ -451,7 +519,13 @@ function movePlayers(dt, canFire) {
     if (p.out || p.dead) continue;
     const inp = input(p.id);
     const d = (inp.r ? 1 : 0) - (inp.l ? 1 : 0);
+    const ox = p.x;
     p.x = clamp(p.x + d * PLAYER_SPEED * dt, 12, W - 12);
+    for (const k of blocks) {
+      if (k.y + k.h < FLOOR - 34) continue;
+      if (ox + 10 <= k.x + .01 && p.x + 10 > k.x) p.x = k.x - 10;
+      if (ox - 10 >= k.x + k.w - .01 && p.x - 10 < k.x + k.w) p.x = k.x + k.w + 10;
+    }
     p.moving = d !== 0;
     if (d) { p.face = d; p.walk += dt * 14; }
     if (p.inv > 0) p.inv -= dt;
@@ -470,7 +544,20 @@ function moveHarpoons(dt) {
   for (const p of players) {
     p.harpoons = p.harpoons.filter(h => {
       if (h.stuck > 0) { h.stuck -= dt; return h.stuck > 0; }
+      const prev = h.top;
       h.top -= HARPOON_SPEED * dt;
+      let hit = null;
+      for (const k of blocks) {
+        const bottom = k.y + k.h;
+        if (h.x < k.x - 1 || h.x > k.x + k.w + 1 || bottom > prev + .5 || bottom < h.top) continue;
+        if (!hit || bottom > hit.y + hit.h) hit = k;
+      }
+      if (hit) {
+        if (hit.t === 'b') { breakBrick(hit, p); return false; }
+        h.top = hit.y + hit.h;
+        if (h.sticky) { h.stuck = 1.8; return true; }
+        return false;
+      }
       if (h.top <= 0) { h.top = 0; if (h.sticky) { h.stuck = 1.8; return true; } return false; }
       return true;
     });
@@ -488,6 +575,17 @@ function hitBalls() {
       }
     }
   }
+}
+
+function breakBrick(k, p) {
+  blocks = blocks.filter(o => o !== k);
+  p.score += 20;
+  float(k.x + k.w / 2, k.y, '+20', COL[p.id].main);
+  for (let i = 0; i < 10; i++) {
+    parts.push({ x: k.x + Math.random() * k.w, y: k.y + Math.random() * k.h, vx: (Math.random() - .5) * 160,
+                 vy: -Math.random() * 120, r: 1.5 + Math.random() * 2.5, life: .6, max: .6, c: i % 2 ? '#d9773b' : '#f2b27a' });
+  }
+  sfx.brick();
 }
 
 function popBall(j, p) {
@@ -758,6 +856,32 @@ function drawPlayer(p) {
   }
 }
 
+function drawBlock(k) {
+  if (k.t === 's') {
+    const g = ctx.createLinearGradient(0, k.y, 0, k.y + k.h);
+    g.addColorStop(0, '#c3ccd8'); g.addColorStop(1, '#6a7588');
+    ctx.fillStyle = g; ctx.fillRect(k.x, k.y, k.w, k.h);
+    ctx.fillStyle = 'rgba(255,255,255,.7)'; ctx.fillRect(k.x, k.y, k.w, 1.5);
+    ctx.strokeStyle = '#3b4252'; ctx.lineWidth = 1.5; ctx.strokeRect(k.x + .75, k.y + .75, k.w - 1.5, k.h - 1.5);
+    ctx.fillStyle = '#4a5366';
+    for (let x = k.x + 5; x < k.x + k.w - 3; x += 20) { ctx.beginPath(); ctx.arc(x, k.y + k.h / 2, 1.4, 0, Math.PI * 2); ctx.fill(); }
+  } else if (k.t === 'b') {
+    ctx.fillStyle = '#d9773b'; ctx.fillRect(k.x, k.y, k.w, k.h);
+    ctx.fillStyle = '#f2a86a'; ctx.fillRect(k.x, k.y, k.w, 2);
+    ctx.fillStyle = '#8a3f1c';
+    ctx.fillRect(k.x, k.y + k.h / 2 - .5, k.w, 1);
+    ctx.fillRect(k.x + k.w / 2, k.y, 1, k.h / 2); ctx.fillRect(k.x + k.w / 4, k.y + k.h / 2, 1, k.h / 2); ctx.fillRect(k.x + k.w * .75, k.y + k.h / 2, 1, k.h / 2);
+    ctx.strokeStyle = '#6b2f14'; ctx.lineWidth = 1.5; ctx.strokeRect(k.x + .75, k.y + .75, k.w - 1.5, k.h - 1.5);
+  } else {
+    ctx.fillStyle = 'rgba(40,30,55,.55)'; ctx.fillRect(k.x, k.y, k.w, k.h);
+    ctx.fillStyle = '#9aa4b8';
+    for (let x = k.x + 1.5; x < k.x + k.w; x += 4.5) ctx.fillRect(x, k.y, 2, k.h);
+    ctx.fillStyle = '#3b4252'; ctx.fillRect(k.x - 1, k.y, k.w + 2, 4);
+    const by = k.y + k.h - 10;
+    for (let i = 0; i < 2; i++) { ctx.fillStyle = i ? '#1b1b1b' : '#ffc83d'; ctx.fillRect(k.x - 1, by + i * 5, k.w + 2, 5); }
+  }
+}
+
 function drawItemGlyph(type) {
   ctx.fillStyle = '#ffffff'; ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.8; ctx.lineCap = 'round';
   ctx.beginPath();
@@ -809,6 +933,7 @@ function draw() {
   ctx.clearRect(0, 0, cv.width, cv.height);
   ctx.setTransform(K, 0, 0, K, 0, 0);
   ctx.drawImage(bg, 0, 0, W, H);
+  for (const k of blocks) drawBlock(k);
   for (const it of items) drawItem(it);
   for (const p of players) for (const h of p.harpoons) drawHarpoon(h);
   for (const b of balls) drawBall(b);
