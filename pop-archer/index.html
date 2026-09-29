@@ -188,6 +188,18 @@ kbd{font-family:var(--body);font-weight:800;font-size:.95em;background:var(--cab
 @container (max-height:600px){ .overlay .tagline{display:none} }
 @container (max-height:250px){ .overlay .help{display:none} }
 @container (max-height:230px){ .overlay .board{display:none} }
+/* Réglages : interrupteurs */
+.toggles{display:flex;flex-direction:column;gap:1.4cqh;width:min(100%,46cqw)}
+.toggle{display:flex;align-items:center;justify-content:space-between;gap:2cqw;padding:.55em .9em;border:0;border-radius:12px;cursor:pointer;
+  font-family:var(--body);font-weight:800;font-size:min(2.8cqw,5.6cqh);color:var(--ink);background:var(--cab-hi);box-shadow:inset 0 0 0 2px var(--edge)}
+.toggle i{flex:none;width:2.2em;height:1.2em;border-radius:99px;background:var(--edge);position:relative;transition:background .15s}
+.toggle i::after{content:"";position:absolute;top:.15em;left:.15em;width:.9em;height:.9em;border-radius:50%;background:var(--muted);transition:transform .15s}
+.toggle[aria-checked="true"] i{background:#3fbf6f}
+.toggle[aria-checked="true"] i::after{transform:translateX(1em);background:#fff}
+.toggle:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+/* Tutoriel : la commande à utiliser clignote */
+.hint{animation:hint 1s ease-in-out infinite}
+@keyframes hint{50%{box-shadow:0 0 0 4px var(--gold),0 0 18px var(--gold)}}
 /* Monétisation : pièces, boutique, boosts, pubs simulées */
 .coin{display:inline-block;width:1em;height:1em;border-radius:50%;vertical-align:-.14em;flex:none;
   background:radial-gradient(circle at 35% 30%,#fff4b8,#ffc83d 48%,#d08e14);box-shadow:inset 0 0 0 .09em #9a6508}
@@ -247,7 +259,7 @@ body[data-state="ready"] .coinpill,body[data-state="play"] .coinpill,body[data-s
       <button class="iconbtn" id="btnFlip" type="button" aria-label="Flip screen" hidden>
         <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3a7 7 0 0 1 6.6 4.7l1.4-.8-.6 4.2-3.6-2.2 1.3-.7A5 5 0 0 0 5.2 8.6L3.3 8A7 7 0 0 1 10 3zm-6.6 9.3 3.6 2.2-1.3.7a5 5 0 0 0 9.1-1.4l1.9.6A7 7 0 0 1 3.4 12.3l-1.4.8z"/></svg>
       </button>
-      <button class="iconbtn" id="btnSound" type="button" aria-label="Mute"></button>
+      <button class="iconbtn" id="btnSound" type="button" aria-label="Settings"></button>
       <button class="iconbtn" id="btnPause" type="button" aria-label="Pause">
         <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="4" y="3" width="4.5" height="14" rx="1.2"/><rect x="11.5" y="3" width="4.5" height="14" rx="1.2"/></svg>
       </button>
@@ -317,6 +329,19 @@ body[data-state="ready"] .coinpill,body[data-state="play"] .coinpill,body[data-s
             <button class="tab" type="button" role="tab" data-tab="coins">Coins &amp; no ads</button>
           </div>
           <div class="cards" id="shopCards" role="tabpanel"></div>
+        </div>
+
+        <div class="overlay" id="setO" hidden>
+          <h2 class="title2">Settings</h2>
+          <div class="toggles">
+            <button class="toggle" id="tSfx" type="button" role="switch" aria-checked="true">Sound effects<i aria-hidden="true"></i></button>
+            <button class="toggle" id="tMusic" type="button" role="switch" aria-checked="true">Music<i aria-hidden="true"></i></button>
+            <button class="toggle" id="tVibe" type="button" role="switch" aria-checked="true">Vibration<i aria-hidden="true"></i></button>
+          </div>
+          <div class="row">
+            <button class="btn" id="bSetDone" type="button">Done</button>
+            <button class="btn ghost sm" id="bReset" type="button">Reset progress</button>
+          </div>
         </div>
 
         <div class="overlay" id="pauseO" hidden>
@@ -551,7 +576,9 @@ const store = {
   get(k, d) { try { const v = localStorage.getItem('eclate-bulles:' + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
   set(k, v) { try { localStorage.setItem('eclate-bulles:' + k, JSON.stringify(v)); } catch (e) {} },
 };
-let muted = store.get('muted', false);
+let muted = store.get('muted', false);          // bruitages coupés
+let musicOn = store.get('music', true);          // musique
+let vibeOn = store.get('vibe', true);            // vibrations
 
 /* ---------- Son ---------- */
 let AC = null, master = null, noiseBuf = null;
@@ -603,11 +630,119 @@ const sfx = {
   gate: () => { tone(140, .5, 'sawtooth', .06, 420); noise(.4, .05, 300); },
   over: () => [392, 330, 262, 196].forEach((f, i) => tone(f, .25, 'triangle', .13, 0, i * .18)),
 };
+// Musique : de petites boucles jouées en direct (lead, basse, batterie), une par monde,
+// plus le menu et les boss. Notation : une note (C5, F#4, Bb2) ou « . » (silence) ou « - » (tenue) par croche.
+const SONGS = {
+  menu: { bpm: 112, lead: 'C5 . E5 . G5 . E5 . F5 . A5 . G5 - - . E5 . G5 . C6 . B5 . A5 . F5 . G5 - - .',
+          bass: 'C3 . G2 . C3 . G2 . F2 . C3 . G2 . D3 . C3 . G2 . A2 . E3 . F2 . C3 . G2 . G2 .',
+          drum: 'k . h . s . h . k . h . s . h . k . h . s . h . k . h . s . h h', wave: 'triangle' },
+  forest: { bpm: 132, lead: 'F5 . A5 C6 . A5 F5 . G5 . A5 . G5 F5 D5 . C5 . F5 A5 . C6 A5 F5 E5 . G5 . F5 - - .',
+            bass: 'F3 . C3 . F3 . C3 . Bb2 . F2 . Bb2 . F2 . C3 . G2 . C3 . G2 . F3 . C3 . F3 . C3 .',
+            drum: 'k . h . s . h . k . h . s . h h k . h . s . h . k . h . s . h h', wave: 'square' },
+  desert: { bpm: 112, lead: 'D5 . Eb5 . F#5 . G5 . A5 - G5 F#5 Eb5 . D5 . A4 . D5 Eb5 F#5 . A5 . Bb5 - A5 G5 F#5 . D5 .',
+            bass: 'D3 . . D3 A2 . . A2 D3 . . D3 G2 . A2 . D3 . . D3 A2 . . A2 Bb2 . . Bb2 A2 . A2 .',
+            drum: 'k . . k s . h . k . k . s . h h k . . k s . h . k . k . s . h h', wave: 'square' },
+  sea: { bpm: 96, lead: 'A4 - C5 - E5 - D5 - C5 - B4 - G4 - - - F4 - A4 - C5 - B4 - A4 - E5 - - - - -',
+         bass: 'A2 . E3 . A2 . E3 . F2 . C3 . G2 . D3 . F2 . C3 . F2 . C3 . E2 . B2 . E2 . G#2 .',
+         drum: 'k . . . h . . . k . . . h . h . k . . . h . . . k . . . h . h .', wave: 'triangle' },
+  space: { bpm: 128, lead: 'E5 G5 B5 E6 B5 G5 E5 G5 C5 E5 G5 C6 G5 E5 C5 E5 D5 F#5 A5 D6 A5 F#5 D5 F#5 B4 D#5 F#5 B5 F#5 D#5 B4 D#5',
+           bass: 'E2 . E2 . E2 . E2 . C2 . C2 . C2 . C2 . D2 . D2 . D2 . D2 . B1 . B1 . B1 . B1 .',
+           drum: 'k . h . s . h . k . h . s . h . k . h . s . h . k . h . s . h h', wave: 'square' },
+  boss: { bpm: 150, lead: 'C5 . C5 Eb5 . C5 G5 . F5 . Eb5 . D5 . Eb5 . C5 . C5 Eb5 . G5 C6 . Bb5 . Ab5 . G5 . G5 .',
+          bass: 'C2 C3 C2 C3 C2 C3 C2 C3 Ab1 Ab2 Ab1 Ab2 G1 G2 G1 G2 C2 C3 C2 C3 C2 C3 C2 C3 Ab1 Ab2 Ab1 Ab2 G1 G2 G1 G2',
+          drum: 'k . s . k k s . k . s . k k s s k . s . k k s . k . s . k k s s', wave: 'sawtooth' },
+};
+const NOTE = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
+const midiHz = t => { const m = /^([A-G])([#b]?)(\d)$/.exec(t); return 440 * 2 ** ((12 * (+m[3] + 1) + NOTE[m[1]] + (m[2] === '#') - (m[2] === 'b') - 69) / 12); };
+// Chaque piste : liste de [pas de départ, durée en croches, fréquence].
+function parseTrack(str) {
+  const out = [];
+  str.trim().split(/\s+/).forEach((t, i) => {
+    if (t === '-') { if (out.length) out[out.length - 1][1]++; }
+    else if (t !== '.') out.push([i, 1, midiHz(t)]);
+  });
+  return out;
+}
+for (const song of Object.values(SONGS)) {
+  song.notes = { lead: parseTrack(song.lead), bass: parseTrack(song.bass) };
+  song.hits = song.drum.trim().split(/\s+/);
+  song.len = song.hits.length;
+}
+const music = {
+  track: null, gain: null, step: 0, next: 0, timer: 0,
+  // Choisit la musique voulue ; ne relance que si elle change.
+  want(name) {
+    if (!musicOn) name = null;
+    if (name === this.track) return;
+    this.track = name;
+    const a = AC;
+    if (this.gain && a) { const g = this.gain; g.gain.setTargetAtTime(0, a.currentTime, .15); setTimeout(() => g.disconnect(), 800); }
+    this.gain = null;
+    clearInterval(this.timer);
+    if (!name || !a) return;
+    this.gain = a.createGain(); this.gain.gain.value = this.level(); this.gain.connect(a.destination);
+    this.step = 0; this.next = a.currentTime + .08;
+    this.timer = setInterval(() => this.tick(), 40);
+  },
+  level() { return paused ? .06 : .16; },
+  duck() { if (this.gain && AC) this.gain.gain.setTargetAtTime(this.level(), AC.currentTime, .2); },
+  // Programme les croches des 0,15 s à venir.
+  tick() {
+    const a = AC, song = SONGS[this.track];
+    if (!a || !song || !this.gain) return;
+    const eighth = 30 / song.bpm;
+    while (this.next < a.currentTime + .15) {
+      const st = this.step % song.len, t = this.next;
+      for (const [i, len, f] of song.notes.lead) if (i === st) this.note(f, t, len * eighth * .92, song.wave, .09);
+      for (const [i, len, f] of song.notes.bass) if (i === st) this.note(f, t, len * eighth * .85, 'triangle', .22);
+      const h = song.hits[st];
+      if (h === 'k') this.drum(t, 'k'); else if (h === 's') this.drum(t, 's'); else if (h === 'h') this.drum(t, 'h');
+      this.step++; this.next += eighth;
+    }
+  },
+  note(f, t, d, type, v) {
+    const a = AC, o = a.createOscillator(), g = a.createGain();
+    o.type = type; o.frequency.value = f;
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v, t + .01);
+    g.gain.setTargetAtTime(v * .6, t + .03, .08); g.gain.setTargetAtTime(0, t + d, .03);
+    o.connect(g); g.connect(this.gain); o.start(t); o.stop(t + d + .2);
+  },
+  drum(t, kind) {
+    const a = AC, g = a.createGain();
+    g.connect(this.gain);
+    if (kind === 'k') {
+      const o = a.createOscillator(); o.frequency.setValueAtTime(130, t); o.frequency.exponentialRampToValueAtTime(42, t + .12);
+      g.gain.setValueAtTime(.5, t); g.gain.exponentialRampToValueAtTime(.001, t + .16);
+      o.connect(g); o.start(t); o.stop(t + .18);
+    } else {
+      const n = a.createBufferSource(), f = a.createBiquadFilter();
+      n.buffer = noiseBuf; f.type = kind === 's' ? 'bandpass' : 'highpass'; f.frequency.value = kind === 's' ? 1800 : 7000;
+      const v = kind === 's' ? .28 : .1, d = kind === 's' ? .12 : .04;
+      g.gain.setValueAtTime(v, t); g.gain.exponentialRampToValueAtTime(.001, t + d);
+      n.connect(f); f.connect(g); n.start(t); n.stop(t + d + .02);
+    }
+  },
+};
+// Quelle musique pour l'écran en cours.
+function musicFor() {
+  if (state === 'over') return null;
+  if (!mode || state === 'menu') return 'menu';
+  if (boss) return 'boss';
+  return scene.theme;
+}
+// Vibrations courtes (téléphone uniquement ; ignorées ailleurs).
+function vibe(ms) {
+  if (!vibeOn || !navigator.vibrate) return;
+  try { navigator.vibrate(ms); } catch (e) {}
+}
+
 const ICON_ON = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 7.5h3l4.5-4v13L6 12.5H3z"/><path d="M13 6.5a5 5 0 0 1 0 7M15.2 4.3a8 8 0 0 1 0 11.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
 const ICON_OFF = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 7.5h3l4.5-4v13L6 12.5H3z"/><path d="M13.5 7.5l5 5m0-5l-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+const ICON_GEAR = '<svg viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M8.6 1.5h2.8l.5 2.3 1.6.9 2.2-.8 1.4 2.4-1.7 1.6v1.9l1.7 1.6-1.4 2.4-2.2-.8-1.6.9-.5 2.3H8.6l-.5-2.3-1.6-.9-2.2.8-1.4-2.4 1.7-1.6V8.1L2.9 6.5l1.4-2.4 2.2.8 1.6-.9zM10 7a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg>';
 function paintSound() {
-  $('btnSound').innerHTML = muted ? ICON_OFF : ICON_ON;
-  $('btnSound').setAttribute('aria-label', muted ? 'Unmute' : 'Mute');
+  $('btnSound').innerHTML = ICON_GEAR;
+  $('btnSound').setAttribute('aria-label', 'Settings');
+  for (const [id, on] of [['tSfx', !muted], ['tMusic', musicOn], ['tVibe', vibeOn]]) $(id).setAttribute('aria-checked', on);
 }
 
 /* ---------- État du jeu ---------- */
@@ -686,6 +821,31 @@ function loadLevel() {
   renderBg();
 }
 
+// Tutoriel au tout premier niveau : se déplacer, tirer, puis éclater. Les bulles attendent
+// que le joueur ait bougé et tiré une fois, et le temps ne s'écoule pas pendant ce temps-là.
+let tut = null;
+function startTutorial() {
+  tut = store.get('tut', false) || starsOf(1) ? null : { step: 0, moved: 0, t: 0 };
+  paintHint();
+}
+function paintHint() {
+  const pad = ctrlL.firstChild, fireB = ctrlR.firstChild;
+  if (pad) pad.classList.toggle('hint', !!tut && tut.step === 0);
+  if (fireB) fireB.classList.toggle('hint', !!tut && tut.step === 1);
+}
+function stepTutorial(dt, p) {
+  if (!tut || !p) return;
+  if (tut.step === 0) { tut.moved += Math.abs(p.x - (tut.lastX ?? p.x)); tut.lastX = p.x; if (tut.moved > 60) { tut.step = 1; paintHint(); } }
+  else if (tut.step === 1) { if (p.harpoons.length) { tut.step = 2; tut.t = 4; paintHint(); } }
+  else if ((tut.t -= dt) <= 0) { tut = null; store.set('tut', true); paintHint(); }
+}
+function tutorialText() {
+  if (!tut) return null;
+  const touch = document.documentElement.classList.contains('touch');
+  if (tut.step === 0) return ['Move', touch ? 'Hold ◀ or ▶ to walk' : 'Walk with ← → or A D'];
+  if (tut.step === 1) return ['Shoot', touch ? 'Tap the bow button to fire an arrow' : 'Press Space or ↑ to fire an arrow'];
+  return ['Pop them all!', "Each hit splits a bubble in two. Don't let one touch you!"];
+}
 function startRun(k, lv) {
   audio();
   kind = k; mode = 1; level = lv;
@@ -694,6 +854,8 @@ function startRun(k, lv) {
   buildControls();
   paused = false; show(null);
   if (k === 'surv') startSurvival(); else loadLevel();
+  tut = null;
+  if (k === 'adv' && lv === 1) startTutorial(); else paintHint();
 }
 
 function menuScene() {
@@ -756,11 +918,12 @@ function openMap(world) {
 function quitRun() { if (kind === 'adv') openMap(worldOf(level)); else toMenu(); }
 
 function setState(s, t) { state = s; stateT = t; document.body.dataset.state = s; }
-function show(el) { for (const o of [menuO, mapO, pauseO, overO, prepO, shopO]) o.hidden = o !== el; }
+function show(el) { for (const o of [menuO, mapO, pauseO, overO, prepO, shopO, setO]) o.hidden = o !== el; }
 
 function togglePause(force) {
   if (state === 'menu' || state === 'over') return;
   paused = force === undefined ? !paused : force;
+  music.duck();
   $('bQuit').textContent = kind === 'adv' ? 'Map' : 'Menu';
   show(paused ? pauseO : null);
   if (paused) $('bResume').focus({ preventScroll: true });
@@ -777,8 +940,10 @@ function update(dt) {
     if (stateT <= 0) { setState('play', 0); fireQueued = false; }
   } else if (state === 'play') {
     MONEY.playT += dt;
-    if (kind === 'surv') updateSurvival(dt); else { timeLeft -= dt; if (dropCd > 0) dropCd -= dt; }
-    const frozen = freezeT > 0, slow = slowT > 0 ? .45 : 1;
+    const learning = tut && tut.step < 2;
+    stepTutorial(dt, players[0]);
+    if (kind === 'surv') updateSurvival(dt); else if (!learning) { timeLeft -= dt; if (dropCd > 0) dropCd -= dt; }
+    const frozen = freezeT > 0 || learning, slow = slowT > 0 ? .45 : 1;
     if (slowT > 0) slowT -= dt;
     if (frozen) freezeT -= dt; else moveBalls(dt * slow);
     if (boss) { if (!frozen) updateBoss(dt * slow); moveShots(dt * slow); }
@@ -967,7 +1132,7 @@ function popBall(j, p, noDrop) {
   p.score += PTS[b.s] * mult;
   float(b.x, b.y - RAD[b.s], '+' + PTS[b.s] * mult, b.v === 'gold' ? '#ffc83d' : COL[p.id].main);
   burst(b.x, b.y, b.v ? VARIANTS[b.v].c : b.c, RAD[b.s]);
-  sfx.pop(Math.min(b.s, 3));
+  sfx.pop(Math.min(b.s, 3)); vibe(b.s >= 3 ? 25 : 12);
   if (b.s > 0) {
     const s = b.s - 1, r = RAD[s], v = b.v === 'steel' || b.v === 'bomb' ? null : b.v;
     const dirs = b.v === 'green' ? [-1, 0, 1] : [-1, 1];
@@ -990,7 +1155,7 @@ function explode(b, p) {
     const a = i / 14 * Math.PI * 2;
     parts.push({ x: b.x, y: b.y, vx: Math.cos(a) * 220, vy: Math.sin(a) * 220 - 60, r: 2.5, life: .4, max: .4, c: i % 2 ? '#ffe066' : '#ff5a1f' });
   }
-  shake = Math.max(shake, .3); sfx.thud();
+  shake = Math.max(shake, .3); sfx.thud(); vibe(60);
   const near = balls.filter(o => Math.hypot(o.x - b.x, o.y - b.y) < R + RAD[o.s]);
   for (const o of near) { const j = balls.indexOf(o); if (j >= 0) hitBall(j, p, true); }
 }
@@ -1077,7 +1242,7 @@ function touchPlayers() {
 
 function hitPlayer(p) {
   if (p.shield) {
-    p.shield = false; p.inv = 1.5; sfx.shield();
+    p.shield = false; p.inv = 1.5; sfx.shield(); vibe(50);
     burst(p.x, FLOOR - 15, '#9eeaff', 14);
   } else {
     hurt(p);
@@ -1089,13 +1254,14 @@ function blackHit(p) {
   p.shield = false; p.lives = 1;
   hurt(p);
   deathMsg = 'The black bubble got you!';
+  vibe([60, 40, 60, 40, 300]);
   burst(p.x, FLOOR - 15, '#241530', 22);
   shake = Math.max(shake, .4);
 }
 // Chaque touche coûte un cœur (une vie en Survie) ; sans cœur, c'est perdu.
 function hurt(p) {
   levelHit = true; p.lives--;
-  sfx.hit();
+  sfx.hit(); vibe(p.lives > 0 ? 120 : [120, 80, 260]);
   burst(p.x, FLOOR - 15, COL[p.id].main, 14);
   if (p.lives > 0) { p.inv = 2; float(p.x, FLOOR - 44, kind === 'surv' ? '-1 life' : '-1 heart', COL[p.id].main); return; }
   p.dead = true; p.dvy = -300; p.dy = 0;
@@ -1121,7 +1287,7 @@ function levelClear() {
   if (lastStars > prevStars) { adv[level] = lastStars; store.set('adv', adv); }
   runCoins += EARN.clear + EARN.star * lastStars;
   for (const p of players) p.harpoons = [];
-  setState('clear', 1.4);
+  setState('clear', 1.4); vibe([30, 60, 30]);
   sfx.clear();
 }
 
@@ -1428,7 +1594,7 @@ function damageBoss(p) {
   b.hp--; b.flash = .15; b.killer = p;
   p.score += 50;
   float(b.x, b.y - b.r - 8, '+50', COL[p.id].main);
-  sfx.bossHit();
+  sfx.bossHit(); vibe(20);
   if (Math.random() < .2) dropItem(b.x, b.y + b.r);
   if (b.type === 'king' && b.hp > 0 && b.hp % 3 === 0) { spawnMinion(b, 1); spawnMinion(b, 1); }
   if (b.hp <= 0) {
@@ -2307,6 +2473,26 @@ function draw() {
   } else if (state === 'clear') banner('Well done!', '');
   else if (state === 'dying') banner(deathMsg, '');
   else if (state === 'play' && ann) banner(ann.big, ann.small);
+  if (state === 'play' && tut) drawTutorial();
+}
+// Encadré du tutoriel, en haut de l'écran, avec une flèche vers la commande à utiliser.
+function drawTutorial() {
+  const [big, small] = tutorialText(), t = performance.now() / 1000;
+  const w = 380, h = 64, x = (W - w) / 2, y = 44;
+  ctx.fillStyle = 'rgba(33,17,48,.88)'; ctx.strokeStyle = '#ffc83d'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.roundRect(x, y, w, h, 12); ctx.fill(); ctx.stroke();
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  outlined(big, W / 2, y + 22, fitSize(big, 20), '#ffc83d');
+  const face = '800 "Baloo 2", "Trebuchet MS", sans-serif';
+  ctx.font = fontOf(fitSize(small, 14, face), face); ctx.fillStyle = '#fff3e6';
+  ctx.fillText(small, W / 2, y + 46);
+  // flèche qui pointe vers la commande : à gauche pour marcher, à droite pour tirer
+  if (tut.step < 2) {
+    const ax = tut.step === 0 ? 60 : W - 60, ay = FLOOR - 40 + Math.sin(t * 6) * 6;
+    ctx.fillStyle = '#ffc83d'; ctx.strokeStyle = 'rgba(33,17,48,.9)'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(ax, ay + 20); ctx.lineTo(ax - 14, ay); ctx.lineTo(ax - 6, ay); ctx.lineTo(ax - 6, ay - 18);
+    ctx.lineTo(ax + 6, ay - 18); ctx.lineTo(ax + 6, ay); ctx.lineTo(ax + 14, ay); ctx.closePath(); ctx.fill(); ctx.stroke();
+  }
 }
 
 function drawSurvival() {
@@ -2393,7 +2579,13 @@ addEventListener('keydown', e => {
 });
 addEventListener('keyup', e => { const k = KEYS[e.code]; if (k && k !== 'fire') kb[k] = false; });
 addEventListener('blur', () => { kb.l = kb.r = false; if (state === 'play' || state === 'ready') togglePause(true); });
-document.addEventListener('visibilitychange', () => { if (document.hidden && (state === 'play' || state === 'ready')) togglePause(true); });
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden && (state === 'play' || state === 'ready')) togglePause(true);
+  // Appli en arrière-plan : plus de son du tout.
+  if (AC) { if (document.hidden) AC.suspend(); else AC.resume(); }
+});
+// Le navigateur n'autorise le son qu'après un premier geste du joueur.
+addEventListener('pointerdown', () => audio(), { capture: true });
 
 if (navigator.keyboard && navigator.keyboard.getLayoutMap) {
   navigator.keyboard.getLayoutMap().then(m => {
@@ -2485,7 +2677,26 @@ $('bNext').addEventListener('click', () => leaveResults(() => prep('adv', level 
 $('bAgain').addEventListener('click', () => leaveResults(() => prep(kind, level)));
 $('bMenu').addEventListener('click', () => leaveResults(quitRun));
 $('btnPause').addEventListener('click', () => togglePause());
-$('btnSound').addEventListener('click', () => { muted = !muted; store.set('muted', muted); paintSound(); if (!muted) sfx.pick(); });
+// Réglages : pendant une partie, on met d'abord en pause ; « Done » revient à l'écran d'avant.
+let setBack = null;
+$('btnSound').addEventListener('click', () => {
+  if (!setO.hidden) { closeSettings(); return; }
+  if (mode && !paused && state !== 'menu' && state !== 'over') togglePause(true);
+  setBack = [menuO, mapO, pauseO, overO, prepO, shopO].find(o => !o.hidden) || null;
+  paintSound(); show(setO); $('tSfx').focus({ preventScroll: true });
+});
+function closeSettings() { show(setBack); }
+$('bSetDone').addEventListener('click', closeSettings);
+$('tSfx').addEventListener('click', () => { muted = !muted; store.set('muted', muted); paintSound(); audio(); sfx.pick(); });
+$('tMusic').addEventListener('click', () => { musicOn = !musicOn; store.set('music', musicOn); paintSound(); audio(); music.want(musicFor()); });
+$('tVibe').addEventListener('click', () => { vibeOn = !vibeOn; store.set('vibe', vibeOn); paintSound(); vibe(40); });
+$('bReset').addEventListener('click', () => message('Reset progress?',
+  'Levels, stars, scores, coins, outfits and purchases will all be erased. This cannot be undone.',
+  [['Erase everything', () => {
+    const keep = ['muted', 'music', 'vibe', 'flip', 'tut'];
+    try { for (const k of Object.keys(localStorage)) if (k.startsWith('eclate-bulles:') && !keep.includes(k.slice(14))) localStorage.removeItem(k); } catch (e) {}
+    location.reload();
+  }, 'alt'], ['Cancel', null, 'ghost']]));
 
 const logoImg = document.querySelector('.logo img');
 const noLogo = () => logoImg.parentNode.classList.add('noimg');
@@ -2814,6 +3025,7 @@ function frame(now) {
   acc += Math.min(.1, (now - last) / 1000); last = now;
   while (acc >= STEP) { update(STEP); acc -= STEP; }
   draw(); hud();
+  if (AC && AC.state === 'running') music.want(musicFor());
   requestAnimationFrame(frame);
 }
 

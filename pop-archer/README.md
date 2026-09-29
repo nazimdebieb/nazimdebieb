@@ -78,6 +78,13 @@ Le jeu se joue à 1 joueur (le mode à 2 joueurs a été retiré : trop compliqu
   - **barrières** : elles coupent l'écran en zones et se lèvent quand toutes les bulles à leur gauche ont éclaté.
 - 24 niveaux dessinés à la main (escaliers, étagères, damier de briques, tunnel, quatre barrières…), puis des niveaux générés de plus en plus chargés à partir de 11 dispositions d'obstacles. Le record est gardé dans le navigateur.
 
+## Son, vibrations et tutoriel
+
+- **Musique** jouée par le jeu lui-même (aucun fichier audio) : une boucle pour le menu, une par monde (forêt, désert, fonds marins, cosmos) et une pour les boss. Elle baisse pendant la pause et s'arrête sur l'écran de fin et quand l'appli passe en arrière-plan.
+- **Vibrations** sur téléphone : petite secousse à chaque bulle éclatée, plus forte quand on est touché, une série pour la bulle noire, et une petite quand on réussit un niveau.
+- **Réglages** (roue dentée en haut à droite) : bruitages, musique et vibrations séparés, et « Reset progress » pour tout effacer (avec confirmation). Ouvrir les réglages en pleine partie met le jeu en pause.
+- **Tutoriel** au tout premier niveau : « Move », puis « Shoot », puis « Pop them all! ». Les bulles et le temps attendent que le joueur ait marché et tiré une fois, et la commande à utiliser clignote. Il ne revient plus ensuite.
+
 ## Monétisation (version de test)
 
 Règle d'or : **aucune pub pendant qu'on joue**. Les pubs et les achats sont **simulés** dans cette version : une fausse pub (écran « AD · TEST » de 3 à 5 s) et un faux paiement (une fenêtre de confirmation, sans argent réel). Dans l'appli Android, seules les deux fonctions `showAd` (AdMob) et `buyProduct` (Google Play Billing) seront remplacées.
