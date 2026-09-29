@@ -36,6 +36,16 @@ Le Play Store demande un fichier **AAB signé** avec **ta** clé. Cette clé pro
    - `POP_ARCHER_KEY_PASSWORD` : le mot de passe de la clé.
 3. Dès que ces secrets existent, l'action produit aussi **pop-archer-release-aab** : c'est le fichier à envoyer sur la Play Console. Active **Play App Signing** quand la console le propose.
 
+## Mettre en ligne la politique de confidentialité
+
+Google exige un lien public vers la politique de confidentialité. Elle est dans `docs/privacy.html` (avec une page d'accueil `docs/index.html`), servie par GitHub Pages :
+
+1. Fusionne la PR, pour que le dossier `docs/` arrive sur la branche par défaut du dépôt.
+2. Sur GitHub, ouvre **Settings → Pages**. Dans **Build and deployment**, choisis **Source : Deploy from a branch**, puis la branche par défaut et le dossier **/docs**, et clique **Save**.
+3. Après une ou deux minutes, la page est en ligne à **https://nazimdebieb.github.io/nazimdebieb/privacy.html**. C'est ce lien qu'on colle dans la Play Console (**Policy → App content → Privacy policy**).
+
+Avant d'envoyer l'appli, remplace « contact email to be added » par ton adresse de contact dans `docs/privacy.html` (repère `<!-- CONTACT -->`), et mets à jour la date (`<!-- DATE -->`) à chaque changement de la politique.
+
 ## Construire sur un ordinateur (facultatif)
 
 Il faut Node.js 22, Java 21 et le SDK Android (Android Studio l'installe).
@@ -61,5 +71,6 @@ keyPassword=…
 
 - `scripts/copy-web.mjs` : copie le jeu dans `www/` et remplace les polices Google par les copies locales de `fonts/`.
 - `scripts/make-icons.mjs` : refait les icônes Android, l'écran de démarrage et les visuels de la fiche Play Store à partir de `art/icon-1024.png` (Playwright nécessaire).
-- `store/` : visuels et textes de la fiche Play Store (icône, bannière, 7 captures légendées dans `store/screenshots/`) et la politique de confidentialité.
+- `store/` : visuels et textes de la fiche Play Store (icône, bannière, 7 captures légendées dans `store/screenshots/`).
+- `../docs/` : le petit site du jeu pour GitHub Pages (accueil et politique de confidentialité).
 - `android/` : le projet Android généré par Capacitor. Modifications : paysage forcé (`AndroidManifest.xml`), plein écran (`MainActivity.java`), signature (`app/build.gradle`), couleurs de démarrage (`res/values/styles.xml`).

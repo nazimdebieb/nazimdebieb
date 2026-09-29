@@ -41,6 +41,7 @@ Collect coins to unlock outfits for your archer — Robin, Nomad, Sailor, Astron
 **Category**: Game › Arcade
 **Tags**: arcade, casual, shooter
 **Contact email**: (your email)
+**Privacy policy URL**: https://nazimdebieb.github.io/nazimdebieb/privacy.html (once GitHub Pages is enabled on `/docs`)
 
 ## Graphics checklist
 
