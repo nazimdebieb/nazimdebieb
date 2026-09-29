@@ -2,6 +2,8 @@
 
 Jeu d'arcade dans l'esprit de Pang / Bubble Trouble : on tire un harpon vers le haut, chaque bulle touchée se coupe en deux bulles plus petites, jusqu'à ce que les plus petites éclatent. Un seul fichier `index.html`, sans dépendance.
 
+On joue un petit **archer** (capuche rouge pour le joueur 1, bleue pour le joueur 2) qui tire des flèches-grappins vers le haut. Chaque monde a son décor : forêt, désert en ruines, fonds marins et cosmos, avec des obstacles dans la matière du monde. Tout est dessiné dans le code (aucune image à charger).
+
 ## Jouer
 
 Ouvrir `index.html` dans un navigateur (double-clic suffit), sur ordinateur ou téléphone.
