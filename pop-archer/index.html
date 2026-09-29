@@ -295,12 +295,12 @@ const COL = [
 const SCENES = [
   { theme: 'forest', sky: ['#5ec2ff', '#d6f3ff'], sun: '#fffbe0', far: '#9ad7a0', trees2: '#6cbf7a', trees: '#3f9a5c', trunk: '#6b4526', ground: '#7a4f2c', grass: '#5cc254', ball: '#ff3b55', clouds: true, art: 'forest' },
   { theme: 'forest', sky: ['#ffab73', '#ffe7c4'], sun: '#fff1c9', far: '#d9a27a', trees2: '#8aa05a', trees: '#4f7f3a', trunk: '#5b3a22', ground: '#6b4526', grass: '#8cc84b', ball: '#3b6cff', clouds: true, art: 'sunset' },
-  { theme: 'desert', sky: ['#ffc76b', '#fff0cc'], sun: '#fff8e1', far: '#eab06a', near: '#c98a4a', dune: '#e3a45a', cactus: '#6f9a4a', ground: '#d9a45c', ball: '#7a3cff' },
-  { theme: 'desert', sky: ['#4b2f86', '#ff8466'], sun: '#ffd29a', far: '#8a4f7a', near: '#5a2f5a', dune: '#a35a5a', cactus: '#3f5a3a', ground: '#8a5a3a', ball: '#ffd23b' },
-  { theme: 'sea', sky: ['#35c3d6', '#0f6f8f'], far: '#1d7f8f', weed: '#2f9e6a', coral: '#ff7a8a', ground: '#e8cf97', ball: '#ffb02e' },
-  { theme: 'sea', sky: ['#1a6b96', '#071f3f'], far: '#0f3a5f', weed: '#1f7a5a', coral: '#e0457b', ground: '#b8a27a', ball: '#ffe14d' },
-  { theme: 'space', sky: ['#1a0b33', '#4a2385'], far: '#2a1a4d', far2: '#1c1036', crystal: '#7cf0ff', neb: '#ff4fa3', planet: '#ffb86b', ground: '#241638', ball: '#ff4fa3' },
-  { theme: 'space', sky: ['#050a24', '#1d2d70'], far: '#1a2350', far2: '#10173a', crystal: '#ff9ad1', neb: '#5ff0c8', planet: '#9ab8ff', ground: '#141a3a', ball: '#5ff0c8' },
+  { theme: 'desert', sky: ['#ffc76b', '#fff0cc'], sun: '#fff8e1', far: '#eab06a', near: '#c98a4a', dune: '#e3a45a', cactus: '#6f9a4a', ground: '#d9a45c', ball: '#7a3cff', art: 'desertDay' },
+  { theme: 'desert', sky: ['#4b2f86', '#ff8466'], sun: '#ffd29a', far: '#8a4f7a', near: '#5a2f5a', dune: '#a35a5a', cactus: '#3f5a3a', ground: '#8a5a3a', ball: '#ffd23b', art: 'desertDusk' },
+  { theme: 'sea', sky: ['#35c3d6', '#0f6f8f'], far: '#1d7f8f', weed: '#2f9e6a', coral: '#ff7a8a', ground: '#e8cf97', ball: '#ffb02e', art: 'seaShallow' },
+  { theme: 'sea', sky: ['#1a6b96', '#071f3f'], far: '#0f3a5f', weed: '#1f7a5a', coral: '#e0457b', ground: '#b8a27a', ball: '#ffe14d', art: 'seaDeep' },
+  { theme: 'space', sky: ['#1a0b33', '#4a2385'], far: '#2a1a4d', far2: '#1c1036', crystal: '#7cf0ff', neb: '#ff4fa3', planet: '#ffb86b', ground: '#241638', ball: '#ff4fa3', art: 'spacePurple' },
+  { theme: 'space', sky: ['#050a24', '#1d2d70'], far: '#1a2350', far2: '#10173a', crystal: '#ff9ad1', neb: '#5ff0c8', planet: '#9ab8ff', ground: '#141a3a', ball: '#5ff0c8', art: 'spaceBlue' },
 ];
 
 // Obstacles : S = plateforme en métal (arrête le harpon), B = rangée de briques (cassées par le harpon),
@@ -1418,6 +1418,12 @@ function loadArt(name, src, ground) {
 }
 loadArt('forest', 'img/forest.webp', .9231);
 loadArt('sunset', 'img/sunset.webp', .907);
+loadArt('desertDay', 'img/desert-day.webp', .932);
+loadArt('desertDusk', 'img/desert-dusk.webp', .933);
+loadArt('seaShallow', 'img/sea-shallow.webp', .907);
+loadArt('seaDeep', 'img/sea-deep.webp', .907);
+loadArt('spacePurple', 'img/space-purple.webp', .918);
+loadArt('spaceBlue', 'img/space-blue.webp', .918);
 
 const disc = (b, x, y, r, c) => { b.fillStyle = c; b.beginPath(); b.arc(x, y, r, 0, Math.PI * 2); b.fill(); };
 function hillLine(b, rnd, base, amp, color, f1, f2) {

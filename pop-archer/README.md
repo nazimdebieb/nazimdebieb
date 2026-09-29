@@ -2,7 +2,7 @@
 
 Jeu d'arcade dans l'esprit de Pang / Bubble Trouble : on tire un harpon vers le haut, chaque bulle touchée se coupe en deux bulles plus petites, jusqu'à ce que les plus petites éclatent. Un fichier `index.html` et un dossier `img/`, sans dépendance.
 
-**Pop Archer** (anciennement « Éclate-Bulles ») est entièrement en anglais. On joue seul un petit **archer** à capuche rouge qui tire des flèches-grappins vers le haut. Chaque monde a son décor : forêt, désert en ruines, fonds marins et cosmos, avec des obstacles dans la matière du monde. Les personnages, bulles, boss et obstacles sont dessinés dans le code ; le logo « Pop Archer » et les décors du monde 1 (forêt de jour et au coucher de soleil) sont des images générées avec Canva, rangées dans `img/` (le dossier doit rester à côté de `index.html`). Si une image manque, le décor dessiné par le code prend le relais.
+**Pop Archer** (anciennement « Éclate-Bulles ») est entièrement en anglais. On joue seul un petit **archer** à capuche rouge qui tire des flèches-grappins vers le haut. Chaque monde a son décor : forêt, désert en ruines, fonds marins et cosmos, avec des obstacles dans la matière du monde. Les personnages, bulles, boss et obstacles sont dessinés dans le code ; le logo « Pop Archer » et les décors des 4 mondes (2 ambiances chacun : forêt de jour et au couchant, désert de jour et au crépuscule, fonds marins clairs et grand fond, cosmos violet et bleu nuit) sont des images générées avec Canva, rangées dans `img/` (le dossier doit rester à côté de `index.html`). Si une image manque, le décor dessiné par le code prend le relais.
 
 ## Jouer
 
