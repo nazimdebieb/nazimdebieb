@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="fr">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Éclate-Bulles</title>
+<title>Pop Archer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Bungee&display=swap">
@@ -207,22 +207,22 @@ kbd{font-family:var(--body);font-weight:800;font-size:.95em;background:var(--cab
 <div class="app">
   <header class="hud">
     <div class="pl p1">
-      <div class="pl-top"><span class="tag">J1</span><span class="score" id="s0">0</span></div>
+      <div class="pl-top"><span class="tag">P1</span><span class="score" id="s0">0</span></div>
       <div class="lives" id="l0"></div>
     </div>
     <div class="mid">
-      <div class="lvl" id="lvl">Éclate-Bulles</div>
+      <div class="lvl" id="lvl">Pop Archer</div>
       <div class="timer" id="timer"><i id="tbar"></i></div>
     </div>
     <div class="pl p2">
-      <div class="pl-top"><span class="tag">J2</span><span class="score" id="s1">0</span></div>
+      <div class="pl-top"><span class="tag">P2</span><span class="score" id="s1">0</span></div>
       <div class="lives" id="l1"></div>
     </div>
     <div class="tools">
-      <button class="iconbtn" id="btnFlip" type="button" aria-label="Retourner l'écran" hidden>
+      <button class="iconbtn" id="btnFlip" type="button" aria-label="Flip screen" hidden>
         <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3a7 7 0 0 1 6.6 4.7l1.4-.8-.6 4.2-3.6-2.2 1.3-.7A5 5 0 0 0 5.2 8.6L3.3 8A7 7 0 0 1 10 3zm-6.6 9.3 3.6 2.2-1.3.7a5 5 0 0 0 9.1-1.4l1.9.6A7 7 0 0 1 3.4 12.3l-1.4.8z"/></svg>
       </button>
-      <button class="iconbtn" id="btnSound" type="button" aria-label="Couper le son"></button>
+      <button class="iconbtn" id="btnSound" type="button" aria-label="Mute"></button>
       <button class="iconbtn" id="btnPause" type="button" aria-label="Pause">
         <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="4" y="3" width="4.5" height="14" rx="1.2"/><rect x="11.5" y="3" width="4.5" height="14" rx="1.2"/></svg>
       </button>
@@ -233,35 +233,35 @@ kbd{font-family:var(--body);font-weight:800;font-size:.95em;background:var(--cab
     <div class="ctrl" id="ctrlL"></div>
     <div class="stage-wrap" id="wrap">
       <div class="stage" id="stage">
-        <canvas id="cv" aria-label="Aire de jeu"></canvas>
+        <canvas id="cv" aria-label="Game area"></canvas>
 
         <div class="overlay" id="menuO">
-          <h1 class="logo"><img src="img/logo.webp" alt="Éclate-Bulles" width="947" height="469"><span class="logo-txt">Éclate<span>Bulles</span></span></h1>
-          <p class="tagline">Coupe chaque bulle en deux, puis encore en deux, jusqu'à la dernière.</p>
-          <div class="seg" role="group" aria-label="Nombre de joueurs">
-            <button type="button" id="pc1" aria-pressed="true">1 joueur</button>
-            <button type="button" id="pc2" aria-pressed="false">2 joueurs</button>
+          <h1 class="logo"><img src="img/logo.webp" alt="Pop Archer" width="822" height="451"><span class="logo-txt">Pop<span>Archer</span></span></h1>
+          <p class="tagline">Split every bubble in two, then in two again, until the last one pops.</p>
+          <div class="seg" role="group" aria-label="Number of players">
+            <button type="button" id="pc1" aria-pressed="true">1 player</button>
+            <button type="button" id="pc2" aria-pressed="false">2 players</button>
           </div>
           <div class="row">
-            <button class="btn" id="bAdv" type="button">Aventure <small id="advStars"></small></button>
-            <button class="btn alt" id="bArc" type="button">Survie</button>
+            <button class="btn" id="bAdv" type="button">Adventure <small id="advStars"></small></button>
+            <button class="btn alt" id="bArc" type="button">Survival</button>
           </div>
           <p class="help kb-help">
-            <b>J1</b> <kbd>←</kbd> <kbd>→</kbd> bouger, <kbd>↑</kbd> ou <kbd>Espace</kbd> tirer ·
-            <b>J2</b> <kbd id="kA">Q</kbd> <kbd id="kD">D</kbd> bouger, <kbd id="kW">Z</kbd> tirer ·
+            <b>P1</b> <kbd>←</kbd> <kbd>→</kbd> move, <kbd>↑</kbd> or <kbd>Space</kbd> shoot ·
+            <b>P2</b> <kbd id="kA">A</kbd> <kbd id="kD">D</kbd> move, <kbd id="kW">W</kbd> shoot ·
             <kbd>P</kbd> pause
           </p>
-          <p class="help touch-help">Pavé ◀ ▶ pour bouger, gros bouton pour tirer. À deux, chacun son côté de l'écran.</p>
-          <p class="best" id="bestLine">Record survie : <b id="best">–</b></p>
+          <p class="help touch-help">Use ◀ ▶ to move and the big button to shoot. With two players, each takes one side of the screen.</p>
+          <p class="best" id="bestLine">Best survival: <b id="best">–</b></p>
         </div>
 
         <div class="overlay" id="mapO" hidden>
           <div class="map-head">
             <button class="btn ghost sm" id="bMapBack" type="button">Menu</button>
             <div class="world">
-              <button class="iconbtn" id="wPrev" type="button" aria-label="Monde précédent"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M13 3v14L4 10z"/></svg></button>
-              <h2 class="title2" id="worldName">Monde 1</h2>
-              <button class="iconbtn" id="wNext" type="button" aria-label="Monde suivant"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 3v14l9-7z"/></svg></button>
+              <button class="iconbtn" id="wPrev" type="button" aria-label="Previous world"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M13 3v14L4 10z"/></svg></button>
+              <h2 class="title2" id="worldName">World 1</h2>
+              <button class="iconbtn" id="wNext" type="button" aria-label="Next world"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 3v14l9-7z"/></svg></button>
             </div>
             <span class="star-total" id="starTotal"></span>
           </div>
@@ -272,21 +272,21 @@ kbd{font-family:var(--body);font-weight:800;font-size:.95em;background:var(--cab
         <div class="overlay" id="pauseO" hidden>
           <h2 class="title2">Pause</h2>
           <div class="row">
-            <button class="btn" id="bResume" type="button">Reprendre</button>
+            <button class="btn" id="bResume" type="button">Resume</button>
             <button class="btn ghost" id="bQuit" type="button">Menu</button>
           </div>
         </div>
 
         <div class="overlay" id="overO" hidden>
-          <h2 class="title2" id="overTitle">Partie terminée</h2>
+          <h2 class="title2" id="overTitle">Game over</h2>
           <div class="stars" id="resStars" hidden aria-hidden="true"><i>★</i><i>★</i><i>★</i></div>
           <ul class="crit" id="resCrit" hidden></ul>
           <p class="result" id="result"></p>
           <p class="record" id="newRecord" hidden></p>
           <ol class="board" id="board" hidden></ol>
           <div class="row">
-            <button class="btn" id="bNext" type="button" hidden>Niveau suivant</button>
-            <button class="btn" id="bAgain" type="button">Rejouer</button>
+            <button class="btn" id="bNext" type="button" hidden>Next level</button>
+            <button class="btn" id="bAgain" type="button">Play again</button>
             <button class="btn ghost" id="bMenu" type="button">Menu</button>
           </div>
         </div>
@@ -400,21 +400,21 @@ const timeFor = def => def.boss ? BOSSES[def.boss].time : Math.round(18 + def.b.
   + (def.k || []).reduce((t, k) => t + (k.t === 'g' ? 6 : k.t === 'b' ? .6 : 0), 0));
 
 const ITEMS = [
-  ['double', 3, '#ff8a3d', 'Double harpon'],
-  ['sticky', 3, '#e0a800', 'Harpon collant'],
-  ['shield', 2, '#2ec4e6', 'Bouclier'],
-  ['freeze', 2, '#6fb8ff', 'Bulles gelées'],
+  ['double', 3, '#ff8a3d', 'Double arrow'],
+  ['sticky', 3, '#e0a800', 'Sticky arrow'],
+  ['shield', 2, '#2ec4e6', 'Shield'],
+  ['freeze', 2, '#6fb8ff', 'Frozen bubbles'],
   ['bonus', 3, '#b45cff', '+500'],
-  ['life', .6, '#ff4f7a', '+1 vie'],
+  ['life', .6, '#ff4f7a', '+1 life'],
 ];
 // Bonus réservés à la Survie.
 const SURV_ITEMS = [
-  ['gun', 2, '#ff6b2d', 'Mitraille'],
-  ['triple', 2, '#2fb89a', 'Triple harpon'],
-  ['bomb', 1.3, '#e03a3a', 'Bombe !'],
-  ['slow', 1.5, '#7a8cff', 'Ralenti'],
-  ['star', 1, '#f5b700', 'Étoile'],
-  ['x2', 1.5, '#3fbf6f', 'Points x2'],
+  ['gun', 2, '#ff6b2d', 'Rapid fire'],
+  ['triple', 2, '#2fb89a', 'Triple arrow'],
+  ['bomb', 1.3, '#e03a3a', 'Bomb!'],
+  ['slow', 1.5, '#7a8cff', 'Slow motion'],
+  ['star', 1, '#f5b700', 'Star'],
+  ['x2', 1.5, '#3fbf6f', 'Double points'],
 ];
 const POWER_TIME = { gun: 8, triple: 10, star: 6, x2: 10, slow: 8 };
 // Aventure : trois de ces bonus se débloquent monde par monde, en version plus courte ;
@@ -437,6 +437,7 @@ const ctrlL = $('ctrlL'), ctrlR = $('ctrlR');
 let K = 1;
 
 /* ---------- Stockage (facultatif) ---------- */
+// Préfixe d'origine du jeu (« Éclate-Bulles ») gardé pour ne pas perdre les étoiles et records déjà enregistrés.
 const store = {
   get(k, d) { try { const v = localStorage.getItem('eclate-bulles:' + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
   set(k, v) { try { localStorage.setItem('eclate-bulles:' + k, JSON.stringify(v)); } catch (e) {} },
@@ -497,7 +498,7 @@ const ICON_ON = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 7.5h3l4
 const ICON_OFF = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 7.5h3l4.5-4v13L6 12.5H3z"/><path d="M13.5 7.5l5 5m0-5l-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
 function paintSound() {
   $('btnSound').innerHTML = muted ? ICON_OFF : ICON_ON;
-  $('btnSound').setAttribute('aria-label', muted ? 'Remettre le son' : 'Couper le son');
+  $('btnSound').setAttribute('aria-label', muted ? 'Unmute' : 'Mute');
 }
 
 /* ---------- État du jeu ---------- */
@@ -560,7 +561,7 @@ function loadLevel() {
   const pops = def.b.reduce((t, [sz]) => t + 2 ** (sz + 1) - 1, 0);
   dropBudget = def.boss ? 3 : clamp(Math.round(pops / 12), 1, 3); dropCd = 0; lifeDropped = false;
   unlockTxt = '';
-  for (const [t, w] of Object.entries(ADV_UNLOCK)) if (level === (w - 1) * WORLD + 1) unlockTxt = 'Nouveau bonus : ' + ITEM_BY[t][3];
+  for (const [t, w] of Object.entries(ADV_UNLOCK)) if (level === (w - 1) * WORLD + 1) unlockTxt = 'New power-up: ' + ITEM_BY[t][3];
   setState('ready', unlockTxt ? 2.6 : 1.7);
   renderBg();
 }
@@ -611,11 +612,11 @@ function openMap(world) {
     const st = starsOf(n);
     if (!unlocked(n)) {
       b.disabled = true; b.innerHTML = LOCK;
-      b.setAttribute('aria-label', `Niveau ${n}, verrouillé`);
+      b.setAttribute('aria-label', `Level ${n}, locked`);
     } else {
       if (n % 12 === 0) b.classList.add('boss');
       b.innerHTML = `<span>${n % 12 === 0 ? 'Boss' : n}</span><span class="st">${[0, 1, 2].map(i => `<i${i < st ? ' class="on"' : ''}>★</i>`).join('')}</span>`;
-      b.setAttribute('aria-label', `Niveau ${n}, ${st} étoile${st > 1 ? 's' : ''} sur 3`);
+      b.setAttribute('aria-label', `Level ${n}, ${st} of 3 stars`);
       b.addEventListener('click', () => startRun(pcount, 'adv', n));
       if (!st && !next) { next = b; b.classList.add('next'); }
     }
@@ -623,8 +624,8 @@ function openMap(world) {
   }
   let ws = 0;
   for (let n = first; n < first + WORLD; n++) ws += starsOf(n);
-  $('worldName').textContent = `Monde ${mapWorld + 1}`;
-  $('worldStars').textContent = `★ ${ws}/${WORLD * 3} dans ce monde`;
+  $('worldName').textContent = `World ${mapWorld + 1}`;
+  $('worldStars').textContent = `★ ${ws}/${WORLD * 3} in this world`;
   $('wPrev').disabled = mapWorld === 0;
   $('wNext').disabled = mapWorld === ADV_COUNT / WORLD - 1;
   $('starTotal').textContent = `★ ${totalStars()}/${ADV_COUNT * 3}`;
@@ -645,7 +646,7 @@ function show(el) { for (const o of [menuO, mapO, pauseO, overO]) o.hidden = o !
 function togglePause(force) {
   if (state === 'menu' || state === 'over') return;
   paused = force === undefined ? !paused : force;
-  $('bQuit').textContent = kind === 'adv' ? 'Carte' : 'Menu';
+  $('bQuit').textContent = kind === 'adv' ? 'Map' : 'Menu';
   show(paused ? pauseO : null);
   if (paused) $('bResume').focus({ preventScroll: true });
 }
@@ -942,19 +943,19 @@ function hurt(p) {
   levelHit = true; p.lives--;
   sfx.hit();
   burst(p.x, FLOOR - 15, COL[p.id].main, 14);
-  if (p.lives > 0) { p.inv = 2; float(p.x, FLOOR - 44, kind === 'surv' ? '-1 vie' : '-1 cœur', COL[p.id].main); return; }
+  if (p.lives > 0) { p.inv = 2; float(p.x, FLOOR - 44, kind === 'surv' ? '-1 life' : '-1 heart', COL[p.id].main); return; }
   if (players.some(o => o !== p && !o.out && o.lives > 0)) {
     p.out = true; p.harpoons = [];
-    float(p.x, FLOOR - 44, `J${p.id + 1} KO`, COL[p.id].main);
+    float(p.x, FLOOR - 44, `P${p.id + 1} KO`, COL[p.id].main);
     return;
   }
   p.dead = true; p.dvy = -300; p.dy = 0;
-  deathMsg = kind === 'surv' ? 'Plus de vies !' : 'Plus de cœurs !';
+  deathMsg = kind === 'surv' ? 'Out of lives!' : 'Out of hearts!';
   setState('dying', 1.6);
 }
 
 function timeUp() {
-  deathMsg = 'Temps écoulé !';
+  deathMsg = "Time's up!";
   for (const p of active()) { p.dead = true; p.dvy = -300; p.dy = 0; }
   setState('dying', 1.9);
   sfx.hit();
@@ -984,12 +985,12 @@ function gameOver() {
   store.set('surv' + mode, board);
   const rank = board.indexOf(entry);
   paintOver({
-    title: 'Partie terminée',
-    result: (mode === 1 ? `Score ${fmt(total)}` : `J1 ${fmt(players[0].score)} + J2 ${fmt(players[1].score)} = ${fmt(total)}`)
-      + ` · tenu ${clock(survT)}`,
-    record: rank === 0 ? 'Nouveau record !' : rank > 0 ? `${rank + 1}e meilleur score` : '',
+    title: 'Game over',
+    result: (mode === 1 ? `Score ${fmt(total)}` : `P1 ${fmt(players[0].score)} + P2 ${fmt(players[1].score)} = ${fmt(total)}`)
+      + ` · survived ${clock(survT)}`,
+    record: rank === 0 ? 'New record!' : rank > 0 ? `#${rank + 1} best score` : '',
     board, rank,
-    again: 'Rejouer', menu: 'Menu',
+    again: 'Play again', menu: 'Menu',
   });
   sfx.over();
 }
@@ -997,19 +998,19 @@ function gameOver() {
 function showResult() {
   const fast = !levelHit && clearTime > timeMax / 2;
   paintOver({
-    title: `Niveau ${level} réussi !`,
+    title: `Level ${level} cleared!`,
     stars: lastStars,
-    crit: [['Niveau fini', true], ['Sans être touché', !levelHit], ['Sans être touché, avec plus de la moitié du temps', fast]],
-    record: prevStars && lastStars > prevStars ? 'Nouveau record d\u2019étoiles !' : '',
-    next: level < ADV_COUNT, again: 'Rejouer', menu: 'Carte',
+    crit: [['Level cleared', true], ['No hits taken', !levelHit], ['No hits, with over half the time left', fast]],
+    record: prevStars && lastStars > prevStars ? 'New star record!' : '',
+    next: level < ADV_COUNT, again: 'Play again', menu: 'Map',
   });
 }
 
 function showFail() {
   paintOver({
-    title: 'Raté !',
-    result: deathMsg === 'Temps écoulé !' ? 'Le temps est écoulé.' : 'Tu n\u2019as plus de cœurs.',
-    again: 'Réessayer', menu: 'Carte',
+    title: 'Failed!',
+    result: deathMsg === "Time's up!" ? 'Time ran out.' : 'You ran out of hearts.',
+    again: 'Try again', menu: 'Map',
   });
   sfx.over();
 }
@@ -1104,7 +1105,7 @@ function updateSurvival(dt) {
     scene = SCENES[(SCENES.indexOf(scene) + 1) % SCENES.length];
     for (const b of balls) b.c = scene.ball;
     renderBg();
-    ann = { big: 'Le terrain change !', small: '', t: 1.6 };
+    ann = { big: 'The ground is shifting!', small: '', t: 1.6 };
     sfx.gate();
   }
   // Un boss toutes les 2 minutes ; les vagues continuent pendant le combat.
@@ -1112,17 +1113,17 @@ function updateSurvival(dt) {
     bossT = BOSS_EVERY;
     boss = makeBoss(BOSS_ORDER[Math.floor(Math.random() * BOSS_ORDER.length)]);
     boss.hp = boss.max = boss.max + bossKills * 4;
-    ann = { big: 'Boss !', small: boss.name, t: 2 };
+    ann = { big: 'Boss!', small: boss.name, t: 2 };
     sfx.charge();
   }
 }
 
 /* ---------- Boss (dernier niveau de chaque monde) ---------- */
 const BOSSES = {
-  king:  { name: 'Roi Bulle',     hp: 12, r: 44, time: 100, scene: 1 },
-  storm: { name: 'Grand Orage',   hp: 16, r: 30, time: 100, scene: 3 },
-  squid: { name: 'Pieuvre Encre', hp: 20, r: 34, time: 110, scene: 4 },
-  eye:   { name: 'Œil du Néant',  hp: 20, r: 36, time: 120, scene: 7 },
+  king:  { name: 'Bubble King',   hp: 12, r: 44, time: 100, scene: 1 },
+  storm: { name: 'Great Storm',   hp: 16, r: 30, time: 100, scene: 3 },
+  squid: { name: 'Ink Octopus',   hp: 20, r: 34, time: 110, scene: 4 },
+  eye:   { name: 'Void Eye',      hp: 20, r: 36, time: 120, scene: 7 },
 };
 const BOSS_ORDER = ['king', 'storm', 'squid', 'eye'];
 let boss = null, shots = [], beams = [], shake = 0;
@@ -1255,7 +1256,7 @@ function damageBoss(p) {
   if (b.hp <= 0) {
     b.dead = true; b.deadT = 1.6; b.fx = 0;
     p.score += 1000;
-    float(b.x, b.y - b.r - 20, 'Boss vaincu ! +1000', '#ffc83d');
+    float(b.x, b.y - b.r - 20, 'Boss defeated! +1000', '#ffc83d');
     shots = []; beams = []; shake = .8;
     for (const q of players) q.inv = Math.max(q.inv, 2.5);
     sfx.bossDie();
@@ -1450,8 +1451,8 @@ function loadArt(name, src, ground) {
   img.onload = () => { ART[name] = { img, ground }; renderBg(); };
   img.src = src;
 }
-loadArt('forest', 'img/foret.webp', .9231);
-loadArt('sunset', 'img/couchant.webp', .907);
+loadArt('forest', 'img/forest.webp', .9231);
+loadArt('sunset', 'img/sunset.webp', .907);
 
 const disc = (b, x, y, r, c) => { b.fillStyle = c; b.beginPath(); b.arc(x, y, r, 0, Math.PI * 2); b.fill(); };
 function hillLine(b, rnd, base, amp, color, f1, f2) {
@@ -1880,9 +1881,9 @@ function draw() {
   if (kind === 'surv' && state !== 'menu') drawSurvival();
   if (state !== 'menu') drawPowers();
   if (state === 'ready') {
-    if (kind === 'surv') banner('Survie', stateT > .45 ? 'Prêt ?' : 'Go !');
-    else banner(boss ? 'Boss !' : 'Niveau ' + level, boss ? boss.name : unlockTxt && stateT > .45 ? unlockTxt : stateT > .45 ? 'Prêt ?' : 'Go !');
-  } else if (state === 'clear') banner('Bravo !', '');
+    if (kind === 'surv') banner('Survival', stateT > .45 ? 'Ready?' : 'Go!');
+    else banner(boss ? 'Boss!' : 'Level ' + level, boss ? boss.name : unlockTxt && stateT > .45 ? unlockTxt : stateT > .45 ? 'Ready?' : 'Go!');
+  } else if (state === 'clear') banner('Well done!', '');
   else if (state === 'dying') banner(deathMsg, '');
   else if (state === 'play' && ann) banner(ann.big, ann.small);
 }
@@ -1931,7 +1932,7 @@ function drawPowers() {
 /* ---------- HUD ---------- */
 const hudCache = {};
 function setHud(key, fn, val) { if (hudCache[key] !== val) { hudCache[key] = val; fn(val); } }
-const fmt = n => n.toLocaleString('fr-FR');
+const fmt = n => n.toLocaleString('en-US');
 function hud() {
   for (let i = 0; i < 2; i++) {
     const p = players[i];
@@ -1943,8 +1944,8 @@ function hud() {
     }, p ? (p.out ? 'ko' : p.lives) : 0);
   }
   const surv = kind === 'surv' && state !== 'menu';
-  setHud('lvl', v => $('lvl').textContent = v, state === 'menu' ? 'Éclate-Bulles'
-    : surv ? 'Survie · ' + clock(survT) : 'Niveau ' + level + (level % 12 === 0 ? ' · Boss' : ''));
+  setHud('lvl', v => $('lvl').textContent = v, state === 'menu' ? 'Pop Archer'
+    : surv ? 'Survival · ' + clock(survT) : 'Level ' + level + (level % 12 === 0 ? ' · Boss' : ''));
   // En Survie, la jauge se remplit jusqu'au prochain boss.
   const frac = state === 'menu' ? 1 : surv ? (boss ? 1 : 1 - bossT / BOSS_EVERY) : clamp(timeLeft / timeMax, 0, 1);
   setHud('t', v => $('tbar').style.transform = `scaleX(${v})`, frac.toFixed(3));
@@ -2026,7 +2027,7 @@ function fireEl(p) {
   const el = document.createElement('button');
   el.type = 'button'; el.className = 'fire' + (p ? ' pb' : '');
   el.innerHTML = '<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M6 25 Q20 3 34 25" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round"/><path d="M6 25 L20 31 L34 25" fill="none" stroke="#fff" stroke-width="1.4"/><path d="M20 35 V8" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><path d="M20 2 L15 10 H25 Z" fill="#fff"/></svg>';
-  el.setAttribute('aria-label', `Tirer (joueur ${p + 1})`);
+  el.setAttribute('aria-label', `Shoot (player ${p + 1})`);
   el.addEventListener('pointerdown', e => { e.preventDefault(); audio(); queueFire(p); el.classList.add('on'); });
   for (const t of ['pointerup', 'pointercancel', 'pointerleave']) el.addEventListener(t, () => el.classList.remove('on'));
   el.addEventListener('contextmenu', e => e.preventDefault());

@@ -1,8 +1,8 @@
-# Éclate-Bulles
+# Pop Archer
 
-Jeu d'arcade dans l'esprit de Pang / Bubble Trouble : on tire un harpon vers le haut, chaque bulle touchée se coupe en deux bulles plus petites, jusqu'à ce que les plus petites éclatent. Un seul fichier `index.html`, sans dépendance.
+Jeu d'arcade dans l'esprit de Pang / Bubble Trouble : on tire un harpon vers le haut, chaque bulle touchée se coupe en deux bulles plus petites, jusqu'à ce que les plus petites éclatent. Un fichier `index.html` et un dossier `img/`, sans dépendance.
 
-On joue un petit **archer** (capuche rouge pour le joueur 1, bleue pour le joueur 2) qui tire des flèches-grappins vers le haut. Chaque monde a son décor : forêt, désert en ruines, fonds marins et cosmos, avec des obstacles dans la matière du monde. Les personnages, bulles, boss et obstacles sont dessinés dans le code ; le logo et les décors du monde 1 (forêt de jour et au coucher de soleil) sont des images générées avec Canva, rangées dans `img/` (le dossier doit rester à côté de `index.html`). Si une image manque, le décor dessiné par le code prend le relais.
+**Pop Archer** (anciennement « Éclate-Bulles ») est entièrement en anglais. On joue un petit **archer** (capuche rouge pour le joueur 1, bleue pour le joueur 2) qui tire des flèches-grappins vers le haut. Chaque monde a son décor : forêt, désert en ruines, fonds marins et cosmos, avec des obstacles dans la matière du monde. Les personnages, bulles, boss et obstacles sont dessinés dans le code ; le logo « Pop Archer » et les décors du monde 1 (forêt de jour et au coucher de soleil) sont des images générées avec Canva, rangées dans `img/` (le dossier doit rester à côté de `index.html`). Si une image manque, le décor dessiné par le code prend le relais.
 
 ## Jouer
 
@@ -12,8 +12,8 @@ Ouvrir `index.html` dans un navigateur (double-clic suffit), sur ordinateur ou t
 
 | | Bouger | Tirer |
 |---|---|---|
-| Joueur 1 | `←` `→` | `↑` ou `Espace` |
-| Joueur 2 | `Q` `D` (AZERTY) / `A` `D` (QWERTY) | `Z` (AZERTY) / `W` (QWERTY) |
+| Joueur 1 (P1) | `←` `→` | `↑` ou `Espace` |
+| Joueur 2 (P2) | `A` `D` (QWERTY) / `Q` `D` (AZERTY) | `W` (QWERTY) / `Z` (AZERTY) |
 
 `P` ou `Échap` : pause. Sur téléphone, un pavé ◀ ▶ et un bouton **Tir** s'affichent ; à deux, chaque joueur a son côté de l'écran.
 
