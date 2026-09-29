@@ -2,7 +2,7 @@
 
 Jeu d'arcade dans l'esprit de Pang / Bubble Trouble : on tire un harpon vers le haut, chaque bulle touchée se coupe en deux bulles plus petites, jusqu'à ce que les plus petites éclatent. Un fichier `index.html` et un dossier `img/`, sans dépendance.
 
-**Pop Archer** (anciennement « Éclate-Bulles ») est entièrement en anglais. On joue un petit **archer** (capuche rouge pour le joueur 1, bleue pour le joueur 2) qui tire des flèches-grappins vers le haut. Chaque monde a son décor : forêt, désert en ruines, fonds marins et cosmos, avec des obstacles dans la matière du monde. Les personnages, bulles, boss et obstacles sont dessinés dans le code ; le logo « Pop Archer » et les décors du monde 1 (forêt de jour et au coucher de soleil) sont des images générées avec Canva, rangées dans `img/` (le dossier doit rester à côté de `index.html`). Si une image manque, le décor dessiné par le code prend le relais.
+**Pop Archer** (anciennement « Éclate-Bulles ») est entièrement en anglais. On joue seul un petit **archer** à capuche rouge qui tire des flèches-grappins vers le haut. Chaque monde a son décor : forêt, désert en ruines, fonds marins et cosmos, avec des obstacles dans la matière du monde. Les personnages, bulles, boss et obstacles sont dessinés dans le code ; le logo « Pop Archer » et les décors du monde 1 (forêt de jour et au coucher de soleil) sont des images générées avec Canva, rangées dans `img/` (le dossier doit rester à côté de `index.html`). Si une image manque, le décor dessiné par le code prend le relais.
 
 ## Jouer
 
@@ -12,10 +12,9 @@ Ouvrir `index.html` dans un navigateur (double-clic suffit), sur ordinateur ou t
 
 | | Bouger | Tirer |
 |---|---|---|
-| Joueur 1 (P1) | `←` `→` | `↑` ou `Espace` |
-| Joueur 2 (P2) | `A` `D` (QWERTY) / `Q` `D` (AZERTY) | `W` (QWERTY) / `Z` (AZERTY) |
+| Clavier | `←` `→` ou `A` `D` (`Q` `D` en AZERTY) | `↑`, `W` (`Z` en AZERTY) ou `Espace` |
 
-`P` ou `Échap` : pause. Sur téléphone, un pavé ◀ ▶ et un bouton **Tir** s'affichent ; à deux, chaque joueur a son côté de l'écran.
+`P` ou `Échap` : pause. Sur téléphone, un pavé ◀ ▶ et un bouton **Tir** s'affichent.
 
 Sur téléphone, le jeu est toujours en paysage : si l'écran est tenu droit, le jeu s'affiche couché et il suffit de tourner le téléphone vers la gauche. Le bouton ⟳ retourne l'affichage pour ceux qui le tournent vers la droite.
 
@@ -30,9 +29,9 @@ Sur téléphone, le jeu est toujours en paysage : si l'écran est tenu droit, le
   - Monde 2, **Grand Orage** : un nuage qui fait pleuvoir des gouttes et des bulles, puis lance des éclairs (une ligne en pointillés prévient avant la frappe).
   - Monde 3, **Pieuvre Encre** : elle crache de l'encre en éventail et plonge sur toi après avoir tremblé.
   - Monde 4, **Œil du Néant** : protégé par 3 bulles en orbite qui arrêtent le harpon, il tire des lasers visés sur toi.
-- **Survie** : un seul écran, pas de niveaux, 3 vies. Des bulles tombent par vagues (une marque jaune prévient où), de plus en plus vite et de plus en plus grosses. Éclater des bulles à moins de 2 s d'intervalle fait monter un combo (x2 dès 3 bulles, puis x3, x4, x5). Toutes les 45 s le terrain et le décor changent, et toutes les 2 minutes un boss arrive (plus résistant à chaque fois) pendant que les vagues continuent. Les 5 meilleurs scores sont gardés, avec le temps tenu (un tableau pour 1 joueur, un pour 2).
+- **Survie** : un seul écran, pas de niveaux, 3 vies. Des bulles tombent par vagues (une marque jaune prévient où), de plus en plus vite et de plus en plus grosses. Éclater des bulles à moins de 2 s d'intervalle fait monter un combo (x2 dès 3 bulles, puis x3, x4, x5). Toutes les 45 s le terrain et le décor changent, et toutes les 2 minutes un boss arrive (plus résistant à chaque fois) pendant que les vagues continuent. Les 5 meilleurs scores sont gardés, avec le temps tenu.
 
-Les deux modes se jouent à 1 ou 2 joueurs (choix dans le menu).
+Le jeu se joue à 1 joueur (le mode à 2 joueurs a été retiré : trop compliqué sur un seul téléphone).
 
 ## Règles
 

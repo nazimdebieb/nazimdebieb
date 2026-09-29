@@ -37,19 +37,14 @@ body{
 .app{height:100%;display:flex;flex-direction:column;gap:8px;padding-block:8px;padding-inline:16px;max-width:1280px;margin-inline:auto}
 
 /* HUD */
-.hud{display:grid;grid-template-columns:1fr auto 1fr auto;align-items:center;gap:12px}
+.hud{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px}
+.tools{justify-self:end}
 .pl{display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-width:0}
-.pl.p2{align-items:flex-end}
 .pl-top{display:flex;align-items:center;gap:8px}
-.p2 .pl-top{flex-direction:row-reverse}
-.tag{font-family:var(--display);font-size:11px;letter-spacing:.06em;padding:1px 6px 0;border-radius:4px;color:var(--cab)}
-.p1 .tag{background:var(--p1)}
-.p2 .tag{background:var(--p2)}
 .score{font-family:var(--display);font-size:clamp(15px,2.4vw,22px);font-variant-numeric:tabular-nums;line-height:1.1}
 .lives{display:flex;gap:3px;min-height:9px}
 .lives i{width:9px;height:9px;border-radius:50%;display:block}
 .p1 .lives i{background:var(--p1)}
-.p2 .lives i{background:var(--p2)}
 .lives.ko::after{content:"KO";font-family:var(--display);font-size:10px;color:var(--muted)}
 .mid{display:flex;flex-direction:column;align-items:center;gap:4px}
 .lvl{font-family:var(--display);font-size:11px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;white-space:nowrap}
@@ -64,7 +59,6 @@ body{
 .iconbtn svg{width:18px;height:18px;fill:currentColor}
 .iconbtn:focus-visible,.btn:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 body[data-state="menu"] .pl,body[data-state="menu"] .timer{visibility:hidden}
-body[data-mode="1"] .pl.p2{visibility:hidden}
 
 /* Aire de jeu et commandes */
 .game{
@@ -96,9 +90,7 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
   background:radial-gradient(circle at 35% 30%,#ffa196,var(--p1) 60%);box-shadow:0 5px 0 var(--p1-dark);
 }
 .fire svg{width:46%;height:46%;display:block;margin:auto}
-.fire.pb{background:radial-gradient(circle at 35% 30%,#9eeaff,var(--p2) 60%);box-shadow:0 5px 0 var(--p2-dark)}
 .fire.on{transform:translateY(4px);box-shadow:0 1px 0 var(--p1-dark)}
-.fire.pb.on{box-shadow:0 1px 0 var(--p2-dark)}
 /* Paysage tactile : pads sur les côtés, bandeau des scores sur une ligne. */
 .land .game{grid-template-columns:auto minmax(0,1fr) auto;grid-template-rows:minmax(0,1fr);grid-template-areas:"L stage R"}
 .land .ctrl,.land #ctrlL,.land #ctrlR{flex-direction:column;justify-content:flex-end;padding-bottom:6px;width:clamp(88px,13vw,140px)}
@@ -106,7 +98,6 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
 .land .fire{width:78px;height:78px}
 .land .app{gap:6px;padding-block:6px}
 .land .pl{flex-direction:row;align-items:center;gap:8px}
-.land .pl.p2{flex-direction:row-reverse}
 .land .score{font-size:16px}
 .land .mid{flex-direction:row;gap:10px}
 .land .iconbtn{width:32px;height:32px}
@@ -155,10 +146,6 @@ kbd{font-family:var(--body);font-weight:800;font-size:.95em;background:var(--cab
 .result{margin:0;font-size:min(3cqw,6cqh);font-weight:700;font-variant-numeric:tabular-nums}
 .record{margin:0;font-family:var(--display);font-size:min(2.8cqw,5.6cqh);color:var(--gold)}
 .touch-help{display:none}
-.seg{display:flex;border-radius:12px;overflow:hidden;box-shadow:inset 0 0 0 2px var(--edge)}
-.seg button{font-family:var(--body);font-weight:800;font-size:min(2.8cqw,5.6cqh);padding:.3em 1em;border:0;background:transparent;color:var(--muted);cursor:pointer}
-.seg button[aria-pressed="true"]{background:var(--edge);color:var(--ink)}
-.seg button:focus-visible{outline:3px solid var(--gold);outline-offset:-3px}
 .btn small{font-family:var(--body);font-weight:800;font-size:.8em;margin-left:.25em;opacity:.85}
 .btn.sm{font-size:min(2.4cqw,4.8cqh);padding:.5em .9em .4em}
 .map-head{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:2cqw;width:min(100%,92cqw)}
@@ -203,20 +190,16 @@ kbd{font-family:var(--body);font-weight:800;font-size:.95em;background:var(--cab
 @media (prefers-reduced-motion:reduce){ .btn:active,.fire.on{transform:none} .stars i.on{animation:none} }
 </style>
 </head>
-<body data-state="menu" data-mode="1">
+<body data-state="menu">
 <div class="app">
   <header class="hud">
     <div class="pl p1">
-      <div class="pl-top"><span class="tag">P1</span><span class="score" id="s0">0</span></div>
+      <div class="pl-top"><span class="score" id="s0">0</span></div>
       <div class="lives" id="l0"></div>
     </div>
     <div class="mid">
       <div class="lvl" id="lvl">Pop Archer</div>
       <div class="timer" id="timer"><i id="tbar"></i></div>
-    </div>
-    <div class="pl p2">
-      <div class="pl-top"><span class="tag">P2</span><span class="score" id="s1">0</span></div>
-      <div class="lives" id="l1"></div>
     </div>
     <div class="tools">
       <button class="iconbtn" id="btnFlip" type="button" aria-label="Flip screen" hidden>
@@ -238,20 +221,16 @@ kbd{font-family:var(--body);font-weight:800;font-size:.95em;background:var(--cab
         <div class="overlay" id="menuO">
           <h1 class="logo"><img src="img/logo.webp" alt="Pop Archer" width="822" height="451"><span class="logo-txt">Pop<span>Archer</span></span></h1>
           <p class="tagline">Split every bubble in two, then in two again, until the last one pops.</p>
-          <div class="seg" role="group" aria-label="Number of players">
-            <button type="button" id="pc1" aria-pressed="true">1 player</button>
-            <button type="button" id="pc2" aria-pressed="false">2 players</button>
-          </div>
           <div class="row">
             <button class="btn" id="bAdv" type="button">Adventure <small id="advStars"></small></button>
             <button class="btn alt" id="bArc" type="button">Survival</button>
           </div>
           <p class="help kb-help">
-            <b>P1</b> <kbd>←</kbd> <kbd>→</kbd> move, <kbd>↑</kbd> or <kbd>Space</kbd> shoot ·
-            <b>P2</b> <kbd id="kA">A</kbd> <kbd id="kD">D</kbd> move, <kbd id="kW">W</kbd> shoot ·
+            <kbd>←</kbd> <kbd>→</kbd> or <kbd id="kA">A</kbd> <kbd id="kD">D</kbd> move ·
+            <kbd>↑</kbd>, <kbd id="kW">W</kbd> or <kbd>Space</kbd> shoot ·
             <kbd>P</kbd> pause
           </p>
-          <p class="help touch-help">Use ◀ ▶ to move and the big button to shoot. With two players, each takes one side of the screen.</p>
+          <p class="help touch-help">Use ◀ ▶ to move and the bow button to shoot.</p>
           <p class="best" id="bestLine">Best survival: <b id="best">–</b></p>
         </div>
 
@@ -310,7 +289,6 @@ const PTS = [100, 70, 50, 30];        // les petites rapportent plus
 const PLAYER_SPEED = 165, HARPOON_SPEED = 470;
 const COL = [
   { main: '#ff5a4e', dark: '#a32a22' },
-  { main: '#2ec4e6', dark: '#177a93' },
 ];
 
 // Deux ambiances par monde : forêt, désert, fonds marins, cosmos.
@@ -504,7 +482,7 @@ function paintSound() {
 /* ---------- État du jeu ---------- */
 let mode = 0, level = 1, state = 'menu', stateT = 0, paused = false;
 // kind : 'adv' (Aventure : niveau par niveau, 3 cœurs, étoiles) ou 'surv' (Survie : vagues sans fin, 3 vies, record)
-let kind = 'adv', pcount = store.get('players', 1) === 2 ? 2 : 1;
+let kind = 'adv';
 const ADV_COUNT = 48, ADV_HEARTS = 3, WORLD = 12;
 const worldOf = n => Math.floor((n - 1) / WORLD);
 let mapWorld = 0;
@@ -515,7 +493,7 @@ const unlocked = n => n === 1 || starsOf(n - 1) > 0;
 const totalStars = () => Object.values(adv).reduce((t, v) => t + v, 0);
 let players = [], balls = [], items = [], parts = [], texts = [], blocks = [];
 let timeLeft = 1, timeMax = 1, freezeT = 0, deathMsg = '', scene = SCENES[0];
-const fireQ = [false, false];
+let fireQueued = false;
 
 function makePlayer(id) {
   return { id, x: W / 2, lives: ADV_HEARTS, score: 0, combo: 0, comboT: 0, mult: 1, out: false, weapon: 'normal', shield: false,
@@ -556,7 +534,7 @@ function loadLevel() {
     p.x = zone * (act.length === 1 ? .5 : (i + 1) / 3);
     p.harpoons = []; p.inv = 0; p.dead = false; p.dy = 0; p.dvy = 0; p.moving = false;
   });
-  fireQ[0] = fireQ[1] = false;
+  fireQueued = false;
   levelHit = false;
   const pops = def.b.reduce((t, [sz]) => t + 2 ** (sz + 1) - 1, 0);
   dropBudget = def.boss ? 3 : clamp(Math.round(pops / 12), 1, 3); dropCd = 0; lifeDropped = false;
@@ -566,11 +544,10 @@ function loadLevel() {
   renderBg();
 }
 
-function startRun(n, k, lv) {
+function startRun(k, lv) {
   audio();
-  kind = k; mode = n; level = lv;
-  players = Array.from({ length: n }, (_, i) => makePlayer(i));
-  document.body.dataset.mode = n;
+  kind = k; mode = 1; level = lv;
+  players = [makePlayer(0)];
   buildControls();
   paused = false; show(null);
   if (k === 'surv') startSurvival(); else loadLevel();
@@ -582,14 +559,12 @@ function menuScene() {
   items = []; parts = []; texts = []; blocks = []; boss = null; shots = []; beams = [];
   balls = [[3, .2, 1], [2, .65, -1], [1, .45, 1], [1, .85, -1]].map(d => makeBall(d, scene.ball));
   setState('menu', 0);
-  document.body.dataset.mode = 1;
   buildControls();
   renderBg();
 }
 function toMenu() {
   menuScene();
   paintBest();
-  paintPcount();
   $('advStars').textContent = `★ ${totalStars()}/${ADV_COUNT * 3}`;
   show(menuO);
 }
@@ -617,7 +592,7 @@ function openMap(world) {
       if (n % 12 === 0) b.classList.add('boss');
       b.innerHTML = `<span>${n % 12 === 0 ? 'Boss' : n}</span><span class="st">${[0, 1, 2].map(i => `<i${i < st ? ' class="on"' : ''}>★</i>`).join('')}</span>`;
       b.setAttribute('aria-label', `Level ${n}, ${st} of 3 stars`);
-      b.addEventListener('click', () => startRun(pcount, 'adv', n));
+      b.addEventListener('click', () => startRun('adv', n));
       if (!st && !next) { next = b; b.classList.add('next'); }
     }
     grid.append(b);
@@ -632,11 +607,6 @@ function openMap(world) {
   show(mapO);
   const focus = next || grid.querySelector('.lv:not(:disabled)');
   if (focus) focus.focus({ preventScroll: true });
-}
-function paintPcount() {
-  paintBest();
-  $('pc1').setAttribute('aria-pressed', pcount === 1);
-  $('pc2').setAttribute('aria-pressed', pcount === 2);
 }
 function quitRun() { if (kind === 'adv') openMap(worldOf(level)); else toMenu(); }
 
@@ -659,7 +629,7 @@ function update(dt) {
   stateT -= dt;
   if (state === 'ready') {
     movePlayers(dt, false);
-    if (stateT <= 0) { setState('play', 0); fireQ[0] = fireQ[1] = false; }
+    if (stateT <= 0) { setState('play', 0); fireQueued = false; }
   } else if (state === 'play') {
     if (kind === 'surv') updateSurvival(dt); else { timeLeft -= dt; if (dropCd > 0) dropCd -= dt; }
     const frozen = freezeT > 0, slow = slowT > 0 ? .45 : 1;
@@ -733,7 +703,7 @@ function moveGates(dt) {
 function movePlayers(dt, canFire) {
   for (const p of players) {
     if (p.out || p.dead) continue;
-    const inp = input(p.id);
+    const inp = input();
     const d = (inp.r ? 1 : 0) - (inp.l ? 1 : 0);
     const ox = p.x;
     p.x = clamp(p.x + d * PLAYER_SPEED * dt, 12, W - 12);
@@ -750,7 +720,7 @@ function movePlayers(dt, canFire) {
     if (p.star > 0) p.star -= dt;
     if (p.x2 > 0) p.x2 -= dt;
     if (p.shootT > 0) p.shootT -= dt;
-    if (fireQ[p.id]) { fireQ[p.id] = false; if (canFire) { fire(p); p.shootT = .3; } }
+    if (fireQueued) { fireQueued = false; if (canFire) { fire(p); p.shootT = .3; } }
   }
 }
 
@@ -938,17 +908,12 @@ function hitPlayer(p) {
   }
 }
 
-// Chaque touche coûte un cœur ; sans cœur, le joueur est KO (à deux, l'autre continue).
+// Chaque touche coûte un cœur (une vie en Survie) ; sans cœur, c'est perdu.
 function hurt(p) {
   levelHit = true; p.lives--;
   sfx.hit();
   burst(p.x, FLOOR - 15, COL[p.id].main, 14);
   if (p.lives > 0) { p.inv = 2; float(p.x, FLOOR - 44, kind === 'surv' ? '-1 life' : '-1 heart', COL[p.id].main); return; }
-  if (players.some(o => o !== p && !o.out && o.lives > 0)) {
-    p.out = true; p.harpoons = [];
-    float(p.x, FLOOR - 44, `P${p.id + 1} KO`, COL[p.id].main);
-    return;
-  }
   p.dead = true; p.dvy = -300; p.dy = 0;
   deathMsg = kind === 'surv' ? 'Out of lives!' : 'Out of hearts!';
   setState('dying', 1.6);
@@ -976,17 +941,17 @@ function levelClear() {
 }
 
 // Survie : fin de partie, tableau des 5 meilleurs scores (un tableau pour 1 joueur, un pour 2).
-const boardOf = n => store.get('surv' + n, []);
+const boardOf = () => store.get('surv1', []);
 const clock = t => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
 function gameOver() {
   const total = players.reduce((t, p) => t + p.score, 0);
   const entry = { score: total, time: Math.floor(survT) };
-  const board = [...boardOf(mode), entry].sort((a, b) => b.score - a.score || b.time - a.time).slice(0, 5);
-  store.set('surv' + mode, board);
+  const board = [...boardOf(), entry].sort((a, b) => b.score - a.score || b.time - a.time).slice(0, 5);
+  store.set('surv1', board);
   const rank = board.indexOf(entry);
   paintOver({
     title: 'Game over',
-    result: (mode === 1 ? `Score ${fmt(total)}` : `P1 ${fmt(players[0].score)} + P2 ${fmt(players[1].score)} = ${fmt(total)}`)
+    result: `Score ${fmt(total)}`
       + ` · survived ${clock(survT)}`,
     record: rank === 0 ? 'New record!' : rank > 0 ? `#${rank + 1} best score` : '',
     board, rank,
@@ -1068,7 +1033,7 @@ function startSurvival() {
   timeMax = timeLeft = 1;
   const act = active();
   act.forEach((p, i) => { p.x = W * (act.length === 1 ? .5 : (i + 1) / 3); p.harpoons = []; });
-  fireQ[0] = fireQ[1] = false;
+  fireQueued = false;
   setState('ready', 1.7);
   renderBg();
 }
@@ -1652,7 +1617,7 @@ function drawArcher(p) {
   const c = COL[p.id], f = p.face, now = performance.now();
   ctx.save();
   ctx.translate(p.x, FLOOR + p.dy);
-  if (p.dead) { ctx.translate(0, -15); ctx.rotate((1.9 - stateT) * 5 * (p.id ? -1 : 1)); ctx.translate(0, 15); }
+  if (p.dead) { ctx.translate(0, -15); ctx.rotate((1.9 - stateT) * 5); ctx.translate(0, 15); }
   const ph = p.moving ? Math.sin(p.walk) : 0;
   const bob = p.moving ? Math.abs(Math.sin(p.walk)) * 1.2 : Math.sin(now / 420) * .4;
   const flap = p.moving ? Math.sin(p.walk * 1.3) * 2 : Math.sin(now / 350);
@@ -1899,15 +1864,14 @@ function drawSurvival() {
   ctx.textBaseline = 'middle';
   for (const p of players) {
     if (p.out || p.mult < 2) continue;
-    const left = p.id === 0, x = left ? 12 : W - 12;
-    ctx.textAlign = left ? 'left' : 'right';
-    outlined('x' + p.mult, x, 16, 16, '#ffc83d');
-    ctx.fillStyle = 'rgba(33,17,48,.75)'; ctx.fillRect(left ? x : x - 44, 28, 44, 4);
-    ctx.fillStyle = COL[p.id].main; ctx.fillRect(left ? x : x - 44 * p.comboT / 2, 28, 44 * p.comboT / 2, 4);
+    ctx.textAlign = 'left';
+    outlined('x' + p.mult, 12, 16, 16, '#ffc83d');
+    ctx.fillStyle = 'rgba(33,17,48,.75)'; ctx.fillRect(12, 28, 44, 4);
+    ctx.fillStyle = COL[p.id].main; ctx.fillRect(12, 28, 44 * p.comboT / 2, 4);
   }
 }
 
-// Bonus actifs : une pastille par effet, avec le temps restant (les deux modes).
+// Bonus actifs : une pastille par effet, avec le temps restant.
 function drawPowers() {
   for (const p of players) {
     if (p.out) continue;
@@ -1915,9 +1879,9 @@ function drawPowers() {
     if (p.power) fx.push([p.power.type, p.power.t]);
     if (p.star > 0) fx.push(['star', p.star]);
     if (p.x2 > 0) fx.push(['x2', p.x2]);
-    if (slowT > 0 && p === players.find(o => !o.out)) fx.push(['slow', slowT]);
+    if (slowT > 0) fx.push(['slow', slowT]);
     fx.forEach(([type, t], i) => {
-      const left = p.id === 0, x = left ? 21 + i * 24 : W - 21 - i * 24, y = 46;
+      const x = 21 + i * 24, y = 46;
       ctx.save(); ctx.translate(x, y);
       ctx.fillStyle = ITEM_BY[type][2]; ctx.strokeStyle = 'rgba(20,10,30,.6)'; ctx.lineWidth = 1.5;
       ctx.beginPath(); ctx.roundRect(-9, -9, 18, 18, 4); ctx.fill(); ctx.stroke();
@@ -1934,7 +1898,7 @@ const hudCache = {};
 function setHud(key, fn, val) { if (hudCache[key] !== val) { hudCache[key] = val; fn(val); } }
 const fmt = n => n.toLocaleString('en-US');
 function hud() {
-  for (let i = 0; i < 2; i++) {
+  for (const i of [0]) {
     const p = players[i];
     setHud('s' + i, v => $('s' + i).textContent = v, p ? fmt(p.score) : '0');
     setHud('l' + i, v => {
@@ -1952,23 +1916,16 @@ function hud() {
   setHud('low', v => $('timer').classList.toggle('low', v), state !== 'menu' && (surv ? !!boss : timeLeft < 10));
 }
 function paintBest() {
-  const top = boardOf(pcount)[0];
+  const top = boardOf()[0];
   $('best').textContent = top ? `${fmt(top.score)} · ${clock(top.time)}` : '–';
 }
 
 /* ---------- Commandes ---------- */
-const kb = [{ l: false, r: false }, { l: false, r: false }];
-let touch = [{ l: false, r: false }, { l: false, r: false }];
-function input(id) {
-  if (mode === 2) return { l: kb[id].l || touch[id].l, r: kb[id].r || touch[id].r };
-  return { l: kb[0].l || kb[1].l || touch[0].l, r: kb[0].r || kb[1].r || touch[0].r };
-}
-function queueFire(p) { fireQ[mode === 2 ? p : 0] = true; }
+const kb = { l: false, r: false };
+let touch = { l: false, r: false };
+const input = () => ({ l: kb.l || touch.l, r: kb.r || touch.r });
 
-const KEYS = {
-  ArrowLeft: [0, 'l'], ArrowRight: [0, 'r'], ArrowUp: [0, 'fire'], Space: [0, 'fire'],
-  KeyA: [1, 'l'], KeyD: [1, 'r'], KeyW: [1, 'fire'],
-};
+const KEYS = { ArrowLeft: 'l', ArrowRight: 'r', ArrowUp: 'fire', Space: 'fire', KeyA: 'l', KeyD: 'r', KeyW: 'fire' };
 addEventListener('keydown', e => {
   audio();
   if (e.code === 'KeyP' || e.code === 'Escape') { togglePause(); e.preventDefault(); return; }
@@ -1977,11 +1934,11 @@ addEventListener('keydown', e => {
   const inGame = !paused && (state === 'ready' || state === 'play' || state === 'clear' || state === 'dying');
   if (!inGame && e.code === 'Space') return;
   e.preventDefault();
-  if (k[1] === 'fire') { if (!e.repeat) queueFire(k[0]); }
-  else kb[k[0]][k[1]] = true;
+  if (k === 'fire') { if (!e.repeat) fireQueued = true; }
+  else kb[k] = true;
 });
-addEventListener('keyup', e => { const k = KEYS[e.code]; if (k && k[1] !== 'fire') kb[k[0]][k[1]] = false; });
-addEventListener('blur', () => { kb.forEach(o => { o.l = o.r = false; }); if (state === 'play' || state === 'ready') togglePause(true); });
+addEventListener('keyup', e => { const k = KEYS[e.code]; if (k && k !== 'fire') kb[k] = false; });
+addEventListener('blur', () => { kb.l = kb.r = false; if (state === 'play' || state === 'ready') togglePause(true); });
 document.addEventListener('visibilitychange', () => { if (document.hidden && (state === 'play' || state === 'ready')) togglePause(true); });
 
 if (navigator.keyboard && navigator.keyboard.getLayoutMap) {
@@ -1994,17 +1951,16 @@ if (navigator.keyboard && navigator.keyboard.getLayoutMap) {
 const ptrs = new Map();
 const ARROW = d => `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="${d < 0 ? 'M14 3v14L4 10z' : 'M6 3v14l10-7z'}"/></svg>`;
 function refreshTouch() {
-  touch = [{ l: false, r: false }, { l: false, r: false }];
-  for (const s of ptrs.values()) touch[s.p][s.side] = true;
+  touch = { l: false, r: false };
+  for (const side of ptrs.values()) touch[side] = true;
   document.querySelectorAll('.move').forEach(el => {
-    const p = +el.dataset.p;
-    el.children[0].classList.toggle('on', touch[p].l);
-    el.children[1].classList.toggle('on', touch[p].r);
+    el.children[0].classList.toggle('on', touch.l);
+    el.children[1].classList.toggle('on', touch.r);
   });
 }
-function moveEl(p) {
+function moveEl() {
   const el = document.createElement('div');
-  el.className = 'move'; el.dataset.p = p;
+  el.className = 'move';
   el.setAttribute('aria-hidden', 'true');
   el.innerHTML = `<span>${ARROW(-1)}</span><span>${ARROW(1)}</span>`;
   const side = e => {
@@ -2016,19 +1972,19 @@ function moveEl(p) {
   el.addEventListener('pointerdown', e => {
     e.preventDefault(); audio();
     try { el.setPointerCapture(e.pointerId); } catch (err) {}
-    ptrs.set(e.pointerId, { p, side: side(e) }); refreshTouch();
+    ptrs.set(e.pointerId, side(e)); refreshTouch();
   });
-  el.addEventListener('pointermove', e => { const s = ptrs.get(e.pointerId); if (s) { s.side = side(e); refreshTouch(); } });
+  el.addEventListener('pointermove', e => { if (ptrs.has(e.pointerId)) { ptrs.set(e.pointerId, side(e)); refreshTouch(); } });
   const up = e => { if (ptrs.delete(e.pointerId)) refreshTouch(); };
   for (const t of ['pointerup', 'pointercancel', 'lostpointercapture']) el.addEventListener(t, up);
   return el;
 }
-function fireEl(p) {
+function fireEl() {
   const el = document.createElement('button');
-  el.type = 'button'; el.className = 'fire' + (p ? ' pb' : '');
+  el.type = 'button'; el.className = 'fire';
   el.innerHTML = '<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M6 25 Q20 3 34 25" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round"/><path d="M6 25 L20 31 L34 25" fill="none" stroke="#fff" stroke-width="1.4"/><path d="M20 35 V8" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><path d="M20 2 L15 10 H25 Z" fill="#fff"/></svg>';
-  el.setAttribute('aria-label', `Shoot (player ${p + 1})`);
-  el.addEventListener('pointerdown', e => { e.preventDefault(); audio(); queueFire(p); el.classList.add('on'); });
+  el.setAttribute('aria-label', 'Shoot');
+  el.addEventListener('pointerdown', e => { e.preventDefault(); audio(); fireQueued = true; el.classList.add('on'); });
   for (const t of ['pointerup', 'pointercancel', 'pointerleave']) el.addEventListener(t, () => el.classList.remove('on'));
   el.addEventListener('contextmenu', e => e.preventDefault());
   return el;
@@ -2036,8 +1992,7 @@ function fireEl(p) {
 function buildControls() {
   ptrs.clear(); refreshTouch();
   ctrlL.replaceChildren(); ctrlR.replaceChildren();
-  if (mode === 2) { ctrlL.append(moveEl(0), fireEl(0)); ctrlR.append(fireEl(1), moveEl(1)); }
-  else { ctrlL.append(moveEl(0)); ctrlR.append(fireEl(0)); }
+  ctrlL.append(moveEl()); ctrlR.append(fireEl());
 }
 /* ---------- Orientation : toujours en paysage sur écran tactile ---------- */
 const root = document.documentElement, app = document.querySelector('.app');
@@ -2065,16 +2020,15 @@ addEventListener('orientationchange', () => setTimeout(layout, 120));
 $('btnFlip').addEventListener('click', () => { flip = !flip; store.set('flip', flip); layout(); });
 layout();
 
-for (const n of [1, 2]) $('pc' + n).addEventListener('click', () => { pcount = n; store.set('players', n); paintPcount(); });
 $('bAdv').addEventListener('click', () => openMap());
-$('bArc').addEventListener('click', () => startRun(pcount, 'surv', 1));
+$('bArc').addEventListener('click', () => startRun('surv', 1));
 $('bMapBack').addEventListener('click', toMenu);
 $('wPrev').addEventListener('click', () => { openMap(mapWorld - 1); $('wPrev').focus({ preventScroll: true }); });
 $('wNext').addEventListener('click', () => { openMap(mapWorld + 1); $('wNext').focus({ preventScroll: true }); });
 $('bResume').addEventListener('click', () => togglePause(false));
 $('bQuit').addEventListener('click', quitRun);
-$('bNext').addEventListener('click', () => startRun(mode, 'adv', level + 1));
-$('bAgain').addEventListener('click', () => startRun(mode || pcount, kind, level));
+$('bNext').addEventListener('click', () => startRun('adv', level + 1));
+$('bAgain').addEventListener('click', () => startRun(kind, level));
 $('bMenu').addEventListener('click', quitRun);
 $('btnPause').addEventListener('click', () => togglePause());
 $('btnSound').addEventListener('click', () => { muted = !muted; store.set('muted', muted); paintSound(); if (!muted) sfx.pick(); });
@@ -2116,9 +2070,8 @@ function boot(data) {
   paintSound();
   fit();
   if (data && data.kind === 'adv' && data.mode && Array.isArray(data.players) && data.players.some(p => !p.out)) {
-    kind = 'adv'; mode = data.mode; level = data.level || 1;
-    players = data.players.map((d, i) => Object.assign(makePlayer(i), d));
-    document.body.dataset.mode = mode;
+    kind = 'adv'; mode = 1; level = data.level || 1;
+    players = [Object.assign(makePlayer(0), data.players[0])];
     buildControls(); loadLevel();
     paused = true; show(pauseO);
   } else {
