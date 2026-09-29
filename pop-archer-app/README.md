@@ -61,5 +61,5 @@ keyPassword=…
 
 - `scripts/copy-web.mjs` : copie le jeu dans `www/` et remplace les polices Google par les copies locales de `fonts/`.
 - `scripts/make-icons.mjs` : refait les icônes Android, l'écran de démarrage et les visuels de la fiche Play Store à partir de `art/icon-1024.png` (Playwright nécessaire).
-- `store/` : visuels et textes de la fiche Play Store, et la politique de confidentialité.
+- `store/` : visuels et textes de la fiche Play Store (icône, bannière, 7 captures légendées dans `store/screenshots/`) et la politique de confidentialité.
 - `android/` : le projet Android généré par Capacitor. Modifications : paysage forcé (`AndroidManifest.xml`), plein écran (`MainActivity.java`), signature (`app/build.gradle`), couleurs de démarrage (`res/values/styles.xml`).

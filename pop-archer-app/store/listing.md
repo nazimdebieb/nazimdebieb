@@ -48,4 +48,14 @@ Collect coins to unlock outfits for your archer — Robin, Nomad, Sailor, Astron
 |---|---|---|
 | App icon | 512 × 512 PNG | `icon-512.png` |
 | Feature graphic | 1024 × 500 PNG or JPG | `feature-1024x500.png` |
-| Phone screenshots | 2 to 8, 16:9 landscape, at least 1080 px on the short side recommended | to capture on a phone |
+| Phone screenshots | 2 to 8, 16:9 landscape, at least 1080 px on the short side recommended | `screenshots/1.png` … `7.png` (1920 × 1080) |
+
+## Screenshots, in upload order
+
+1. Split every bubble! (forest, arrow in flight)
+2. 7 special bubbles (cosmos, all seven specials)
+3. Epic boss fights (Ink Octopus)
+4. Tricky obstacles (desert, bricks and a gate)
+5. Endless Survival mode (x4 combo)
+6. Unlock fun outfits (shop)
+7. 48 levels in 4 worlds (level map)
