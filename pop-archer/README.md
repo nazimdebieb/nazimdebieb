@@ -23,7 +23,14 @@ Ouvrir `index.html` dans un navigateur (double-clic suffit), sur ordinateur ou t
 |---|---|---|
 | Clavier | `←` `→` ou `A` `D` (`Q` `D` en AZERTY) | `↑`, `W` (`Z` en AZERTY) ou `Espace` |
 
-`P` ou `Échap` : pause. Sur téléphone, un pavé ◀ ▶ et un bouton **Tir** s'affichent.
+`P` ou `Échap` : pause.
+
+Sur téléphone et tablette, le jeu prend **tout l'écran** et il n'y a plus de boutons :
+
+- **moitié gauche** : on pose le pouce n'importe où, un joystick apparaît sous le doigt. Il ne sert qu'à aller à gauche ou à droite ; si le pouce dépasse le bord du joystick, celui-ci le suit, pour pouvoir repartir dans l'autre sens tout de suite ;
+- **moitié droite** : un appui n'importe où tire une flèche (on peut tirer en marchant, avec les deux pouces).
+
+Au début de chaque niveau et pendant le tutoriel, un joystick et un arc « fantômes » rappellent où poser les doigts. L'aire de jeu garde ses proportions : sur un écran plus large, le décor continue en miroir sur les côtés (un peu assombri, ce sont les murs) ; au-dessus, le ciel se prolonge sous le bandeau des scores.
 
 Sur téléphone, le jeu est toujours en paysage : si l'écran est tenu droit, le jeu s'affiche couché et il suffit de tourner le téléphone vers la gauche. Le bouton ⟳ retourne l'affichage pour ceux qui le tournent vers la droite.
 

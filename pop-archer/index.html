@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Bungee&display=swap">
 <style>
-/* Layout: borne d'arcade — bandeau de scores en haut, aire de jeu 16:9 au centre, pads tactiles dessous (portrait) ou sur les côtés (paysage). Un seul écran, sans défilement. */
+/* Layout: borne d'arcade — bandeau de scores en haut, aire de jeu 16:9 au centre. Sur écran tactile, le jeu prend tout l'écran : joystick flottant à gauche, tir à droite. Un seul écran, sans défilement. */
 :root{
   --cab:#211130;
   --cab-hi:#321a47;
@@ -71,32 +71,40 @@ body[data-state="menu"] .pl,body[data-state="menu"] .timer{visibility:hidden}
   box-shadow:0 0 0 3px var(--edge),0 18px 40px rgba(0,0,0,.45);container-type:size;
 }
 canvas{display:block;width:100%;height:100%;touch-action:none}
-.ctrl{display:none;gap:10px;align-items:center}
-#ctrlL{grid-area:L;justify-content:flex-start}
-#ctrlR{grid-area:R;justify-content:flex-end}
-.touch .game{grid-template-rows:minmax(0,1fr) auto;grid-template-areas:"stage stage" "L R"}
-.touch .ctrl{display:flex}
-.move{
-  display:flex;flex:1;max-width:230px;height:76px;border-radius:18px;overflow:hidden;touch-action:none;
-  background:var(--cab-hi);box-shadow:inset 0 0 0 2px var(--edge);
-}
-.move span{flex:1;display:grid;place-items:center;color:var(--muted)}
-.move span+span{box-shadow:inset 2px 0 0 var(--edge)}
-.move svg{width:26px;height:26px;fill:currentColor}
-.move span.on{background:var(--edge);color:var(--ink)}
-.fire{
-  flex:none;width:76px;height:76px;border-radius:50%;border:0;touch-action:none;cursor:pointer;
-  font-family:var(--display);font-size:14px;color:#fff;
-  background:radial-gradient(circle at 35% 30%,#ffa196,var(--p1) 60%);box-shadow:0 5px 0 var(--p1-dark);
-}
-.fire svg{width:46%;height:46%;display:block;margin:auto}
-.fire.on{transform:translateY(4px);box-shadow:0 1px 0 var(--p1-dark)}
-/* Paysage tactile : pads sur les côtés, bandeau des scores sur une ligne. */
-.land .game{grid-template-columns:auto minmax(0,1fr) auto;grid-template-rows:minmax(0,1fr);grid-template-areas:"L stage R"}
-.land .ctrl,.land #ctrlL,.land #ctrlR{flex-direction:column;justify-content:flex-end;padding-bottom:6px;width:clamp(88px,13vw,140px)}
-.land .move{flex:none;width:100%;height:84px}
-.land .fire{width:78px;height:78px}
-.land .app{gap:6px;padding-block:6px}
+/* Tactile : joystick flottant (gauche/droite seulement) là où le pouce se pose sur la moitié gauche ;
+   un appui n'importe où sur la moitié droite tire. Les repères fantômes montrent où poser les doigts. */
+.joy{position:absolute;left:0;top:0;z-index:3;width:116px;height:116px;margin:-58px 0 0 -58px;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(33,17,48,.18),rgba(33,17,48,.42));box-shadow:inset 0 0 0 2px rgba(255,243,230,.45);
+  opacity:0;transition:opacity .12s}
+.joy.on{opacity:1}
+.joy::before,.joy::after{content:"";position:absolute;top:50%;margin-top:-8px;border:8px solid transparent}
+.joy::before{left:6px;border-right-color:rgba(255,243,230,.55);border-left-width:0}
+.joy::after{right:6px;border-left-color:rgba(255,243,230,.55);border-right-width:0}
+.joy i{position:absolute;left:50%;top:50%;width:54px;height:54px;margin:-27px 0 0 -27px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#fff4d0,var(--gold) 62%);box-shadow:0 4px 0 var(--gold-dark),0 6px 14px rgba(0,0,0,.35)}
+.joy.on.go i{background:radial-gradient(circle at 35% 30%,#fff,#ffd866 62%)}
+.ghost{position:absolute;z-index:2;bottom:12%;pointer-events:none;opacity:0;transition:opacity .25s}
+.ghost.on{opacity:.55}
+.ghost.hint{opacity:1}
+#ghostL{left:clamp(24px,14%,190px);margin:0}
+#ghostL.joy{top:auto;margin:0 0 -58px -58px;transform:translateY(-58px)}
+#ghostR{right:clamp(24px,14%,190px);width:84px;height:84px;margin-bottom:-12px;border-radius:50%;display:grid;place-items:center;
+  background:radial-gradient(circle at 35% 30%,#ffa196,var(--p1) 60%);box-shadow:0 5px 0 var(--p1-dark)}
+#ghostR svg{width:46%;height:46%}
+.ghost.hint{animation:hint 1s ease-in-out infinite;border-radius:50%}
+.tap{position:absolute;left:0;top:0;z-index:3;width:60px;height:60px;margin:-30px 0 0 -30px;border-radius:50%;pointer-events:none;
+  box-shadow:inset 0 0 0 3px rgba(255,243,230,.8);opacity:0}
+.tap.go{animation:tap .3s ease-out}
+@keyframes tap{from{opacity:.9;transform:scale(.4)}to{opacity:0;transform:scale(1.15)}}
+/* Plein écran tactile : plus de marges ; le bandeau des scores flotte au-dessus du ciel, que le décor prolonge. */
+.land .app{max-width:none;padding:0;gap:0;position:relative}
+.land.turned .app{position:fixed;padding:0}
+.land .hud{position:absolute;z-index:4;top:0;left:0;right:0;pointer-events:none;
+  padding:5px max(14px,env(safe-area-inset-right,0px)) 5px max(14px,env(safe-area-inset-left,0px));
+  background:linear-gradient(rgba(33,17,48,.6),rgba(33,17,48,0))}
+.land .hud button,.land .hud .coinpill{pointer-events:auto}
+.land .stage{border-radius:0;box-shadow:none}
+.land .overlay{padding-top:calc(var(--hudh,40px) + 1cqh)}
 .land .pl{flex-direction:row;align-items:center;gap:8px}
 .land .score{font-size:16px}
 .land .mid{flex-direction:row;gap:10px}
@@ -240,7 +248,7 @@ body[data-state="ready"] .coinpill,body[data-state="play"] .coinpill,body[data-s
 .adtag{position:absolute;top:2.5cqh;left:2.5cqw;font-weight:800;font-size:min(2cqw,4cqh);background:var(--gold);color:var(--cab);border-radius:6px;padding:.1em .5em}
 .board li .cont{color:var(--muted);font-size:.85em;margin-left:.2em}
 @container (max-height:300px){ .overlay .earned{font-size:min(2.4cqw,4.8cqh)} }
-@media (prefers-reduced-motion:reduce){ .btn:active,.fire.on{transform:none} .stars i.on{animation:none} }
+@media (prefers-reduced-motion:reduce){ .btn:active{transform:none} .stars i.on{animation:none} }
 </style>
 </head>
 <body data-state="menu">
@@ -267,10 +275,13 @@ body[data-state="ready"] .coinpill,body[data-state="play"] .coinpill,body[data-s
   </header>
 
   <div class="game">
-    <div class="ctrl" id="ctrlL"></div>
     <div class="stage-wrap" id="wrap">
       <div class="stage" id="stage">
         <canvas id="cv" aria-label="Game area"></canvas>
+        <div class="joy" id="joy" aria-hidden="true"><i></i></div>
+        <div class="tap" id="tap" aria-hidden="true"></div>
+        <div class="joy ghost" id="ghostL" aria-hidden="true"><i></i></div>
+        <div class="ghost" id="ghostR" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M6 25 Q20 3 34 25" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round"/><path d="M6 25 L20 31 L34 25" fill="none" stroke="#fff" stroke-width="1.4"/><path d="M20 35 V8" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><path d="M20 2 L15 10 H25 Z" fill="#fff"/></svg></div>
 
         <div class="overlay" id="menuO">
           <h1 class="logo"><img src="img/logo.webp" alt="Pop Archer" width="822" height="451"><span class="logo-txt">Pop<span>Archer</span></span></h1>
@@ -288,7 +299,7 @@ body[data-state="ready"] .coinpill,body[data-state="play"] .coinpill,body[data-s
             <kbd>↑</kbd>, <kbd id="kW">W</kbd> or <kbd>Space</kbd> shoot ·
             <kbd>P</kbd> pause
           </p>
-          <p class="help touch-help">Use ◀ ▶ to move and the bow button to shoot.</p>
+          <p class="help touch-help">Slide a thumb on the left half to move · tap the right half to shoot</p>
           <p class="best" id="bestLine">Best survival: <b id="best">–</b></p>
         </div>
 
@@ -383,7 +394,6 @@ body[data-state="ready"] .coinpill,body[data-state="play"] .coinpill,body[data-s
         </div>
       </div>
     </div>
-    <div class="ctrl" id="ctrlR"></div>
   </div>
 </div>
 
@@ -601,8 +611,9 @@ const cv = $('cv'), ctx = cv.getContext('2d');
 const bg = document.createElement('canvas'), bctx = bg.getContext('2d');
 const wrap = $('wrap'), stage = $('stage');
 const menuO = $('menuO'), mapO = $('mapO'), pauseO = $('pauseO'), overO = $('overO');
-const ctrlL = $('ctrlL'), ctrlR = $('ctrlR');
-let K = 1;
+const hudEl = document.querySelector('.hud');
+// K : échelle du monde (640×360) vers les pixels du canvas ; OX, OY : décalage de l'aire de jeu dans le canvas.
+let K = 1, OX = 0, OY = 0;
 
 /* ---------- Stockage (facultatif) ---------- */
 // Préfixe d'origine du jeu (« Éclate-Bulles ») gardé pour ne pas perdre les étoiles et records déjà enregistrés.
@@ -870,9 +881,8 @@ function startTutorial() {
   paintHint();
 }
 function paintHint() {
-  const pad = ctrlL.firstChild, fireB = ctrlR.firstChild;
-  if (pad) pad.classList.toggle('hint', !!tut && tut.step === 0);
-  if (fireB) fireB.classList.toggle('hint', !!tut && tut.step === 1);
+  $('ghostL').classList.toggle('hint', !!tut && tut.step === 0);
+  $('ghostR').classList.toggle('hint', !!tut && tut.step === 1);
 }
 function stepTutorial(dt, p) {
   if (!tut || !p) return;
@@ -883,8 +893,8 @@ function stepTutorial(dt, p) {
 function tutorialText() {
   if (!tut) return null;
   const touch = document.documentElement.classList.contains('touch');
-  if (tut.step === 0) return ['Move', touch ? 'Hold ◀ or ▶ to walk' : 'Walk with ← → or A D'];
-  if (tut.step === 1) return ['Shoot', touch ? 'Tap the bow button to fire an arrow' : 'Press Space or ↑ to fire an arrow'];
+  if (tut.step === 0) return ['Move', touch ? 'Put a thumb on the left side and slide ◀ ▶' : 'Walk with ← → or A D'];
+  if (tut.step === 1) return ['Shoot', touch ? 'Tap anywhere on the right side to fire' : 'Press Space or ↑ to fire an arrow'];
   return ['Pop them all!', "Each hit splits a bubble in two. Don't let one touch you!"];
 }
 function startRun(k, lv) {
@@ -892,7 +902,7 @@ function startRun(k, lv) {
   kind = k; mode = 1; level = lv;
   runCoins = 0; survPaid = 0; continued = false;
   players = [makePlayer(0)];
-  buildControls();
+  releaseJoy();
   paused = false; show(null);
   if (k === 'surv') startSurvival(); else loadLevel();
   tut = null;
@@ -905,7 +915,7 @@ function menuScene() {
   items = []; parts = []; texts = []; blocks = []; boss = null; shots = []; beams = [];
   balls = [[4, .2, 1], [2, .65, -1, null, 'gold'], [1, .45, 1, null, 'black'], [2, .85, -1, null, 'green']].map(d => makeBall(d, scene.ball));
   setState('menu', 0);
-  buildControls();
+  releaseJoy();
   renderBg();
 }
 function toMenu() {
@@ -959,7 +969,7 @@ function openMap(world) {
 function quitRun() { if (kind === 'adv') openMap(worldOf(level)); else toMenu(); }
 
 function setState(s, t) { state = s; stateT = t; document.body.dataset.state = s; }
-function show(el) { for (const o of [menuO, mapO, pauseO, overO, prepO, shopO, setO]) o.hidden = o !== el; }
+function show(el) { for (const o of [menuO, mapO, pauseO, overO, prepO, shopO, setO]) o.hidden = o !== el; if (el) releaseJoy(); }
 
 function togglePause(force) {
   if (state === 'menu' || state === 'over') return;
@@ -1948,7 +1958,7 @@ function shades(c) { return shadeCache[c] || (shadeCache[c] = { lite: mix(c, '#f
 function renderBg() {
   bg.width = cv.width; bg.height = cv.height;
   const b = bctx;
-  b.setTransform(K, 0, 0, K, 0, 0);
+  b.setTransform(K, 0, 0, K, OX, OY);
   let seed = level * 7919 + SCENES.indexOf(scene) * 131 + 1;
   const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
   const sc = scene;
@@ -1960,6 +1970,43 @@ function renderBg() {
     // Décor peint (Canva) : l'herbe de l'image est calée sur le sol du jeu.
     b.drawImage(art.img, 0, 0, W, (FLOOR - 2) / art.ground);
   } else BACKDROPS[sc.theme](b, sc, rnd);
+  extendBg();
+}
+// Écran plus large que le 16:9 : le décor continue en miroir sur les côtés (un peu assombri, ce sont
+// les murs) ; au-dessus, sous le bandeau des scores, le haut du ciel est prolongé.
+function extendBg() {
+  const b = bctx, pw = Math.round(W * K), ph = Math.round(H * K), mr = bg.width - OX - pw;
+  b.setTransform(1, 0, 0, 1, 0, 0);
+  if (OX > 0 || mr > 0) {
+    b.save(); b.scale(-1, 1);
+    if (OX > 0) { const s = Math.min(OX, pw); b.drawImage(bg, OX, OY, s, ph, -OX, OY, s, ph); }
+    if (mr > 0) { const s = Math.min(mr, pw); b.drawImage(bg, OX + pw - s, OY, s, ph, -(OX + pw + s), OY, s, ph); }
+    b.restore();
+    b.fillStyle = 'rgba(20,10,30,.3)';
+    b.fillRect(0, OY, OX, ph); b.fillRect(OX + pw, OY, mr, ph);
+    const edge = Math.max(2, Math.round(5 * K));
+    for (const [x, dir] of [[OX, -1], [OX + pw, 1]]) {
+      const g = b.createLinearGradient(x, 0, x + dir * edge, 0);
+      g.addColorStop(0, 'rgba(20,10,30,.45)'); g.addColorStop(1, 'rgba(20,10,30,0)');
+      b.fillStyle = g; b.fillRect(Math.min(x, x + dir * edge), OY, edge, ph);
+    }
+  }
+  if (OY > 0) {
+    // haut du ciel réduit à une rangée floue de 32 points, puis étiré : un dégradé lisse, sans stries
+    // (copie exacte des rangées d'abord : le filtre de réduction ne doit pas mordre sur la bande encore vide)
+    const rows = Math.max(1, Math.round(4 * K)), r = document.createElement('canvas'); r.width = bg.width; r.height = rows;
+    r.getContext('2d').drawImage(bg, 0, OY, bg.width, rows, 0, 0, bg.width, rows);
+    const t = document.createElement('canvas'); t.width = 32; t.height = 1;
+    const tc = t.getContext('2d'); tc.imageSmoothingQuality = 'high';
+    tc.drawImage(r, 0, 0, 32, 1);
+    b.imageSmoothingQuality = 'high'; b.drawImage(t, 0, 0, 32, 1, 0, 0, bg.width, OY);
+    // raccord en fondu sur le haut de l'aire de jeu
+    const f = Math.round(18 * K), m = document.createElement('canvas'); m.width = bg.width; m.height = f;
+    const mc = m.getContext('2d'); mc.drawImage(t, 0, 0, 32, 1, 0, 0, bg.width, f);
+    const g = mc.createLinearGradient(0, 0, 0, f); g.addColorStop(0, '#000'); g.addColorStop(1, 'rgba(0,0,0,0)');
+    mc.globalCompositeOperation = 'destination-in'; mc.fillStyle = g; mc.fillRect(0, 0, bg.width, f);
+    b.drawImage(m, 0, OY);
+  }
 }
 
 // Images générées avec Canva, rangées dans img/ ; tant qu'une image n'est pas chargée
@@ -2610,9 +2657,10 @@ function fitSize(text, size, face) {
 function draw() {
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.clearRect(0, 0, cv.width, cv.height);
-  ctx.setTransform(K, 0, 0, K, 0, 0);
-  if (shake > 0 && !paused) ctx.translate((Math.random() - .5) * shake * 10, (Math.random() - .5) * shake * 10);
-  ctx.drawImage(bg, 0, 0, W, H);
+  let sx = 0, sy = 0;
+  if (shake > 0 && !paused) { sx = (Math.random() - .5) * shake * 10 * K; sy = (Math.random() - .5) * shake * 10 * K; }
+  ctx.drawImage(bg, sx, sy);
+  ctx.setTransform(K, 0, 0, K, OX + sx, OY + sy);
   for (const k of blocks) drawBlock(k);
   if (boss || shots.length || beams.length) drawShotsAndBeams();
   for (const it of items) drawItem(it);
@@ -2709,6 +2757,7 @@ const hudCache = {};
 function setHud(key, fn, val) { if (hudCache[key] !== val) { hudCache[key] = val; fn(val); } }
 const fmt = n => n.toLocaleString('en-US');
 function hud() {
+  paintGhosts();
   for (const i of [0]) {
     const p = players[i];
     setHud('s' + i, v => $('s' + i).textContent = v, p ? fmt(p.score) : '0');
@@ -2765,51 +2814,57 @@ if (navigator.keyboard && navigator.keyboard.getLayoutMap) {
   }).catch(() => {});
 }
 
-const ptrs = new Map();
-const ARROW = d => `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="${d < 0 ? 'M14 3v14L4 10z' : 'M6 3v14l10-7z'}"/></svg>`;
-function refreshTouch() {
-  touch = { l: false, r: false };
-  for (const side of ptrs.values()) touch[side] = true;
-  document.querySelectorAll('.move').forEach(el => {
-    el.children[0].classList.toggle('on', touch.l);
-    el.children[1].classList.toggle('on', touch.r);
-  });
+// Joystick flottant : le pouce se pose n'importe où sur la moitié gauche, le joystick apparaît dessous
+// et ne sert qu'à aller à gauche ou à droite. Au-delà du bord, il suit le pouce pour pouvoir repartir
+// dans l'autre sens tout de suite. Un appui n'importe où sur la moitié droite tire une flèche.
+const JOY_R = 40, JOY_DEAD = 9;
+const joy = { id: null, x: 0, y: 0, dx: 0 };
+const joyEl = $('joy'), tapEl = $('tap');
+function local(e) {
+  // Coordonnées dans l'aire de jeu, même quand le téléphone est tenu droit et le jeu dessiné couché.
+  if (turned === 'cw') return { x: e.clientY, y: innerWidth - e.clientX };
+  if (turned === 'ccw') return { x: innerHeight - e.clientY, y: e.clientX };
+  const r = stage.getBoundingClientRect();
+  return { x: e.clientX - r.left, y: e.clientY - r.top };
 }
-function moveEl() {
-  const el = document.createElement('div');
-  el.className = 'move';
-  el.setAttribute('aria-hidden', 'true');
-  el.innerHTML = `<span>${ARROW(-1)}</span><span>${ARROW(1)}</span>`;
-  const side = e => {
-    const r = el.getBoundingClientRect();
-    if (turned === 'cw') return e.clientY < r.top + r.height / 2 ? 'l' : 'r';
-    if (turned === 'ccw') return e.clientY > r.top + r.height / 2 ? 'l' : 'r';
-    return e.clientX < r.left + r.width / 2 ? 'l' : 'r';
-  };
-  el.addEventListener('pointerdown', e => {
-    e.preventDefault(); audio();
-    try { el.setPointerCapture(e.pointerId); } catch (err) {}
-    ptrs.set(e.pointerId, side(e)); refreshTouch();
-  });
-  el.addEventListener('pointermove', e => { if (ptrs.has(e.pointerId)) { ptrs.set(e.pointerId, side(e)); refreshTouch(); } });
-  const up = e => { if (ptrs.delete(e.pointerId)) refreshTouch(); };
-  for (const t of ['pointerup', 'pointercancel', 'lostpointercapture']) el.addEventListener(t, up);
-  return el;
+const inPlay = () => mode && !paused && (state === 'ready' || state === 'play' || state === 'clear' || state === 'dying');
+function setJoy() {
+  const on = joy.id !== null;
+  touch = { l: on && joy.dx < -JOY_DEAD, r: on && joy.dx > JOY_DEAD };
+  joyEl.classList.toggle('on', on);
+  joyEl.classList.toggle('go', touch.l || touch.r);
+  joyEl.style.transform = `translate(${joy.x}px,${joy.y}px)`;
+  joyEl.firstChild.style.transform = `translateX(${joy.dx}px)`;
 }
-function fireEl() {
-  const el = document.createElement('button');
-  el.type = 'button'; el.className = 'fire';
-  el.innerHTML = '<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M6 25 Q20 3 34 25" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round"/><path d="M6 25 L20 31 L34 25" fill="none" stroke="#fff" stroke-width="1.4"/><path d="M20 35 V8" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><path d="M20 2 L15 10 H25 Z" fill="#fff"/></svg>';
-  el.setAttribute('aria-label', 'Shoot');
-  el.addEventListener('pointerdown', e => { e.preventDefault(); audio(); fireQueued = true; el.classList.add('on'); });
-  for (const t of ['pointerup', 'pointercancel', 'pointerleave']) el.addEventListener(t, () => el.classList.remove('on'));
-  el.addEventListener('contextmenu', e => e.preventDefault());
-  return el;
-}
-function buildControls() {
-  ptrs.clear(); refreshTouch();
-  ctrlL.replaceChildren(); ctrlR.replaceChildren();
-  ctrlL.append(moveEl()); ctrlR.append(fireEl());
+function releaseJoy() { joy.id = null; joy.dx = 0; setJoy(); }
+cv.addEventListener('pointerdown', e => {
+  if (!isTouch || !inPlay()) return;
+  e.preventDefault();
+  const p = local(e);
+  if (p.x < stage.clientWidth / 2) {
+    if (joy.id !== null) return;
+    joy.id = e.pointerId; joy.x = p.x; joy.y = p.y; joy.dx = 0;
+    try { cv.setPointerCapture(e.pointerId); } catch (err) {}
+    setJoy();
+  } else {
+    fireQueued = true;
+    tapEl.style.transform = `translate(${p.x}px,${p.y}px)`;
+    tapEl.classList.remove('go'); void tapEl.offsetWidth; tapEl.classList.add('go');
+  }
+});
+cv.addEventListener('pointermove', e => {
+  if (e.pointerId !== joy.id) return;
+  const p = local(e);
+  let dx = p.x - joy.x;
+  if (dx > JOY_R) { joy.x = p.x - JOY_R; dx = JOY_R; } else if (dx < -JOY_R) { joy.x = p.x + JOY_R; dx = -JOY_R; }
+  joy.dx = dx; setJoy();
+});
+for (const t of ['pointerup', 'pointercancel', 'lostpointercapture']) cv.addEventListener(t, e => { if (e.pointerId === joy.id) releaseJoy(); });
+cv.addEventListener('contextmenu', e => e.preventDefault());
+// Repères fantômes (pouce à gauche, arc à droite) : au début de chaque niveau et pendant le tutoriel.
+function paintGhosts() {
+  const on = isTouch && inPlay() && joy.id === null && (state === 'ready' || !!tut);
+  setHud('ghosts', v => { $('ghostL').classList.toggle('on', v); $('ghostR').classList.toggle('on', v); }, on);
 }
 /* ---------- Orientation : toujours en paysage sur écran tactile ---------- */
 const root = document.documentElement, app = document.querySelector('.app');
@@ -2827,7 +2882,8 @@ function layout() {
   app.style.height = upright ? vw + 'px' : '';
   if (upright && (innerWidth !== vw || innerHeight !== vh)) requestAnimationFrame(layout);
   $('btnFlip').hidden = !upright;
-  if (ptrs.size) { ptrs.clear(); refreshTouch(); }
+  releaseJoy();
+  if (typeof fit === 'function') fit();
 }
 function enableTouch() { if (!isTouch) { isTouch = true; layout(); } }
 if (matchMedia('(pointer: coarse)').matches) isTouch = true;
@@ -3176,15 +3232,19 @@ $('bPlay').addEventListener('click', play);
 $('bPrepBack').addEventListener('click', () => { if (prepKind === 'adv') openMap(worldOf(prepLevel)); else toMenu(); });
 
 /* ---------- Taille de l'écran ---------- */
+// Sur ordinateur, l'aire de jeu est un 16:9 encadré. Sur écran tactile, le canvas couvre tout l'écran :
+// l'aire de jeu garde ses proportions, calée en bas sous le bandeau des scores et centrée en largeur.
 function fit() {
-  const r = { width: wrap.clientWidth, height: wrap.clientHeight };
-  let w = r.width, h = w * 9 / 16;
-  if (h > r.height) { h = r.height; w = h * 16 / 9; }
+  let w = wrap.clientWidth, h = wrap.clientHeight;
+  if (!isTouch) { const hh = h; h = w * 9 / 16; if (h > hh) { h = hh; w = h * 16 / 9; } }
   w = Math.max(160, Math.floor(w)); h = Math.max(90, Math.floor(h));
   stage.style.width = w + 'px'; stage.style.height = h + 'px';
   const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
   cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
-  K = cv.width / W;
+  const band = isTouch ? hudEl.offsetHeight : 0;
+  root.style.setProperty('--hudh', band + 'px');
+  K = Math.min(cv.width / W, (cv.height - band * dpr) / H);
+  OX = Math.round((cv.width - W * K) / 2); OY = Math.round(cv.height - H * K);
   renderBg();
 }
 new ResizeObserver(fit).observe(wrap);
@@ -3210,7 +3270,7 @@ function boot(data) {
   if (data && data.kind === 'adv' && data.mode && Array.isArray(data.players) && data.players.some(p => !p.out)) {
     kind = 'adv'; mode = 1; level = data.level || 1;
     players = [Object.assign(makePlayer(0), data.players[0])];
-    buildControls(); loadLevel();
+    releaseJoy(); loadLevel();
     paused = true; show(pauseO);
   } else {
     toMenu();
