@@ -409,6 +409,14 @@ const SURV_ITEMS = [
   ['x2', 1.5, '#3fbf6f', 'Points x2'],
 ];
 const POWER_TIME = { gun: 8, triple: 10, star: 6, x2: 10, slow: 8 };
+// Aventure : trois de ces bonus se débloquent monde par monde, en version plus courte ;
+// bombe, étoile et points x2 restent réservés à la Survie.
+const ADV_UNLOCK = { triple: 2, slow: 3, gun: 4 };
+const ADV_TIME = { triple: 6, slow: 5, gun: 5 };
+const powerTime = t => (kind === 'adv' && ADV_TIME[t]) || POWER_TIME[t];
+// Budget de bonus par niveau d'Aventure : 1 à 3 selon le nombre de bulles, 3 pour un boss,
+// au moins 5 s entre deux bonus, et une seule vie en plus par niveau.
+let dropBudget = 0, dropCd = 0, lifeDropped = false, unlockTxt = '';
 const ITEM_BY = Object.fromEntries([...ITEMS, ...SURV_ITEMS].map(i => [i[0], i]));
 
 /* ---------- DOM ---------- */
@@ -541,7 +549,11 @@ function loadLevel() {
   });
   fireQ[0] = fireQ[1] = false;
   levelHit = false;
-  setState('ready', 1.7);
+  const pops = def.b.reduce((t, [sz]) => t + 2 ** (sz + 1) - 1, 0);
+  dropBudget = def.boss ? 3 : clamp(Math.round(pops / 12), 1, 3); dropCd = 0; lifeDropped = false;
+  unlockTxt = '';
+  for (const [t, w] of Object.entries(ADV_UNLOCK)) if (level === (w - 1) * WORLD + 1) unlockTxt = 'Nouveau bonus : ' + ITEM_BY[t][3];
+  setState('ready', unlockTxt ? 2.6 : 1.7);
   renderBg();
 }
 
@@ -640,7 +652,7 @@ function update(dt) {
     movePlayers(dt, false);
     if (stateT <= 0) { setState('play', 0); fireQ[0] = fireQ[1] = false; }
   } else if (state === 'play') {
-    if (kind === 'surv') updateSurvival(dt); else timeLeft -= dt;
+    if (kind === 'surv') updateSurvival(dt); else { timeLeft -= dt; if (dropCd > 0) dropCd -= dt; }
     const frozen = freezeT > 0, slow = slowT > 0 ? .45 : 1;
     if (slowT > 0) slowT -= dt;
     if (frozen) freezeT -= dt; else moveBalls(dt * slow);
@@ -836,10 +848,19 @@ function bomb(p) {
 }
 
 function dropItem(x, y) {
-  const pool = kind === 'surv' ? [...ITEMS, ...SURV_ITEMS] : ITEMS;
+  let pool;
+  if (kind === 'surv') pool = [...ITEMS, ...SURV_ITEMS];
+  else {
+    if (dropBudget <= 0 || dropCd > 0) return;
+    dropBudget--; dropCd = 5;
+    const world = worldOf(level) + 1;
+    pool = [...ITEMS, ...SURV_ITEMS.filter(i => ADV_UNLOCK[i[0]] && world >= ADV_UNLOCK[i[0]])];
+    if (lifeDropped) pool = pool.filter(i => i[0] !== 'life');
+  }
   const total = pool.reduce((t, i) => t + i[1], 0);
   let r = Math.random() * total, pick = pool[0];
   for (const it of pool) { if ((r -= it[1]) <= 0) { pick = it; break; } }
+  if (pick[0] === 'life') lifeDropped = true;
   items.push({ type: pick[0], x: clamp(x, 10, W - 10), y, vy: -80, t: 7 });
 }
 
@@ -864,10 +885,10 @@ function applyItem(p, type) {
   else if (type === 'freeze') freezeT = 4.5;
   else if (type === 'bonus') p.score += 500;
   else if (type === 'life') p.lives = Math.min(p.lives + 1, 9);
-  else if (type === 'gun' || type === 'triple') p.power = { type, t: POWER_TIME[type] };
+  else if (type === 'gun' || type === 'triple') p.power = { type, t: powerTime(type) };
   else if (type === 'star') p.star = POWER_TIME.star;
   else if (type === 'x2') p.x2 = POWER_TIME.x2;
-  else if (type === 'slow') slowT = POWER_TIME.slow;
+  else if (type === 'slow') slowT = powerTime('slow');
   else if (type === 'bomb') bomb(p);
   float(p.x, FLOOR - 44, label, color);
   sfx.pick();
@@ -1659,9 +1680,10 @@ function draw() {
 
   if (boss && state !== 'menu') drawBossBar();
   if (kind === 'surv' && state !== 'menu') drawSurvival();
+  if (state !== 'menu') drawPowers();
   if (state === 'ready') {
     if (kind === 'surv') banner('Survie', stateT > .45 ? 'Prêt ?' : 'Go !');
-    else banner(boss ? 'Boss !' : 'Niveau ' + level, boss ? boss.name : stateT > .45 ? 'Prêt ?' : 'Go !');
+    else banner(boss ? 'Boss !' : 'Niveau ' + level, boss ? boss.name : unlockTxt && stateT > .45 ? unlockTxt : stateT > .45 ? 'Prêt ?' : 'Go !');
   } else if (state === 'clear') banner('Bravo !', '');
   else if (state === 'dying') banner(deathMsg, '');
   else if (state === 'play' && ann) banner(ann.big, ann.small);
@@ -1684,7 +1706,10 @@ function drawSurvival() {
     ctx.fillStyle = 'rgba(33,17,48,.75)'; ctx.fillRect(left ? x : x - 44, 28, 44, 4);
     ctx.fillStyle = COL[p.id].main; ctx.fillRect(left ? x : x - 44 * p.comboT / 2, 28, 44 * p.comboT / 2, 4);
   }
-  // Bonus actifs : une pastille par effet, avec le temps restant.
+}
+
+// Bonus actifs : une pastille par effet, avec le temps restant (les deux modes).
+function drawPowers() {
   for (const p of players) {
     if (p.out) continue;
     const fx = [];
@@ -1699,7 +1724,7 @@ function drawSurvival() {
       ctx.beginPath(); ctx.roundRect(-9, -9, 18, 18, 4); ctx.fill(); ctx.stroke();
       drawItemGlyph(type);
       ctx.fillStyle = 'rgba(33,17,48,.75)'; ctx.fillRect(-9, 12, 18, 3);
-      ctx.fillStyle = '#fff3e6'; ctx.fillRect(-9, 12, 18 * clamp(t / POWER_TIME[type], 0, 1), 3);
+      ctx.fillStyle = '#fff3e6'; ctx.fillRect(-9, 12, 18 * clamp(t / powerTime(type), 0, 1), 3);
       ctx.restore();
     });
   }

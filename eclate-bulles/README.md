@@ -36,6 +36,10 @@ Les deux modes se jouent à 1 ou 2 joueurs (choix dans le menu).
 
 - Les petites bulles rapportent plus (30 → 100 points) ; le temps restant donne un bonus en fin de niveau.
 - Bonus qui tombent parfois : double harpon, harpon collant (reste accroché au plafond), bouclier, bulles gelées, +500, +1 vie.
+- En Aventure, les bonus sont dosés pour que les étoiles restent à gagner :
+  - chaque niveau donne **1 à 3 bonus au maximum** (selon le nombre de bulles, 3 pour un boss), avec au moins 5 s entre deux, et une seule vie en plus par niveau ;
+  - trois bonus de la Survie arrivent monde par monde, en version plus courte : **Triple harpon** (monde 2, 6 s), **Ralenti** (monde 3, 5 s), **Mitraille** (monde 4, 5 s). Un message l'annonce au premier niveau du monde ;
+  - Bombe, Étoile et Points x2 restent réservés à la Survie.
 - Bonus en plus en Survie (une pastille en haut de l'écran montre ceux qui sont actifs et leur temps restant) :
   - **Mitraille** (8 s) : des balles courtes et rapides, jusqu'à 6 à l'écran ;
   - **Triple harpon** (10 s) : trois harpons en éventail à chaque tir ;
