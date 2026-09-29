@@ -127,7 +127,11 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
   margin:0 0 .12em;font-family:var(--display);font-weight:400;line-height:1;color:var(--gold);
   font-size:min(9cqw,15cqh);text-shadow:0 .06em 0 #c2452f,0 .13em 0 rgba(0,0,0,.35);white-space:nowrap;
 }
-.logo span{display:inline;margin-left:.08em;color:var(--ink);text-shadow:0 .06em 0 var(--p2-dark),0 .13em 0 rgba(0,0,0,.35)}
+.logo img{display:block;height:min(30cqh,23cqw);width:auto;margin-inline:auto}
+.logo .logo-txt{display:none}
+.logo.noimg img{display:none}
+.logo.noimg .logo-txt{display:inline}
+.logo span span{display:inline;margin-left:.08em;color:var(--ink);text-shadow:0 .06em 0 var(--p2-dark),0 .13em 0 rgba(0,0,0,.35)}
 .title2{margin:0;font-family:var(--display);font-weight:400;font-size:min(7cqw,13cqh);color:var(--ink);text-wrap:balance}
 .tagline{margin:0;font-size:min(3cqw,6cqh);font-weight:700;color:var(--ink)}
 .row{display:flex;gap:2.5cqw;flex-wrap:wrap;justify-content:center}
@@ -193,7 +197,7 @@ kbd{font-family:var(--body);font-weight:800;font-size:.95em;background:var(--cab
 .touch .touch-help{display:block}
 .touch .kb-help{display:none}
 .overlay>*{flex-shrink:0}
-@container (max-height:420px){ .overlay .tagline{display:none} }
+@container (max-height:600px){ .overlay .tagline{display:none} }
 @container (max-height:250px){ .overlay .help{display:none} }
 @container (max-height:230px){ .overlay .board{display:none} }
 @media (prefers-reduced-motion:reduce){ .btn:active,.fire.on{transform:none} .stars i.on{animation:none} }
@@ -232,7 +236,7 @@ kbd{font-family:var(--body);font-weight:800;font-size:.95em;background:var(--cab
         <canvas id="cv" aria-label="Aire de jeu"></canvas>
 
         <div class="overlay" id="menuO">
-          <h1 class="logo">Éclate<span>Bulles</span></h1>
+          <h1 class="logo"><img src="img/logo.webp" alt="Éclate-Bulles" width="947" height="469"><span class="logo-txt">Éclate<span>Bulles</span></span></h1>
           <p class="tagline">Coupe chaque bulle en deux, puis encore en deux, jusqu'à la dernière.</p>
           <div class="seg" role="group" aria-label="Nombre de joueurs">
             <button type="button" id="pc1" aria-pressed="true">1 joueur</button>
@@ -311,8 +315,8 @@ const COL = [
 
 // Deux ambiances par monde : forêt, désert, fonds marins, cosmos.
 const SCENES = [
-  { theme: 'forest', sky: ['#5ec2ff', '#d6f3ff'], sun: '#fffbe0', far: '#9ad7a0', trees2: '#6cbf7a', trees: '#3f9a5c', trunk: '#6b4526', ground: '#7a4f2c', grass: '#5cc254', ball: '#ff3b55', clouds: true },
-  { theme: 'forest', sky: ['#ffab73', '#ffe7c4'], sun: '#fff1c9', far: '#d9a27a', trees2: '#8aa05a', trees: '#4f7f3a', trunk: '#5b3a22', ground: '#6b4526', grass: '#8cc84b', ball: '#3b6cff', clouds: true },
+  { theme: 'forest', sky: ['#5ec2ff', '#d6f3ff'], sun: '#fffbe0', far: '#9ad7a0', trees2: '#6cbf7a', trees: '#3f9a5c', trunk: '#6b4526', ground: '#7a4f2c', grass: '#5cc254', ball: '#ff3b55', clouds: true, art: 'forest' },
+  { theme: 'forest', sky: ['#ffab73', '#ffe7c4'], sun: '#fff1c9', far: '#d9a27a', trees2: '#8aa05a', trees: '#4f7f3a', trunk: '#5b3a22', ground: '#6b4526', grass: '#8cc84b', ball: '#3b6cff', clouds: true, art: 'sunset' },
   { theme: 'desert', sky: ['#ffc76b', '#fff0cc'], sun: '#fff8e1', far: '#eab06a', near: '#c98a4a', dune: '#e3a45a', cactus: '#6f9a4a', ground: '#d9a45c', ball: '#7a3cff' },
   { theme: 'desert', sky: ['#4b2f86', '#ff8466'], sun: '#ffd29a', far: '#8a4f7a', near: '#5a2f5a', dune: '#a35a5a', cactus: '#3f5a3a', ground: '#8a5a3a', ball: '#ffd23b' },
   { theme: 'sea', sky: ['#35c3d6', '#0f6f8f'], far: '#1d7f8f', weed: '#2f9e6a', coral: '#ff7a8a', ground: '#e8cf97', ball: '#ffb02e' },
@@ -1431,8 +1435,23 @@ function renderBg() {
   const g = b.createLinearGradient(0, 0, 0, FLOOR);
   g.addColorStop(0, sc.sky[0]); g.addColorStop(1, sc.sky[1]);
   b.fillStyle = g; b.fillRect(0, 0, W, FLOOR);
-  BACKDROPS[sc.theme](b, sc, rnd);
+  const art = sc.art && ART[sc.art];
+  if (art) {
+    // Décor peint (Canva) : l'herbe de l'image est calée sur le sol du jeu.
+    b.drawImage(art.img, 0, 0, W, (FLOOR - 2) / art.ground);
+  } else BACKDROPS[sc.theme](b, sc, rnd);
 }
+
+// Images générées avec Canva, rangées dans img/ ; tant qu'une image n'est pas chargée
+// (ou si elle manque), le décor dessiné par le code prend le relais.
+const ART = {};
+function loadArt(name, src, ground) {
+  const img = new Image();
+  img.onload = () => { ART[name] = { img, ground }; renderBg(); };
+  img.src = src;
+}
+loadArt('forest', 'img/foret.webp', .9231);
+loadArt('sunset', 'img/couchant.webp', .907);
 
 const disc = (b, x, y, r, c) => { b.fillStyle = c; b.beginPath(); b.arc(x, y, r, 0, Math.PI * 2); b.fill(); };
 function hillLine(b, rnd, base, amp, color, f1, f2) {
@@ -2058,6 +2077,11 @@ $('bAgain').addEventListener('click', () => startRun(mode || pcount, kind, level
 $('bMenu').addEventListener('click', quitRun);
 $('btnPause').addEventListener('click', () => togglePause());
 $('btnSound').addEventListener('click', () => { muted = !muted; store.set('muted', muted); paintSound(); if (!muted) sfx.pick(); });
+
+const logoImg = document.querySelector('.logo img');
+const noLogo = () => logoImg.parentNode.classList.add('noimg');
+logoImg.addEventListener('error', noLogo);
+if (logoImg.complete && !logoImg.naturalWidth) noLogo();
 
 /* ---------- Taille de l'écran ---------- */
 function fit() {
