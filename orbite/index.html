@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Orbite</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Righteous&family=Outfit:wght@400;600;800&display=swap">
+<style>
+  /* Layout: full-screen arcade. A circular arena centred in the screen, a thin score
+     strip above it, overlays for the title and game-over screens. Single deliberate
+     night-sky look in every theme. */
+  :root {
+    --bg: #150d2b;
+    --bg-2: #24174a;
+    --ink: #f4efff;
+    --muted: #a99bd0;
+    --accent: #ffb23f;
+    --danger: #ff4d6d;
+    --panel: #20153f;
+    --font-display: 'Righteous', 'Outfit', system-ui, sans-serif;
+    --font-ui: 'Outfit', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body { height: 100%; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: var(--font-ui); overflow: hidden; overscroll-behavior: none;
+    user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent;
+    touch-action: none;
+  }
+  #game { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+  .hud {
+    position: fixed; left: 0; right: 0; top: env(safe-area-inset-top, 0px);
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding: 14px 18px; pointer-events: none;
+  }
+  .hud .block { display: flex; flex-direction: column; gap: 2px; }
+  .hud .block.right { align-items: flex-end; }
+  .label { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  .score { font-family: var(--font-display); font-size: 34px; line-height: 1; font-variant-numeric: tabular-nums; }
+  .small { font-family: var(--font-display); font-size: 20px; line-height: 1; font-variant-numeric: tabular-nums; }
+  .hud button { pointer-events: auto; }
+  .pause {
+    margin-top: 8px; width: 36px; height: 36px; border-radius: 50%;
+    border: 1.5px solid var(--bg-2); background: var(--panel); color: var(--ink); display: grid; place-items: center;
+  }
+  .pause svg { width: 16px; height: 16px; fill: currentColor; }
+
+  .overlay {
+    position: fixed; inset: 0; display: grid; place-items: center; padding: 16px;
+    background: radial-gradient(circle at 50% 45%, rgb(21 13 43 / .55), rgb(21 13 43 / .92));
+  }
+  .card { width: min(100%, 360px); display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; }
+  .logo { font-family: var(--font-display); font-weight: 400; font-size: 64px; letter-spacing: .04em; margin: 0; line-height: 1; }
+  .logo span { color: var(--accent); }
+  .card p { margin: 0; color: var(--muted); line-height: 1.45; font-size: 16px; max-width: 30ch; }
+  .card h2 { font-family: var(--font-display); font-weight: 400; font-size: 40px; margin: 0; line-height: 1.05; }
+  .big { font-family: var(--font-display); font-size: 56px; line-height: 1; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .btn {
+    width: 100%; border: 0; border-radius: 16px; padding: 15px 18px;
+    font: 700 18px var(--font-ui); background: var(--bg-2); color: var(--ink); cursor: pointer;
+  }
+  .btn.primary { background: var(--accent); color: #2a1600; }
+  .btn small { display: block; font-weight: 500; font-size: 12px; opacity: .8; margin-top: 2px; }
+  .btn:focus-visible, .pause:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+  .rules { display: grid; gap: 8px; text-align: left; font-size: 15px; color: var(--ink); width: 100%; }
+  .rules div { display: flex; gap: 10px; align-items: center; }
+  .dot { flex: none; width: 14px; height: 14px; border-radius: 4px; }
+  .newbest { color: var(--accent); font-weight: 800; letter-spacing: .08em; text-transform: uppercase; font-size: 13px; }
+</style>
+</head>
+<body>
+<canvas id="game" aria-label="Arène d'Orbite : le noyau au centre, la bille en orbite, les anneaux de briques autour"></canvas>
+
+<div class="hud" id="hud" hidden>
+  <div class="block"><span class="label">Score</span><span class="score" id="score">0</span></div>
+  <div class="block right">
+    <span class="label">Vague <b class="small" id="wave">1</b></span>
+    <span class="label">Record <b class="small" id="best">0</b></span>
+    <button class="pause" id="btn-pause" aria-label="Pause"><svg viewBox="0 0 16 16"><rect x="3" y="2" width="3.5" height="12" rx="1"/><rect x="9.5" y="2" width="3.5" height="12" rx="1"/></svg></button>
+  </div>
+</div>
+
+<div class="overlay" id="menu">
+  <div class="card">
+    <h1 class="logo">ORB<span>I</span>TE</h1>
+    <p>Ta bille tourne autour du noyau. Touche l'écran pour la lâcher au bon moment.</p>
+    <div class="rules">
+      <div><span class="dot" style="background:#5ef0b8"></span>Casse les briques avant qu'elles atteignent le noyau.</div>
+      <div><span class="dot" style="background:#ff8a3d"></span>Brique orange : elle explose et emporte ses voisines.</div>
+      <div><span class="dot" style="background:#6fb6ff"></span>Brique bleue « +1 » : une bille de plus en orbite.</div>
+      <div><span class="dot" style="background:#c9b8ff"></span>Plusieurs briques en un tir = combo, points multipliés.</div>
+    </div>
+    <button class="btn primary" id="btn-play">Jouer</button>
+    <p id="menu-best"></p>
+  </div>
+</div>
+
+<div class="overlay" id="over" hidden>
+  <div class="card">
+    <h2>Le noyau est touché</h2>
+    <span class="newbest" id="over-newbest" hidden>Nouveau record</span>
+    <span class="big" id="over-score">0</span>
+    <p id="over-detail"></p>
+    <button class="btn primary" id="btn-continue">Repousser les briques et continuer<small>Une fois par partie (pub récompensée dans le jeu final)</small></button>
+    <button class="btn" id="btn-retry">Rejouer</button>
+  </div>
+</div>
+
+<div class="overlay" id="paused" hidden>
+  <div class="card">
+    <h2>Pause</h2>
+    <button class="btn primary" id="btn-resume">Reprendre</button>
+    <button class="btn" id="btn-sound">Son : activé</button>
+    <button class="btn" id="btn-quit">Menu</button>
+  </div>
+</div>
+
+<script src="game.js"></script>
+</body>
+</html>
