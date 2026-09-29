@@ -30,7 +30,11 @@ Sur téléphone et tablette, le jeu prend **tout l'écran** et il n'y a plus de 
 - **moitié gauche** : on pose le pouce n'importe où, un joystick apparaît sous le doigt. Il ne sert qu'à aller à gauche ou à droite ; si le pouce dépasse le bord du joystick, celui-ci le suit, pour pouvoir repartir dans l'autre sens tout de suite ;
 - **moitié droite** : un appui n'importe où tire une flèche (on peut tirer en marchant, avec les deux pouces).
 
-Au début de chaque niveau et pendant le tutoriel, un joystick et un arc « fantômes » rappellent où poser les doigts. L'aire de jeu garde ses proportions : sur un écran plus large, le décor continue en miroir sur les côtés (un peu assombri, ce sont les murs) ; au-dessus, le ciel se prolonge sous le bandeau des scores.
+Au début de chaque niveau et pendant le tutoriel, un joystick et un arc « fantômes » rappellent où poser les doigts.
+
+**Plein écran, jusqu'aux bords.** Le monde fait toujours 360 unités de haut, mais sa largeur suit le format de l'écran : 640 en 16:9 (et sur ordinateur), 779 sur un téléphone 19,5:9, jusqu'à 800 au maximum (20:9). Les murs sont donc les bords de l'écran. Les niveaux sont dessinés sur 640 de large et étirés au chargement : bulles, plateformes, briques et barrières sont placées en proportion, et le temps du niveau augmente un peu avec la largeur (+60 % de l'élargissement). La largeur ne change qu'au début d'un niveau ou d'une partie ; si l'écran change en cours de route (rotation), les côtés sont comblés en miroir jusqu'au niveau suivant. Le bandeau des scores flotte sur le haut du ciel ; la barre de vie des boss, le combo et les bonus actifs se placent juste en dessous.
+
+Les décors sont en 2:1 (2000×1000) : chacun est calé sur le sol du jeu, un peu recadré sur les côtés en 16:9 ou un peu agrandi (le haut du ciel déborde) sur les écrans plus larges que 2:1.
 
 Sur téléphone, le jeu est toujours en paysage : si l'écran est tenu droit, le jeu s'affiche couché et il suffit de tourner le téléphone vers la gauche. Le bouton ⟳ retourne l'affichage pour ceux qui le tournent vers la droite.
 
@@ -41,7 +45,7 @@ Sur téléphone, le jeu est toujours en paysage : si l'écran est tenu droit, le
   - ★★ niveau fini sans être touché ;
   - ★★★ sans être touché et avec plus de la moitié du temps restant.
 - **Boss** : le 12e niveau de chaque monde est un combat de boss, avec une barre de vie. Chaque coup de harpon lui retire un point ; une fois vaincu, toutes les bulles restantes éclatent.
-- **Monde 5, Frozen Peaks** (niveaux 49 à 60) : le sol est en glace, l'archer glisse et met un peu de temps à s'arrêter ou à repartir. Boss : le **Frost Yeti**, qui lance des boules de neige puis saute d'un bord à l'autre ; à chaque atterrissage, des stalactites tombent du plafond (signalées en rouge avant de tomber). Au sol sa fourrure arrête les flèches : on ne peut le blesser que pendant ses sauts.
+- **Monde 5, Frozen Peaks** (niveaux 49 à 60) : le sol est en glace, l'archer glisse et met un peu de temps à s'arrêter ou à repartir. Boss : le **Frost Yeti**, qui lance des boules de neige puis fait de grands sauts d'un côté à l'autre ; à chaque atterrissage, des stalactites tombent du plafond (signalées en rouge avant de tomber). Au sol sa fourrure arrête les flèches : on ne peut le blesser que pendant ses sauts.
 - **Monde 6, Volcano** (niveaux 61 à 72) : des geysers de lave jaillissent du sol, annoncés par des bulles et des pointillés 1,3 s avant. Boss : le **Lava Dragon**, qui vole en haut de l'écran, crache des boules de feu en cloche (3 d'un coup quand il enrage) et un souffle de flammes visé sur l'archer.
   - Monde 1, **Roi Bulle** : une bulle géante couronnée qui rebondit de plus en plus vite et lâche des petites bulles tous les 3 coups.
   - Monde 2, **Grand Orage** : un nuage qui fait pleuvoir des gouttes et des bulles, puis lance des éclairs (une ligne en pointillés prévient avant la frappe).
