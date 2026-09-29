@@ -44,6 +44,21 @@ Le jeu se joue à 1 joueur (le mode à 2 joueurs a été retiré : trop compliqu
 
 ## Règles
 
+- **Tailles de bulles** : de la mini à la grosse, plus deux nouvelles : l'**énorme** (dès le monde 1) et le **titan** (monde 4 et Survie). Une grosse bulle se coupe en deux à chaque coup, jusqu'à la mini qui éclate.
+- **Bulles spéciales**, chacune avec sa couleur et son signe. Un message les présente la première fois qu'elles apparaissent :
+
+  | Bulle | Signe | Effet |
+  |---|---|---|
+  | **Noire** | yeux rouges, halo rouge | Si elle te touche, tu perds **tous tes cœurs** d'un coup (toutes tes vies en Survie). Le bouclier ne protège pas, seule l'étoile d'invincibilité la fait éclater. |
+  | **Dorée** | étoile | Points x3, 3 pièces à chaque éclatement, un bonus tombe une fois sur deux |
+  | **Acier** | rivets | Il faut 2 coups : le premier la fissure, le second la coupe en deux bulles normales |
+  | **Verte** | trois points | Se coupe en **trois** au lieu de deux |
+  | **Fantôme** | violette transparente, deux yeux | Traverse les plateformes et les briques (pas les barrières) |
+  | **Bombe** | mèche allumée | En éclatant, elle explose et touche toutes les bulles autour, puis se coupe en deux bulles normales |
+  | **Rebondissante** | chevrons | Plus rapide et rebondit plus haut |
+
+  Elles arrivent peu à peu : la dorée au niveau 5, la rebondissante au 7, l'acier au 9, la verte au 13, la noire au 16, la fantôme au 19, la bombe au 21. Ensuite, environ une bulle sur trois est spéciale. En Survie, elles se débloquent avec le temps (la dorée à 20 s, puis toutes les 20 s environ, et la noire à 2 min 30), avec jamais plus d'une noire à la fois. Les niveaux avec des bulles noires, fantômes ou rebondissantes donnent un peu plus de temps.
+
 - Les petites bulles rapportent plus (30 → 100 points) ; le temps restant donne un bonus en fin de niveau.
 - Bonus qui tombent parfois : double harpon, harpon collant (reste accroché au plafond), bouclier, bulles gelées, +500, +1 vie.
 - En Aventure, les bonus sont dosés pour que les étoiles restent à gagner :

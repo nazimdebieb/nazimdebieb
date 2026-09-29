@@ -369,10 +369,29 @@ body[data-state="ready"] .coinpill,body[data-state="play"] .coinpill,body[data-s
 /* ---------- Constantes du monde (unités logiques 640×360) ---------- */
 const W = 640, H = 360, FLOOR = 338;
 const GRAV = 560;
-const RAD = [6, 11, 18, 28];          // rayon par taille (0 = mini, 3 = géante)
-const HOP = [58, 100, 145, 195];      // hauteur de rebond fixe par taille
-const VX  = [100, 90, 80, 72];        // vitesse horizontale par taille
-const PTS = [100, 70, 50, 30];        // les petites rapportent plus
+const RAD = [6, 11, 18, 28, 40, 52];         // rayon par taille (0 = mini, 3 = grosse, 4 = énorme, 5 = titan)
+const HOP = [58, 100, 145, 195, 222, 232];   // hauteur de rebond fixe par taille
+const VX  = [100, 90, 80, 72, 64, 58];       // vitesse horizontale par taille
+const PTS = [100, 70, 50, 30, 20, 10];       // les petites rapportent plus
+// Bulles spéciales : couleur propre et comportement différent.
+const VARIANTS = {
+  black:  { c: '#241530', name: 'Black bubble', tip: 'One touch and you lose all your hearts!' },
+  gold:   { c: '#ffc83d', name: 'Gold bubble', tip: 'Triple points and bonus coins' },
+  steel:  { c: '#a7b1c4', name: 'Steel bubble', tip: 'Takes 2 hits to crack' },
+  green:  { c: '#3fbf6f', name: 'Green bubble', tip: 'Splits into 3 instead of 2' },
+  ghost:  { c: '#b45cff', name: 'Ghost bubble', tip: 'Floats through platforms and bricks' },
+  bomb:   { c: '#e8412f', name: 'Bomb bubble', tip: 'Explodes and hits every bubble around it' },
+  bouncy: { c: '#ff8a3d', name: 'Bouncy bubble', tip: 'Faster and bounces higher' },
+};
+// Nombre de coups pour faire disparaître une bulle et toutes ses filles.
+function popsOf(s, v) {
+  const kids = v === 'green' ? 3 : 2, childV = v === 'steel' || v === 'bomb' ? null : v;
+  const own = v === 'steel' ? 2 : 1;
+  return own + (s > 0 ? kids * popsOf(s - 1, childV) : 0);
+}
+const HARD_V = ['black', 'ghost', 'bouncy'];   // plus dures à viser : un peu plus de temps
+const vxOf = (s, v) => VX[s] * (v === 'bouncy' ? 1.3 : 1);
+const hopOf = b => b.v === 'bouncy' ? Math.min(HOP[b.s] * 1.3, FLOOR - 2 * RAD[b.s] - 6) : HOP[b.s];
 const PLAYER_SPEED = 165, HARPOON_SPEED = 470;
 const COL = [
   { main: '#ff5a4e', dark: '#a32a22' },
@@ -397,32 +416,32 @@ const B = (x, y, n = 1) => Array.from({ length: n }, (_, i) => ({ t: 'b', x: x +
 const G = x => ({ t: 'g', x: x - 6, y: 0, w: 12, h: FLOOR });
 const brickFloor = y => Array.from({ length: 16 }, (_, i) => i % 5 === 0 ? S(i * 40, y, 40, 16) : B(i * 40, y)[0]);
 
-// b : [taille, position x (0..1), direction, y facultatif] · k : obstacles
+// b : [taille, position x (0..1), direction, y facultatif, bulle spéciale facultative] · k : obstacles
 const LEVELS = [
   { b: [[2, .25, 1]] },
   { b: [[3, .22, 1]] },
   { b: [[2, .18, 1], [2, .82, -1]], k: [S(250, 170, 140)] },
   { b: [[2, .25, 1], [2, .75, -1]], k: [G(320)] },
-  { b: [[2, .12, 1], [2, .88, -1], [1, .5, 1, 120]], k: B(160, 196, 8) },
+  { b: [[2, .12, 1], [2, .88, -1], [1, .5, 1, 120, 'gold']], k: B(160, 196, 8) },
   { b: [[1, .08, 1], [1, .2, 1], [1, .32, 1], [1, .68, -1], [1, .8, -1], [1, .92, -1]], k: [S(60, 190, 130), S(450, 190, 130)] },
-  { b: [[2, .16, 1], [2, .5, 1], [2, .84, -1]], k: [G(213), G(427)] },
+  { b: [[2, .16, 1], [2, .5, 1, null, 'bouncy'], [2, .84, -1]], k: [G(213), G(427)] },
   { b: [[3, .3, -1], [2, .12, 1], [2, .88, -1]], k: B(120, 150, 10) },
-  { b: [[3, .25, 1], [3, .75, -1]], k: [G(320), S(70, 205, 120), S(450, 205, 120)] },
-  { b: [[3, .15, 1], [3, .38, -1], [3, .62, 1], [3, .85, -1]], k: [S(0, 130, 120), S(520, 130, 120), ...B(240, 130, 4)] },
+  { b: [[3, .25, 1], [3, .75, -1, null, 'steel']], k: [G(320), S(70, 205, 120), S(450, 205, 120)] },
+  { b: [[4, .3, 1], [3, .7, -1, null, 'gold']], k: [S(0, 130, 120), S(520, 130, 120), ...B(240, 130, 4)] },
   { b: [[2, .1, 1], [2, .37, -1], [2, .63, 1], [2, .9, -1]], k: [G(160), G(320), G(480)] },
   null, // 12 : boss
   // Monde 2
-  { b: [[2, .1, 1], [2, .9, -1]], k: stairs() },
+  { b: [[2, .1, 1], [2, .9, -1, null, 'green']], k: stairs() },
   { b: [[3, .25, 1, 80], [2, .75, -1]], k: [G(320), ...B(40, 180, 6)] },
   { b: [[2, .3, 1, 60], [2, .7, -1, 60]], k: [...B(80, 120, 12), ...B(80, 220, 12)] },
-  { b: [[3, .16, 1], [3, .5, -1], [3, .84, 1]], k: [G(213), G(427), S(40, 200, 130), S(255, 200, 130), S(470, 200, 130)] },
+  { b: [[3, .16, 1], [1, .5, -1, null, 'black'], [3, .84, 1]], k: [G(213), G(427), S(40, 200, 130), S(255, 200, 130), S(470, 200, 130)] },
   { b: [[1, .1, 1, 120], [1, .25, 1, 120], [1, .75, -1, 120], [1, .9, -1, 120], [2, .5, 1]], k: shelves() },
-  { b: [[3, .2, 1], [3, .8, -1]], k: [S(300, 60, 40, 180)] },
-  { b: [[2, .2, 1, 60], [2, .5, -1, 60], [2, .8, 1, 60]], k: checker(150, 230) },
-  { b: [[3, .12, 1], [3, .38, -1], [3, .62, 1], [3, .88, -1]], k: [G(320)] },
-  { b: [[2, .2, 1, 260], [2, .8, -1, 260], [1, .5, 1, 260]], k: [S(0, 200, 640)] },
+  { b: [[4, .2, 1], [3, .8, -1, null, 'bouncy']], k: [S(300, 60, 40, 180)] },
+  { b: [[2, .2, 1, 60, 'ghost'], [2, .5, -1, 60], [2, .8, 1, 60, 'ghost']], k: checker(150, 230) },
+  { b: [[3, .12, 1, null, 'steel'], [3, .38, -1], [3, .62, 1, null, 'gold'], [3, .88, -1]], k: [G(320)] },
+  { b: [[2, .2, 1, 260], [2, .8, -1, 260], [2, .5, 1, 260, 'bomb']], k: [S(0, 200, 640)] },
   { b: [[3, .15, 1, 60], [2, .6, -1], [2, .85, 1]], k: [G(427), ...B(40, 160, 5), S(240, 160, 40, 16)] },
-  { b: [[2, .1, 1], [2, .3, -1], [2, .5, 1], [2, .7, -1], [2, .9, 1]], k: [G(128), G(256), G(384), G(512)] },
+  { b: [[2, .1, 1], [2, .3, -1, null, 'green'], [2, .5, 1, null, 'black'], [2, .7, -1, null, 'bouncy'], [2, .9, 1]], k: [G(128), G(256), G(384), G(512)] },
   null, // 24 : boss
 ];
 function stairs() { return [S(40, 250, 100), S(180, 200, 100), S(320, 150, 100), S(460, 100, 100)]; }
@@ -441,7 +460,32 @@ function levelDef(n) {
   const count = Math.min(2 + Math.floor((n - 20) / 5), 6);
   const big = Math.min(.4 + (n - 24) * .02, .9);
   const b = [];
-  for (let i = 0; i < count; i++) b.push([rnd() < big ? 3 : 2, (i + .5) / count, i % 2 ? -1 : 1]);
+  // Monde 3 : bulles énormes ; monde 4 : titans. Une bulle sur trois environ est spéciale.
+  const pool = ['gold', 'bouncy', 'steel', 'green', 'ghost', 'bomb', 'black'];
+  let hasBlack = false;
+  for (let i = 0; i < count; i++) {
+    let sz = rnd() < big ? 3 : 2;
+    if (n > 24 && rnd() < .25) sz = 4;
+    if (n > 36 && i === 0 && rnd() < .5) sz = 5;
+    let v = rnd() < .38 ? pool[Math.floor(rnd() * pool.length)] : null;
+    if (v === 'black' && (hasBlack || sz > 2)) v = sz > 2 ? 'steel' : 'gold';
+    if (v === 'green' && sz > 2) v = 'bouncy';
+    if (v === 'black') hasBlack = true;
+    b.push([sz, (i + .5) / count, i % 2 ? -1 : 1, null, v]);
+  }
+  // Un plafond de coups par niveau : on garde la bulle énorme ou le titan, et on allège d'abord les autres
+  // (en les rétrécissant, puis en en retirant).
+  let cap = Math.round(36 + (n - 24) * 1.4);
+  if (b[0][0] >= 4) cap = Math.max(cap, popsOf(b[0][0], b[0][4]));
+  const total = () => b.reduce((t, d) => t + popsOf(d[0], d[4]), 0);
+  while (total() > cap) {
+    const rest = b.slice(1).filter(d => d[0] > 1);
+    if (rest.length) rest.reduce((m, x) => (x[0] > m[0] ? x : m))[0]--;
+    else if (b.length > 1) b.pop();
+    else if (b[0][0] > 1) b[0][0]--;
+    else break;
+  }
+  b.forEach((d, i) => { d[1] = (i + .5) / b.length; });
   const layouts = [
     () => [G(320)],
     () => [S(60, 190, 130), S(450, 190, 130)],
@@ -461,7 +505,7 @@ function levelDef(n) {
   if (pick === 9) b.forEach(d => { d[3] = 262; });
   return { b, k };
 }
-const timeFor = def => def.boss ? BOSSES[def.boss].time : Math.round(18 + def.b.reduce((t, [s]) => t + (2 ** (s + 1) - 1) * 1.7, 0)
+const timeFor = def => def.boss ? BOSSES[def.boss].time : Math.round(18 + def.b.reduce((t, [s, , , , v]) => t + popsOf(s, v) * 1.7 * (HARD_V.includes(v) ? 1.2 : 1), 0)
   + (def.k || []).reduce((t, k) => t + (k.t === 'g' ? 6 : k.t === 'b' ? .6 : 0), 0));
 
 const ITEMS = [
@@ -590,9 +634,9 @@ function makePlayer(id) {
 const active = () => players.filter(p => !p.out);
 const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
 
-function makeBall([s, fx, dir, y], color) {
+function makeBall([s, fx, dir, y, v], color) {
   const r = RAD[s];
-  const b = { s, x: clamp(fx * W, r, W - r), y: y != null ? y : FLOOR - HOP[s] - r, vx: dir * VX[s], vy: 0, c: color };
+  const b = { s, v: v || null, x: clamp(fx * W, r, W - r), y: y != null ? y : FLOOR - HOP[s] - r, vx: dir * vxOf(s, v), vy: 0, c: color };
   // Ne jamais faire naître une bulle dans un obstacle.
   for (const k of blocks) {
     if (!overlaps(b.x, b.y, r, k)) continue;
@@ -606,6 +650,15 @@ function overlaps(x, y, r, k) {
   return dx * dx + dy * dy < r * r;
 }
 
+// Premier niveau d'Aventure où apparaît une bulle spéciale (pour l'annoncer).
+const FIRST_V = {};
+function firstLevelOf(v) {
+  if (!(v in FIRST_V)) {
+    FIRST_V[v] = 0;
+    for (let n = 1; n <= ADV_COUNT && !FIRST_V[v]; n++) if (levelDef(n).b.some(d => d[4] === v)) FIRST_V[v] = n;
+  }
+  return FIRST_V[v];
+}
 function loadLevel() {
   const def = levelDef(level);
   scene = SCENES[def.boss ? BOSSES[def.boss].scene : (worldOf(level) % 4) * 2 + (level - 1) % 2];
@@ -623,10 +676,12 @@ function loadLevel() {
   });
   fireQueued = false;
   levelHit = false;
-  const pops = def.b.reduce((t, [sz]) => t + 2 ** (sz + 1) - 1, 0);
+  const pops = def.b.reduce((t, [sz, , , , v]) => t + popsOf(sz, v), 0);
   dropBudget = def.boss ? 3 : clamp(Math.round(pops / 12), 1, 3); dropCd = 0; lifeDropped = false;
   unlockTxt = '';
   for (const [t, w] of Object.entries(ADV_UNLOCK)) if (level === (w - 1) * WORLD + 1) unlockTxt = 'New power-up: ' + ITEM_BY[t][3];
+  const fresh = def.b.map(d => d[4]).find(v => v && firstLevelOf(v) === level);
+  if (fresh) unlockTxt = `${VARIANTS[fresh].name}: ${VARIANTS[fresh].tip}`;
   setState('ready', unlockTxt ? 2.6 : 1.7);
   renderBg();
 }
@@ -645,7 +700,7 @@ function menuScene() {
   mode = 0; paused = false; players = [];
   level = 1; scene = SCENES[0];
   items = []; parts = []; texts = []; blocks = []; boss = null; shots = []; beams = [];
-  balls = [[3, .2, 1], [2, .65, -1], [1, .45, 1], [1, .85, -1]].map(d => makeBall(d, scene.ball));
+  balls = [[4, .2, 1], [2, .65, -1, null, 'gold'], [1, .45, 1, null, 'black'], [2, .85, -1, null, 'green']].map(d => makeBall(d, scene.ball));
   setState('menu', 0);
   buildControls();
   renderBg();
@@ -754,9 +809,10 @@ function moveBalls(dt) {
     b.vy += GRAV * dt; b.x += b.vx * dt; b.y += b.vy * dt;
     if (b.x < r) { b.x = r; b.vx = Math.abs(b.vx); }
     if (b.x > W - r) { b.x = W - r; b.vx = -Math.abs(b.vx); }
-    if (b.y > FLOOR - r) { b.y = FLOOR - r; b.vy = -Math.sqrt(2 * GRAV * HOP[b.s]); }
+    if (b.y > FLOOR - r) { b.y = FLOOR - r; b.vy = -Math.sqrt(2 * GRAV * hopOf(b)); }
     if (b.y < r) { b.y = r; b.vy = Math.abs(b.vy); }
-    for (const k of blocks) bounceOff(b, k);
+    // La bulle fantôme traverse plateformes et briques, mais pas les barrières.
+    for (const k of blocks) if (b.v !== 'ghost' || k.t === 'g') bounceOff(b, k);
   }
 }
 
@@ -778,7 +834,7 @@ function bounceOff(b, k) {
     b.x = px + nx * r; b.y = py + ny * r;
   }
   if (Math.abs(nx) > Math.abs(ny)) b.vx = Math.sign(nx) * Math.abs(b.vx);
-  else if (ny < 0) { if (b.vy > 0) b.vy = -Math.sqrt(2 * GRAV * HOP[b.s]); }
+  else if (ny < 0) { if (b.vy > 0) b.vy = -Math.sqrt(2 * GRAV * hopOf(b)); }
   else if (b.vy < 0) b.vy = -b.vy;
 }
 
@@ -865,7 +921,7 @@ function hitBalls() {
       const h = p.harpoons[i];
       for (let j = 0; j < balls.length; j++) {
         const b = balls[j], r = RAD[b.s];
-        if (segHits(h, b.x, b.y, r)) { p.harpoons.splice(i, 1); popBall(j, p); break; }
+        if (segHits(h, b.x, b.y, r)) { p.harpoons.splice(i, 1); hitBall(j, p); break; }
       }
       if (p.harpoons[i] === h && boss && !boss.dead && harpoonHitsBoss(h, p)) p.harpoons.splice(i, 1);
     }
@@ -883,6 +939,18 @@ function breakBrick(k, p) {
   sfx.brick();
 }
 
+// Un coup sur une bulle : la bulle d'acier se fissure d'abord, les autres éclatent.
+function hitBall(j, p, noDrop) {
+  const b = balls[j];
+  if (b.v === 'steel' && !b.cracked) {
+    b.cracked = true; b.flash = .25;
+    burst(b.x, b.y, '#dfe6f2', RAD[b.s] * .6);
+    float(b.x, b.y - RAD[b.s], 'Crack!', '#dfe6f2');
+    sfx.brick();
+    return;
+  }
+  popBall(j, p, noDrop);
+}
 function popBall(j, p, noDrop) {
   const b = balls[j];
   balls.splice(j, 1);
@@ -894,25 +962,41 @@ function popBall(j, p, noDrop) {
     p.mult = mult;
   }
   if (p.x2 > 0) mult *= 2;
+  if (b.v === 'gold') { mult *= 3; runCoins += 3; }
   if (kind === 'adv' && b.s === 0) runCoins += EARN.pop;
   p.score += PTS[b.s] * mult;
-  float(b.x, b.y - RAD[b.s], '+' + PTS[b.s] * mult, COL[p.id].main);
-  burst(b.x, b.y, b.c, RAD[b.s]);
-  sfx.pop(b.s);
+  float(b.x, b.y - RAD[b.s], '+' + PTS[b.s] * mult, b.v === 'gold' ? '#ffc83d' : COL[p.id].main);
+  burst(b.x, b.y, b.v ? VARIANTS[b.v].c : b.c, RAD[b.s]);
+  sfx.pop(Math.min(b.s, 3));
   if (b.s > 0) {
-    const s = b.s - 1, r = RAD[s];
-    for (const dir of [-1, 1]) {
+    const s = b.s - 1, r = RAD[s], v = b.v === 'steel' || b.v === 'bomb' ? null : b.v;
+    const dirs = b.v === 'green' ? [-1, 0, 1] : [-1, 1];
+    for (const dir of dirs) {
       let x = clamp(b.x + dir * r * .6, r, W - r);
-      if (blocks.some(k => overlaps(x, b.y, r, k))) x = b.x;
-      balls.push({ s, x, y: Math.max(b.y, r), vx: dir * VX[s], vy: -230, c: b.c });
+      if (v !== 'ghost' && blocks.some(k => overlaps(x, b.y, r, k))) x = b.x;
+      balls.push({ s, v, x, y: Math.max(b.y, r), vx: (dir || (Math.random() < .5 ? -.5 : .5)) * vxOf(s, v), vy: dir ? -230 : -330, c: b.c });
     }
   }
-  if (!noDrop && Math.random() < (kind === 'surv' ? .18 : .15)) dropItem(b.x, b.y);
+  if (b.v === 'bomb') explode(b, p);
+  const drop = b.v === 'gold' ? .5 : kind === 'surv' ? .18 : .15;
+  if (!noDrop && Math.random() < drop) dropItem(b.x, b.y);
 }
 
-// Bombe : chaque bulle à l'écran éclate une fois (les grosses se coupent en deux).
+// Bulle bombe : elle explose et touche toutes les bulles autour d'elle.
+function explode(b, p) {
+  const R = 70 + RAD[b.s] * 2;
+  parts.push({ ring: true, x: b.x, y: b.y, r: R, life: .35, max: .35, c: '#ffb347' });
+  for (let i = 0; i < 14; i++) {
+    const a = i / 14 * Math.PI * 2;
+    parts.push({ x: b.x, y: b.y, vx: Math.cos(a) * 220, vy: Math.sin(a) * 220 - 60, r: 2.5, life: .4, max: .4, c: i % 2 ? '#ffe066' : '#ff5a1f' });
+  }
+  shake = Math.max(shake, .3); sfx.thud();
+  const near = balls.filter(o => Math.hypot(o.x - b.x, o.y - b.y) < R + RAD[o.s]);
+  for (const o of near) { const j = balls.indexOf(o); if (j >= 0) hitBall(j, p, true); }
+}
+// Bombe (bonus) : chaque bulle à l'écran est touchée une fois (les grosses se coupent en deux).
 function bomb(p) {
-  for (const b of balls.slice()) { const j = balls.indexOf(b); if (j >= 0) popBall(j, p, true); }
+  for (const b of balls.slice()) { const j = balls.indexOf(b); if (j >= 0) hitBall(j, p, true); }
   drops = [];
   shake = Math.max(shake, .6);
   parts.push({ ring: true, x: p.x, y: FLOOR - 20, r: 120, life: .4, max: .4, c: '#ffc83d' });
@@ -983,7 +1067,7 @@ function touchPlayers() {
       const r = RAD[b.s] * .92;
       const dx = b.x - clamp(b.x, x0, x1), dy = b.y - clamp(b.y, y0, y1);
       if (dx * dx + dy * dy < r * r) {
-        hitPlayer(p);
+        if (b.v === 'black') blackHit(p); else hitPlayer(p);
         break;
       }
     }
@@ -1000,6 +1084,14 @@ function hitPlayer(p) {
   }
 }
 
+// Bulle noire : ni le bouclier ni les cœurs ne protègent, la partie est perdue d'un coup.
+function blackHit(p) {
+  p.shield = false; p.lives = 1;
+  hurt(p);
+  deathMsg = 'The black bubble got you!';
+  burst(p.x, FLOOR - 15, '#241530', 22);
+  shake = Math.max(shake, .4);
+}
 // Chaque touche coûte un cœur (une vie en Survie) ; sans cœur, c'est perdu.
 function hurt(p) {
   levelHit = true; p.lives--;
@@ -1075,7 +1167,7 @@ function showFail() {
   paintOver({
     coins: payRun(),
     title: 'Failed!',
-    result: deathMsg === "Time's up!" ? 'Time ran out.' : 'You ran out of hearts.',
+    result: deathMsg === "Time's up!" ? 'Time ran out.' : deathMsg.startsWith('The black') ? 'You touched a black bubble.' : 'You ran out of hearts.',
     again: 'Try again', menu: 'Map',
   });
   sfx.over();
@@ -1131,11 +1223,14 @@ const TERRAINS = [
 let slowT = 0;
 let survT = 0, waveT = 0, bossT = 0, terrainT = 0, terrainI = 0, drops = [], ann = null, bossKills = 0;
 const comboMult = c => c >= 15 ? 5 : c >= 10 ? 4 : c >= 6 ? 3 : c >= 3 ? 2 : 1;
-const weight = () => balls.reduce((t, b) => t + 2 ** (b.s + 1) - 1, 0) + drops.reduce((t, d) => t + 2 ** (d.s + 1) - 1, 0);
+const weight = () => balls.reduce((t, b) => t + popsOf(b.s, b.cracked ? null : b.v), 0) + drops.reduce((t, d) => t + popsOf(d.s, d.v), 0);
+// Survie : moment (en secondes) où chaque bulle spéciale commence à tomber.
+const SURV_V = [['gold', 20], ['bouncy', 40], ['steel', 60], ['green', 80], ['ghost', 100], ['bomb', 120], ['black', 150]];
+const survSeen = new Set();
 
 function startSurvival() {
   level = 1; survT = 0; waveT = 3; bossT = BOSS_EVERY; terrainT = TERRAIN_EVERY; terrainI = 0; bossKills = 0;
-  drops = []; ann = null; slowT = 0;
+  drops = []; ann = null; slowT = 0; survSeen.clear();
   scene = SCENES[0];
   blocks = []; boss = null; shots = []; beams = []; shake = 0;
   items = []; parts = []; texts = []; freezeT = 0;
@@ -1155,7 +1250,8 @@ function updateSurvival(dt) {
   drops = drops.filter(d => {
     if ((d.t -= dt) > 0) return true;
     const r = RAD[d.s];
-    balls.push({ s: d.s, x: d.x, y: r + 4, vx: d.dir * VX[d.s], vy: 0, c: scene.ball });
+    balls.push({ s: d.s, v: d.v, x: d.x, y: r + 4, vx: d.dir * vxOf(d.s, d.v), vy: 0, c: scene.ball });
+    if (d.v && !survSeen.has(d.v)) { survSeen.add(d.v); ann = { big: VARIANTS[d.v].name, small: VARIANTS[d.v].tip, t: 2.4 }; }
     return false;
   });
   const gap = clamp(6.5 - survT * .025, 2.4, 6.5) * (boss ? 1.6 : 1);
@@ -1167,9 +1263,16 @@ function updateSurvival(dt) {
       const big = survT < 20 ? .3 : survT < 60 ? .7 : 1;
       let sz = Math.random() < big ? 2 : 1;
       if (survT > 60 && Math.random() < Math.min(.6, (survT - 60) / 200)) sz = 3;
-      if (weight() + 2 ** (sz + 1) - 1 > cap) break;
+      if (survT > 150 && Math.random() < .2) sz = 4;
+      if (survT > 270 && Math.random() < .1) sz = 5;
+      // Bulles spéciales, de plus en plus variées au fil du temps.
+      const open = SURV_V.filter(([, t]) => survT >= t).map(([v]) => v);
+      let v = open.length && Math.random() < .35 ? open[Math.floor(Math.random() * open.length)] : null;
+      if (v === 'black' && (sz > 2 || balls.some(b => b.v === 'black'))) v = null;
+      if (v === 'green' && sz > 2) v = 'bouncy';
+      if (weight() + popsOf(sz, v) > cap) break;
       const r = RAD[sz];
-      drops.push({ s: sz, x: r + Math.random() * (W - 2 * r), dir: Math.random() < .5 ? -1 : 1, t: .9 });
+      drops.push({ s: sz, v, x: r + Math.random() * (W - 2 * r), dir: Math.random() < .5 ? -1 : 1, t: .9 });
     }
   }
   // Le terrain change régulièrement (et le décor avec).
@@ -1733,15 +1836,82 @@ const BACKDROPS = {
   },
 };
 
+// Signe de chaque bulle spéciale (visible dès la taille 1).
+function drawMark(b, r, t) {
+  const x = b.x, y = b.y, k = r / 18;
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  if (b.v === 'black') {
+    // deux yeux rouges méchants
+    ctx.fillStyle = '#ff3b55';
+    for (const s of [-1, 1]) {
+      ctx.beginPath(); ctx.moveTo(x + s * 2 * k, y - 1 * k); ctx.lineTo(x + s * 9 * k, y - 5 * k); ctx.lineTo(x + s * 8 * k, y + 2 * k); ctx.closePath(); ctx.fill();
+    }
+    if (r > 8) { ctx.strokeStyle = '#ff3b55'; ctx.lineWidth = 1.6 * k; ctx.beginPath(); ctx.moveTo(x - 6 * k, y + 8 * k); ctx.lineTo(x - 2 * k, y + 5 * k); ctx.lineTo(x + 2 * k, y + 8 * k); ctx.lineTo(x + 6 * k, y + 5 * k); ctx.stroke(); }
+  } else if (b.v === 'gold') {
+    // étoile scintillante
+    ctx.fillStyle = '#fff6c9';
+    const sp = 1 + Math.sin(t * 5 + x) * .15;
+    ctx.beginPath();
+    for (let i = 0; i < 8; i++) { const a = -Math.PI / 2 + i * Math.PI / 4, rr = (i % 2 ? 2.2 : 8) * k * sp; i ? ctx.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr) : ctx.moveTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); }
+    ctx.closePath(); ctx.fill();
+  } else if (b.v === 'steel') {
+    // rivets, et une fissure une fois touchée
+    ctx.fillStyle = '#5d6678';
+    for (let i = 0; i < 6; i++) { const a = i * Math.PI / 3 + .3; ctx.beginPath(); ctx.arc(x + Math.cos(a) * r * .68, y + Math.sin(a) * r * .68, Math.max(1, 1.6 * k), 0, Math.PI * 2); ctx.fill(); }
+    ctx.strokeStyle = '#5d6678'; ctx.lineWidth = Math.max(1, 1.4 * k);
+    ctx.beginPath(); ctx.moveTo(x - r * .45, y); ctx.lineTo(x + r * .45, y); ctx.stroke();
+    if (b.cracked) {
+      ctx.strokeStyle = '#1b1024'; ctx.lineWidth = Math.max(1.2, 2 * k);
+      ctx.beginPath(); ctx.moveTo(x - r * .2, y - r * .9); ctx.lineTo(x + r * .1, y - r * .35); ctx.lineTo(x - r * .15, y + r * .05); ctx.lineTo(x + r * .25, y + r * .55); ctx.lineTo(x + r * .05, y + r * .9); ctx.stroke();
+    }
+  } else if (b.v === 'green') {
+    // trois points : se coupe en trois
+    ctx.fillStyle = '#e9fff0';
+    for (const [dx, dy] of [[-5, 3], [5, 3], [0, -5]]) { ctx.beginPath(); ctx.arc(x + dx * k, y + dy * k, 2.6 * k, 0, Math.PI * 2); ctx.fill(); }
+  } else if (b.v === 'ghost') {
+    // petit fantôme : deux yeux ronds
+    ctx.fillStyle = '#ffffff';
+    for (const s of [-1, 1]) { ctx.beginPath(); ctx.ellipse(x + s * 4.5 * k, y, 2.6 * k, 3.6 * k, 0, 0, Math.PI * 2); ctx.fill(); }
+    ctx.fillStyle = '#2a1340';
+    for (const s of [-1, 1]) { ctx.beginPath(); ctx.arc(x + s * 4.5 * k + Math.sign(b.vx) * k, y + k, 1.4 * k, 0, Math.PI * 2); ctx.fill(); }
+  } else if (b.v === 'bomb') {
+    // mèche allumée au sommet
+    ctx.strokeStyle = '#3a2418'; ctx.lineWidth = Math.max(1.2, 2 * k);
+    ctx.beginPath(); ctx.moveTo(x + r * .35, y - r * .85); ctx.quadraticCurveTo(x + r * .7, y - r * 1.35, x + r * .95, y - r * 1.15); ctx.stroke();
+    ctx.fillStyle = Math.floor(t * 12) % 2 ? '#ffe066' : '#ff7a1f';
+    ctx.beginPath(); ctx.arc(x + r * .95, y - r * 1.15, Math.max(1.8, 3 * k), 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#fff1dc'; ctx.lineWidth = Math.max(1, 1.6 * k);
+    for (const s of [-1, 1]) { ctx.beginPath(); ctx.moveTo(x + s * 6 * k - 2 * k, y - 2 * k); ctx.lineTo(x + s * 6 * k + 2 * k, y + 2 * k); ctx.moveTo(x + s * 6 * k + 2 * k, y - 2 * k); ctx.lineTo(x + s * 6 * k - 2 * k, y + 2 * k); ctx.stroke(); }
+  } else if (b.v === 'bouncy') {
+    // chevrons vers le haut
+    ctx.strokeStyle = '#fff1dc'; ctx.lineWidth = Math.max(1.2, 2.2 * k);
+    for (const dy of [-3, 4]) { ctx.beginPath(); ctx.moveTo(x - 6 * k, y + (dy + 3) * k); ctx.lineTo(x, y + (dy - 3) * k); ctx.lineTo(x + 6 * k, y + (dy + 3) * k); ctx.stroke(); }
+  }
+  ctx.lineCap = 'butt';
+}
 function drawBall(b) {
-  const r = RAD[b.s], sh = shades(b.c);
+  const r = RAD[b.s], c = b.v ? VARIANTS[b.v].c : b.c, sh = shades(c), t = performance.now() / 1000;
+  ctx.save();
+  if (b.v === 'ghost') ctx.globalAlpha = .5 + Math.sin(t * 4 + b.x * .05) * .15;
+  if (b.v === 'black') {
+    // halo rouge qui pulse : danger
+    ctx.fillStyle = `rgba(255,40,60,${.25 + Math.sin(t * 6) * .12})`;
+    ctx.beginPath(); ctx.arc(b.x, b.y, r + 3 + Math.sin(t * 6), 0, Math.PI * 2); ctx.fill();
+  }
   const g = ctx.createRadialGradient(b.x - r * .35, b.y - r * .4, r * .1, b.x, b.y, r);
-  g.addColorStop(0, sh.lite); g.addColorStop(.35, b.c); g.addColorStop(1, sh.dark);
+  g.addColorStop(0, b.v === 'black' ? '#6a4a80' : sh.lite); g.addColorStop(.35, c); g.addColorStop(1, b.v === 'black' ? '#07030c' : sh.dark);
   ctx.fillStyle = g;
   ctx.beginPath(); ctx.arc(b.x, b.y, r, 0, Math.PI * 2); ctx.fill();
-  ctx.lineWidth = 1.5; ctx.strokeStyle = 'rgba(20,10,30,.45)'; ctx.stroke();
+  ctx.lineWidth = b.v === 'black' ? 2 : 1.5; ctx.strokeStyle = b.v === 'black' ? '#ff3b55' : 'rgba(20,10,30,.45)'; ctx.stroke();
   ctx.fillStyle = 'rgba(255,255,255,.8)';
   ctx.beginPath(); ctx.ellipse(b.x - r * .38, b.y - r * .42, r * .22, r * .14, -.6, 0, Math.PI * 2); ctx.fill();
+  if (b.v) drawMark(b, r, t);
+  if (b.flash > 0) {
+    b.flash -= 1 / 60;
+    ctx.globalAlpha = .6; ctx.fillStyle = '#ffffff';
+    ctx.beginPath(); ctx.arc(b.x, b.y, r, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.restore();
   if (freezeT > 0 && state !== 'menu') {
     const blink = freezeT < 1.2 && Math.floor(freezeT * 10) % 2;
     ctx.fillStyle = blink ? 'rgba(220,245,255,.2)' : 'rgba(220,245,255,.5)';
@@ -2077,15 +2247,27 @@ function drawItem(it) {
   ctx.restore();
 }
 
+// face peut commencer par une graisse (« 800 "Baloo 2" … ») : elle doit précéder la taille.
+function fontOf(size, face) {
+  const m = /^(\d{3}) (.*)$/.exec(face || '');
+  return m ? `${m[1]} ${size}px ${m[2]}` : `${size}px ${face || 'Bungee, "Arial Black", sans-serif'}`;
+}
 function outlined(text, x, y, size, fill, face) {
-  ctx.font = `${size}px ${face || 'Bungee, "Arial Black", sans-serif'}`;
+  ctx.font = fontOf(size, face);
   ctx.lineJoin = 'round'; ctx.lineWidth = size / 4.5; ctx.strokeStyle = 'rgba(33,17,48,.9)';
   ctx.strokeText(text, x, y); ctx.fillStyle = fill; ctx.fillText(text, x, y);
 }
 function banner(big, small) {
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  outlined(big, W / 2, H / 2 - 30, 30, '#fff3e6');
-  if (small) outlined(small, W / 2, H / 2 + 4, 15, '#ffc83d', '800 "Baloo 2", "Trebuchet MS", sans-serif');
+  outlined(big, W / 2, H / 2 - 30, fitSize(big, 30), '#fff3e6');
+  const face = '800 "Baloo 2", "Trebuchet MS", sans-serif';
+  if (small) outlined(small, W / 2, H / 2 + 4, fitSize(small, 15, face), '#ffc83d', face);
+}
+// Taille de police réduite si le texte dépasse la largeur de l'écran.
+function fitSize(text, size, face) {
+  ctx.font = fontOf(size, face);
+  const w = ctx.measureText(text).width;
+  return w > W - 48 ? size * (W - 48) / w : size;
 }
 
 function draw() {
@@ -2131,7 +2313,7 @@ function drawSurvival() {
   for (const d of drops) {
     if (Math.floor(d.t * 10) % 2) continue;
     const r = RAD[d.s];
-    ctx.fillStyle = '#ffc83d'; ctx.strokeStyle = 'rgba(33,17,48,.9)'; ctx.lineWidth = 1.5;
+    ctx.fillStyle = d.v ? VARIANTS[d.v].c : '#ffc83d'; ctx.strokeStyle = d.v === 'black' ? '#ff3b3b' : 'rgba(33,17,48,.9)'; ctx.lineWidth = 1.5;
     ctx.beginPath(); ctx.moveTo(d.x - r * .6 - 4, 3); ctx.lineTo(d.x + r * .6 + 4, 3); ctx.lineTo(d.x, 12 + r * .4); ctx.closePath();
     ctx.fill(); ctx.stroke();
   }
