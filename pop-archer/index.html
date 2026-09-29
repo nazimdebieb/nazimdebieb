@@ -1776,7 +1776,41 @@ const MATERIALS = {
   sea:    { s: ['#a9bfc0', '#5c7a7f', '#34494d'], b: ['#e0708a', '#f6a8b8', '#9a3550', '#7a2540'] },
   space:  { s: ['#6d71a3', '#33365e', '#1c1e3c'], b: ['#5bc8f0', '#b8f0ff', '#2a7fa8', '#1d5a7a'] },
 };
+// Plateformes et briques peintes (Canva), une paire par thème.
+const BLOCK_ART = {};
+for (const th of Object.keys(MATERIALS)) {
+  BLOCK_ART[th] = {};
+  for (const [t, name] of [['s', 'plat'], ['b', 'brick']]) {
+    const img = new Image();
+    img.onload = () => { BLOCK_ART[th][t] = img; };
+    img.src = `img/${name}-${th}.webp`;
+  }
+}
+// Plateforme horizontale : les deux bouts gardent leurs proportions, le milieu est répété
+// (une copie sur deux en miroir pour cacher les raccords).
+function drawSlab(img, x, y, w, h) {
+  const sc = h / img.height, capS = Math.min(img.height * 1.2, img.width / 3);
+  const cap = Math.min(capS * sc, w / 2), capSrc = cap / sc;
+  ctx.drawImage(img, 0, 0, capSrc, img.height, x, y, cap + .5, h);
+  ctx.drawImage(img, img.width - capSrc, 0, capSrc, img.height, x + w - cap - .5, y, cap + .5, h);
+  const midS = img.width - capS * 2, tile = midS * sc;
+  for (let tx = x + cap, i = 0; tx < x + w - cap - .01; tx += tile, i++) {
+    const dw = Math.min(tile, x + w - cap - tx), sw = dw / sc;
+    if (i % 2) {
+      ctx.save(); ctx.translate(tx + dw, y); ctx.scale(-1, 1);
+      ctx.drawImage(img, img.width - capS - sw, 0, sw, img.height, -.5, 0, dw + 1, h);
+      ctx.restore();
+    } else ctx.drawImage(img, capS, 0, sw, img.height, tx - .5, y, dw + 1, h);
+  }
+}
 function drawBlock(k) {
+  const art = BLOCK_ART[scene.theme] && BLOCK_ART[scene.theme][k.t];
+  if (art && k.t === 'b') { ctx.drawImage(art, k.x - 1, k.y - 1, k.w + 2, k.h + 2); return; }
+  if (art && k.t === 's') {
+    if (k.w >= k.h) drawSlab(art, k.x, k.y - 1, k.w, k.h + 2);
+    else { ctx.save(); ctx.translate(k.x - 1, k.y + k.h); ctx.rotate(-Math.PI / 2); drawSlab(art, 0, 0, k.h, k.w + 2); ctx.restore(); }
+    return;
+  }
   const m = MATERIALS[scene.theme] || MATERIALS.forest;
   if (k.t === 's') {
     const g = ctx.createLinearGradient(0, k.y, 0, k.y + k.h);

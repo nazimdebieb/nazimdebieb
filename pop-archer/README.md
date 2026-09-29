@@ -2,11 +2,12 @@
 
 Jeu d'arcade dans l'esprit de Pang / Bubble Trouble : on tire un harpon vers le haut, chaque bulle touchée se coupe en deux bulles plus petites, jusqu'à ce que les plus petites éclatent. Un fichier `index.html` et un dossier `img/`, sans dépendance.
 
-**Pop Archer** (anciennement « Éclate-Bulles ») est entièrement en anglais. On joue seul un petit **archer** à capuche rouge qui tire des flèches-grappins vers le haut. Chaque monde a son décor : forêt, désert en ruines, fonds marins et cosmos, avec des obstacles dans la matière du monde. L'archer, les bulles et les obstacles sont dessinés dans le code. Sont des images générées avec Canva, rangées dans `img/` (le dossier doit rester à côté de `index.html`) :
+**Pop Archer** (anciennement « Éclate-Bulles ») est entièrement en anglais. On joue seul un petit **archer** à capuche rouge qui tire des flèches-grappins vers le haut. Chaque monde a son décor : forêt, désert en ruines, fonds marins et cosmos, avec des obstacles dans la matière du monde. L'archer, les bulles et les portes sont dessinés dans le code. Sont des images générées avec Canva, rangées dans `img/` (le dossier doit rester à côté de `index.html`) :
 
 - le logo « Pop Archer » ;
 - les décors des 4 mondes, 2 ambiances chacun : forêt de jour et au couchant, désert de jour et au crépuscule, fonds marins clairs et grand fond, cosmos violet et bleu nuit ;
 - les 4 boss : Bubble King, Great Storm, Ink Octopus et Void Eye. Leur portrait apparaît aussi sur la case « Boss » de la carte.
+- les plateformes et briques de chaque monde (`plat-*.webp`, `brick-*.webp`) : rondin herbeux et caisse en bois (forêt), dalle de grès gravée et brique d'argile (désert), roche à coquillages et bloc de corail (fonds marins), plateforme métal néon et bloc de cristal (cosmos). Les plateformes gardent leurs bouts arrondis quelle que soit leur longueur ; le milieu est répété ;
 - les 12 icônes de bonus (`item-*.webp`), dans le même style : pastille arrondie brillante avec un symbole blanc. Elles servent pour les bonus qui tombent et pour les pastilles d'effet en haut à gauche.
 
 Si une image manque, le dessin fait par le code prend le relais.
