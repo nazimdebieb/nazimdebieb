@@ -399,7 +399,17 @@ const ITEMS = [
   ['bonus', 3, '#b45cff', '+500'],
   ['life', .6, '#ff4f7a', '+1 vie'],
 ];
-const ITEM_BY = Object.fromEntries(ITEMS.map(i => [i[0], i]));
+// Bonus réservés à la Survie.
+const SURV_ITEMS = [
+  ['gun', 2, '#ff6b2d', 'Mitraille'],
+  ['triple', 2, '#2fb89a', 'Triple harpon'],
+  ['bomb', 1.3, '#e03a3a', 'Bombe !'],
+  ['slow', 1.5, '#7a8cff', 'Ralenti'],
+  ['star', 1, '#f5b700', 'Étoile'],
+  ['x2', 1.5, '#3fbf6f', 'Points x2'],
+];
+const POWER_TIME = { gun: 8, triple: 10, star: 6, x2: 10, slow: 8 };
+const ITEM_BY = Object.fromEntries([...ITEMS, ...SURV_ITEMS].map(i => [i[0], i]));
 
 /* ---------- DOM ---------- */
 const $ = id => document.getElementById(id);
@@ -492,7 +502,8 @@ const fireQ = [false, false];
 
 function makePlayer(id) {
   return { id, x: W / 2, lives: ADV_HEARTS, score: 0, combo: 0, comboT: 0, mult: 1, out: false, weapon: 'normal', shield: false,
-           harpoons: [], walk: 0, face: 1, moving: false, inv: 0, dead: false, dy: 0, dvy: 0 };
+           harpoons: [], walk: 0, face: 1, moving: false, inv: 0, dead: false, dy: 0, dvy: 0,
+           power: null, star: 0, x2: 0 };
 }
 const active = () => players.filter(p => !p.out);
 const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
@@ -517,7 +528,7 @@ function loadLevel() {
   const def = levelDef(level);
   scene = SCENES[def.boss ? BOSSES[def.boss].scene : (level - 1) % SCENES.length];
   blocks = (def.k || []).map(k => ({ ...k }));
-  boss = def.boss ? makeBoss(def.boss) : null; shots = []; beams = []; shake = 0;
+  boss = def.boss ? makeBoss(def.boss) : null; shots = []; beams = []; shake = 0; slowT = 0;
   balls = def.b.map(d => makeBall(d, scene.ball));
   items = []; parts = []; texts = []; freezeT = 0;
   timeMax = timeLeft = timeFor(def);
@@ -630,9 +641,10 @@ function update(dt) {
     if (stateT <= 0) { setState('play', 0); fireQ[0] = fireQ[1] = false; }
   } else if (state === 'play') {
     if (kind === 'surv') updateSurvival(dt); else timeLeft -= dt;
-    const frozen = freezeT > 0;
-    if (frozen) freezeT -= dt; else moveBalls(dt);
-    if (boss) { if (!frozen) updateBoss(dt); moveShots(dt); }
+    const frozen = freezeT > 0, slow = slowT > 0 ? .45 : 1;
+    if (slowT > 0) slowT -= dt;
+    if (frozen) freezeT -= dt; else moveBalls(dt * slow);
+    if (boss) { if (!frozen) updateBoss(dt * slow); moveShots(dt * slow); }
     movePlayers(dt, true);
     moveGates(dt);
     moveHarpoons(dt);
@@ -713,11 +725,27 @@ function movePlayers(dt, canFire) {
     if (d) { p.face = d; p.walk += dt * 14; }
     if (p.inv > 0) p.inv -= dt;
     if (p.comboT > 0 && (p.comboT -= dt) <= 0) { p.combo = 0; p.mult = 1; }
+    if (p.power && (p.power.t -= dt) <= 0) p.power = null;
+    if (p.star > 0) p.star -= dt;
+    if (p.x2 > 0) p.x2 -= dt;
     if (fireQ[p.id]) { fireQ[p.id] = false; if (canFire) fire(p); }
   }
 }
 
 function fire(p) {
+  if (p.power && p.power.type === 'gun') {
+    // Mitraille : des balles courtes et rapides, jusqu'à 6 à la fois.
+    if (p.harpoons.length >= 6) return;
+    p.harpoons.push({ x: p.x, top: FLOOR - 30, stuck: 0, sticky: false, bullet: true });
+    sfx.shoot();
+    return;
+  }
+  if (p.power && p.power.type === 'triple') {
+    if (p.harpoons.length) return;
+    for (const dx of [-24, 0, 24]) p.harpoons.push({ x: clamp(p.x + dx, 4, W - 4), top: FLOOR - 30, stuck: 0, sticky: false });
+    sfx.shoot();
+    return;
+  }
   const max = p.weapon === 'double' ? 2 : 1;
   if (p.harpoons.length >= max) return;
   p.harpoons.push({ x: p.x, top: FLOOR - 30, stuck: 0, sticky: p.weapon === 'sticky' });
@@ -729,7 +757,7 @@ function moveHarpoons(dt) {
     p.harpoons = p.harpoons.filter(h => {
       if (h.stuck > 0) { h.stuck -= dt; return h.stuck > 0; }
       const prev = h.top;
-      h.top -= HARPOON_SPEED * dt;
+      h.top -= (h.bullet ? 760 : HARPOON_SPEED) * dt;
       let hit = null;
       for (const k of blocks) {
         const bottom = k.y + k.h;
@@ -754,8 +782,7 @@ function hitBalls() {
       const h = p.harpoons[i];
       for (let j = 0; j < balls.length; j++) {
         const b = balls[j], r = RAD[b.s];
-        const cy = clamp(b.y, h.top, FLOOR), dx = b.x - h.x, dy = b.y - cy;
-        if (dx * dx + dy * dy < r * r) { p.harpoons.splice(i, 1); popBall(j, p); break; }
+        if (segHits(h, b.x, b.y, r)) { p.harpoons.splice(i, 1); popBall(j, p); break; }
       }
       if (p.harpoons[i] === h && boss && !boss.dead && harpoonHitsBoss(h, p)) p.harpoons.splice(i, 1);
     }
@@ -773,7 +800,7 @@ function breakBrick(k, p) {
   sfx.brick();
 }
 
-function popBall(j, p) {
+function popBall(j, p, noDrop) {
   const b = balls[j];
   balls.splice(j, 1);
   let mult = 1;
@@ -783,6 +810,7 @@ function popBall(j, p) {
     if (mult > p.mult) { float(p.x, FLOOR - 58, 'Combo x' + mult, '#ffc83d'); sfx.pick(); }
     p.mult = mult;
   }
+  if (p.x2 > 0) mult *= 2;
   p.score += PTS[b.s] * mult;
   float(b.x, b.y - RAD[b.s], '+' + PTS[b.s] * mult, COL[p.id].main);
   burst(b.x, b.y, b.c, RAD[b.s]);
@@ -795,13 +823,23 @@ function popBall(j, p) {
       balls.push({ s, x, y: Math.max(b.y, r), vx: dir * VX[s], vy: -230, c: b.c });
     }
   }
-  if (Math.random() < .15) dropItem(b.x, b.y);
+  if (!noDrop && Math.random() < (kind === 'surv' ? .18 : .15)) dropItem(b.x, b.y);
+}
+
+// Bombe : chaque bulle à l'écran éclate une fois (les grosses se coupent en deux).
+function bomb(p) {
+  for (const b of balls.slice()) { const j = balls.indexOf(b); if (j >= 0) popBall(j, p, true); }
+  drops = [];
+  shake = Math.max(shake, .6);
+  parts.push({ ring: true, x: p.x, y: FLOOR - 20, r: 120, life: .4, max: .4, c: '#ffc83d' });
+  sfx.thud();
 }
 
 function dropItem(x, y) {
-  const total = ITEMS.reduce((t, i) => t + i[1], 0);
-  let r = Math.random() * total, pick = ITEMS[0];
-  for (const it of ITEMS) { if ((r -= it[1]) <= 0) { pick = it; break; } }
+  const pool = kind === 'surv' ? [...ITEMS, ...SURV_ITEMS] : ITEMS;
+  const total = pool.reduce((t, i) => t + i[1], 0);
+  let r = Math.random() * total, pick = pool[0];
+  for (const it of pool) { if ((r -= it[1]) <= 0) { pick = it; break; } }
   items.push({ type: pick[0], x: clamp(x, 10, W - 10), y, vy: -80, t: 7 });
 }
 
@@ -826,14 +864,28 @@ function applyItem(p, type) {
   else if (type === 'freeze') freezeT = 4.5;
   else if (type === 'bonus') p.score += 500;
   else if (type === 'life') p.lives = Math.min(p.lives + 1, 9);
+  else if (type === 'gun' || type === 'triple') p.power = { type, t: POWER_TIME[type] };
+  else if (type === 'star') p.star = POWER_TIME.star;
+  else if (type === 'x2') p.x2 = POWER_TIME.x2;
+  else if (type === 'slow') slowT = POWER_TIME.slow;
+  else if (type === 'bomb') bomb(p);
   float(p.x, FLOOR - 44, label, color);
   sfx.pick();
 }
 
 function touchPlayers() {
   for (const p of players) {
-    if (p.out || p.dead || p.inv > 0) continue;
+    if (p.out || p.dead) continue;
     const x0 = p.x - 8, x1 = p.x + 8, y0 = FLOOR - 26, y1 = FLOOR;
+    if (p.star > 0) {
+      for (let j = balls.length - 1; j >= 0; j--) {
+        const b = balls[j], r = RAD[b.s] + 4;
+        const dx = b.x - clamp(b.x, x0, x1), dy = b.y - clamp(b.y, y0, y1);
+        if (dx * dx + dy * dy < r * r) popBall(j, p, true);
+      }
+      continue;
+    }
+    if (p.inv > 0) continue;
     for (const b of balls) {
       const r = RAD[b.s] * .92;
       const dx = b.x - clamp(b.x, x0, x1), dy = b.y - clamp(b.y, y0, y1);
@@ -970,13 +1022,14 @@ const TERRAINS = [
   () => [S(300, 60, 40, 180)],
   () => [S(40, 170, 120), S(260, 120, 120), S(480, 170, 120)],
 ];
+let slowT = 0;
 let survT = 0, waveT = 0, bossT = 0, terrainT = 0, terrainI = 0, drops = [], ann = null, bossKills = 0;
 const comboMult = c => c >= 15 ? 5 : c >= 10 ? 4 : c >= 6 ? 3 : c >= 3 ? 2 : 1;
 const weight = () => balls.reduce((t, b) => t + 2 ** (b.s + 1) - 1, 0) + drops.reduce((t, d) => t + 2 ** (d.s + 1) - 1, 0);
 
 function startSurvival() {
   level = 1; survT = 0; waveT = 3; bossT = BOSS_EVERY; terrainT = TERRAIN_EVERY; terrainI = 0; bossKills = 0;
-  drops = []; ann = null;
+  drops = []; ann = null; slowT = 0;
   scene = SCENES[1];
   blocks = []; boss = null; shots = []; beams = []; shake = 0;
   items = []; parts = []; texts = []; freezeT = 0;
@@ -1137,8 +1190,10 @@ function moveShots(dt) {
   });
 }
 
+// Un harpon couvre du sol jusqu'à sa pointe ; une balle de mitraille ne fait que 14 px.
+const segBottom = h => h.bullet ? h.top + 14 : FLOOR;
 function segHits(h, x, y, r) {
-  const cy = clamp(y, h.top, FLOOR), dx = x - h.x, dy = y - cy;
+  const cy = clamp(y, h.top, segBottom(h)), dx = x - h.x, dy = y - cy;
   return dx * dx + dy * dy < r * r;
 }
 function harpoonHitsBoss(h, p) {
@@ -1152,7 +1207,8 @@ function harpoonHitsBoss(h, p) {
   if (b.type === 'storm') {
     // Nuage : ellipse large et plate.
     const rx = 64, ry = 30, dx = (h.x - b.x) / rx;
-    hit = Math.abs(dx) < 1 && h.top <= b.y + ry * Math.sqrt(1 - dx * dx);
+    const hh = ry * Math.sqrt(Math.max(0, 1 - dx * dx));
+    hit = Math.abs(dx) < 1 && h.top <= b.y + hh && segBottom(h) >= b.y - hh;
   } else hit = segHits(h, b.x, b.y, b.r * .95);
   if (!hit) return false;
   damageBoss(p);
@@ -1185,7 +1241,7 @@ function finishBoss() {
 function bossTouch() {
   for (const p of players) {
     if (state !== 'play') return;
-    if (p.out || p.dead || p.inv > 0) continue;
+    if (p.out || p.dead || p.inv > 0 || p.star > 0) continue;
     const x0 = p.x - 8, x1 = p.x + 8, y0 = FLOOR - 26, y1 = FLOOR;
     const touches = (x, y, r) => { const dx = x - clamp(x, x0, x1), dy = y - clamp(y, y0, y1); return dx * dx + dy * dy < r * r; };
     let hit = !!boss && !boss.dead && boss.type !== 'storm' && touches(boss.x, boss.y, boss.r * .85);
@@ -1406,6 +1462,12 @@ function drawBall(b) {
 }
 
 function drawHarpoon(h) {
+  if (h.bullet) {
+    ctx.fillStyle = '#ffb36b'; ctx.strokeStyle = 'rgba(25,15,25,.8)'; ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.roundRect(h.x - 2.5, h.top, 5, 14, 2.5); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#fff3e6'; ctx.fillRect(h.x - 1, h.top + 2, 2, 5);
+    return;
+  }
   ctx.beginPath();
   let k = 0;
   ctx.moveTo(h.x, FLOOR);
@@ -1422,6 +1484,17 @@ function drawHarpoon(h) {
 
 function drawPlayer(p) {
   if (p.out) return;
+  if (p.star > 0 && !p.dead && (p.star > 1.5 || Math.floor(p.star * 10) % 2)) {
+    const t = performance.now() / 200;
+    const g = ctx.createRadialGradient(p.x, FLOOR - 16, 4, p.x, FLOOR - 16, 26);
+    g.addColorStop(0, 'rgba(255,230,120,.55)'); g.addColorStop(1, 'rgba(255,200,60,0)');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(p.x, FLOOR - 16, 26, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#fff3a8';
+    for (let i = 0; i < 4; i++) {
+      const a = t + i * Math.PI / 2;
+      ctx.beginPath(); ctx.arc(p.x + Math.cos(a) * 20, FLOOR - 16 + Math.sin(a) * 20, 2, 0, Math.PI * 2); ctx.fill();
+    }
+  }
   if (p.inv > 0 && !p.dead && Math.floor(p.inv * 14) % 2) return;
   const c = COL[p.id];
   ctx.save();
@@ -1513,6 +1586,24 @@ function drawItemGlyph(type) {
     ctx.closePath(); ctx.fill();
   } else if (type === 'life') {
     ctx.moveTo(0, 5); ctx.bezierCurveTo(-8, -1, -3, -7, 0, -3); ctx.bezierCurveTo(3, -7, 8, -1, 0, 5); ctx.fill();
+  } else if (type === 'gun') {
+    for (const [x, y] of [[-4, 1], [0, -4], [4, 1]]) ctx.fillRect(x - 1, y - 2.5, 2, 5);
+  } else if (type === 'triple') {
+    ctx.moveTo(0, 6); ctx.lineTo(0, -6); ctx.moveTo(0, 6); ctx.lineTo(-5, -5); ctx.moveTo(0, 6); ctx.lineTo(5, -5); ctx.stroke();
+  } else if (type === 'bomb') {
+    ctx.arc(-1, 1.5, 4.5, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(2, -2); ctx.quadraticCurveTo(4, -6, 6, -5); ctx.stroke();
+  } else if (type === 'slow') {
+    ctx.moveTo(-4, -6); ctx.lineTo(4, -6); ctx.lineTo(-4, 6); ctx.lineTo(4, 6); ctx.closePath(); ctx.fill();
+  } else if (type === 'star') {
+    for (let i = 0; i < 8; i++) {
+      const a = -Math.PI / 2 + i * Math.PI / 4, r = i % 2 ? 2 : 6.5;
+      i ? ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r) : ctx.moveTo(Math.cos(a) * r, Math.sin(a) * r);
+    }
+    ctx.closePath(); ctx.fill();
+  } else if (type === 'x2') {
+    ctx.font = '8px Bungee, "Arial Black", sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('x2', 0, .5);
   }
   ctx.lineCap = 'butt';
 }
@@ -1592,6 +1683,25 @@ function drawSurvival() {
     outlined('x' + p.mult, x, 16, 16, '#ffc83d');
     ctx.fillStyle = 'rgba(33,17,48,.75)'; ctx.fillRect(left ? x : x - 44, 28, 44, 4);
     ctx.fillStyle = COL[p.id].main; ctx.fillRect(left ? x : x - 44 * p.comboT / 2, 28, 44 * p.comboT / 2, 4);
+  }
+  // Bonus actifs : une pastille par effet, avec le temps restant.
+  for (const p of players) {
+    if (p.out) continue;
+    const fx = [];
+    if (p.power) fx.push([p.power.type, p.power.t]);
+    if (p.star > 0) fx.push(['star', p.star]);
+    if (p.x2 > 0) fx.push(['x2', p.x2]);
+    if (slowT > 0 && p === players.find(o => !o.out)) fx.push(['slow', slowT]);
+    fx.forEach(([type, t], i) => {
+      const left = p.id === 0, x = left ? 21 + i * 24 : W - 21 - i * 24, y = 46;
+      ctx.save(); ctx.translate(x, y);
+      ctx.fillStyle = ITEM_BY[type][2]; ctx.strokeStyle = 'rgba(20,10,30,.6)'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.roundRect(-9, -9, 18, 18, 4); ctx.fill(); ctx.stroke();
+      drawItemGlyph(type);
+      ctx.fillStyle = 'rgba(33,17,48,.75)'; ctx.fillRect(-9, 12, 18, 3);
+      ctx.fillStyle = '#fff3e6'; ctx.fillRect(-9, 12, 18 * clamp(t / POWER_TIME[type], 0, 1), 3);
+      ctx.restore();
+    });
   }
 }
 

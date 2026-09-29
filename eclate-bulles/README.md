@@ -36,6 +36,13 @@ Les deux modes se jouent à 1 ou 2 joueurs (choix dans le menu).
 
 - Les petites bulles rapportent plus (30 → 100 points) ; le temps restant donne un bonus en fin de niveau.
 - Bonus qui tombent parfois : double harpon, harpon collant (reste accroché au plafond), bouclier, bulles gelées, +500, +1 vie.
+- Bonus en plus en Survie (une pastille en haut de l'écran montre ceux qui sont actifs et leur temps restant) :
+  - **Mitraille** (8 s) : des balles courtes et rapides, jusqu'à 6 à l'écran ;
+  - **Triple harpon** (10 s) : trois harpons en éventail à chaque tir ;
+  - **Bombe** : toutes les bulles à l'écran éclatent une fois (les grosses se coupent en deux) ;
+  - **Ralenti** (8 s) : bulles, boss et projectiles au ralenti ;
+  - **Étoile** (6 s) : invincible, et les bulles touchées éclatent ;
+  - **Points x2** (10 s) : se cumule avec le combo.
 - Obstacles, dans l'esprit de Bubble Trouble 2 :
   - **plateformes en métal** : les bulles rebondissent dessus et le harpon s'y arrête (le harpon collant reste accroché dessous) ;
   - **briques** : les bulles rebondissent dessus, un coup de harpon les casse (+20) ;
