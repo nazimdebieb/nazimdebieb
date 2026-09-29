@@ -23,6 +23,11 @@ Sur téléphone, le jeu est toujours en paysage : si l'écran est tenu droit, le
   - ★ niveau fini ;
   - ★★ niveau fini sans être touché ;
   - ★★★ sans être touché et avec plus de la moitié du temps restant.
+- **Boss** : le 12e niveau de chaque monde est un combat de boss, avec une barre de vie. Chaque coup de harpon lui retire un point ; une fois vaincu, toutes les bulles restantes éclatent.
+  - Monde 1, **Roi Bulle** : une bulle géante couronnée qui rebondit de plus en plus vite et lâche des petites bulles tous les 3 coups.
+  - Monde 2, **Grand Orage** : un nuage qui fait pleuvoir des gouttes et des bulles, puis lance des éclairs (une ligne en pointillés prévient avant la frappe).
+  - Monde 3, **Pieuvre Encre** : elle crache de l'encre en éventail et plonge sur toi après avoir tremblé.
+  - Monde 4, **Œil du Néant** : protégé par 3 bulles en orbite qui arrêtent le harpon, il tire des lasers visés sur toi.
 - **Arcade** : les niveaux s'enchaînent avec 5 vies. Toucher une bulle ou laisser filer le temps coûte une vie et relance le niveau ; sans vie, on repart du niveau 1. C'est le mode du record.
 
 Les deux modes se jouent à 1 ou 2 joueurs (choix dans le menu).
