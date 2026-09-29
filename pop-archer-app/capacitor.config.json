@@ -1,0 +1,8 @@
+{
+  "appId": "com.nazimdebieb.poparcher",
+  "appName": "Pop Archer",
+  "webDir": "www",
+  "android": {
+    "backgroundColor": "#211130"
+  }
+}

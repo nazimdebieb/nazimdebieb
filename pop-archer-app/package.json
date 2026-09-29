@@ -1,0 +1,18 @@
+{
+  "name": "pop-archer-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Pop Archer packaged as an Android app with Capacitor",
+  "scripts": {
+    "sync": "node scripts/copy-web.mjs && cap sync android",
+    "build:debug": "npm run sync && cd android && ./gradlew assembleDebug",
+    "build:release": "npm run sync && cd android && ./gradlew bundleRelease"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.5.2",
+    "@capacitor/core": "^8.5.2"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.5.2"
+  }
+}
