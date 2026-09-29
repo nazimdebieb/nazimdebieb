@@ -432,7 +432,14 @@ const SCENES = [
   { theme: 'sea', sky: ['#1a6b96', '#071f3f'], far: '#0f3a5f', weed: '#1f7a5a', coral: '#e0457b', ground: '#b8a27a', ball: '#ffe14d', art: 'seaDeep' },
   { theme: 'space', sky: ['#1a0b33', '#4a2385'], far: '#2a1a4d', far2: '#1c1036', crystal: '#7cf0ff', neb: '#ff4fa3', planet: '#ffb86b', ground: '#241638', ball: '#ff4fa3', art: 'spacePurple' },
   { theme: 'space', sky: ['#050a24', '#1d2d70'], far: '#1a2350', far2: '#10173a', crystal: '#ff9ad1', neb: '#5ff0c8', planet: '#9ab8ff', ground: '#141a3a', ball: '#5ff0c8', art: 'spaceBlue' },
+  { theme: 'ice', sky: ['#8fd3ff', '#e8f7ff'], sun: '#fffbe8', far: '#a9c8e8', near: '#d8ecfb', ground: '#eef8ff', ball: '#ff4f8b', art: 'iceDay' },
+  { theme: 'ice', sky: ['#0b1a3d', '#1f5a6e'], sun: '#e8f4ff', far: '#1b3056', near: '#2c4f78', ground: '#c9e4f5', ball: '#ffd23b', art: 'iceNight' },
+  { theme: 'volcano', sky: ['#5a1a1a', '#ff8a3d'], far: '#3a1414', lava: '#ff7a1f', ground: '#2a1a1a', ball: '#3bd1ff', art: 'volcano' },
+  { theme: 'volcano', sky: ['#140a1c', '#3a1426'], far: '#241028', lava: '#ff7a1f', ground: '#1c1218', ball: '#9dff5a', art: 'lavaCave' },
 ];
+// Noms des mondes (carte) et conseil affiché au premier niveau des mondes qui ont un piège.
+const WORLD_NAMES = ['Enchanted Forest', 'Desert Ruins', 'Deep Sea', 'Outer Space', 'Frozen Peaks', 'Volcano'];
+const WORLD_TIPS = { 4: 'Frozen Peaks: the ice is slippery!', 5: 'Volcano: watch out for lava geysers!' };
 
 // Obstacles : S = plateforme en métal (arrête le harpon), B = rangée de briques (cassées par le harpon),
 // G = barrière qui se lève quand toutes les bulles à sa gauche ont éclaté.
@@ -469,6 +476,32 @@ const LEVELS = [
   { b: [[2, .1, 1], [2, .3, -1, null, 'green'], [2, .5, 1, null, 'black'], [2, .7, -1, null, 'bouncy'], [2, .9, 1]], k: [G(128), G(256), G(384), G(512)] },
   null, // 24 : boss
 ];
+// Mondes 5 (glace : le sol glisse) et 6 (volcan : des geysers de lave jaillissent), niveaux 49 à 71.
+const LEVELS_56 = [
+  { b: [[3, .25, 1], [3, .75, -1]] },
+  { b: [[2, .15, 1], [2, .5, 1, null, 'steel'], [2, .85, -1]], k: shelves() },
+  { b: [[4, .3, 1], [2, .8, -1, null, 'bouncy']], k: [G(427)] },
+  { b: [[2, .1, 1, 60], [2, .3, -1, 60, 'gold'], [2, .7, 1, 60], [2, .9, -1, 60]], k: brickFloor(210) },
+  { b: [[3, .2, 1], [2, .5, -1, null, 'green'], [3, .8, 1]], k: stairs() },
+  { b: [[4, .5, 1]], k: [S(0, 200, 200), S(440, 200, 200)] },
+  { b: [[2, .12, 1], [2, .37, -1, null, 'black'], [2, .63, 1, null, 'ghost'], [2, .88, -1]], k: [G(320), ...B(40, 190, 5)] },
+  { b: [[3, .2, 1, 60, 'gold'], [3, .5, -1, 60, 'steel'], [3, .8, 1, 60]], k: checker(150, 230) },
+  { b: [[5, .5, 1]] },
+  { b: [[2, .1, 1, 262], [2, .3, -1, 262, 'bomb'], [2, .5, 1, 262], [2, .7, -1, 262, 'bomb'], [2, .9, 1, 262]], k: [S(0, 200, 640)] },
+  { b: [[3, .15, 1, null, 'bouncy'], [3, .5, -1, null, 'steel'], [2, .85, 1, null, 'green']], k: [G(213), G(427)] },
+  null, // 60 : boss
+  { b: [[3, .25, 1], [3, .75, -1]] },
+  { b: [[4, .3, 1, null, 'gold'], [2, .8, -1]], k: shelves() },
+  { b: [[2, .1, 1, 60], [2, .35, -1, 60, 'ghost'], [2, .65, 1, 60, 'ghost'], [2, .9, -1, 60]], k: [...B(80, 150, 6), ...B(320, 150, 6)] },
+  { b: [[3, .16, 1], [3, .5, -1, null, 'bomb'], [3, .84, 1]], k: [G(213), G(427)] },
+  { b: [[5, .3, 1]], k: [S(460, 150, 140)] },
+  { b: [[2, .2, 1, 60, 'steel'], [2, .5, -1, 60, 'black'], [2, .8, 1, 60, 'steel']], k: brickFloor(210) },
+  { b: [[4, .2, 1], [4, .8, -1]], k: [G(320)] },
+  { b: [[3, .15, 1, null, 'steel'], [2, .5, -1, null, 'green'], [3, .85, 1, null, 'gold']], k: stairs() },
+  { b: [[2, .1, 1, null, 'bouncy'], [2, .3, -1, null, 'bouncy'], [1, .5, 1, null, 'black'], [2, .7, -1, null, 'bouncy'], [2, .9, 1, null, 'bouncy']] },
+  { b: [[5, .2, 1], [3, .8, -1, null, 'gold']], k: [S(380, 170, 260)] },
+  { b: [[4, .15, 1, null, 'steel'], [3, .5, -1, null, 'bomb'], [3, .85, 1, null, 'ghost']], k: [G(320), ...B(40, 180, 6)] },
+];
 function stairs() { return [S(40, 250, 100), S(180, 200, 100), S(320, 150, 100), S(460, 100, 100)]; }
 function shelves() { return [S(0, 170, 260), S(380, 170, 260)]; }
 function checker(y1, y2) {
@@ -480,6 +513,7 @@ function checker(y1, y2) {
 function levelDef(n) {
   if (n % 12 === 0) return { boss: BOSS_ORDER[(n / 12 - 1) % BOSS_ORDER.length], b: [], k: [] };
   if (n <= LEVELS.length) return LEVELS[n - 1];
+  if (n > 48) return LEVELS_56[n - 49];
   let seed = (n * 2654435761) >>> 0;
   const rnd = () => (seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296;
   const count = Math.min(2 + Math.floor((n - 20) / 5), 6);
@@ -530,7 +564,7 @@ function levelDef(n) {
   if (pick === 9) b.forEach(d => { d[3] = 262; });
   return { b, k };
 }
-const timeFor = def => def.boss ? BOSSES[def.boss].time : Math.round(18 + def.b.reduce((t, [s, , , , v]) => t + popsOf(s, v) * 1.7 * (HARD_V.includes(v) ? 1.2 : 1), 0)
+const timeFor = def => def.boss ? BOSSES[def.boss].time : Math.round(18 + (LEVELS_56.includes(def) ? 1.15 : 1) * def.b.reduce((t, [s, , , , v]) => t + popsOf(s, v) * 1.7 * (HARD_V.includes(v) ? 1.2 : 1), 0)
   + (def.k || []).reduce((t, k) => t + (k.t === 'g' ? 6 : k.t === 'b' ? .6 : 0), 0));
 
 const ITEMS = [
@@ -648,6 +682,12 @@ const SONGS = {
   space: { bpm: 128, lead: 'E5 G5 B5 E6 B5 G5 E5 G5 C5 E5 G5 C6 G5 E5 C5 E5 D5 F#5 A5 D6 A5 F#5 D5 F#5 B4 D#5 F#5 B5 F#5 D#5 B4 D#5',
            bass: 'E2 . E2 . E2 . E2 . C2 . C2 . C2 . C2 . D2 . D2 . D2 . D2 . B1 . B1 . B1 . B1 .',
            drum: 'k . h . s . h . k . h . s . h . k . h . s . h . k . h . s . h h', wave: 'square' },
+  ice: { bpm: 104, lead: 'E6 . B5 . G#5 . E5 . F#5 - G#5 . B5 . C#6 . B5 . G#5 . E5 . F#5 . G#5 - - . E5 - - .',
+         bass: 'E3 . . . B2 . . . C#3 . . . G#2 . . . A2 . . . E3 . . . B2 . . . B2 . . .',
+         drum: 'k . . h . . h . k . . h . . h h k . . h . . h . k . . h . h h .', wave: 'triangle' },
+  volcano: { bpm: 138, lead: 'A4 . C5 . E5 . A5 . G5 . F5 . E5 - D5 . C5 . D5 . E5 . C5 . A4 . B4 . C5 - - .',
+             bass: 'A2 A2 . A2 A2 . A2 . F2 F2 . F2 F2 . F2 . G2 G2 . G2 G2 . G2 . E2 E2 . E2 E2 . E2 .',
+             drum: 'k . h k s . h . k . h k s . h h k . h k s . h . k k h . s . s s', wave: 'sawtooth' },
   boss: { bpm: 150, lead: 'C5 . C5 Eb5 . C5 G5 . F5 . Eb5 . D5 . Eb5 . C5 . C5 Eb5 . G5 C6 . Bb5 . Ab5 . G5 . G5 .',
           bass: 'C2 C3 C2 C3 C2 C3 C2 C3 Ab1 Ab2 Ab1 Ab2 G1 G2 G1 G2 C2 C3 C2 C3 C2 C3 C2 C3 Ab1 Ab2 Ab1 Ab2 G1 G2 G1 G2',
           drum: 'k . s . k k s . k . s . k k s s k . s . k k s . k . s . k k s s', wave: 'sawtooth' },
@@ -749,7 +789,7 @@ function paintSound() {
 let mode = 0, level = 1, state = 'menu', stateT = 0, paused = false;
 // kind : 'adv' (Aventure : niveau par niveau, 3 cœurs, étoiles) ou 'surv' (Survie : vagues sans fin, 3 vies, record)
 let kind = 'adv';
-const ADV_COUNT = 48, ADV_HEARTS = 3, WORLD = 12;
+const ADV_COUNT = 72, ADV_HEARTS = 3, WORLD = 12, WORLDS = ADV_COUNT / WORLD;
 const worldOf = n => Math.floor((n - 1) / WORLD);
 let mapWorld = 0;
 let adv = store.get('adv', {});
@@ -796,9 +836,9 @@ function firstLevelOf(v) {
 }
 function loadLevel() {
   const def = levelDef(level);
-  scene = SCENES[def.boss ? BOSSES[def.boss].scene : (worldOf(level) % 4) * 2 + (level - 1) % 2];
+  scene = SCENES[def.boss ? BOSSES[def.boss].scene : (worldOf(level) % WORLDS) * 2 + (level - 1) % 2];
   blocks = (def.k || []).map(k => ({ ...k }));
-  boss = def.boss ? makeBoss(def.boss) : null; shots = []; beams = []; shake = 0; slowT = 0;
+  boss = def.boss ? makeBoss(def.boss) : null; shots = []; beams = []; shake = 0; slowT = 0; geyserT = 3;
   balls = def.b.map(d => makeBall(d, scene.ball));
   items = []; parts = []; texts = []; freezeT = 0;
   timeMax = timeLeft = timeFor(def);
@@ -807,7 +847,7 @@ function loadLevel() {
   const zone = gate ? gate.x : W;
   act.forEach((p, i) => {
     p.x = zone * (act.length === 1 ? .5 : (i + 1) / 3);
-    p.harpoons = []; p.inv = 0; p.dead = false; p.dy = 0; p.dvy = 0; p.moving = false;
+    p.harpoons = []; p.inv = 0; p.dead = false; p.dy = 0; p.dvy = 0; p.moving = false; p.vx = 0;
   });
   fireQueued = false;
   levelHit = false;
@@ -815,6 +855,7 @@ function loadLevel() {
   dropBudget = def.boss ? 3 : clamp(Math.round(pops / 12), 1, 3); dropCd = 0; lifeDropped = false;
   unlockTxt = '';
   for (const [t, w] of Object.entries(ADV_UNLOCK)) if (level === (w - 1) * WORLD + 1) unlockTxt = 'New power-up: ' + ITEM_BY[t][3];
+  if (level % WORLD === 1 && WORLD_TIPS[worldOf(level)]) unlockTxt = WORLD_TIPS[worldOf(level)];
   const fresh = def.b.map(d => d[4]).find(v => v && firstLevelOf(v) === level);
   if (fresh) unlockTxt = `${VARIANTS[fresh].name}: ${VARIANTS[fresh].tip}`;
   setState('ready', unlockTxt ? 2.6 : 1.7);
@@ -907,7 +948,7 @@ function openMap(world) {
   let ws = 0;
   for (let n = first; n < first + WORLD; n++) ws += starsOf(n);
   $('worldName').textContent = `World ${mapWorld + 1}`;
-  $('worldStars').textContent = `★ ${ws}/${WORLD * 3} in this world`;
+  $('worldStars').textContent = `${WORLD_NAMES[mapWorld]} · ★ ${ws}/${WORLD * 3}`;
   $('wPrev').disabled = mapWorld === 0;
   $('wNext').disabled = mapWorld === ADV_COUNT / WORLD - 1;
   $('starTotal').textContent = `★ ${totalStars()}/${ADV_COUNT * 3}`;
@@ -946,14 +987,16 @@ function update(dt) {
     const frozen = freezeT > 0 || learning, slow = slowT > 0 ? .45 : 1;
     if (slowT > 0) slowT -= dt;
     if (frozen) freezeT -= dt; else moveBalls(dt * slow);
-    if (boss) { if (!frozen) updateBoss(dt * slow); moveShots(dt * slow); }
+    if (boss && !frozen) updateBoss(dt * slow);
+    if (!learning) updateHazards(dt);
+    if (boss || shots.length || beams.length) moveShots(dt * slow);
     movePlayers(dt, true);
     moveGates(dt);
     moveHarpoons(dt);
     hitBalls();
     moveItems(dt);
     touchPlayers();
-    if (boss) bossTouch();
+    if (boss || shots.length || beams.length) bossTouch();
     if (state === 'play' && kind === 'adv') {
       if (balls.length === 0 && !boss) levelClear();
       else if (timeLeft <= 0) timeUp();
@@ -1018,13 +1061,17 @@ function movePlayers(dt, canFire) {
     const inp = input();
     const d = (inp.r ? 1 : 0) - (inp.l ? 1 : 0);
     const ox = p.x;
-    p.x = clamp(p.x + d * PLAYER_SPEED * dt, 12, W - 12);
+    // Sur la glace, l'archer prend de l'élan et glisse avant de s'arrêter.
+    if (scene.theme === 'ice') p.vx = (p.vx || 0) + (d * PLAYER_SPEED - (p.vx || 0)) * Math.min(1, dt * (d ? 3.4 : 1.6));
+    else p.vx = d * PLAYER_SPEED;
+    p.x = clamp(p.x + p.vx * dt, 12, W - 12);
+    if (p.x <= 12 || p.x >= W - 12) p.vx = 0;
     for (const k of blocks) {
       if (k.y + k.h < FLOOR - 34) continue;
-      if (ox + 10 <= k.x + .01 && p.x + 10 > k.x) p.x = k.x - 10;
-      if (ox - 10 >= k.x + k.w - .01 && p.x - 10 < k.x + k.w) p.x = k.x + k.w + 10;
+      if (ox + 10 <= k.x + .01 && p.x + 10 > k.x) { p.x = k.x - 10; p.vx = 0; }
+      if (ox - 10 >= k.x + k.w - .01 && p.x - 10 < k.x + k.w) { p.x = k.x + k.w + 10; p.vx = 0; }
     }
-    p.moving = d !== 0;
+    p.moving = d !== 0 || Math.abs(p.vx) > 20;
     if (d) { p.face = d; p.walk += dt * 14; }
     if (p.inv > 0) p.inv -= dt;
     if (p.comboT > 0 && (p.comboT -= dt) <= 0) { p.combo = 0; p.mult = 1; }
@@ -1398,7 +1445,7 @@ function startSurvival() {
   level = 1; survT = 0; waveT = 3; bossT = BOSS_EVERY; terrainT = TERRAIN_EVERY; terrainI = 0; bossKills = 0;
   drops = []; ann = null; slowT = 0; survSeen.clear();
   scene = SCENES[0];
-  blocks = []; boss = null; shots = []; beams = []; shake = 0;
+  blocks = []; boss = null; shots = []; beams = []; shake = 0; geyserT = 3;
   items = []; parts = []; texts = []; freezeT = 0;
   balls = [makeBall([2, .25, 1], scene.ball)];
   timeMax = timeLeft = 1;
@@ -1449,7 +1496,7 @@ function updateSurvival(dt) {
     scene = SCENES[(SCENES.indexOf(scene) + 1) % SCENES.length];
     for (const b of balls) b.c = scene.ball;
     renderBg();
-    ann = { big: 'The ground is shifting!', small: '', t: 1.6 };
+    ann = { big: 'The ground is shifting!', small: { ice: 'The ice is slippery!', volcano: 'Watch out for lava geysers!' }[scene.theme] || '', t: 1.8 };
     sfx.gate();
   }
   // Un boss toutes les 2 minutes ; les vagues continuent pendant le combat.
@@ -1468,9 +1515,27 @@ const BOSSES = {
   storm: { name: 'Great Storm',   hp: 16, r: 30, time: 100, scene: 3 },
   squid: { name: 'Ink Octopus',   hp: 20, r: 34, time: 110, scene: 4 },
   eye:   { name: 'Void Eye',      hp: 20, r: 36, time: 120, scene: 7 },
+  yeti:  { name: 'Frost Yeti',    hp: 22, r: 40, time: 120, scene: 9 },
+  dragon:{ name: 'Lava Dragon',   hp: 24, r: 38, time: 130, scene: 11 },
 };
-const BOSS_ORDER = ['king', 'storm', 'squid', 'eye'];
-let boss = null, shots = [], beams = [], shake = 0;
+const BOSS_ORDER = ['king', 'storm', 'squid', 'eye', 'yeti', 'dragon'];
+let boss = null, shots = [], beams = [], shake = 0, geyserT = 3;
+// Volcan : un geyser de lave jaillit du sol après un avertissement (bulles au sol et pointillés).
+function updateHazards(dt) {
+  if (scene.theme !== 'volcano' || (tut && tut.step < 2)) return;
+  if ((geyserT -= dt) > 0) return;
+  const hard = kind === 'surv' ? clamp(survT / 240, 0, 1) : clamp((level - 61) / 10, 0, 1);
+  geyserT = 4.4 - hard * 1.6 + Math.random() * 1.4;
+  const p = players[0], near = p && Math.random() < .5;
+  const x = clamp(near ? p.x + (Math.random() - .5) * 180 : 30 + Math.random() * (W - 60), 20, W - 20);
+  beams.push({ x, warn: 1.3, on: .9, c: '#ff7a1f', zapped: false, geyser: true, h: 140 + Math.random() * 130 });
+}
+// Tir en cloche du boss (boule de neige, boule de feu) qui retombe sur x au bout de T secondes.
+function throwArc(b, tx, kind, T, r) {
+  const x0 = b.x, y0 = b.y + b.r * .3, vy = b.type === 'yeti' ? -330 : -150;
+  const g = 2 * (FLOOR - r - y0 - vy * T) / (T * T);
+  shots.push({ x: x0, y: y0, vx: (clamp(tx, 10, W - 10) - x0) / T, vy, g, r, kind });
+}
 
 function makeBoss(type) {
   const d = BOSSES[type];
@@ -1480,6 +1545,8 @@ function makeBoss(type) {
   if (type === 'storm') b.y = 70;
   if (type === 'squid') b.y = 110;
   if (type === 'eye') b.orbs = [0, 1, 2].map(i => ({ a: i * Math.PI * 2 / 3, alive: true, t: 0 }));
+  if (type === 'yeti') { b.x = W * .82; b.y = FLOOR - b.r; b.mt = 2.2; b.cd = 1; b.jumps = 0; }
+  if (type === 'dragon') { b.y = 90; b.cd = 1.5; b.cd2 = 4; b.cd3 = 6; }
   return b;
 }
 const rage = b => 1 - b.hp / b.max;
@@ -1549,18 +1616,55 @@ function updateBoss(dt) {
     for (const o of b.orbs) { o.a += dt * (1.3 + rg); if (!o.alive && (o.t -= dt) <= 0) o.alive = true; }
     if ((b.cd -= dt) <= 0) { b.cd = 3.2 - rg * 1.2; aimBeam(tgt, '#ff4fa3'); }
     if (rg >= .5 && (b.cd2 -= dt) <= 0) { b.cd2 = 7; spawnMinion(b, 2); }
+  } else if (b.type === 'yeti') {
+    // Au sol, il lance des boules de neige ; puis il saute d'un bord à l'autre, et son atterrissage
+    // fait tomber des stalactites (signalées au plafond). On ne peut le toucher que pendant le saut.
+    if (b.mode === 'idle') {
+      b.y = FLOOR - b.r;
+      if ((b.cd -= dt) <= 0 && tgt) { b.cd = 1.4 - rg * .5; throwArc(b, tgt.x + (Math.random() - .5) * 40, 'snow', 1.15, 7); sfx.ink(); }
+      if ((b.mt -= dt) <= 0) {
+        const to = b.x < W / 2 ? W - b.r - 10 : b.r + 10, T = 1.75 - rg * .35;
+        b.mode = 'jump'; b.vx = (to - b.x) / T; b.vy = -GRAV * T / 2; b.dx = to;
+      }
+    } else {
+      b.vy += GRAV * dt; b.x += b.vx * dt; b.y += b.vy * dt;
+      if (b.y >= FLOOR - b.r && b.vy > 0) {
+        b.y = FLOOR - b.r; b.x = b.dx; b.mode = 'idle'; b.mt = 2.4 - rg * .9; b.cd = .6; b.jumps++;
+        shake = Math.max(shake, .3); sfx.thud(); vibe(40);
+        const n = 2 + Math.round(rg * 2);
+        for (let i = 0; i < n; i++) {
+          const x = i === 0 && tgt ? tgt.x : 40 + Math.random() * (W - 80);
+          shots.push({ x: clamp(x, 16, W - 16), y: 16, vx: 0, vy: 0, g: 900, r: 6, kind: 'icicle', wait: .9 + i * .18 });
+        }
+        if (rg >= .5 && b.jumps % 2 === 0) spawnMinion(b, 1);
+      }
+    }
+  } else if (b.type === 'dragon') {
+    // Il vole en haut, crache des boules de feu en cloche et un souffle de flammes visé sur le joueur.
+    b.x += ((W / 2 + Math.sin(b.t * (.45 + rg * .3)) * 220) - b.x) * Math.min(1, dt * 2.5);
+    b.y = 90 + Math.sin(b.t * 1.6) * 14;
+    if ((b.cd -= dt) <= 0 && tgt) {
+      b.cd = 2.1 - rg * .7;
+      const n = rg >= .5 ? 3 : 1;
+      for (let i = 0; i < n; i++) throwArc(b, tgt.x + (i - (n - 1) / 2) * 80, 'fire', 1.25, 7);
+      sfx.ink();
+    }
+    if ((b.cd2 -= dt) <= 0) { b.cd2 = 5.5 - rg * 1.5; aimBeam(tgt, '#ff7a1f'); }
+    if (rg >= .5 && (b.cd3 -= dt) <= 0) { b.cd3 = 8; spawnMinion(b, 2); }
   }
 }
 
+const SHOT_COL = { ink: '#5a2f78', drop: '#8fd0ff', snow: '#ffffff', icicle: '#bfe9ff', fire: '#ff7a1f' };
 function moveShots(dt) {
   shots = shots.filter(s => {
+    if (s.wait > 0) { s.wait -= dt; return true; }
     s.vy += s.g * dt; s.x += s.vx * dt; s.y += s.vy * dt;
-    if (s.y > FLOOR - s.r) { burst(s.x, FLOOR - 2, s.kind === 'ink' ? '#5a2f78' : '#8fd0ff', 3); return false; }
+    if (s.y > FLOOR - s.r) { burst(s.x, FLOOR - 2, SHOT_COL[s.kind] || '#8fd0ff', s.kind === 'icicle' || s.kind === 'snow' ? 7 : 3); return false; }
     return s.x > -10 && s.x < W + 10;
   });
   beams = beams.filter(bm => {
     bm.warn -= dt;
-    if (bm.warn <= 0) { if (!bm.zapped) { bm.zapped = true; sfx.zap(); } bm.on -= dt; }
+    if (bm.warn <= 0) { if (!bm.zapped) { bm.zapped = true; if (bm.geyser) { sfx.thud(); shake = Math.max(shake, .15); } else sfx.zap(); } bm.on -= dt; }
     return bm.on > 0;
   });
 }
@@ -1586,6 +1690,8 @@ function harpoonHitsBoss(h, p) {
     hit = Math.abs(dx) < 1 && h.top <= b.y + hh && segBottom(h) >= b.y - hh;
   } else hit = segHits(h, b.x, b.y, b.r * .95);
   if (!hit) return false;
+  // Le yéti au sol est protégé par sa fourrure : la flèche rebondit, il faut le toucher en plein saut.
+  if (b.type === 'yeti' && b.mode === 'idle') { burst(h.x, Math.max(h.top, b.y - b.r), '#ffffff', 5); sfx.brick(); return true; }
   damageBoss(p);
   return true;
 }
@@ -1621,7 +1727,7 @@ function bossTouch() {
     const x0 = p.x - 8, x1 = p.x + 8, y0 = FLOOR - 26, y1 = FLOOR;
     const touches = (x, y, r) => { const dx = x - clamp(x, x0, x1), dy = y - clamp(y, y0, y1); return dx * dx + dy * dy < r * r; };
     let hit = !!boss && !boss.dead && boss.type !== 'storm' && touches(boss.x, boss.y, boss.r * .85);
-    for (let i = shots.length - 1; i >= 0 && !hit; i--) if (touches(shots[i].x, shots[i].y, shots[i].r)) { shots.splice(i, 1); hit = true; }
+    for (let i = shots.length - 1; i >= 0 && !hit; i--) if (!(shots[i].wait > 0) && touches(shots[i].x, shots[i].y, shots[i].r)) { shots.splice(i, 1); hit = true; }
     if (!hit) hit = beams.some(bm => bm.warn <= 0 && Math.abs(bm.x - p.x) < 15);
     if (hit) hitPlayer(p);
   }
@@ -1678,7 +1784,12 @@ function drawBoss() {
     ctx.restore();
     return;
   }
-  if (b.type === 'king') {
+  if (b.type === 'yeti' || b.type === 'dragon') {
+    const c = b.type === 'yeti' ? '#dff1ff' : '#ff5a1f', sh = shades(c);
+    ctx.fillStyle = c; ctx.strokeStyle = sh.dark; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    drawEyes(b.x, b.y - 4, 9, look, true);
+  } else if (b.type === 'king') {
     const c = '#8b3dff', sh = shades(c), r = b.r;
     const g = ctx.createRadialGradient(b.x - r * .35, b.y - r * .4, r * .1, b.x, b.y, r);
     g.addColorStop(0, sh.lite); g.addColorStop(.35, c); g.addColorStop(1, sh.dark);
@@ -1739,6 +1850,7 @@ function drawBoss() {
 }
 function drawShotsAndBeams() {
   for (const bm of beams) {
+    if (bm.geyser) { drawGeyser(bm); continue; }
     if (bm.warn > 0) {
       if (Math.floor(bm.warn * 12) % 2) continue;
       ctx.strokeStyle = bm.c; ctx.lineWidth = 1.5; ctx.setLineDash([6, 6]);
@@ -1749,7 +1861,22 @@ function drawShotsAndBeams() {
     }
   }
   for (const sh of shots) {
-    if (sh.kind === 'drop') {
+    if (sh.kind === 'icicle') {
+      if (sh.wait > 0) {
+        // avertissement : un triangle rouge clignote au plafond
+        if (Math.floor(sh.wait * 10) % 2) continue;
+        ctx.fillStyle = '#ff4f5e'; ctx.beginPath(); ctx.moveTo(sh.x - 8, 2); ctx.lineTo(sh.x + 8, 2); ctx.lineTo(sh.x, 14); ctx.closePath(); ctx.fill();
+      }
+      const g = ctx.createLinearGradient(sh.x - 5, 0, sh.x + 5, 0); g.addColorStop(0, '#e9f8ff'); g.addColorStop(1, '#7cc8f0');
+      ctx.fillStyle = g; ctx.strokeStyle = 'rgba(20,40,70,.6)'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(sh.x - 6, sh.y - 14); ctx.lineTo(sh.x + 6, sh.y - 14); ctx.lineTo(sh.x, sh.y + 8); ctx.closePath(); ctx.fill(); ctx.stroke();
+    } else if (sh.kind === 'snow' || sh.kind === 'fire') {
+      const fire = sh.kind === 'fire', g = ctx.createRadialGradient(sh.x - 2, sh.y - 2, 1, sh.x, sh.y, sh.r);
+      g.addColorStop(0, fire ? '#fff2a8' : '#ffffff'); g.addColorStop(1, fire ? '#ff5a1f' : '#9cc9ea');
+      if (fire) { ctx.fillStyle = 'rgba(255,120,30,.35)'; ctx.beginPath(); ctx.arc(sh.x, sh.y, sh.r + 4, 0, Math.PI * 2); ctx.fill(); }
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(sh.x, sh.y, sh.r, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = fire ? 'rgba(90,20,0,.6)' : 'rgba(40,70,110,.5)'; ctx.lineWidth = 1; ctx.stroke();
+    } else if (sh.kind === 'drop') {
       ctx.fillStyle = '#8fd0ff';
       ctx.beginPath(); ctx.moveTo(sh.x, sh.y - 9); ctx.quadraticCurveTo(sh.x + 5, sh.y, sh.x, sh.y + 4); ctx.quadraticCurveTo(sh.x - 5, sh.y, sh.x, sh.y - 9); ctx.fill();
     } else {
@@ -1757,6 +1884,29 @@ function drawShotsAndBeams() {
       ctx.fillStyle = 'rgba(255,255,255,.45)'; ctx.beginPath(); ctx.arc(sh.x - 2, sh.y - 2, 1.8, 0, Math.PI * 2); ctx.fill();
     }
   }
+}
+// Geyser de lave : bulles qui clignotent au sol, puis une colonne de lave qui monte.
+function drawGeyser(bm) {
+  const t = performance.now() / 1000, top = FLOOR - bm.h;
+  if (bm.warn > 0) {
+    ctx.fillStyle = '#ff7a1f';
+    for (let i = 0; i < 4; i++) {
+      const bx = bm.x + Math.sin(t * 9 + i * 2) * 8, by = FLOOR - 3 - ((t * 30 + i * 6) % 14);
+      ctx.globalAlpha = .9; ctx.beginPath(); ctx.arc(bx, by, 2.5 + (i % 2), 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    if (Math.floor(bm.warn * 10) % 2) return;
+    ctx.strokeStyle = '#ff7a1f'; ctx.lineWidth = 1.5; ctx.setLineDash([5, 5]);
+    ctx.beginPath(); ctx.moveTo(bm.x - 12, FLOOR); ctx.lineTo(bm.x - 12, top); ctx.moveTo(bm.x + 12, FLOOR); ctx.lineTo(bm.x + 12, top); ctx.stroke();
+    ctx.setLineDash([]);
+    return;
+  }
+  const rise = Math.min(1, (.9 - bm.on) / .12), h = bm.h * rise, y = FLOOR - h;
+  const g = ctx.createLinearGradient(bm.x - 14, 0, bm.x + 14, 0);
+  g.addColorStop(0, '#c2280f'); g.addColorStop(.5, '#ffd24a'); g.addColorStop(1, '#c2280f');
+  ctx.fillStyle = g; ctx.beginPath(); ctx.roundRect(bm.x - 13, y, 26, h + 2, 12); ctx.fill();
+  ctx.fillStyle = 'rgba(255,240,170,.9)';
+  for (let i = 0; i < 5; i++) { ctx.beginPath(); ctx.arc(bm.x + Math.sin(t * 13 + i) * 9, y + 4 + ((t * 60 + i * 11) % Math.max(8, h - 6)), 2.2, 0, Math.PI * 2); ctx.fill(); }
 }
 function drawBossBar() {
   const b = boss, w = 240, x = (W - w) / 2, y = 22;
@@ -1828,12 +1978,18 @@ loadArt('seaShallow', 'img/sea-shallow.webp', .907);
 loadArt('seaDeep', 'img/sea-deep.webp', .907);
 loadArt('spacePurple', 'img/space-purple.webp', .918);
 loadArt('spaceBlue', 'img/space-blue.webp', .918);
+loadArt('iceDay', 'img/ice-day.webp', .938);
+loadArt('iceNight', 'img/ice-night.webp', .915);
+loadArt('volcano', 'img/volcano.webp', .937);
+loadArt('lavaCave', 'img/lava-cave.webp', .926);
 // Boss peints (Canva) : [fichier, largeur affichée, décalage vertical du centre de l'image]
 const BOSS_ART = {
   king: ['img/boss-king.webp', 110, -8],
   storm: ['img/boss-storm.webp', 140, 15],
   squid: ['img/boss-squid.webp', 104, 24],
   eye: ['img/boss-eye.webp', 90, -3],
+  yeti: ['img/boss-yeti.webp', 100, -20],
+  dragon: ['img/boss-dragon.webp', 120, 2],
 };
 const BOSS_SPRITES = {};
 // Icônes des bonus (Canva), une par type : img/item-<type>.webp
@@ -1893,6 +2049,19 @@ function tree(b, x, y, r, leaf, trunk) {
 }
 
 const BACKDROPS = {
+  ice(b, sc, rnd) {
+    sunDisc(b, sc, rnd, 20);
+    hillLine(b, rnd, FLOOR - 120, 40, sc.far, .012, .03);
+    hillLine(b, rnd, FLOOR - 60, 20, sc.near, .02, .05);
+    groundBand(b, rnd, sc.ground, '#a9d6f0');
+  },
+  volcano(b, sc, rnd) {
+    hillLine(b, rnd, FLOOR - 110, 45, sc.far, .01, .025);
+    b.fillStyle = sc.lava;
+    for (let i = 0; i < 3; i++) { const x = rnd() * W; b.globalAlpha = .6; b.fillRect(x, FLOOR - 60, 4, 60); }
+    b.globalAlpha = 1;
+    groundBand(b, rnd, sc.ground, sc.lava);
+  },
   forest(b, sc, rnd) {
     sunDisc(b, sc, rnd, 24);
     cloudPuffs(b, rnd, 4);
@@ -2284,6 +2453,8 @@ const MATERIALS = {
   desert: { s: ['#f0cf93', '#b98a4f', '#7a5428'], b: ['#cf6f3f', '#eea070', '#86391a', '#632a12'] },
   sea:    { s: ['#a9bfc0', '#5c7a7f', '#34494d'], b: ['#e0708a', '#f6a8b8', '#9a3550', '#7a2540'] },
   space:  { s: ['#6d71a3', '#33365e', '#1c1e3c'], b: ['#5bc8f0', '#b8f0ff', '#2a7fa8', '#1d5a7a'] },
+  ice:    { s: ['#f4fbff', '#9fd0f0', '#4a7fa8'], b: ['#cdeeff', '#ffffff', '#7fb8dc', '#4a7fa8'] },
+  volcano:{ s: ['#5a4a4a', '#2a1e1e', '#140c0c'], b: ['#8a2a14', '#ff9a3d', '#3a1008', '#1c0804'] },
 };
 // Plateformes et briques peintes (Canva), une paire par thème.
 const BLOCK_ART = {};
@@ -2443,7 +2614,7 @@ function draw() {
   if (shake > 0 && !paused) ctx.translate((Math.random() - .5) * shake * 10, (Math.random() - .5) * shake * 10);
   ctx.drawImage(bg, 0, 0, W, H);
   for (const k of blocks) drawBlock(k);
-  if (boss) drawShotsAndBeams();
+  if (boss || shots.length || beams.length) drawShotsAndBeams();
   for (const it of items) drawItem(it);
   for (const p of players) for (const h of p.harpoons) drawHarpoon(h, p);
   if (boss) drawBoss();

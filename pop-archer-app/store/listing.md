@@ -3,7 +3,7 @@
 **App name** (30 characters max): Pop Archer
 
 **Short description** (80 characters max):
-Aim, shoot, split! Pop every bubble in 48 levels and an endless Survival mode.
+Aim, shoot, split! Pop every bubble in 72 levels and an endless Survival mode.
 
 **Full description** (4,000 characters max):
 
@@ -12,10 +12,11 @@ Pop Archer is a colorful arcade shooter inspired by the classic bubble-splitting
 Aim your bow and shoot straight up: every bubble you hit splits in two, then in two again, until the smallest ones pop. Clear the screen before time runs out, and never let a bubble touch you!
 
 🏹 ADVENTURE
-• 48 levels across 4 worlds: an enchanted forest, desert ruins, the deep sea and outer space
+• 72 levels across 6 worlds: an enchanted forest, desert ruins, the deep sea, outer space, the frozen peaks and a fiery volcano
+• Slide on slippery ice and dodge erupting lava geysers
 • Earn up to 3 stars per level
 • Platforms, breakable bricks and gates that open as you clear each zone
-• A boss at the end of every world: the Bubble King, the Great Storm, the Ink Octopus and the Void Eye
+• A boss at the end of every world: the Bubble King, the Great Storm, the Ink Octopus, the Void Eye, the Frost Yeti and the Lava Dragon
 
 🎈 SPECIAL BUBBLES
 • Gold bubbles for bonus points and coins
@@ -59,4 +60,5 @@ Collect coins to unlock outfits for your archer — Robin, Nomad, Sailor, Astron
 4. Tricky obstacles (desert, bricks and a gate)
 5. Endless Survival mode (x4 combo)
 6. Unlock fun outfits (shop)
-7. 48 levels in 4 worlds (level map)
+7. 72 levels in 6 worlds (level map)
+8. Ice and lava worlds (Lava Dragon boss)
