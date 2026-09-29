@@ -142,6 +142,11 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
 kbd{font-family:var(--body);font-weight:800;font-size:.95em;background:var(--cab-hi);border:1px solid var(--edge);border-radius:4px;padding:0 .35em;color:var(--ink)}
 .best{margin:0;font-size:min(2.6cqw,5.2cqh);color:var(--muted);font-variant-numeric:tabular-nums}
 .best b{color:var(--gold);font-family:var(--display);font-weight:400}
+.board{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:auto auto auto;column-gap:3cqw;row-gap:.1em;
+  font-size:min(2.5cqw,5cqh);font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
+.board li{display:contents}
+.board li span:first-child,.board li span:last-child{text-align:right}
+.board li.me{color:var(--gold)}
 .result{margin:0;font-size:min(3cqw,6cqh);font-weight:700;font-variant-numeric:tabular-nums}
 .record{margin:0;font-family:var(--display);font-size:min(2.8cqw,5.6cqh);color:var(--gold)}
 .touch-help{display:none}
@@ -189,6 +194,7 @@ kbd{font-family:var(--body);font-weight:800;font-size:.95em;background:var(--cab
 .overlay>*{flex-shrink:0}
 @container (max-height:420px){ .overlay .tagline{display:none} }
 @container (max-height:250px){ .overlay .help{display:none} }
+@container (max-height:230px){ .overlay .board{display:none} }
 @media (prefers-reduced-motion:reduce){ .btn:active,.fire.on{transform:none} .stars i.on{animation:none} }
 </style>
 </head>
@@ -233,7 +239,7 @@ kbd{font-family:var(--body);font-weight:800;font-size:.95em;background:var(--cab
           </div>
           <div class="row">
             <button class="btn" id="bAdv" type="button">Aventure <small id="advStars"></small></button>
-            <button class="btn alt" id="bArc" type="button">Arcade</button>
+            <button class="btn alt" id="bArc" type="button">Survie</button>
           </div>
           <p class="help kb-help">
             <b>J1</b> <kbd>←</kbd> <kbd>→</kbd> bouger, <kbd>↑</kbd> ou <kbd>Espace</kbd> tirer ·
@@ -241,7 +247,7 @@ kbd{font-family:var(--body);font-weight:800;font-size:.95em;background:var(--cab
             <kbd>P</kbd> pause
           </p>
           <p class="help touch-help">Pavé ◀ ▶ pour bouger, gros bouton pour tirer. À deux, chacun son côté de l'écran.</p>
-          <p class="best" id="bestLine">Record arcade : <b id="best">0</b></p>
+          <p class="best" id="bestLine">Record survie : <b id="best">–</b></p>
         </div>
 
         <div class="overlay" id="mapO" hidden>
@@ -272,6 +278,7 @@ kbd{font-family:var(--body);font-weight:800;font-size:.95em;background:var(--cab
           <ul class="crit" id="resCrit" hidden></ul>
           <p class="result" id="result"></p>
           <p class="record" id="newRecord" hidden></p>
+          <ol class="board" id="board" hidden></ol>
           <div class="row">
             <button class="btn" id="bNext" type="button" hidden>Niveau suivant</button>
             <button class="btn" id="bAgain" type="button">Rejouer</button>
@@ -296,7 +303,6 @@ const HOP = [58, 100, 145, 195];      // hauteur de rebond fixe par taille
 const VX  = [100, 90, 80, 72];        // vitesse horizontale par taille
 const PTS = [100, 70, 50, 30];        // les petites rapportent plus
 const PLAYER_SPEED = 165, HARPOON_SPEED = 470;
-const START_LIVES = 5;
 const COL = [
   { main: '#ff5a4e', dark: '#a32a22', belly: '#ffb3a6' },
   { main: '#2ec4e6', dark: '#177a93', belly: '#b8f0ff' },
@@ -409,7 +415,6 @@ const store = {
   get(k, d) { try { const v = localStorage.getItem('eclate-bulles:' + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
   set(k, v) { try { localStorage.setItem('eclate-bulles:' + k, JSON.stringify(v)); } catch (e) {} },
 };
-let best = store.get('best', { score: 0, level: 0 });
 let muted = store.get('muted', false);
 
 /* ---------- Son ---------- */
@@ -471,8 +476,8 @@ function paintSound() {
 
 /* ---------- État du jeu ---------- */
 let mode = 0, level = 1, state = 'menu', stateT = 0, paused = false;
-// kind : 'arcade' (5 vies, retour au niveau 1) ou 'adv' (Aventure : niveau par niveau, 3 cœurs, étoiles)
-let kind = 'arcade', pcount = store.get('players', 1) === 2 ? 2 : 1;
+// kind : 'adv' (Aventure : niveau par niveau, 3 cœurs, étoiles) ou 'surv' (Survie : vagues sans fin, 3 vies, record)
+let kind = 'adv', pcount = store.get('players', 1) === 2 ? 2 : 1;
 const ADV_COUNT = 48, ADV_HEARTS = 3, WORLD = 12;
 const worldOf = n => Math.floor((n - 1) / WORLD);
 let mapWorld = 0;
@@ -482,11 +487,11 @@ const starsOf = n => adv[n] || 0;
 const unlocked = n => n === 1 || starsOf(n - 1) > 0;
 const totalStars = () => Object.values(adv).reduce((t, v) => t + v, 0);
 let players = [], balls = [], items = [], parts = [], texts = [], blocks = [];
-let timeLeft = 1, timeMax = 1, freezeT = 0, bonusTxt = '', deathMsg = '', scene = SCENES[0];
+let timeLeft = 1, timeMax = 1, freezeT = 0, deathMsg = '', scene = SCENES[0];
 const fireQ = [false, false];
 
 function makePlayer(id) {
-  return { id, x: W / 2, lives: kind === 'adv' ? ADV_HEARTS : START_LIVES, score: 0, out: false, weapon: 'normal', shield: false,
+  return { id, x: W / 2, lives: ADV_HEARTS, score: 0, combo: 0, comboT: 0, mult: 1, out: false, weapon: 'normal', shield: false,
            harpoons: [], walk: 0, face: 1, moving: false, inv: 0, dead: false, dy: 0, dvy: 0 };
 }
 const active = () => players.filter(p => !p.out);
@@ -536,7 +541,7 @@ function startRun(n, k, lv) {
   document.body.dataset.mode = n;
   buildControls();
   paused = false; show(null);
-  loadLevel();
+  if (k === 'surv') startSurvival(); else loadLevel();
 }
 
 function menuScene() {
@@ -597,6 +602,7 @@ function openMap(world) {
   if (focus) focus.focus({ preventScroll: true });
 }
 function paintPcount() {
+  paintBest();
   $('pc1').setAttribute('aria-pressed', pcount === 1);
   $('pc2').setAttribute('aria-pressed', pcount === 2);
 }
@@ -623,7 +629,7 @@ function update(dt) {
     movePlayers(dt, false);
     if (stateT <= 0) { setState('play', 0); fireQ[0] = fireQ[1] = false; }
   } else if (state === 'play') {
-    timeLeft -= dt;
+    if (kind === 'surv') updateSurvival(dt); else timeLeft -= dt;
     const frozen = freezeT > 0;
     if (frozen) freezeT -= dt; else moveBalls(dt);
     if (boss) { if (!frozen) updateBoss(dt); moveShots(dt); }
@@ -634,7 +640,7 @@ function update(dt) {
     moveItems(dt);
     touchPlayers();
     if (boss) bossTouch();
-    if (state === 'play') {
+    if (state === 'play' && kind === 'adv') {
       if (balls.length === 0 && !boss) levelClear();
       else if (timeLeft <= 0) timeUp();
     }
@@ -643,7 +649,7 @@ function update(dt) {
     if (stateT <= 0) afterDeath();
   } else if (state === 'clear') {
     movePlayers(dt, false);
-    if (stateT <= 0) { if (kind === 'adv') showResult(); else { level++; loadLevel(); } }
+    if (stateT <= 0) showResult();
   }
   stepFx(dt);
 }
@@ -706,6 +712,7 @@ function movePlayers(dt, canFire) {
     p.moving = d !== 0;
     if (d) { p.face = d; p.walk += dt * 14; }
     if (p.inv > 0) p.inv -= dt;
+    if (p.comboT > 0 && (p.comboT -= dt) <= 0) { p.combo = 0; p.mult = 1; }
     if (fireQ[p.id]) { fireQ[p.id] = false; if (canFire) fire(p); }
   }
 }
@@ -769,8 +776,15 @@ function breakBrick(k, p) {
 function popBall(j, p) {
   const b = balls[j];
   balls.splice(j, 1);
-  p.score += PTS[b.s];
-  float(b.x, b.y - RAD[b.s], '+' + PTS[b.s], COL[p.id].main);
+  let mult = 1;
+  if (kind === 'surv') {
+    p.combo = p.comboT > 0 ? p.combo + 1 : 1; p.comboT = 2;
+    mult = comboMult(p.combo);
+    if (mult > p.mult) { float(p.x, FLOOR - 58, 'Combo x' + mult, '#ffc83d'); sfx.pick(); }
+    p.mult = mult;
+  }
+  p.score += PTS[b.s] * mult;
+  float(b.x, b.y - RAD[b.s], '+' + PTS[b.s] * mult, COL[p.id].main);
   burst(b.x, b.y, b.c, RAD[b.s]);
   sfx.pop(b.s);
   if (b.s > 0) {
@@ -836,81 +850,63 @@ function hitPlayer(p) {
   if (p.shield) {
     p.shield = false; p.inv = 1.5; sfx.shield();
     burst(p.x, FLOOR - 15, '#9eeaff', 14);
-  } else if (kind === 'adv') {
-    hurt(p);
   } else {
-    killPlayer(p, 'Aïe !');
+    hurt(p);
   }
 }
 
-// Aventure : chaque touche coûte un cœur ; sans cœur, le joueur est KO (à deux, l'autre continue).
+// Chaque touche coûte un cœur ; sans cœur, le joueur est KO (à deux, l'autre continue).
 function hurt(p) {
   levelHit = true; p.lives--;
   sfx.hit();
   burst(p.x, FLOOR - 15, COL[p.id].main, 14);
-  if (p.lives > 0) { p.inv = 2; float(p.x, FLOOR - 44, '-1 cœur', COL[p.id].main); return; }
+  if (p.lives > 0) { p.inv = 2; float(p.x, FLOOR - 44, kind === 'surv' ? '-1 vie' : '-1 cœur', COL[p.id].main); return; }
   if (players.some(o => o !== p && !o.out && o.lives > 0)) {
     p.out = true; p.harpoons = [];
     float(p.x, FLOOR - 44, `J${p.id + 1} KO`, COL[p.id].main);
     return;
   }
   p.dead = true; p.dvy = -300; p.dy = 0;
-  deathMsg = 'Plus de cœurs !';
+  deathMsg = kind === 'surv' ? 'Plus de vies !' : 'Plus de cœurs !';
   setState('dying', 1.6);
-}
-
-function killPlayer(p, msg) {
-  p.dead = true; p.dvy = -300; p.dy = 0; p.lives--;
-  deathMsg = msg;
-  setState('dying', 1.9);
-  sfx.hit();
 }
 
 function timeUp() {
   deathMsg = 'Temps écoulé !';
-  for (const p of active()) { p.dead = true; p.dvy = -300; p.dy = 0; if (kind !== 'adv') p.lives--; }
+  for (const p of active()) { p.dead = true; p.dvy = -300; p.dy = 0; }
   setState('dying', 1.9);
   sfx.hit();
 }
 
 function afterDeath() {
-  if (kind === 'adv') { showFail(); return; }
-  for (const p of players) {
-    if (p.dead) { p.weapon = 'normal'; p.shield = false; if (p.lives <= 0) p.out = true; }
-  }
-  if (active().length === 0) gameOver();
-  else loadLevel();
+  if (kind === 'adv') showFail(); else gameOver();
 }
 
 function levelClear() {
-  if (kind === 'adv') {
-    clearTime = timeLeft;
-    lastStars = 1 + (levelHit ? 0 : 1) + (!levelHit && clearTime > timeMax / 2 ? 1 : 0);
-    prevStars = starsOf(level);
-    if (lastStars > prevStars) { adv[level] = lastStars; store.set('adv', adv); }
-    for (const p of players) p.harpoons = [];
-    bonusTxt = '';
-    setState('clear', 1.4);
-    sfx.clear();
-    return;
-  }
-  const bonus = Math.ceil(Math.max(0, timeLeft)) * 10;
-  for (const p of active()) { p.score += bonus; p.harpoons = []; }
-  bonusTxt = 'Bonus temps +' + bonus;
-  setState('clear', 2.4);
+  clearTime = timeLeft;
+  lastStars = 1 + (levelHit ? 0 : 1) + (!levelHit && clearTime > timeMax / 2 ? 1 : 0);
+  prevStars = starsOf(level);
+  if (lastStars > prevStars) { adv[level] = lastStars; store.set('adv', adv); }
+  for (const p of players) p.harpoons = [];
+  setState('clear', 1.4);
   sfx.clear();
 }
 
+// Survie : fin de partie, tableau des 5 meilleurs scores (un tableau pour 1 joueur, un pour 2).
+const boardOf = n => store.get('surv' + n, []);
+const clock = t => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
 function gameOver() {
-  const top = Math.max(...players.map(p => p.score));
-  const isRecord = top > best.score;
-  if (isRecord) { best = { score: top, level }; store.set('best', best); }
+  const total = players.reduce((t, p) => t + p.score, 0);
+  const entry = { score: total, time: Math.floor(survT) };
+  const board = [...boardOf(mode), entry].sort((a, b) => b.score - a.score || b.time - a.time).slice(0, 5);
+  store.set('surv' + mode, board);
+  const rank = board.indexOf(entry);
   paintOver({
     title: 'Partie terminée',
-    result: mode === 1
-      ? `Score ${fmt(players[0].score)} · niveau ${level}`
-      : `J1 ${fmt(players[0].score)} · J2 ${fmt(players[1].score)} · niveau ${level}`,
-    record: isRecord ? 'Nouveau record !' : '',
+    result: (mode === 1 ? `Score ${fmt(total)}` : `J1 ${fmt(players[0].score)} + J2 ${fmt(players[1].score)} = ${fmt(total)}`)
+      + ` · tenu ${clock(survT)}`,
+    record: rank === 0 ? 'Nouveau record !' : rank > 0 ? `${rank + 1}e meilleur score` : '',
+    board, rank,
     again: 'Rejouer', menu: 'Menu',
   });
   sfx.over();
@@ -946,12 +942,96 @@ function paintOver(o) {
   cr.replaceChildren(...(o.crit || []).map(([txt, ok]) => { const li = document.createElement('li'); li.textContent = txt; if (ok) li.className = 'ok'; return li; }));
   $('result').textContent = o.result || ''; $('result').hidden = !o.result;
   $('newRecord').textContent = o.record || ''; $('newRecord').hidden = !o.record;
+  const bd = $('board');
+  bd.hidden = !o.board;
+  bd.replaceChildren(...(o.board || []).map((e, i) => {
+    const li = document.createElement('li');
+    if (i === o.rank) li.className = 'me';
+    li.innerHTML = `<span>${i + 1}.</span><span>${fmt(e.score)}</span><span>${clock(e.time)}</span>`;
+    return li;
+  }));
   $('bNext').hidden = !o.next;
   $('bAgain').textContent = o.again; $('bAgain').className = o.next ? 'btn alt' : 'btn';
   $('bMenu').textContent = o.menu;
   setState('over', 0);
   show(overO);
   (o.next ? $('bNext') : $('bAgain')).focus({ preventScroll: true });
+}
+
+/* ---------- Survie ---------- */
+const BOSS_EVERY = 120, TERRAIN_EVERY = 45;
+const TERRAINS = [
+  () => [],
+  () => shelves(),
+  () => stairs(),
+  () => B(160, 190, 8),
+  () => [S(60, 190, 130), S(450, 190, 130)],
+  () => checker(150, 230),
+  () => [S(300, 60, 40, 180)],
+  () => [S(40, 170, 120), S(260, 120, 120), S(480, 170, 120)],
+];
+let survT = 0, waveT = 0, bossT = 0, terrainT = 0, terrainI = 0, drops = [], ann = null, bossKills = 0;
+const comboMult = c => c >= 15 ? 5 : c >= 10 ? 4 : c >= 6 ? 3 : c >= 3 ? 2 : 1;
+const weight = () => balls.reduce((t, b) => t + 2 ** (b.s + 1) - 1, 0) + drops.reduce((t, d) => t + 2 ** (d.s + 1) - 1, 0);
+
+function startSurvival() {
+  level = 1; survT = 0; waveT = 3; bossT = BOSS_EVERY; terrainT = TERRAIN_EVERY; terrainI = 0; bossKills = 0;
+  drops = []; ann = null;
+  scene = SCENES[1];
+  blocks = []; boss = null; shots = []; beams = []; shake = 0;
+  items = []; parts = []; texts = []; freezeT = 0;
+  balls = [makeBall([2, .25, 1], scene.ball)];
+  timeMax = timeLeft = 1;
+  const act = active();
+  act.forEach((p, i) => { p.x = W * (act.length === 1 ? .5 : (i + 1) / 3); p.harpoons = []; });
+  fireQ[0] = fireQ[1] = false;
+  setState('ready', 1.7);
+  renderBg();
+}
+
+function updateSurvival(dt) {
+  survT += dt;
+  if (ann && (ann.t -= dt) <= 0) ann = null;
+  // Vagues : une marque clignote en haut, puis la bulle tombe.
+  drops = drops.filter(d => {
+    if ((d.t -= dt) > 0) return true;
+    const r = RAD[d.s];
+    balls.push({ s: d.s, x: d.x, y: r + 4, vx: d.dir * VX[d.s], vy: 0, c: scene.ball });
+    return false;
+  });
+  const gap = clamp(6.5 - survT * .025, 2.4, 6.5) * (boss ? 1.6 : 1);
+  if ((waveT -= dt) <= 0) {
+    waveT = gap;
+    const cap = 22 + Math.min(40, survT * .15);
+    const n = survT < 30 ? 1 : survT < 90 ? 1 + (Math.random() < .5) : 2 + (Math.random() < .4);
+    for (let i = 0; i < n; i++) {
+      const big = survT < 20 ? .3 : survT < 60 ? .7 : 1;
+      let sz = Math.random() < big ? 2 : 1;
+      if (survT > 60 && Math.random() < Math.min(.6, (survT - 60) / 200)) sz = 3;
+      if (weight() + 2 ** (sz + 1) - 1 > cap) break;
+      const r = RAD[sz];
+      drops.push({ s: sz, x: r + Math.random() * (W - 2 * r), dir: Math.random() < .5 ? -1 : 1, t: .9 });
+    }
+  }
+  // Le terrain change régulièrement (et le décor avec).
+  if ((terrainT -= dt) <= 0) {
+    terrainT = TERRAIN_EVERY;
+    terrainI = (terrainI + 1 + Math.floor(Math.random() * (TERRAINS.length - 1))) % TERRAINS.length;
+    blocks = TERRAINS[terrainI]();
+    scene = SCENES[(SCENES.indexOf(scene) + 1) % SCENES.length];
+    for (const b of balls) b.c = scene.ball;
+    renderBg();
+    ann = { big: 'Le terrain change !', small: '', t: 1.6 };
+    sfx.gate();
+  }
+  // Un boss toutes les 2 minutes ; les vagues continuent pendant le combat.
+  if (!boss && (bossT -= dt) <= 0) {
+    bossT = BOSS_EVERY;
+    boss = makeBoss(BOSS_ORDER[Math.floor(Math.random() * BOSS_ORDER.length)]);
+    boss.hp = boss.max = boss.max + bossKills * 4;
+    ann = { big: 'Boss !', small: boss.name, t: 2 };
+    sfx.charge();
+  }
 }
 
 /* ---------- Boss (dernier niveau de chaque monde) ---------- */
@@ -1098,8 +1178,9 @@ function damageBoss(p) {
 function finishBoss() {
   const p = boss.killer || players[0];
   for (const b of balls) { burst(b.x, b.y, b.c, RAD[b.s]); p.score += PTS[b.s]; }
-  balls = [];
+  balls = []; drops = [];
   boss = null;
+  if (kind === 'surv') { bossKills++; waveT = 4; }
 }
 function bossTouch() {
   for (const p of players) {
@@ -1486,11 +1567,31 @@ function draw() {
   ctx.globalAlpha = 1;
 
   if (boss && state !== 'menu') drawBossBar();
-  if (state === 'ready') banner(boss ? 'Boss !' : 'Niveau ' + level, boss ? boss.name : stateT > .45 ? 'Prêt ?' : 'Go !');
-  else if (state === 'clear') banner('Bravo !', bonusTxt);
-  else if (state === 'dying') {
-    const left = players.filter(p => p.dead && p.lives <= 0 && mode === 2 && kind === 'arcade').map(p => `J${p.id + 1} est éliminé`);
-    banner(deathMsg, left.join(' · '));
+  if (kind === 'surv' && state !== 'menu') drawSurvival();
+  if (state === 'ready') {
+    if (kind === 'surv') banner('Survie', stateT > .45 ? 'Prêt ?' : 'Go !');
+    else banner(boss ? 'Boss !' : 'Niveau ' + level, boss ? boss.name : stateT > .45 ? 'Prêt ?' : 'Go !');
+  } else if (state === 'clear') banner('Bravo !', '');
+  else if (state === 'dying') banner(deathMsg, '');
+  else if (state === 'play' && ann) banner(ann.big, ann.small);
+}
+
+function drawSurvival() {
+  for (const d of drops) {
+    if (Math.floor(d.t * 10) % 2) continue;
+    const r = RAD[d.s];
+    ctx.fillStyle = '#ffc83d'; ctx.strokeStyle = 'rgba(33,17,48,.9)'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(d.x - r * .6 - 4, 3); ctx.lineTo(d.x + r * .6 + 4, 3); ctx.lineTo(d.x, 12 + r * .4); ctx.closePath();
+    ctx.fill(); ctx.stroke();
+  }
+  ctx.textBaseline = 'middle';
+  for (const p of players) {
+    if (p.out || p.mult < 2) continue;
+    const left = p.id === 0, x = left ? 12 : W - 12;
+    ctx.textAlign = left ? 'left' : 'right';
+    outlined('x' + p.mult, x, 16, 16, '#ffc83d');
+    ctx.fillStyle = 'rgba(33,17,48,.75)'; ctx.fillRect(left ? x : x - 44, 28, 44, 4);
+    ctx.fillStyle = COL[p.id].main; ctx.fillRect(left ? x : x - 44 * p.comboT / 2, 28, 44 * p.comboT / 2, 4);
   }
 }
 
@@ -1508,13 +1609,17 @@ function hud() {
       el.classList.toggle('ko', !!(p && p.out));
     }, p ? (p.out ? 'ko' : p.lives) : 0);
   }
-  setHud('lvl', v => $('lvl').textContent = v, state === 'menu' ? 'Éclate-Bulles' : 'Niveau ' + level + (level % 12 === 0 ? ' · Boss' : ''));
-  const frac = state === 'menu' ? 1 : clamp(timeLeft / timeMax, 0, 1);
+  const surv = kind === 'surv' && state !== 'menu';
+  setHud('lvl', v => $('lvl').textContent = v, state === 'menu' ? 'Éclate-Bulles'
+    : surv ? 'Survie · ' + clock(survT) : 'Niveau ' + level + (level % 12 === 0 ? ' · Boss' : ''));
+  // En Survie, la jauge se remplit jusqu'au prochain boss.
+  const frac = state === 'menu' ? 1 : surv ? (boss ? 1 : 1 - bossT / BOSS_EVERY) : clamp(timeLeft / timeMax, 0, 1);
   setHud('t', v => $('tbar').style.transform = `scaleX(${v})`, frac.toFixed(3));
-  setHud('low', v => $('timer').classList.toggle('low', v), state !== 'menu' && timeLeft < 10);
+  setHud('low', v => $('timer').classList.toggle('low', v), state !== 'menu' && (surv ? !!boss : timeLeft < 10));
 }
 function paintBest() {
-  $('best').textContent = fmt(best.score) + (best.level ? ` · niveau ${best.level}` : '');
+  const top = boardOf(pcount)[0];
+  $('best').textContent = top ? `${fmt(top.score)} · ${clock(top.time)}` : '–';
 }
 
 /* ---------- Commandes ---------- */
@@ -1627,14 +1732,14 @@ layout();
 
 for (const n of [1, 2]) $('pc' + n).addEventListener('click', () => { pcount = n; store.set('players', n); paintPcount(); });
 $('bAdv').addEventListener('click', () => openMap());
-$('bArc').addEventListener('click', () => startRun(pcount, 'arcade', 1));
+$('bArc').addEventListener('click', () => startRun(pcount, 'surv', 1));
 $('bMapBack').addEventListener('click', toMenu);
 $('wPrev').addEventListener('click', () => { openMap(mapWorld - 1); $('wPrev').focus({ preventScroll: true }); });
 $('wNext').addEventListener('click', () => { openMap(mapWorld + 1); $('wNext').focus({ preventScroll: true }); });
 $('bResume').addEventListener('click', () => togglePause(false));
 $('bQuit').addEventListener('click', quitRun);
 $('bNext').addEventListener('click', () => startRun(mode, 'adv', level + 1));
-$('bAgain').addEventListener('click', () => startRun(mode || pcount, kind, kind === 'adv' ? level : 1));
+$('bAgain').addEventListener('click', () => startRun(mode || pcount, kind, level));
 $('bMenu').addEventListener('click', quitRun);
 $('btnPause').addEventListener('click', () => togglePause());
 $('btnSound').addEventListener('click', () => { muted = !muted; store.set('muted', muted); paintSound(); if (!muted) sfx.pick(); });
@@ -1664,14 +1769,14 @@ function frame(now) {
 }
 
 function snapshot() {
-  if (!mode || state === 'over' || state === 'menu') return {};
+  if (!mode || kind !== 'adv' || state === 'over' || state === 'menu') return {};
   return { kind, mode, level, players: players.map(p => ({ score: p.score, lives: p.lives, out: p.out, weapon: p.weapon })) };
 }
 function boot(data) {
   paintSound();
   fit();
-  if (data && data.mode && Array.isArray(data.players) && data.players.some(p => !p.out)) {
-    kind = data.kind === 'adv' ? 'adv' : 'arcade'; mode = data.mode; level = data.level || 1;
+  if (data && data.kind === 'adv' && data.mode && Array.isArray(data.players) && data.players.some(p => !p.out)) {
+    kind = 'adv'; mode = data.mode; level = data.level || 1;
     players = data.players.map((d, i) => Object.assign(makePlayer(i), d));
     document.body.dataset.mode = mode;
     buildControls(); loadLevel();
