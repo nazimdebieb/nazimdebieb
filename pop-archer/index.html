@@ -220,6 +220,7 @@ kbd{font-family:var(--body);font-weight:800;font-size:.95em;background:var(--cab
 .toggle[aria-checked="true"] i{background:#3fbf6f}
 .toggle[aria-checked="true"] i::after{transform:translateX(1em);background:#fff}
 .toggle:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.toggle b{font-family:var(--display);font-weight:400;color:var(--gold)}
 /* Tutoriel : la commande à utiliser clignote */
 .hint{animation:hint 1s ease-in-out infinite}
 @keyframes hint{50%{box-shadow:0 0 0 4px var(--gold),0 0 18px var(--gold)}}
@@ -396,6 +397,7 @@ body[data-state="ready"] .coinpill,body[data-state="play"] .coinpill,body[data-s
             <button class="toggle" id="tSfx" type="button" role="switch" aria-checked="true">Sound effects<i aria-hidden="true"></i></button>
             <button class="toggle" id="tMusic" type="button" role="switch" aria-checked="true">Music<i aria-hidden="true"></i></button>
             <button class="toggle" id="tVibe" type="button" role="switch" aria-checked="true">Vibration<i aria-hidden="true"></i></button>
+            <button class="toggle" id="tLang" type="button">Language<b id="langName">English</b></button>
           </div>
           <div class="row">
             <button class="btn" id="bSetDone" type="button">Done</button>
@@ -708,6 +710,176 @@ const store = {
   get(k, d) { try { const v = localStorage.getItem('eclate-bulles:' + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
   set(k, v) { try { localStorage.setItem('eclate-bulles:' + k, JSON.stringify(v)); } catch (e) {} },
 };
+
+/* ---------- Langue : anglais ou français ---------- */
+// Le jeu est écrit en anglais. En français, chaque texte affiché passe par tr() : les textes des écrans
+// sont traduits dès qu'ils apparaissent dans la page (MutationObserver), ceux du canvas au moment du dessin.
+// Dictionnaire exact, puis quelques modèles pour les textes avec des nombres ; un texte « A · B » ou
+// « A: B » est traduit morceau par morceau.
+let lang = store.get('lang', /^fr\b/i.test(navigator.language || '') ? 'fr' : 'en');
+const nb = s => s.replace(/ ([!?:;»])/g, ' $1').replace(/« /g, '« ');
+const FR = {
+  // menu, carte, réglages
+  'Adventure': 'Aventure', 'Survival': 'Survie', 'Daily': 'Défi', 'Shop': 'Boutique', 'Free chest': 'Coffre gratuit',
+  'Trophies': 'Trophées', 'Best survival:': 'Meilleure survie :', 'Menu': 'Menu', 'Map': 'Carte', 'Back': 'Retour',
+  'Split every bubble in two, then in two again, until the last one pops.': 'Coupe chaque bulle en deux, puis encore en deux, jusqu’à ce que la dernière éclate.',
+  'Slide a thumb on the left half to move · tap the right half to shoot': 'Glisse le pouce à gauche pour bouger · touche la droite pour tirer',
+  'or': 'ou', 'move ·': 'bouger ·', 'shoot ·': 'tirer ·', 'pause': 'pause', 'Space': 'Espace',
+  'Settings': 'Réglages', 'Sound effects': 'Bruitages', 'Music': 'Musique', 'Vibration': 'Vibrations', 'Language': 'Langue',
+  'Done': 'OK', 'Reset progress': 'Tout effacer', 'Pause': 'Pause', 'Resume': 'Reprendre',
+  'Play': 'Jouer', 'Take one boost into this run, or just play.': 'Prends un boost pour cette partie, ou joue directement.',
+  'Next level': 'Niveau suivant', 'Play again': 'Rejouer', 'Try again': 'Réessayer', 'Game over': 'Partie terminée',
+  'Daily challenge': 'Défi du jour', 'Boss': 'Boss', 'Outfits': 'Tenues', 'Arrows': 'Flèches', 'Boosts': 'Boosts',
+  'Coins & no ads': 'Pièces et sans pub', 'Ad': 'Pub', 'AD': 'PUB', 'AD · TEST': 'PUB · TEST', 'Close': 'Fermer', 'Trophy unlocked': 'Trophée débloqué',
+  // bandeaux et tutoriel
+  'Ready?': 'Prêt ?', 'Go!': 'Partez !', 'Boss!': 'Boss !', 'Well done!': 'Bravo !',
+  'Move': 'Bouger', 'Shoot': 'Tirer', 'Pop them all!': 'Éclate-les toutes !',
+  'Put a thumb on the left side and slide ◀ ▶': 'Pose le pouce à gauche et glisse ◀ ▶',
+  'Walk with ← → or A D': 'Marche avec ← → ou A D',
+  'Tap anywhere on the right side to fire': 'Touche n’importe où à droite pour tirer',
+  'Press Space or ↑ to fire an arrow': 'Appuie sur Espace ou ↑ pour tirer une flèche',
+  "Each hit splits a bubble in two. Don't let one touch you!": 'Chaque flèche coupe une bulle en deux. Ne te fais pas toucher !',
+  'The black bubble got you!': 'La bulle noire t’a eu !', 'Out of lives!': 'Plus de vies !', 'Out of hearts!': 'Plus de cœurs !', "Time's up!": 'Temps écoulé !',
+  'Crack!': 'Crac !', '-1 heart': '-1 cœur', '-1 life': '-1 vie',
+  'The ground is shifting!': 'Le terrain change !', 'The ice is slippery!': 'La glace glisse !', 'Watch out for lava geysers!': 'Attention aux geysers de lave !',
+  'Gusts of wind push you around!': 'Les rafales de vent te poussent !', 'Sometimes the lights go out!': 'Parfois, la lumière s’éteint !',
+  'Frozen Peaks: the ice is slippery!': 'Pics gelés : la glace glisse !', 'Volcano: watch out for lava geysers!': 'Volcan : attention aux geysers de lave !',
+  'Sky Kingdom: gusts of wind push you around!': 'Royaume des nuages : les rafales de vent te poussent !',
+  'Haunted Castle: sometimes the lights go out!': 'Château hanté : parfois, la lumière s’éteint !',
+  // résultats
+  'Level cleared': 'Niveau réussi', 'No hits taken': 'Sans être touché', 'No hits, with over half the time left': 'Sans être touché, avec plus de la moitié du temps',
+  'New record!': 'Nouveau record !', 'New star record!': 'Nouveau record d’étoiles !', 'Failed!': 'Raté !',
+  'Time ran out.': 'Le temps est écoulé.', 'You touched a black bubble.': 'Tu as touché une bulle noire.', 'You ran out of hearts.': 'Tu n’as plus de cœurs.',
+  'Daily challenge done!': 'Défi du jour réussi !', 'Already done today: come back tomorrow!': 'Déjà fait aujourd’hui : reviens demain !',
+  'Already done today: play for fun!': 'Déjà fait aujourd’hui : joue pour le plaisir !',
+  '▶ Double coins': '▶ Doubler les pièces', '▶ Continue (+1 life)': '▶ Continuer (+1 vie)', '▶ Continue (+15 s)': '▶ Continuer (+15 s)',
+  '▶ Continue (+1 heart)': '▶ Continuer (+1 cœur)', 'Continue ·': 'Continuer ·',
+  // mondes et boss
+  'Enchanted Forest': 'Forêt enchantée', 'Desert Ruins': 'Ruines du désert', 'Deep Sea': 'Fonds marins', 'Outer Space': 'Espace',
+  'Frozen Peaks': 'Pics gelés', 'Volcano': 'Volcan', 'Sky Kingdom': 'Royaume des nuages', 'Haunted Castle': 'Château hanté',
+  'Bubble King': 'Roi des Bulles', 'Great Storm': 'Grande Tempête', 'Ink Octopus': 'Pieuvre d’encre', 'Void Eye': 'Œil du Néant',
+  'Frost Yeti': 'Yéti des glaces', 'Lava Dragon': 'Dragon de lave', 'Sky Pirate': 'Pirate du ciel', 'Lantern Phantom': 'Fantôme à la lanterne',
+  // bulles spéciales
+  'Black bubble': 'Bulle noire', 'One touch and you lose all your hearts!': 'Un seul contact et tu perds tous tes cœurs !',
+  'Gold bubble': 'Bulle dorée', 'Triple points and bonus coins': 'Points triplés et pièces en plus',
+  'Steel bubble': 'Bulle d’acier', 'Takes 2 hits to crack': 'Il faut 2 flèches pour la casser',
+  'Green bubble': 'Bulle verte', 'Splits into 3 instead of 2': 'Se coupe en 3 au lieu de 2',
+  'Ghost bubble': 'Bulle fantôme', 'Floats through platforms and bricks': 'Traverse les plateformes et les briques',
+  'Bomb bubble': 'Bulle bombe', 'Explodes and hits every bubble around it': 'Explose et touche toutes les bulles autour',
+  'Bouncy bubble': 'Bulle rebondissante', 'Faster and bounces higher': 'Plus rapide, rebondit plus haut',
+  // bonus
+  'Double arrow': 'Double flèche', 'Sticky arrow': 'Flèche collante', 'Shield': 'Bouclier', 'Frozen bubbles': 'Bulles gelées',
+  '+1 life': '+1 vie', 'Rapid fire': 'Mitraille', 'Triple arrow': 'Triple flèche', 'Bomb!': 'Bombe !', 'Slow motion': 'Ralenti',
+  'Star': 'Étoile', 'Double points': 'Points x2',
+  // boutique
+  'Red Hood': 'Chaperon rouge', 'Robin': 'Robin', 'Nomad': 'Nomade', 'Sailor': 'Marin', 'Astronaut': 'Astronaute', 'Royal': 'Royale',
+  'Classic': 'Classique', 'Fire': 'Feu', 'Ice': 'Glace', 'Rainbow': 'Arc-en-ciel',
+  'No ads': 'Sans pub', 'No more ads between levels': 'Plus de pub entre les niveaux', 'Starter pack': 'Pack de départ',
+  'No ads + 1,000 coins + Royal outfit': 'Sans pub + 1 000 pièces + tenue Royale', 'Pouch': 'Bourse', 'Chest': 'Coffre', 'Treasure': 'Trésor',
+  '500 coins': '500 pièces', '2,000 coins': '2 000 pièces', '6,000 coins': '6 000 pièces',
+  'Equipped': 'Équipée', 'Equip': 'Équiper', 'See pack': 'Voir le pack', 'Starter pack only': 'Seulement dans le pack', 'Owned': 'Acheté',
+  'One run': 'Une partie', '✓ Ready — tap to remove': '✓ Prêt — touche pour l’enlever', '▶ Free': '▶ Gratuit',
+  // pubs, achats, messages
+  'Rewarded ad': 'Pub récompensée', 'Ad break': 'Page de pub', 'Reward unlocked!': 'Récompense débloquée !', 'Thanks for playing!': 'Merci de jouer !',
+  'Skip (no reward)': 'Passer (sans récompense)', 'Get reward': 'Récupérer', 'Test purchase': 'Achat test', 'Buy': 'Acheter', 'Cancel': 'Annuler',
+  'Not enough coins': 'Pas assez de pièces', 'Get coins': 'Avoir des pièces', 'OK': 'OK',
+  'Daily gift': 'Cadeau du jour', '▶ Double it': '▶ Le doubler', 'Collect': 'Récupérer', 'Doubled!': 'Doublé !', 'Nice!': 'Super !',
+  'Chest opened!': 'Coffre ouvert !', 'Great!': 'Génial !', 'Thank you!': 'Merci !',
+  'Ads between levels are gone for good.': 'Les pubs entre les niveaux ont disparu pour de bon.',
+  'No ads, 1,000 coins and the Royal outfit are yours.': 'Sans pub, 1 000 pièces et la tenue Royale sont à toi.',
+  'Reset progress?': 'Tout effacer ?', 'Erase everything': 'Tout effacer',
+  'Levels, stars, scores, coins, outfits and purchases will all be erased. This cannot be undone.': 'Niveaux, étoiles, scores, pièces, tenues et achats seront tous effacés. Impossible de revenir en arrière.',
+  // défi du jour et trophées
+  'Gold Rush': 'Ruée vers l’or', 'every bubble is gold!': 'toutes les bulles sont dorées !',
+  'Giants': 'Géants', 'the biggest bubble grows one size!': 'la plus grosse bulle grandit d’une taille !',
+  'Ghost Night': 'Nuit des fantômes', 'every bubble floats through platforms!': 'toutes les bulles traversent les plateformes !',
+  'Iron Rain': 'Pluie d’acier', 'every bubble is steel: two hits each!': 'toutes les bulles sont en acier : deux flèches chacune !',
+  'Split Party': 'Fête du partage', 'every bubble splits into three!': 'toutes les bulles se coupent en trois !',
+  'Bounce House': 'Château gonflable', 'every bubble is bouncy and fast!': 'toutes les bulles rebondissent et foncent !',
+  'Glass Heart': 'Cœur de verre', "only one heart, so don't get hit!": 'un seul cœur, ne te fais pas toucher !',
+  'Bubble Popper': 'Éclateur de bulles', 'Star Collector': 'Collectionneur d’étoiles', 'Boss Hunter': 'Chasseur de boss',
+  'Untouchable': 'Intouchable', 'Daily Hero': 'Héros du jour', 'On a Roll': 'Sur sa lancée', 'Survivor': 'Survivant',
+  'Combo Master': 'Maître du combo', 'Golden Touch': 'Toucher d’or', 'Metal Breaker': 'Casseur de métal', 'Demolition': 'Démolition',
+  'Fashionista': 'Fashionista', '✓ Done': '✓ Fait', 'Claim': 'Réclamer',
+};
+for (const k in FR) FR[k] = nb(FR[k]);
+// Modèles : [expression régulière, traduction] ; une fonction reçoit les groupes capturés.
+const FRX = [
+  [/^Level (\d+)$/, n => `Niveau ${n}`],
+  [/^Level (\d+) cleared!$/, n => nb(`Niveau ${n} réussi !`)],
+  [/^World (\d+)$/, n => `Monde ${n}`],
+  [/^survived (.+)$/, t => `tenu ${t}`],
+  [/^#(\d+) best score$/, n => `${n}e meilleur score`],
+  [/^Daily streak: (\d+) days?!$/, n => nb(`Série : ${n} jour${n > 1 ? 's' : ''} !`)],
+  [/^([\d\s,.]+) earned$/, n => `${n} gagnées`],
+  [/^([\d\s,.]+) earned \(doubled!\)$/, n => nb(`${n} gagnées (doublées !)`)],
+  [/^\+([\d\s,.]+) coins$/, n => `+${n} pièces`],
+  [/^\+([\d\s,.]+) more coins\.$/, n => `Encore +${n} pièces.`],
+  [/^You need ([\d\s,.]+) more coins\.$/, n => `Il te manque ${n} pièces.`],
+  [/^Day (\d+): \+([\d\s,.]+) coins\. Come back tomorrow for more!$/, (d, n) => nb(`Jour ${d} : +${n} pièces. Reviens demain pour plus !`)],
+  [/^Reward: ([\d\s,.]+) coins\.$/, n => nb(`Récompense : ${n} pièces.`)],
+  [/^Reward in (\d+) s…$/, n => `Récompense dans ${n} s…`],
+  [/^The game continues in (\d+) s…$/, n => `Le jeu reprend dans ${n} s…`],
+  [/^Wait (\d+)$/, n => `Attends ${n}`],
+  [/^(.+)\. This is a simulation: no real payment\.$/, p => nb(`${trCore(p)}. Ceci est une simulation : aucun paiement réel.`)],
+  [/^\+1 (.+) boost$/, b => `+1 boost ${trCore(b)}`],
+  [/^Use \((\d+)\)$/, n => `Utiliser (${n})`],
+  [/^You have (\d+)$/, n => `Tu en as ${n}`],
+  [/^New power-up: (.+)$/, b => nb(`Nouveau bonus : ${trCore(b)}`)],
+  [/^Boss defeated! \+(\d+)$/, n => nb(`Boss vaincu ! +${n}`)],
+];
+function trCore(s) {
+  if (s in FR) return FR[s];
+  for (const [re, f] of FRX) { const m = s.match(re); if (m) return f(...m.slice(1)); }
+  if (s.includes(' · ')) {
+    const parts = s.split(' · '), out = parts.map(trCore);
+    if (out.some((p, i) => p !== parts[i])) return out.join(' · ');
+  }
+  const i = s.indexOf(': ');
+  if (i > 0) {
+    const a = s.slice(0, i), b = s.slice(i + 2), ta = trCore(a), tb = trCore(b);
+    if (ta !== a || tb !== b) return ta + ' : ' + tb;
+  }
+  return s;
+}
+function tr(s) {
+  if (lang !== 'fr' || typeof s !== 'string' || !/[A-Za-z]/.test(s)) return s;
+  const m = s.match(/^(\s*)([\s\S]*?)(\s*)$/), core = trCore(m[2]);
+  return core === m[2] ? s : m[1] + core + m[3];
+}
+// Texte choisi directement dans les deux langues (phrases avec des nombres et des pluriels).
+const L = (en, fr) => lang === 'fr' ? nb(fr) : en;
+// Prix : « €2.99 » en anglais, « 2,99 € » en français.
+const price = p => lang === 'fr' ? p.replace(/^€(\d+)\.(\d+)$/, '$1,$2\u00a0€') : p;
+// Traduction automatique des écrans : chaque texte écrit par le jeu (en anglais) est gardé et remplacé.
+const EN_TEXT = new WeakMap();
+function trText(n) {
+  const v = n.nodeValue;
+  if (!v || !/[A-Za-z]/.test(v)) return;
+  EN_TEXT.set(n, v);
+  const f = tr(v);
+  if (f !== v) n.nodeValue = f;
+}
+function eachText(root, fn) {
+  const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  for (let n = w.nextNode(); n; n = w.nextNode()) if (!n.parentNode.closest('script,style')) fn(n);
+}
+const langObs = new MutationObserver(recs => {
+  if (lang !== 'fr') return;
+  for (const r of recs) {
+    if (r.type === 'characterData') trText(r.target);
+    else for (const n of r.addedNodes) { if (n.nodeType === 3) trText(n); else if (n.nodeType === 1) eachText(n, trText); }
+  }
+  langObs.takeRecords();
+});
+langObs.observe(document.body, { subtree: true, childList: true, characterData: true });
+function applyLang() {
+  document.documentElement.lang = lang;
+  if (lang === 'fr') eachText(document.body, trText);
+  else eachText(document.body, n => { const en = EN_TEXT.get(n); if (en != null && n.nodeValue !== en) n.nodeValue = en; });
+  langObs.takeRecords();
+}
+
 let muted = store.get('muted', false);          // bruitages coupés
 let musicOn = store.get('music', true);          // musique
 let vibeOn = store.get('vibe', true);            // vibrations
@@ -2895,11 +3067,13 @@ function fontOf(size, face) {
   return m ? `${m[1]} ${size}px ${m[2]}` : `${size}px ${face || 'Bungee, "Arial Black", sans-serif'}`;
 }
 function outlined(text, x, y, size, fill, face) {
+  text = tr(text);
   ctx.font = fontOf(size, face);
   ctx.lineJoin = 'round'; ctx.lineWidth = size / 4.5; ctx.strokeStyle = 'rgba(33,17,48,.9)';
   ctx.strokeText(text, x, y); ctx.fillStyle = fill; ctx.fillText(text, x, y);
 }
 function banner(big, small) {
+  big = tr(big); small = tr(small);
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   outlined(big, W / 2, H / 2 - 30, fitSize(big, 30), '#fff3e6');
   const face = '800 "Baloo 2", "Trebuchet MS", sans-serif';
@@ -2955,7 +3129,7 @@ function draw() {
 }
 // Encadré du tutoriel, en haut de l'écran, avec une flèche vers la commande à utiliser.
 function drawTutorial() {
-  const [big, small] = tutorialText(), t = performance.now() / 1000;
+  const [big, small] = tutorialText().map(tr), t = performance.now() / 1000;
   const w = 380, h = 64, x = (W - w) / 2, y = 44 + TOP;
   ctx.fillStyle = 'rgba(33,17,48,.88)'; ctx.strokeStyle = '#ffc83d'; ctx.lineWidth = 2;
   ctx.beginPath(); ctx.roundRect(x, y, w, h, 12); ctx.fill(); ctx.stroke();
@@ -3014,7 +3188,7 @@ function drawPowers() {
 /* ---------- HUD ---------- */
 const hudCache = {};
 function setHud(key, fn, val) { if (hudCache[key] !== val) { hudCache[key] = val; fn(val); } }
-const fmt = n => n.toLocaleString('en-US');
+const fmt = n => n.toLocaleString(lang === 'fr' ? 'fr-FR' : 'en-US').replace(/\u202f/g, '\u00a0');
 function hud() {
   paintGhosts();
   for (const i of [0]) {
@@ -3176,10 +3350,17 @@ $('bSetDone').addEventListener('click', closeSettings);
 $('tSfx').addEventListener('click', () => { muted = !muted; store.set('muted', muted); paintSound(); audio(); sfx.pick(); });
 $('tMusic').addEventListener('click', () => { musicOn = !musicOn; store.set('music', musicOn); paintSound(); audio(); music.want(musicFor()); });
 $('tVibe').addEventListener('click', () => { vibeOn = !vibeOn; store.set('vibe', vibeOn); paintSound(); vibe(40); });
+$('tLang').addEventListener('click', () => {
+  lang = lang === 'fr' ? 'en' : 'fr'; store.set('lang', lang);
+  $('langName').textContent = lang === 'fr' ? 'Français' : 'English';
+  applyLang(); paintCoins(); paintBest(); paintAchBadge();
+  $('advStars').textContent = `★ ${fmt(totalStars())}/${fmt(ADV_COUNT * 3)}`;
+  sfx.pick();
+});
 $('bReset').addEventListener('click', () => message('Reset progress?',
   'Levels, stars, scores, coins, outfits and purchases will all be erased. This cannot be undone.',
   [['Erase everything', () => {
-    const keep = ['muted', 'music', 'vibe', 'flip', 'tut'];
+    const keep = ['muted', 'music', 'vibe', 'flip', 'tut', 'lang'];
     try { for (const k of Object.keys(localStorage)) if (k.startsWith('eclate-bulles:') && !keep.includes(k.slice(14))) localStorage.removeItem(k); } catch (e) {}
     location.reload();
   }, 'alt'], ['Cancel', null, 'ghost']]));
@@ -3279,7 +3460,7 @@ function showAd(rewarded) {
 // Faux paiement : une fenêtre de confirmation, sans argent réel.
 function buyProduct(prod) {
   return new Promise(done => message('Test purchase',
-    `${prod.name} · ${prod.price}. This is a simulation: no real payment.`,
+    `${prod.name} · ${price(prod.price)}. This is a simulation: no real payment.`,
     [['Buy', () => done(true)], ['Cancel', () => done(false), 'ghost']]));
 }
 function grant(prod) {
@@ -3364,7 +3545,7 @@ function prep(k, lv) {
   prepKind = k; prepLevel = lv; armed = null;
   $('prepTitle').textContent = k === 'surv' ? 'Survival' : k === 'daily' ? 'Daily challenge' : `Level ${lv}` + (lv % WORLD === 0 ? ' · Boss' : '');
   const m = k === 'daily' && dailyPick().mod;
-  $('prepHelp').textContent = m ? `${m.name}: ${m.tip} ` + (dailyDone() ? 'Already done today: play for fun!' : `Reward: ${fmt(dailyReward())} coins.`)
+  $('prepHelp').textContent = m ? tr(`${m.name}: ${m.tip}`) + ' ' + tr(dailyDone() ? 'Already done today: play for fun!' : `Reward: ${fmt(dailyReward())} coins.`)
     : 'Take one boost into this run, or just play.';
   renderPrep();
   show(prepO);
@@ -3467,22 +3648,22 @@ function bump(k, n = 1) { STATS[k] += n; store.set('stats', STATS); checkAch(); 
 function best(k, v) { if (v > STATS[k]) { STATS[k] = v; store.set('stats', STATS); checkAch(); } }
 const plural = (n, one, many) => `${fmt(n)} ${n === 1 ? one : many}`;
 const ACH = [
-  { id: 'pops', icon: 'ach-bubbles', name: 'Bubble Popper', goal: n => `Pop ${plural(n, 'bubble', 'bubbles')}`, tiers: [100, 1000, 10000], pay: [50, 150, 500], val: () => STATS.pops },
-  { id: 'stars', icon: 'item-star', name: 'Star Collector', goal: n => `Earn ${plural(n, 'star', 'stars')} in Adventure`, tiers: [30, 100, ADV_COUNT * 3], pay: [100, 300, 1000], val: totalStars },
-  { id: 'bosses', icon: 'ach-crown', name: 'Boss Hunter', goal: n => n === 1 ? 'Defeat a boss in Adventure' : `Defeat ${n} different bosses`, tiers: [1, 3, BOSS_ORDER.length], pay: [100, 300, 800],
+  { id: 'pops', icon: 'ach-bubbles', name: 'Bubble Popper', goal: n => L(`Pop ${plural(n, 'bubble', 'bubbles')}`, `Éclate ${plural(n, 'bulle', 'bulles')}`), tiers: [100, 1000, 10000], pay: [50, 150, 500], val: () => STATS.pops },
+  { id: 'stars', icon: 'item-star', name: 'Star Collector', goal: n => L(`Earn ${plural(n, 'star', 'stars')} in Adventure`, `Gagne ${plural(n, 'étoile', 'étoiles')} en Aventure`), tiers: [30, 100, ADV_COUNT * 3], pay: [100, 300, 1000], val: totalStars },
+  { id: 'bosses', icon: 'ach-crown', name: 'Boss Hunter', goal: n => n === 1 ? L('Defeat a boss in Adventure', 'Bats un boss en Aventure') : L(`Defeat ${n} different bosses`, `Bats ${n} boss différents`), tiers: [1, 3, BOSS_ORDER.length], pay: [100, 300, 800],
     val: () => BOSS_ORDER.filter((_, i) => starsOf((i + 1) * WORLD) > 0).length },
-  { id: 'flawless', icon: 'item-shield', name: 'Untouchable', goal: n => `Clear ${plural(n, 'level', 'levels')} without a hit`, tiers: [5, 25, 60], pay: [80, 250, 600], val: () => STATS.flawless },
-  { id: 'daily', icon: 'ach-calendar', name: 'Daily Hero', goal: n => n === 1 ? 'Win a daily challenge' : `Win ${n} daily challenges`, tiers: [1, 7, 30], pay: [100, 300, 1000], val: () => dailyWins().total },
-  { id: 'streak', icon: 'ach-flame', name: 'On a Roll', goal: n => `Win the daily challenge ${n} days in a row`, tiers: [3, 7], pay: [200, 600], val: () => dailyWins().best || 0 },
-  { id: 'surv', icon: 'item-slow', name: 'Survivor', goal: n => `Last ${clock(n)} in Survival`, tiers: [60, 180, 420], pay: [80, 250, 700], val: () => STATS.surv, show: clock },
-  { id: 'combo', icon: 'item-x2', name: 'Combo Master', goal: n => `Reach a x${n} combo in Survival`, tiers: [3, 5], pay: [80, 300], val: () => STATS.combo, show: n => 'x' + Math.max(1, n) },
-  { id: 'gold', icon: 'item-bonus', name: 'Golden Touch', goal: n => `Pop ${plural(n, 'gold bubble', 'gold bubbles')}`, tiers: [10, 100], pay: [60, 250], val: () => STATS.gold },
-  { id: 'steel', icon: 'ach-steel', name: 'Metal Breaker', goal: n => `Pop ${plural(n, 'steel bubble', 'steel bubbles')}`, tiers: [10, 100], pay: [60, 250], val: () => STATS.steel },
-  { id: 'bomb', icon: 'item-bomb', name: 'Demolition', goal: n => `Pop ${plural(n, 'bomb bubble', 'bomb bubbles')}`, tiers: [10, 50], pay: [60, 250], val: () => STATS.bomb },
-  { id: 'style', icon: 'ach-hanger', name: 'Fashionista', goal: n => `Own ${n} outfits`, tiers: [2, 4], pay: [100, 300], val: () => SKINS.filter(k => owns(k.id)).length },
+  { id: 'flawless', icon: 'item-shield', name: 'Untouchable', goal: n => L(`Clear ${plural(n, 'level', 'levels')} without a hit`, `Réussis ${plural(n, 'niveau', 'niveaux')} sans être touché`), tiers: [5, 25, 60], pay: [80, 250, 600], val: () => STATS.flawless },
+  { id: 'daily', icon: 'ach-calendar', name: 'Daily Hero', goal: n => n === 1 ? L('Win a daily challenge', 'Réussis un défi du jour') : L(`Win ${n} daily challenges`, `Réussis ${n} défis du jour`), tiers: [1, 7, 30], pay: [100, 300, 1000], val: () => dailyWins().total },
+  { id: 'streak', icon: 'ach-flame', name: 'On a Roll', goal: n => L(`Win the daily challenge ${n} days in a row`, `Réussis le défi du jour ${n} jours d’affilée`), tiers: [3, 7], pay: [200, 600], val: () => dailyWins().best || 0 },
+  { id: 'surv', icon: 'item-slow', name: 'Survivor', goal: n => L(`Last ${clock(n)} in Survival`, `Tiens ${clock(n)} en Survie`), tiers: [60, 180, 420], pay: [80, 250, 700], val: () => STATS.surv, show: clock },
+  { id: 'combo', icon: 'item-x2', name: 'Combo Master', goal: n => L(`Reach a x${n} combo in Survival`, `Fais un combo x${n} en Survie`), tiers: [3, 5], pay: [80, 300], val: () => STATS.combo, show: n => 'x' + Math.max(1, n) },
+  { id: 'gold', icon: 'item-bonus', name: 'Golden Touch', goal: n => L(`Pop ${plural(n, 'gold bubble', 'gold bubbles')}`, `Éclate ${plural(n, 'bulle dorée', 'bulles dorées')}`), tiers: [10, 100], pay: [60, 250], val: () => STATS.gold },
+  { id: 'steel', icon: 'ach-steel', name: 'Metal Breaker', goal: n => L(`Pop ${plural(n, 'steel bubble', 'steel bubbles')}`, `Éclate ${plural(n, 'bulle d’acier', 'bulles d’acier')}`), tiers: [10, 100], pay: [60, 250], val: () => STATS.steel },
+  { id: 'bomb', icon: 'item-bomb', name: 'Demolition', goal: n => L(`Pop ${plural(n, 'bomb bubble', 'bomb bubbles')}`, `Éclate ${plural(n, 'bulle bombe', 'bulles bombes')}`), tiers: [10, 50], pay: [60, 250], val: () => STATS.bomb },
+  { id: 'style', icon: 'ach-hanger', name: 'Fashionista', goal: n => L(`Own ${n} outfits`, `Possède ${n} tenues`), tiers: [2, 4], pay: [100, 300], val: () => SKINS.filter(k => owns(k.id)).length },
 ];
 const ROMAN = ['', ' I', ' II', ' III'];
-const achName = (a, t) => a.name + (a.tiers.length > 1 ? ROMAN[t] : '');
+const achName = (a, t) => tr(a.name) + (a.tiers.length > 1 ? ROMAN[t] : '');
 const reached = a => a.tiers.filter(t => a.val() >= t).length;
 const ACHS = store.get('ach', {});                 // paliers déjà réclamés
 let achSeen = store.get('achSeen', null);          // paliers déjà annoncés
@@ -3580,7 +3761,7 @@ function renderShop() {
       : coinArt(prod.coins >= 6000 ? 4 : prod.coins >= 2000 ? 3 : 2);
     cards.push(card({
       art, name: prod.name, desc: prod.desc,
-      acts: [[done ? 'Owned' : prod.price, async () => {
+      acts: [[done ? 'Owned' : price(prod.price), async () => {
         if (!(await buyProduct(prod))) return;
         grant(prod); sfx.clear(); renderShop();
         message('Thank you!', prod.coins ? `+${fmt(prod.coins)} coins` : prod.id === 'noads' ? 'Ads between levels are gone for good.' : 'No ads, 1,000 coins and the Royal outfit are yours.', [['OK']]);
@@ -3670,6 +3851,7 @@ function snapshot() {
   return { kind, mode, level, players: players.map(p => ({ score: p.score, lives: p.lives, out: p.out, weapon: p.weapon })) };
 }
 function boot(data) {
+  applyLang(); $('langName').textContent = lang === 'fr' ? 'Français' : 'English';
   paintSound(); paintCoins();
   fit();
   if (data && data.kind === 'adv' && data.mode && Array.isArray(data.players) && data.players.some(p => !p.out)) {

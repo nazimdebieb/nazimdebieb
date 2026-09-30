@@ -2,7 +2,7 @@
 
 Jeu d'arcade dans l'esprit de Pang / Bubble Trouble : on tire un harpon vers le haut, chaque bulle touchée se coupe en deux bulles plus petites, jusqu'à ce que les plus petites éclatent. Un fichier `index.html` et un dossier `img/`, sans dépendance.
 
-**Pop Archer** (anciennement « Éclate-Bulles ») est entièrement en anglais. On joue seul un petit **archer** à capuche rouge qui tire des flèches-grappins vers le haut. Chaque monde a son décor : forêt, désert en ruines, fonds marins, cosmos, pics gelés et volcan, avec des obstacles dans la matière du monde. Les bulles et les portes sont dessinées dans le code. Sont des images générées avec Canva, rangées dans `img/` (le dossier doit rester à côté de `index.html`) :
+**Pop Archer** (anciennement « Éclate-Bulles ») est en **anglais et en français** : la langue suit celle du téléphone au premier lancement (français si le téléphone est en français, anglais sinon), et se change dans les Réglages (ligne « Language / Langue »). On joue seul un petit **archer** à capuche rouge qui tire des flèches-grappins vers le haut. Chaque monde a son décor : forêt, désert en ruines, fonds marins, cosmos, pics gelés et volcan, avec des obstacles dans la matière du monde. Les bulles et les portes sont dessinées dans le code. Sont des images générées avec Canva, rangées dans `img/` (le dossier doit rester à côté de `index.html`) :
 
 - le logo « Pop Archer » ;
 - les décors des 8 mondes, 2 ambiances chacun : forêt de jour et au couchant, désert de jour et au crépuscule, fonds marins clairs et grand fond, cosmos violet et bleu nuit, pics gelés de jour et sous les aurores boréales, volcan en éruption et grotte de lave, royaume des nuages de jour et au couchant, cour et grande salle du château hanté ;
@@ -12,6 +12,10 @@ Jeu d'arcade dans l'esprit de Pang / Bubble Trouble : on tire un harpon vers le 
 - les 12 icônes de bonus (`item-*.webp`), dans le même style : pastille arrondie brillante avec un symbole blanc. Elles servent pour les bonus qui tombent et pour les pastilles d'effet en haut à gauche.
 
 Si une image manque, le dessin fait par le code prend le relais.
+
+## Traduction
+
+Le jeu est écrit en anglais ; en français, chaque texte affiché passe par `tr()`. Les textes des écrans sont traduits dès qu'ils apparaissent dans la page (un `MutationObserver` garde l'anglais d'origine pour pouvoir revenir en arrière sans recharger), ceux dessinés dans le canvas au moment du dessin. `tr()` cherche d'abord le texte exact dans le dictionnaire `FR`, puis dans les modèles `FRX` (textes avec des nombres), puis traduit morceau par morceau les textes de la forme « A · B » ou « A: B ». Les phrases avec des pluriels (objectifs des trophées) sont écrites dans les deux langues avec `L(anglais, français)`. Les nombres s'écrivent à la française (« 1 000 ») et les prix aussi (« 2,99 € »). Pour ajouter un texte : l'écrire en anglais dans le jeu, puis ajouter sa traduction dans `FR`.
 
 ## Jouer
 
