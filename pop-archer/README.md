@@ -15,7 +15,22 @@ Si une image manque, le dessin fait par le code prend le relais.
 
 ## Traduction
 
-Le jeu est écrit en anglais ; en français, chaque texte affiché passe par `tr()`. Les textes des écrans sont traduits dès qu'ils apparaissent dans la page (un `MutationObserver` garde l'anglais d'origine pour pouvoir revenir en arrière sans recharger), ceux dessinés dans le canvas au moment du dessin. `tr()` cherche d'abord le texte exact dans le dictionnaire `FR`, puis dans les modèles `FRX` (textes avec des nombres), puis traduit morceau par morceau les textes de la forme « A · B » ou « A: B ». Les phrases avec des pluriels (objectifs des trophées) sont écrites dans les deux langues avec `L(anglais, français)`. Les nombres s'écrivent à la française (« 1 000 ») et les prix aussi (« 2,99 € »). Pour ajouter un texte : l'écrire en anglais dans le jeu, puis ajouter sa traduction dans `FR`.
+Le jeu existe en **5 langues** : anglais, français, espagnol, portugais du Brésil et allemand. Au premier lancement il suit la langue du téléphone (l'anglais si elle n'est pas dans la liste) ; on change dans Réglages › Langue, qui passe d'une langue à l'autre sans recharger, et le choix est gardé.
+
+Le jeu est écrit en anglais ; dans une autre langue, chaque texte affiché passe par `tr()`. Les textes des écrans sont traduits dès qu'ils apparaissent dans la page (un `MutationObserver` garde l'anglais d'origine pour changer de langue sans recharger), ceux dessinés dans le canvas au moment du dessin.
+
+- `tr()` cherche d'abord le texte exact dans la table `T`, qui donne pour chaque texte anglais sa traduction dans les 4 langues (français, espagnol, portugais, allemand, dans cet ordre).
+- Sinon, il essaie les modèles `TX`, pour les textes avec des nombres.
+- Sinon, il traduit morceau par morceau les textes de la forme « A · B » ou « A: B ».
+- Les phrases avec des pluriels (objectifs des trophées) sont écrites dans chaque langue avec `L(anglais, français, espagnol, portugais, allemand)`.
+- Les nombres et les prix suivent la langue (« 1 000 » en français, « 1.000 » en allemand ; « 2,99 € » partout sauf en anglais).
+
+La typographie française (espace insécable avant « ! ? : ; ») est ajoutée automatiquement. Le logo « sans pub » de la boutique rétrécit si le mot traduit est long (« WERBUNG »).
+
+- **Ajouter un texte** : l'écrire en anglais dans le jeu, puis ajouter une ligne dans `T` avec ses 4 traductions.
+- **Ajouter une langue** : l'ajouter à `LANGS` et `LOCALE`, puis ajouter une colonne à chaque ligne de `T` et une entrée à chaque modèle de `TX` et à chaque `L()`.
+
+La fiche Play Store existe aussi dans ces langues : `pop-archer-app/store/listing-translations.md`.
 
 ## Jouer
 

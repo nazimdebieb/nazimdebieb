@@ -39,9 +39,12 @@ Double arrow, sticky arrow, shield, triple shot, rapid fire, slow motion, bombs 
 🎨 MAKE IT YOURS
 Collect coins to unlock outfits for your archer — Robin, Nomad, Sailor, Astronaut — and fire, ice or rainbow arrows.
 
-• Simple one-thumb controls, made for phones
+• Simple touch controls: slide to move, tap to shoot
 • Plays offline
 • No ads during gameplay
+• In English, French, Spanish, Portuguese and German
+
+Translations of the short and full descriptions (French, Spanish, Brazilian Portuguese, German): see `listing-translations.md`.
 
 **Category**: Game › Arcade
 **Tags**: arcade, casual, shooter
