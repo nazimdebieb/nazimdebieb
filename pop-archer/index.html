@@ -788,7 +788,51 @@ function regionLevel(n) {
   }
   return (REGION_DEFS[n] = { b: [[2, .5, 1]] });
 }
+// Chambres séparées par des barrières : on commence par la plus facile, et la dernière est la plus dure.
+// Deux chambres voisines de même largeur échangent leurs bulles si celle de gauche demande plus de coups ;
+// puis, si la plus grosse bulle de la dernière chambre n'est pas plus grosse que celle de la première,
+// elle prend une taille de plus (si elle tient dans sa chambre, sans devenir un titan, et pas pour une verte). Comme dans les jeux du genre : une bulle
+// moyenne d'abord, une plus grosse derrière la porte.
+const LEVEL_DEFS = {};
 function levelDef(n) {
+  if (LEVEL_DEFS[n]) return LEVEL_DEFS[n];
+  const raw = rawLevelDef(n);
+  return (LEVEL_DEFS[n] = orderRooms(raw, LEVELS_78.includes(raw) ? 1.2 : LEVELS_56.includes(raw) ? 1.15 : 1));
+}
+function orderRooms(def, f) {
+  const gates = (def.k || []).filter(k => k.t === 'g').map(k => k.x + k.w / 2).sort((a, b) => a - b);
+  if (!gates.length || !def.b || !def.b.length) return def;
+  const edges = [0, ...gates, DW], rooms = gates.map(() => []).concat([[]]);
+  const roomOf = d => { let z = 0; while (z < gates.length && d[1] * DW > gates[z]) z++; return z; };
+  for (const d of def.b) rooms[roomOf(d)].push(d);
+  const used = rooms.map((r, i) => i).filter(i => rooms[i].length);
+  if (used.length < 2) return def;
+  const pops = g => g.r.reduce((t, d) => t + popsOf(d[0], d[4]), 0), wid = i => edges[i + 1] - edges[i];
+  const groups = used.map(i => ({ src: i, r: rooms[i] }));
+  for (let pass = 0; pass < used.length; pass++)
+    for (let k = 0; k + 1 < used.length; k++) {
+      const wa = wid(used[k]), wb = wid(used[k + 1]);
+      if (pops(groups[k]) > pops(groups[k + 1]) && Math.max(wa, wb) / Math.min(wa, wb) < 1.25) [groups[k], groups[k + 1]] = [groups[k + 1], groups[k]];
+    }
+  const rooms2 = groups.map((g, k) => {
+    const to = used[k], x0 = edges[to], x1 = edges[to + 1], a0 = edges[g.src], a1 = edges[g.src + 1];
+    return g.r.map(d => {
+      const e = [...d];
+      if (to !== g.src) e[1] = clamp(x0 + (d[1] * DW - a0) / (a1 - a0) * (x1 - x0), x0 + RAD[d[0]] + 8, x1 - RAD[d[0]] - 8) / DW;
+      return e;
+    });
+  });
+  const biggest = r => r.reduce((m, e) => e[0] > m[0] ? e : m, r[0]);
+  const first = biggest(rooms2[0]), last = biggest(rooms2[rooms2.length - 1]), lw = wid(used[used.length - 1]);
+  // jamais jusqu'au titan, ni pour une verte (elle se coupe en trois : une taille de plus, c'est trois fois plus de coups)
+  if (last[0] <= first[0] && last[0] < 4 && last[4] !== 'green' && RAD[last[0] + 1] * 2 + 24 < lw) {
+    last[0]++;
+    last[1] = clamp(last[1] * DW, edges[used[used.length - 1]] + RAD[last[0]] + 8, edges[used[used.length - 1] + 1] - RAD[last[0]] - 8) / DW;
+  }
+  const b = rooms2.flat();
+  return b.every((e, i) => e.join() === def.b[i].join()) && b.length === def.b.length ? def : { ...def, b, _f: f };
+}
+function rawLevelDef(n) {
   if (n > 96) return regionLevel(n);
   if (n % 12 === 0) return { boss: BOSS_ORDER[(n / 12 - 1) % BOSS_ORDER.length], b: [], k: [] };
   if (n <= LEVELS.length) return LEVELS[n - 1];
@@ -846,7 +890,7 @@ function levelDef(n) {
 }
 // Temps d'un niveau par défaut : 18 s, 1,7 s par coup (+20 % pour les bulles dures à viser), 6 s par barrière.
 // Les niveaux mesurés par tools/chrono.mjs (levels/timing.js) ont leur propre temps et leur difficulté.
-const timeFor = def => def.time ? def.time : def.boss ? Math.round(BOSSES[def.boss].time * (def.mega ? 1.35 : 1)) : Math.round(18 + (LEVELS_78.includes(def) ? 1.2 : LEVELS_56.includes(def) ? 1.15 : 1) * def.b.reduce((t, [s, , , , v]) => t + popsOf(s, v) * 1.7 * (HARD_V.includes(v) ? 1.2 : 1), 0)
+const timeFor = def => def.time ? def.time : def.boss ? Math.round(BOSSES[def.boss].time * (def.mega ? 1.35 : 1)) : Math.round(18 + (def._f || (LEVELS_78.includes(def) ? 1.2 : LEVELS_56.includes(def) ? 1.15 : 1)) * def.b.reduce((t, [s, , , , v]) => t + popsOf(s, v) * 1.7 * (HARD_V.includes(v) ? 1.2 : 1), 0)
   + (def.k || []).reduce((t, k) => t + (k.t === 'g' ? 6 : k.t === 'b' ? .6 : 0), 0));
 
 const ITEMS = [
@@ -1754,8 +1798,12 @@ function togglePause(force) {
 }
 
 /* ---------- Mise à jour ---------- */
+// Vitesse du jeu : tout (bulles, archer, flèches, boss, chrono) tourne un peu moins vite que le temps réel.
+// Les temps des niveaux sont en secondes de jeu : ils restent justes.
+const GAME_SPEED = .88;
 function update(dt) {
   if (paused) return;
+  dt *= GAME_SPEED;
   if (state === 'menu') { moveBalls(dt); stepFx(dt); return; }
   if (state === 'over') { stepFx(dt); return; }
   stateT -= dt;
@@ -1839,13 +1887,15 @@ function moveBlocks(dt) {
     k.x = m.x0 + m.ax * s; k.y = m.y0 + m.ay * s;
   }
 }
+// Barrière : quand la chambre de gauche est vide, une porte s'ouvre en bas (le mur remonte de DOOR_H) :
+// l'archer passe dessous, mais les grosses bulles de la chambre suivante restent de leur côté.
+const DOOR_H = 48;
 function moveGates(dt) {
   for (const g of blocks) {
     if (g.t !== 'g') continue;
     if (!g.opening && !balls.some(b => b.x < g.x + g.w / 2)) { g.opening = true; sfx.gate(); }
-    if (g.opening) g.h -= 520 * dt;
+    if (g.opening && g.h > FLOOR - DOOR_H) g.h = Math.max(FLOOR - DOOR_H, g.h - 120 * dt);
   }
-  blocks = blocks.filter(k => k.h > 0);
 }
 
 function movePlayers(dt, canFire) {
@@ -1980,7 +2030,9 @@ function popBall(j, p, noDrop) {
     for (const dir of dirs) {
       let x = clamp(b.x + dir * r * .6, r, W - r);
       if (v !== 'ghost' && blocks.some(k => overlaps(x, b.y, r, k))) x = b.x;
-      balls.push({ s, v, x, y: Math.max(b.y, r), vx: (dir || (Math.random() < .5 ? -.5 : .5)) * vxOf(s, v), vy: dir ? -230 : -330, c: b.c });
+      // les deux (ou trois) morceaux partent toujours vers le haut, et d'autant plus haut qu'ils sont gros
+      const up = Math.sqrt(2 * GRAV * (70 + 12 * s)) * (dir ? 1 : 1.2);
+      balls.push({ s, v, x, y: Math.max(b.y, r), vx: (dir || (Math.random() < .5 ? -.5 : .5)) * vxOf(s, v), vy: -up, c: b.c });
     }
   }
   if (b.v === 'bomb') explode(b, p);

@@ -160,7 +160,8 @@ La carte est un long chemin qui monte, façon jeu « saga » : on la fait défil
   - Au début, surtout du facile et du moyen ; de monde en monde, de plus en plus de difficile et de très difficile, mélangés dans le monde (les niveaux montent en dents de scie).
   - Sur la carte : une pastille de couleur en haut à droite du rond, verte pour facile, jaune pour moyen, orange pour difficile ; un très difficile est un rond rouge avec une tête de mort. L'écran avant la partie montre une pastille de couleur avec le nom et 1 à 4 barres (et, en difficile ou très difficile, conseille un boost) ; le bandeau de départ dit « Très difficile · Prêt ? » ; la barre du haut « Niveau 5 · Difficile ».
   - Un niveau sans mesure (une région toute neuve) prend le temps de la formule : 18 s, plus 1,7 s par coup nécessaire (20 % de plus pour les bulles noires, fantômes et rebondissantes, 6 s par barrière) ; les boss ont chacun leur temps (35 % de plus en méga).
-- **Tailles de bulles** : de la mini à la grosse, plus deux nouvelles : l'**énorme** (dès le monde 1) et le **titan** (à partir du monde 4, et en Survie). Une grosse bulle se coupe en deux à chaque coup, jusqu'à la mini qui éclate.
+- **Tailles de bulles** : de la mini à la grosse, plus deux nouvelles : l'**énorme** (dès le monde 1) et le **titan** (à partir du monde 4, et en Survie). Une grosse bulle se coupe en deux à chaque coup, jusqu'à la mini qui éclate. Les morceaux partent toujours vers le haut (d'autant plus haut qu'ils sont gros), même quand la bulle retombait au moment du tir.
+- **Vitesse** : tout le jeu (bulles, archer, flèches, boss, chrono) tourne à 88 % du temps réel (`GAME_SPEED`), pour un rythme un peu plus calme. Les temps des niveaux sont en secondes de jeu et restent justes.
 - **Bulles spéciales**, chacune avec sa couleur et son signe. Un message les présente la première fois qu'elles apparaissent :
 
   | Bulle | Signe | Effet |
@@ -191,7 +192,8 @@ La carte est un long chemin qui monte, façon jeu « saga » : on la fait défil
 - Obstacles, dans l'esprit de Bubble Trouble 2 :
   - **plateformes en métal** : les bulles rebondissent dessus et le harpon s'y arrête (le harpon collant reste accroché dessous) ;
   - **briques** : les bulles rebondissent dessus, un coup de harpon les casse (+20) ;
-  - **barrières** : elles coupent l'écran en zones et se lèvent quand toutes les bulles à leur gauche ont éclaté.
+  - **barrières** : elles coupent l'écran en chambres. Quand toutes les bulles à gauche d'une barrière ont éclaté, une **porte** s'ouvre en bas (le mur remonte de 48) : l'archer passe dessous, mais les grosses bulles de la chambre suivante restent de leur côté ;
+  - **les chambres vont de la plus facile à la plus dure** : deux chambres voisines de même largeur échangent leurs bulles si celle de gauche demande plus de coups, et si la plus grosse bulle de la dernière chambre n'est pas plus grosse que celle de la première, elle prend une taille de plus (sans devenir un titan, et pas pour une verte). Comme dans les jeux du genre : une bulle moyenne d'abord, une plus grosse derrière la porte. C'est fait au chargement (`orderRooms`) ; 33 niveaux ont changé, et ils ont été remesurés.
 - 24 niveaux dessinés à la main (escaliers, étagères, damier de briques, tunnel, quatre barrières…), puis des niveaux générés de plus en plus chargés à partir de 11 dispositions d'obstacles. Le record est gardé dans le navigateur.
 
 ## Son, vibrations et tutoriel
