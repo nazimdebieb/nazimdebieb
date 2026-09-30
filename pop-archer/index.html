@@ -532,7 +532,7 @@ body[data-state="ready"] .coinpill,body[data-state="play"] .coinpill,body[data-s
             <button class="btn" id="bTrainPlay" type="button">Play level</button>
             <button class="btn alt" id="bTrainBox" type="button">Sandbox</button>
           </div>
-          <p class="help">Nothing counts here: no stars, coins, records or trophies. In a game, the wrench opens the tools.</p>
+          <p class="help" id="tHelp"></p>
         </div>
 
         <div class="overlay train-o" id="toolO" hidden>
@@ -1130,10 +1130,18 @@ const T = {
   'Daily challenge rule': ['Règle du défi du jour', 'Regla del reto diario', 'Regra do desafio diário', 'Regel der Tagesaufgabe'],
   'None': ['Aucune', 'Ninguna', 'Nenhuma', 'Keine'],
   'Invincible': ['Invincible', 'Invencible', 'Invencível', 'Unverwundbar'],
-  'Infinite time': ['Temps infini', 'Tiempo infinito', 'Tempo infinito', 'Unendlich Zeit'],
   'Play level': ['Jouer le niveau', 'Jugar el nivel', 'Jogar o nível', 'Level spielen'],
   'Sandbox': ['Bac à sable', 'Caja de arena', 'Caixa de areia', 'Sandkasten'],
-  'Nothing counts here: no stars, coins, records or trophies. In a game, the wrench opens the tools.': ['Rien ne compte ici : ni étoiles, ni pièces, ni records, ni trophées. En partie, la clé ouvre les outils.', 'Aquí nada cuenta: ni estrellas, ni monedas, ni récords, ni trofeos. En partida, la llave abre las herramientas.', 'Aqui nada conta: nem estrelas, nem moedas, nem recordes, nem troféus. Na partida, a chave abre as ferramentas.', 'Hier zählt nichts: keine Sterne, Münzen, Rekorde oder Trophäen. Im Spiel öffnet der Schlüssel die Werkzeuge.'],
+  'Normal game': ['Partie normale', 'Partida normal', 'Partida normal', 'Normales Spiel'],
+  'Infinite': ['Infini', 'Infinito', 'Infinito', 'Unendlich'],
+  'Normal game: the clock and 3 hearts, like the Adventure. Nothing is saved here; the wrench opens the tools.': ['Partie normale : le chrono et 3 cœurs, comme en Aventure. Rien n’est enregistré ici ; la clé ouvre les outils.', 'Partida normal: el reloj y 3 corazones, como en la Aventura. Aquí no se guarda nada; la llave abre las herramientas.', 'Partida normal: o relógio e 3 corações, como na Aventura. Nada é salvo aqui; a chave abre as ferramentas.', 'Normales Spiel: die Uhr und 3 Herzen, wie im Abenteuer. Hier wird nichts gespeichert; der Schlüssel öffnet die Werkzeuge.'],
+  'Infinite: you never lose. The clock runs past zero and hearts empty, to measure each level. Nothing is saved.': ['Infini : tu ne perds jamais. Le chrono dépasse zéro et les cœurs se vident, pour mesurer chaque niveau. Rien n’est enregistré.', 'Infinito: nunca pierdes. El reloj pasa de cero y los corazones se vacían, para medir cada nivel. No se guarda nada.', 'Infinito: você nunca perde. O relógio passa do zero e os corações se esvaziam, para medir cada nível. Nada é salvo.', 'Unendlich: Du verlierst nie. Die Uhr läuft über null hinaus und die Herzen leeren sich, um jedes Level zu messen. Nichts wird gespeichert.'],
+  'Time': ['Temps', 'Tiempo', 'Tempo', 'Zeit'],
+  'Hits': ['Touches', 'Golpes', 'Golpes', 'Treffer'],
+  'cleared': ['réussi', 'superado', 'concluído', 'geschafft'],
+  'failed, time ran out': ['perdu, temps écoulé', 'perdido, se acabó el tiempo', 'perdido, o tempo acabou', 'verloren, Zeit abgelaufen'],
+  'failed, out of hearts': ['perdu, plus de cœurs', 'perdido, sin corazones', 'perdido, sem corações', 'verloren, keine Herzen mehr'],
+  'failed, black bubble': ['perdu, bulle noire', 'perdido, burbuja negra', 'perdido, bolha preta', 'verloren, schwarze Blase'],
   'the wrench opens the tools': ['la clé ouvre les outils', 'la llave abre las herramientas', 'a chave abre as ferramentas', 'der Schlüssel öffnet die Werkzeuge'],
   'Training mode unlocked: the button is on the menu.': ['Mode Entraînement débloqué : le bouton est sur le menu.', 'Modo Entrenamiento desbloqueado: el botón está en el menú.', 'Modo Treino desbloqueado: o botão está no menu.', 'Trainingsmodus freigeschaltet: Der Knopf ist im Menü.'],
   'Training mode hidden. Tap the logo 5 times to bring it back.': ['Mode Entraînement caché. Touche 5 fois le logo pour le retrouver.', 'Modo Entrenamiento oculto. Toca el logo 5 veces para recuperarlo.', 'Modo Treino oculto. Toque no logo 5 vezes para trazê-lo de volta.', 'Trainingsmodus versteckt. Tippe 5-mal aufs Logo, um ihn zurückzuholen.'],
@@ -1442,10 +1450,16 @@ let mode = 0, level = 1, state = 'menu', stateT = 0, paused = false;
 // kind : 'adv' (Aventure : niveau par niveau, 3 cœurs, étoiles), 'surv' (Survie : vagues sans fin, 3 vies, record),
 // 'daily' (défi du jour) ou 'train' (Entraînement : tout au choix, rien n'est enregistré)
 let kind = 'adv';
-// Entraînement (voir plus bas) : réglages gardés d'une fois sur l'autre ; « endless » = sans chrono.
-const train = Object.assign({ lv: 1, mod: '', god: true, inf: true, box: false }, store.get('trainCfg', {}));
+// Entraînement (voir plus bas) : réglages gardés d'une fois sur l'autre. Deux façons de jouer :
+// « normal » (chrono et cœurs, comme l'Aventure) ou « inf » (on ne perd jamais : le chrono continue sous zéro
+// et les cœurs se vident sans tuer, pour mesurer le temps et la difficulté de chaque niveau).
+const train = Object.assign({ lv: 1, mod: '', box: false }, store.get('trainCfg', {}));
+if (!train.mode) train.mode = train.god === false && train.inf === false ? 'normal' : 'inf';
+delete train.god; delete train.inf;
 const trainMod = () => DAILY_MODS.find(m => m.id === train.mod) || null;
-const endless = () => kind === 'train' && (train.inf || train.box);
+const endless = () => kind === 'train' && (train.mode === 'inf' || train.box);
+// mesures de la partie d'entraînement : temps joué, touches reçues, et ce qui aurait fait perdre en vrai
+let trainT = 0, trainHits = 0, trainDead = '';
 // Un monde = 12 niveaux ; ajouter un monde (nom, 2 décors, 12 niveaux, un boss) allonge la carte tout seul.
 const WORLD = 12, WORLDS = WORLD_NAMES.length, ADV_COUNT = WORLDS * WORLD, ADV_HEARTS = 3;
 const worldOf = n => Math.floor((n - 1) / WORLD);
@@ -1502,6 +1516,7 @@ function loadLevel() {
   wind = dark = null; windT = 4; darkT = 6;
   balls = def.b.map(d => makeBall(d, scene.ball));
   items = []; parts = []; texts = []; freezeT = 0;
+  trainT = 0; trainHits = 0; trainDead = '';
   // un monde plus large, c'est plus de chemin : un peu plus de temps
   timeMax = timeLeft = Math.round(timeFor(def) * (1 + (W / DW - 1) * .6));
   const act = active();
@@ -1722,7 +1737,7 @@ function update(dt) {
     if (kind !== 'train') MONEY.playT += dt;
     const learning = tut && tut.step < 2;
     stepTutorial(dt, players[0]);
-    if (kind === 'surv') updateSurvival(dt); else if (!learning) { if (!endless()) timeLeft -= dt; if (dropCd > 0) dropCd -= dt; }
+    if (kind === 'surv') updateSurvival(dt); else if (!learning) { if (!(kind === 'train' && train.box)) timeLeft -= dt; if (kind === 'train') trainT += dt; if (dropCd > 0) dropCd -= dt; }
     const frozen = freezeT > 0 || learning, slow = slowT > 0 ? .45 : 1;
     if (slowT > 0) slowT -= dt;
     if (frozen) freezeT -= dt; else moveBalls(dt * slow);
@@ -1739,7 +1754,7 @@ function update(dt) {
     if (boss || shots.length || beams.length) bossTouch();
     if (state === 'play' && kind !== 'surv') {
       if (balls.length === 0 && !boss && !(kind === 'train' && train.box)) levelClear();
-      else if (timeLeft <= 0) timeUp();
+      else if (timeLeft <= 0 && !endless()) timeUp();
     }
   } else if (state === 'dying') {
     for (const p of players) if (p.dead) { p.dvy += GRAV * dt; p.dy += p.dvy * dt; }
@@ -2048,7 +2063,7 @@ function hitPlayer(p) {
 
 // Bulle noire : ni le bouclier ni les cœurs ne protègent, la partie est perdue d'un coup.
 function blackHit(p) {
-  if (godSave(p)) return;
+  if (godSave(p, true)) return;
   p.shield = false; p.lives = 1;
   hurt(p);
   deathMsg = 'The black bubble got you!';
@@ -2059,6 +2074,7 @@ function blackHit(p) {
 // Chaque touche coûte un cœur (une vie en Survie) ; sans cœur, c'est perdu.
 function hurt(p) {
   if (godSave(p)) return;
+  if (kind === 'train') trainHits++;
   levelHit = true; p.lives--;
   sfx.hit(); vibe(p.lives > 0 ? 120 : [120, 80, 260]);
   burst(p.x, FLOOR - 15, COL[p.id].main, 14);
@@ -2085,8 +2101,12 @@ function levelClear() {
   if (kind === 'daily') {
     prevStars = 0; dailyStreak = winDaily();
     if (dailyStreak) runCoins += EARN.dailyWin + EARN.dailyStep * (Math.min(dailyStreak, 7) - 1);
-  } else if (kind === 'train') prevStars = 0;
-  else {
+  } else if (kind === 'train') {
+    prevStars = 0;
+    // mode infini : les étoiles qu'on aurait eues en vrai (aucune si le temps ou les cœurs ont manqué)
+    if (!trainDead && timeLeft < 0) trainDead = 'time';
+    if (trainDead) lastStars = 0;
+  } else {
     prevStars = starsOf(level);
     if (lastStars > prevStars) { adv[level] = lastStars; store.set('adv', adv); }
   }
@@ -2129,8 +2149,10 @@ function showResult() {
     coins: payRun(),
     title: kind === 'daily' ? 'Daily challenge done!' : `Level ${level} cleared!`,
     stars: lastStars,
-    crit: [['Level cleared', true], ['No hits taken', !levelHit], ['No hits, with over half the time left', fast]],
-    record: kind === 'daily' ? (dailyStreak ? `Daily streak: ${dailyStreak} day${dailyStreak > 1 ? 's' : ''}!` : 'Already done today: come back tomorrow!')
+    result: kind === 'train' ? trainReport() : '',
+    crit: [['Level cleared', !trainDead], ['No hits taken', !levelHit], ['No hits, with over half the time left', fast]],
+    record: kind === 'train' ? (train.mode === 'inf' ? 'Normal game: ' + (trainDead ? TRAIN_FAIL[trainDead] : 'cleared') : '')
+      : kind === 'daily' ? (dailyStreak ? `Daily streak: ${dailyStreak} day${dailyStreak > 1 ? 's' : ''}!` : 'Already done today: come back tomorrow!')
       : prevStars && lastStars > prevStars ? 'New star record!' : '',
     next: (kind === 'adv' || kind === 'train') && level < ADV_COUNT, again: 'Play again', menu: backLabel(),
   });
@@ -2141,7 +2163,8 @@ function showFail() {
   paintOver({
     coins: payRun(),
     title: 'Failed!',
-    result: deathMsg === "Time's up!" ? 'Time ran out.' : deathMsg.startsWith('The black') ? 'You touched a black bubble.' : 'You ran out of hearts.',
+    result: (deathMsg === "Time's up!" ? 'Time ran out.' : deathMsg.startsWith('The black') ? 'You touched a black bubble.' : 'You ran out of hearts.'),
+    record: kind === 'train' ? trainReport() : '',
     again: 'Try again', menu: backLabel(),
   });
   sfx.over();
@@ -3747,12 +3770,14 @@ function hud() {
   const surv = kind === 'surv' && state !== 'menu';
   setHud('lvl', v => $('lvl').textContent = v, state === 'menu' ? 'Pop Archer'
     : surv ? 'Survival · ' + clock(survT) : kind === 'daily' ? 'Daily · ' + dailyPick().mod.name
-    : (kind === 'train' ? 'Training · ' : '') + (kind === 'train' && train.box ? 'Sandbox' : 'Level ' + level + (level % 12 === 0 ? ' · Boss' : '')));
+    : kind === 'train' ? 'Training · ' + (train.box ? 'Sandbox · ' + clock(trainT) : `Level ${level} · ${clock(Math.max(0, timeMax - timeLeft))} / ${clock(timeMax)}`)
+    : 'Level ' + level + (level % 12 === 0 ? ' · Boss' : ''));
   setHud('tools', v => $('btnTrain').hidden = !v, kind === 'train' && mode === 1 && state !== 'menu' && state !== 'over');
   // En Survie, la jauge se remplit jusqu'au prochain boss.
-  const frac = state === 'menu' || endless() ? 1 : surv ? (boss ? 1 : 1 - bossT / BOSS_EVERY) : clamp(timeLeft / timeMax, 0, 1);
+  const noClock = kind === 'train' && train.box;
+  const frac = state === 'menu' || noClock ? 1 : surv ? (boss ? 1 : 1 - bossT / BOSS_EVERY) : clamp(timeLeft / timeMax, 0, 1);
   setHud('t', v => $('tbar').style.transform = `scaleX(${v})`, frac.toFixed(3));
-  setHud('low', v => $('timer').classList.toggle('low', v), state !== 'menu' && (surv ? !!boss : !endless() && timeLeft < 10));
+  setHud('low', v => $('timer').classList.toggle('low', v), state !== 'menu' && (surv ? !!boss : !noClock && timeLeft < 10));
 }
 function paintBest() {
   const top = boardOf()[0];
@@ -3959,13 +3984,22 @@ $('bReset').addEventListener('click', () => message('Reset progress?',
 // Rien n'y compte : ni étoiles, ni pièces, ni records, ni trophées. On l'affiche en touchant 5 fois le logo.
 const saveTrain = () => store.set('trainCfg', train);
 function trainDef() { return train.box ? { b: [], k: [] } : withMod(levelDef(level), trainMod()); }
-// Invincible : la bulle (même noire) ou le tir rebondit sur l'archer sans lui coûter de cœur.
-function godSave(p) {
-  if (kind !== 'train' || !train.god) return false;
-  p.inv = 1.2; sfx.shield();
+// Mode infini : la touche est comptée (le cœur se vide, comme en vrai) mais l'archer ne meurt jamais.
+function godSave(p, black) {
+  if (kind !== 'train' || train.mode !== 'inf') return false;
+  levelHit = true; trainHits++;
+  p.lives = black ? 0 : Math.max(0, p.lives - 1);
+  if (!p.lives && !trainDead) trainDead = black ? 'black' : 'hearts';
+  p.inv = 1.2; sfx.shield(); vibe(60);
   burst(p.x, FLOOR - 15, '#9eeaff', 10);
-  float(p.x, FLOOR - 44, 'Invincible', '#9eeaff');
+  float(p.x, FLOOR - 44, p.lives ? '-1 heart' : 'Invincible', '#9eeaff');
   return true;
+}
+const TRAIN_FAIL = { time: 'failed, time ran out', hearts: 'failed, out of hearts', black: 'failed, black bubble' };
+// « Temps : 0:42 / 1:10 (60 %) · Touches : 2 » (l'atelier garde un niveau si le robot finit sous 60 %)
+function trainReport() {
+  const used = Math.max(0, timeMax - timeLeft);
+  return `Time: ${clock(used)} / ${clock(timeMax)} (${Math.round(used / timeMax * 100)} %) · Hits: ${trainHits}`;
 }
 function paintTrainBtn() { $('bTrain').hidden = !store.get('train', false); }
 let logoTaps = [];
@@ -4000,11 +4034,16 @@ function renderTrain() {
     ...(d.boss ? [(d.mega ? 'Mega ' : '') + BOSSES[d.boss].name] : d.hard ? ['Hard level'] : [])].join(' · ');
   $('tMods').replaceChildren(chip('None', !train.mod, () => { train.mod = ''; saveTrain(); renderTrain(); }),
     ...DAILY_MODS.map(m => chip(m.name, train.mod === m.id, () => { train.mod = m.id; saveTrain(); renderTrain(); }, m.v ? [VARIANTS[m.v].c, .9] : null)));
-  $('tOpts').replaceChildren(...trainToggles(renderTrain));
+  $('tOpts').replaceChildren(...trainModes(renderTrain));
+  $('tHelp').textContent = TRAIN_HELP[train.mode];
 }
-const trainToggles = redraw => [
-  chip('Invincible', train.god, () => { train.god = !train.god; saveTrain(); redraw(); }),
-  chip('Infinite time', train.inf, () => { train.inf = !train.inf; saveTrain(); redraw(); }),
+const TRAIN_HELP = {
+  normal: 'Normal game: the clock and 3 hearts, like the Adventure. Nothing is saved here; the wrench opens the tools.',
+  inf: 'Infinite: you never lose. The clock runs past zero and hearts empty, to measure each level. Nothing is saved.',
+};
+const trainModes = redraw => [
+  chip('Normal game', train.mode === 'normal', () => { train.mode = 'normal'; saveTrain(); redraw(); }),
+  chip('Infinite', train.mode === 'inf', () => { train.mode = 'inf'; saveTrain(); redraw(); }),
 ];
 function trainGo(n) {
   train.lv = clamp(n, 1, ADV_COUNT); saveTrain();
@@ -4039,7 +4078,7 @@ function dropBubble(s, v) {
 }
 function spawnBoss(type, mega) {
   boss = makeBoss(type, mega); shots = []; beams = [];
-  if (!endless()) timeMax = timeLeft = Math.max(timeLeft, timeFor({ boss: type, mega, b: [] }));
+  if (!train.box) timeMax = timeLeft = Math.max(timeLeft, timeFor({ boss: type, mega, b: [] }));
   closeTools(); setState('ready', 1.6);
 }
 function setScene(i) {
@@ -4091,7 +4130,7 @@ function renderTools() {
       btns([['Remove boss', () => { boss = null; shots = []; beams = []; toolSay('✓'); }, 'ghost']]));
   } else {
     pane.replaceChildren(
-      sec('', chips(...trainToggles(renderTools))),
+      sec('', chips(...trainModes(renderTools))),
       sec('Scenery', chips(...SCENES.map((sc, i) => chip(WORLD_NAMES[i >> 1] + (i % 2 ? ' · 2' : ''), scene === sc, () => setScene(i), [sc.ball, .8])))),
       btns([
         ['Restart', () => trainGo(level)],
