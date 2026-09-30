@@ -210,35 +210,40 @@ La carte est un long chemin qui monte, façon jeu « saga » : on la fait défil
 
 Règle d'or : **aucune pub pendant qu'on joue**. Les pubs et les achats sont **simulés** dans cette version : une fausse pub (écran « AD · TEST » de 3 à 5 s) et un faux paiement (une fenêtre de confirmation, sans argent réel). Dans l'appli Android, seules les deux fonctions `showAd` (AdMob) et `buyProduct` (Google Play Billing) seront remplacées.
 
+Les valeurs viennent de l'étude de 12 jeux comparables (`reports/Économie des jeux comparables.md`) : on gagne à peu près autant que dans ces jeux, mais les objets coûtent 2 à 3 fois plus qu'avant, et une partie des cadeaux se donne en objets (boosts, vies illimitées, coffres) plutôt qu'en pièces.
+
 - **Pièces** 🪙, gardées sur l'appareil, visibles en haut à droite hors partie :
-  - **en jouant, seulement en ramassant les pièces qui tombent des bulles éclatées** (Aventure, défi du jour, Survie) :
+  - **en jouant, en ramassant les pièces qui tombent des bulles éclatées** (Aventure, défi du jour, Survie) :
     - une pièce vaut 5, deux pièces collées 10, trois 15 ; elles scintillent au sol et, comme les bonus, disparaissent au bout de **5 s** (elles clignotent la dernière seconde et demie) ;
-    - **environ 20 pièces par partie** : chaque niveau reçoit une réserve de 10 à 30 selon son nombre de coups (21 en moyenne sur les 156 niveaux ; 50 pour un boss et pour une partie de Survie), découpée au hasard en pièces de 5, 10 et 15 ; en fin de niveau, une pub les double ;
-    - en niveau, elles tombent au fil des bulles éclatées, étalées jusqu'à la fin (la chance suit les pièces qui restent sur les coups qui restent) ; une bulle dorée en fait toujours tomber une s'il en reste ; face à un boss, un coup au boss compte comme une bulle ; en Survie, une de temps en temps (au plus une toutes les 7 s) ;
+    - **environ 20 pièces par partie** : chaque niveau reçoit une réserve de 10 à 30 selon son nombre de coups (21 en moyenne sur les 156 niveaux ; **100 pour un boss**, 50 pour une partie de Survie), découpée au hasard en pièces de 5, 10 et 15 ; en fin de niveau, une pub double tout ce qui a été gagné ;
+    - en niveau, elles tombent au fil des bulles éclatées, étalées jusqu'à la fin (la chance suit les pièces qui restent sur les coups qui restent) ; une bulle dorée en fait toujours tomber une s'il en reste ; face à un boss, un coup au boss compte comme une bulle, et les pièces du boss qui ne sont pas tombées sont versées à la victoire ; en Survie, une de temps en temps (au plus une toutes les 7 s) ;
     - les pièces encore au sol quand le niveau est réussi sont ramassées d'office ;
-    - plus rien d'autre en partie : ni pièces par niveau réussi, par étoile, par boss ou pour le score de Survie ;
-  - **le week-end** (samedi et dimanche), deux fois plus de pièces tombent (au plus 60 par niveau, 100 pour un boss) ; le menu l'annonce ;
-  - **2 pièces par nouvelle étoile** en Aventure (seulement la 1re fois qu'on la gagne) et **75 pour un monde fini** (son boss battu la 1re fois) ;
-  - la victoire du jour au défi du jour : 20, plus 5 par jour d'affilée (jusqu'à 50) ;
-  - cadeau du jour : 5, 10, 15, 20, 30, 40 puis 50 pièces du 1er au 7e jour d'affilée, doublable avec une pub ;
-  - coffre gratuit : 5 à 20 pièces ou un boost ; trophées : 5 à 125 par palier.
-- **Vies de l'Aventure**, façon Candy Crush : **5 au plus**. Rater un niveau ou le quitter en cours en coûte une (l'écran d'échec dit combien il en reste) ; elles reviennent seules, **une toutes les 20 min**, même jeu fermé. Sur la carte, un compteur ♥ montre les vies et le temps avant la prochaine. Sans vie, on ne peut pas lancer de niveau : on attend, on regarde une pub (+1 vie) ou on paie 30 pièces pour les 5. Continuer après un échec rend la vie perdue. Le défi du jour, la Survie et l'Entraînement ne coûtent pas de vie.
-- **Pubs récompensées** (le joueur choisit) :
-  - **Continuer** après un échec ou un game over : +1 cœur, +15 s si le temps était écoulé, ou +1 vie en Survie. Une seule fois par partie. Un score de Survie « continué » est marqué ↻ dans le classement ;
-  - **Doubler les pièces** en fin de niveau ;
-  - **Bouclier gratuit** avant une partie ;
-  - **Coffre gratuit** au menu, 3 par jour : des pièces ou un boost au hasard.
-  - Chaque récompense existe aussi sans pub : continuer coûte 30 pièces, un boost 25 pièces, les 5 vies 30 pièces.
+  - **bonus d'adresse** en Aventure : +1 pièce par seconde restante au chrono, 10 au plus ;
+  - **le week-end** (samedi et dimanche), deux fois plus de pièces tombent (seulement les pièces des niveaux et des boss, pas les coffres ni les cadeaux) ; le menu l'annonce ;
+  - **2 pièces par nouvelle étoile** en Aventure (seulement la 1re fois qu'on la gagne) ;
+  - **coffre de monde** (boss battu la 1re fois) : 150 pièces, un boost et une chance sur trois d'avoir une flèche ;
+  - la victoire du jour au défi du jour : **30, 40, 50, 60, 65, 70 puis 80** pièces selon la série de jours d'affilée ; au 7e jour d'affilée (puis tous les 7 jours), un coffre (100 pièces, un boost, une chance de flèche) ;
+  - trophées : 5 à 125 par palier.
+- **Cadeau du jour**, sur 7 jours : 10, 15 puis 20 pièces, **un boost** le 4e jour, 30 puis 40 pièces, et un **coffre** le 7e jour (100 pièces, un boost et **30 min de vies illimitées**). Les pièces se doublent avec une pub. Un jour oublié fait **reculer d'un jour** au lieu de tout remettre à zéro ; après le 7e jour, on repart au 1er.
+- **Cadeaux gratuits** (bouton « Free chest » du menu, avec « ! » quand le coffre est prêt, sinon le nombre de vidéos restantes) :
+  - un **coffre sans pub toutes les 4 h** : 10 à 30 pièces ;
+  - une **échelle de 5 vidéos par jour**, dont les lots montent : 30 pièces, un boost, 60 pièces, un coffre (50 à 150 pièces et une chance de flèche), 30 min de vies illimitées.
+- **Vies de l'Aventure**, façon Candy Crush : **5 au plus** (8 avec le pass). Rater un niveau ou le quitter en cours en coûte une (l'écran d'échec dit combien il en reste) ; elles reviennent seules, **une toutes les 20 min**, même jeu fermé. Sur la carte, un compteur ♥ montre les vies et le temps avant la prochaine (∞ et le temps restant pendant des vies illimitées). Sans vie, on ne peut pas lancer de niveau : on attend, on regarde une pub (+1 vie, **5 fois par jour**) ou on paie **75 pièces** pour tout recharger. Continuer après un échec rend la vie perdue. Pendant des **vies illimitées**, rater ne coûte rien. Le défi du jour, la Survie et l'Entraînement ne coûtent pas de vie.
+- **Continuer** après un échec ou un game over, **3 fois au plus par partie**, de plus en plus cher : **60, 120 puis 240 pièces**, avec l'aide complète (+1 cœur ou +1 vie en Survie, un **bouclier**, au moins 15 s au chrono). Le 1er continuer peut aussi se prendre **contre une pub** (5 fois par jour) : reprise simple, sans bouclier, au moins 10 s. Un score de Survie « continué » est marqué ↻ dans le classement.
+- **Série de victoires** en Aventure : après 1, 2 puis 3 victoires d'affilée, le niveau suivant commence avec des boosts offerts (bouclier ; bouclier et +15 s ; bouclier, +15 s et double flèche), annoncés sur l'écran avant la partie. Un échec ou un niveau quitté remet la série à zéro.
+- **Tirelire** : +5 pièces par niveau d'Aventure réussi et +10 par nouvelle étoile, jusqu'à 1 500. Elle se casse contre un achat (1,99 €) dès 600 pièces, puis se remplit de nouveau. L'écran de fin montre ce qu'elle a reçu.
+- **Pass saisonnier** (bouton « Pass » du menu, avec le nombre de lots à réclamer) : des saisons de 4 semaines, 20 paliers de 10 points. Points : les étoiles de chaque niveau d'Aventure réussi (1 à 3), 5 pour le défi du jour, 1 par minute tenue en Survie (3 au plus). La piste gratuite (pièces, boosts, vies illimitées) est pour tous ; le pass (4,99 €) ouvre la seconde piste : plus de pièces et de boosts, jusqu'à 2 h de vies illimitées, la **flèche dorée** (palier 10), la tenue **Golden Archer** (palier 20), et **3 vies de plus** au maximum pendant la saison.
+- **Pubs récompensées** (le joueur choisit) : continuer (le 1er, reprise simple), doubler les pièces en fin de niveau, doubler le cadeau du jour, bouclier gratuit avant une partie, +1 vie, et l'échelle de 5 vidéos par jour.
 - **Pubs imposées**, seulement en quittant l'écran de fin :
   - un niveau réussi sur trois en Aventure, une partie sur deux en Survie ;
   - jamais après un échec, jamais juste avant un boss, jamais pendant les 10 premières minutes de jeu ni avant le niveau 6 ;
   - au plus une toutes les 3 minutes, pub récompensée comprise ;
   - pas de bannière.
-- **Écran avant la partie** : un seul boost au choix, pris dans le stock ou acheté 25 pièces (le bouclier aussi contre une pub) : **Bouclier**, **Double flèche**, **+15 s** au chrono (pas en Survie) ou **+1 cœur**. La difficulté du niveau est affichée juste au-dessus ; en difficile et très difficile, le jeu conseille un boost.
+- **Écran avant la partie** : un seul boost au choix, pris dans le stock ou acheté **40 pièces** (le bouclier aussi contre une pub) : **Bouclier**, **Double flèche**, **+15 s** au chrono (pas en Survie) ou **+1 cœur**. La difficulté du niveau est affichée juste au-dessus ; en difficile et très difficile, le jeu conseille un boost. La série de victoires ajoute ses boosts offerts.
 - **Boutique** (bouton *Shop* du menu) :
-  - **costumes** faits sur Canva, chacun en 3 poses : Red Hood (de base), Robin 250, Nomad 400, Sailor 500, Astronaut 650, Royal (pack de départ uniquement) ;
-  - **flèches** : Fire et Ice 100, Rainbow 200 (couleur de la corde et étincelles) ;
-  - **boosts** : 25 pièces l'unité (les 4 boosts) ;
-  - **achats** : Sans pub 2,99 €, Pack de départ 3,99 € (sans pub + 300 pièces + costume Royal), 150 pièces 0,99 €, 600 pièces 2,99 €, 1 800 pièces 6,99 €. L'achat « sans pub » retire les pubs imposées ; les pubs récompensées restent au choix.
+  - **costumes** faits sur Canva, chacun en 3 poses : Red Hood (de base), Robin 400, Nomad 800, Sailor 1 200, Astronaut 2 000, Royal (pack de départ uniquement), Golden Archer (pass uniquement : le Red Hood passé dans un filtre doré) ;
+  - **flèches** : Fire et Ice 300, Rainbow 600, Gold (pass uniquement) (couleur de la corde et étincelles) ;
+  - **boosts** : 40 pièces l'unité (les 4 boosts) ;
+  - **offres** : 200 pièces 0,99 €, 750 pièces 2,99 €, 2 000 pièces 6,99 €, 5 000 pièces 14,99 € (« meilleur prix »), Sans pub 3,99 € (retire les pubs imposées ; les pubs récompensées restent au choix), la tirelire, le pass saisonnier 4,99 €, et le **pack de départ** à 1,99 € (1 000 pièces, 3 boosts et le costume Royal, affiché « −70 % », sans le sans pub) : il est proposé une seule fois, quand on réussit le niveau 10, puis reste en boutique **72 h** avec un compte à rebours.
 
-Les réglages (gains, prix, rythme des pubs) sont regroupés en haut du bloc « Monétisation » dans `index.html` (`EARN`, `SKINS`, `TRAILS`, `PRODUCTS`, `interstitialDue`).
+Les réglages (gains, prix, rythme des pubs) sont regroupés dans le bloc « Monétisation » de `index.html` : `EARN`, `SKINS`, `TRAILS`, `PRODUCTS`, `GIFTS`, `LADDER`, `PIGGY`, `SEASON`, `PASS_FREE`, `PASS_PAID`, `STREAK_GIFTS`, `interstitialDue`.
