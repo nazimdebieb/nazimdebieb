@@ -131,7 +131,7 @@ Commandes : `node tools/atelier.mjs 1` (fabrique la région 1) et `node tools/at
    | 5 et suivants | 2 | 4 | 3 | 2 |
 
 3. le temps du niveau est le temps du robot multiplié par une marge pour un humain, qui doit esquiver et vise moins vite (`MARGIN`) : facile ×2,3 + 5 s, moyen ×1,85 + 4 s, difficile ×1,5 + 3 s, très difficile ×1,25 + 2 s (25 s au moins) ; un boss ×1,6 + 12 s (il faut en plus esquiver ses tirs). Le jeu ajoute ensuite un peu de temps sur les écrans larges, et une règle du défi du jour change le temps dans la même proportion que la formule ;
-4. `--verify` rejoue tout avec un « joueur moyen » : un robot 2,5 fois plus lent à réagir, qui recule devant les bulles qui lui tombent dessus, et compte ses réussites par difficulté.
+4. `--verify` rejoue tout avec un « joueur moyen » et compte ses réussites par difficulté. C'est un robot plus lent (il réagit 1,6 fois moins souvent, vise moins finement et fait un pas de côté quand une bulle va lui tomber dessus) : il met en moyenne 1,4 fois le temps du robot de mesure, de 0,9 à 2,6 fois selon les parties.
 
 Commandes : `node tools/chrono.mjs --levels 1-156` (mesure et écrit), `node tools/chrono.mjs --retime` (recalcule sans rejouer, après avoir changé `DIST` ou `MARGIN`), `node tools/chrono.mjs --verify`.
 

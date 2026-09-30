@@ -14,9 +14,11 @@
 // 3. Le temps d'un niveau = temps du robot (médiane) × marge du niveau de difficulté + quelques secondes (MARGIN).
 //    Un humain doit esquiver et vise moins vite que le robot : large marge en facile, presque rien en très
 //    difficile, où il faudra souvent un boost. Un boss : 3e plus long des 5 essais × 1,45 + 5 s.
-// 4. --verify : un robot plus lent (il réfléchit 2,5 fois moins souvent et recule devant les bulles qui
-//    tombent sur lui) rejoue avec les temps du fichier ; on attend presque toujours la réussite en facile,
-//    souvent en moyen, parfois en difficile, rarement en très difficile.
+// 4. --verify : un « joueur moyen » rejoue avec les temps du fichier. C'est un robot plus lent : il réagit
+//    1,6 fois moins souvent, vise moins finement, et fait un pas de côté quand une bulle va lui tomber dessus.
+//    Il met en moyenne 1,4 fois le temps du robot de mesure (de 0,9 à 2,6 fois selon les parties).
+//    On attend presque toujours la réussite en facile, souvent en moyen, une fois sur deux environ en
+//    difficile, rarement en très difficile. --free le fait jouer sans limite de temps (pour le comparer).
 import { readFileSync, writeFileSync, rmSync, existsSync } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
@@ -41,12 +43,14 @@ const range = s => s.split(',').flatMap(p => { const [a, b] = p.split('-').map(N
 // Robot : il vise la bulle la plus proche (du bon côté des barrières), le boss s'il n'y a plus de bulles,
 // et fait un détour par une pièce tombée tout près. En --verify il est plus lent et recule devant les bulles.
 const HOOK = `window.__t={go:(n,free)=>{startRun('adv',n);if(free)timeMax=timeLeft=900;},st:()=>({state,level,timeLeft,timeMax,W})};
-window.__bot=()=>{const slow=window.__slow;if((window.__k=(window.__k||0)+1)%(slow?12:5))return;const p=players[0];if(!p)return;p.inv=99;
-  if(slow){const d=balls.find(b=>b.vy>0&&b.y>FLOOR-150&&Math.abs(b.x-p.x)<RAD[b.s]+34);if(d){kb.l=d.x>p.x;kb.r=d.x<=p.x;return;}}
+window.__bot=()=>{const slow=window.__slow;if((window.__k=(window.__k||0)+1)%(slow?8:5))return;const p=players[0];if(!p)return;p.inv=99;
+  if(slow){window.__dg=(window.__dg||0)-1;if(window.__dt>0){window.__dt--;return;}
+    const d=window.__dg<=0&&balls.find(b=>b.vy>0&&b.y>FLOOR-RAD[b.s]*2-70&&Math.abs(b.x-p.x)<RAD[b.s]+16);
+    if(d){kb.l=d.x>p.x;kb.r=d.x<=p.x;window.__dt=4;window.__dg=10;return;}}
   const c=items.find(i=>i.type==='coin'&&i.y>FLOOR-20&&Math.abs(i.x-p.x)<90);
   let t=balls.filter(b=>!blocks.some(k=>k.t==='g'&&k.x<p.x!==k.x<b.x)).sort((a,c)=>Math.abs(a.x-p.x)-Math.abs(c.x-p.x))[0]||balls[0];
   if(!t&&boss)t={x:boss.x,s:4};if(c)t={x:c.x,s:0,coin:1};if(!t){kb.l=kb.r=false;return;}
-  const dx=t.x-p.x;kb.l=dx<-6;kb.r=dx>6;if(!t.coin&&Math.abs(dx)<RAD[t.s]+(slow?0:4))fireQueued=true;};
+  const dx=t.x-p.x,dz=slow?12:6;kb.l=dx<-dz;kb.r=dx>dz;if(!t.coin&&Math.abs(dx)<RAD[t.s]+(slow?8:4))fireQueued=true;};
 `;
 
 async function play(list, free, slow) {
@@ -142,7 +146,7 @@ if (opt('retime', false)) {
   console.log(`Écrit ${OUT}`);
 } else if (VERIFY) {
   const list = opt('levels', null) ? range(opt('levels')) : Object.keys(timing).map(Number);
-  const res = await play(list, false, true);
+  const res = await play(list, !!opt('free', false), true);
   const byTier = {};
   for (const n of list) {
     const tier = timing[n] ? timing[n][1] : -1;
