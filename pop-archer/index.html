@@ -198,12 +198,14 @@ kbd{font-family:var(--body);font-weight:800;font-size:.95em;background:var(--cab
 .node.boss{width:calc(var(--d) * 1.3);height:calc(var(--d) * 1.3);margin:calc(var(--d) * -.65) 0 0 calc(var(--d) * -.65);font-size:calc(var(--d) * .44);
   background:radial-gradient(circle at 34% 26%,#e6ecff 0 9%,#7d97ff 34%,#3b44d8 74%,#2a2a9e);
   box-shadow:0 calc(var(--d) * .09) 0 #1c1a6b,0 calc(var(--d) * .15) calc(var(--d) * .2) rgba(20,8,30,.5);text-shadow:0 .08em 0 rgba(10,10,70,.6)}
+.bigheart{font-size:min(10cqw,18cqh);color:#ff4f7a;line-height:1}
 .tierpill{margin:0;display:inline-flex;align-items:center;gap:.5em;padding:.25em .9em;border-radius:99px;font-weight:800;
   font-size:min(2.4cqw,4.6cqh);color:#fff;background:var(--tc);text-shadow:0 1px 0 rgba(0,0,0,.3)}
 .tierpill i{display:inline-block;width:.35em;height:.9em;border-radius:2px;background:rgba(255,255,255,.35);margin-left:.12em}
 .tierpill i.on{background:#fff}
 /* difficulté : pastille verte (facile), jaune (moyen), orange (difficile) en haut à droite ; rond rouge et tête de mort (très difficile) */
-.node .tb{position:absolute;right:-6%;top:-6%;width:34%;height:34%;border-radius:50%;background:var(--tc);box-shadow:0 0 0 calc(var(--d) * .045) #fff,0 1px 3px rgba(0,0,0,.4)}
+.node .tb{position:absolute;right:-6%;top:-6%;width:34%;height:34%;border-radius:50%;background:var(--tc);display:grid;place-items:center;
+  font:normal 800 calc(var(--d) * .22)/1 var(--body);color:#fff;text-shadow:0 1px 0 rgba(0,0,0,.35);box-shadow:0 0 0 calc(var(--d) * .045) #fff,0 1px 3px rgba(0,0,0,.4)}
 .node.hard{background:radial-gradient(circle at 34% 26%,#ffd9d9 0 9%,#ff6b6b 34%,#d6243f 72%,#9e1330);box-shadow:0 calc(var(--d) * .08) 0 #6e0c22,0 calc(var(--d) * .14) calc(var(--d) * .18) rgba(20,8,30,.45);text-shadow:0 .08em 0 rgba(90,0,20,.6)}
 .node.hard::after{content:"";position:absolute;left:50%;top:-14%;width:36%;height:28%;transform:translateX(-50%);border-radius:50% 50% 40% 40%;
   background:radial-gradient(circle at 33% 45%,#2a1236 0 18%,transparent 20%),radial-gradient(circle at 67% 45%,#2a1236 0 18%,transparent 20%),#fff;box-shadow:0 1px 0 rgba(0,0,0,.35)}
@@ -248,6 +250,10 @@ kbd{font-family:var(--body);font-weight:800;font-size:.95em;background:var(--cab
 .maphud>*{pointer-events:auto}
 .land .maphud{top:5px;left:max(14px,env(safe-area-inset-left,0px))}
 .maphud .btn{font-size:13px}
+.lifepill{border:0;cursor:pointer;color:var(--ink);font:inherit;gap:.35em}
+.lifepill i{color:#ff4f7a;font-style:normal}
+.lifepill small{color:var(--muted);font-weight:800}
+.event{margin:0;padding:.2em .9em;border-radius:99px;background:#3fbf6f;color:#fff;font-weight:800;font-size:min(2.3cqw,4.6cqh)}
 .starpill{display:flex;align-items:center;height:32px;padding:0 12px;border-radius:10px;background:rgba(33,17,48,.82);box-shadow:inset 0 0 0 2px var(--edge);
   font-family:var(--display);font-size:14px;color:var(--gold);font-variant-numeric:tabular-nums;white-space:nowrap}
 .tome{position:absolute;z-index:4;right:max(14px,env(safe-area-inset-right,0px));bottom:14px;width:48px;height:48px;border-radius:50%;
@@ -367,7 +373,10 @@ body[data-state="ready"] .coinpill,body[data-state="play"] .coinpill,body[data-s
 .shop{justify-content:flex-start;gap:2.4cqh}
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(17cqw,1fr));gap:1.4cqw;width:min(100%,90cqw);
   overflow-y:auto;max-height:62cqh;padding:.6cqh .4cqw;scrollbar-width:thin}
-.cards.boosts{grid-template-columns:repeat(2,minmax(0,24cqw));width:auto;max-height:none}
+.cards.boosts{grid-template-columns:repeat(4,minmax(0,21cqw));width:auto;max-height:none}
+.cards.boosts .card{padding:1cqh .8cqw;gap:.5cqh;font-size:min(1.9cqw,3.8cqh)}
+.cards.boosts .card .art,.cards.boosts .card .art img{height:min(8cqw,13cqh)}
+.cards.boosts .card .btn{font-size:min(1.8cqw,3.6cqh)}
 .card{display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:.8cqh;padding:1.4cqh 1cqw;border-radius:1.6cqw;
   background:var(--cab-hi);box-shadow:inset 0 0 0 2px var(--edge);font-weight:800;font-size:min(2.1cqw,4.2cqh);line-height:1.2}
 .card.on{box-shadow:inset 0 0 0 3px var(--gold)}
@@ -450,6 +459,7 @@ body[data-state="ready"] .coinpill,body[data-state="play"] .coinpill,body[data-s
             <kbd>P</kbd> pause
           </p>
           <p class="help touch-help">Slide a thumb on the left half to move · tap the right half to shoot</p>
+          <p class="event" id="eventLine" hidden>Weekend event: coins ×2!</p>
           <p class="best" id="bestLine">Best survival: <b id="best">–</b></p>
         </div>
 
@@ -458,6 +468,7 @@ body[data-state="ready"] .coinpill,body[data-state="play"] .coinpill,body[data-s
           <div class="maphud">
             <button class="btn ghost sm" id="bMapBack" type="button">Menu</button>
             <span class="starpill" id="starTotal"></span>
+            <button class="starpill lifepill" id="bLives" type="button"></button>
           </div>
           <button class="iconbtn tome" id="bToMe" type="button" aria-label="My level" hidden><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 4 3 13h14z"/></svg></button>
         </div>
@@ -1177,6 +1188,12 @@ const T = {
   'Claim': ['Réclamer', 'Reclamar', 'Resgatar', 'Abholen'],
   // régions
   'Easy': ['Facile', 'Fácil', 'Fácil', 'Leicht'],
+  'Out of lives': ['Plus de vies', 'Sin vidas', 'Sem vidas', 'Keine Leben mehr'],
+  'Wait': ['Attendre', 'Esperar', 'Esperar', 'Warten'],
+  '+1 heart': ['+1 cœur', '+1 corazón', '+1 coração', '+1 Herz'],
+  'Weekend event: coins ×2!': ['Événement du week-end : pièces ×2 !', 'Evento de fin de semana: ¡monedas ×2!', 'Evento de fim de semana: moedas ×2!', 'Wochenend-Event: Münzen ×2!'],
+  'The door is open!': ['La porte est ouverte !', '¡La puerta está abierta!', 'A porta está aberta!', 'Die Tür ist offen!'],
+  'Walk under the wall into the next room': ['Passe sous le mur pour aller dans la chambre suivante', 'Pasa bajo el muro a la siguiente sala', 'Passe sob o muro para a próxima sala', 'Geh unter der Mauer durch in den nächsten Raum'],
   'Medium': ['Moyen', 'Medio', 'Médio', 'Mittel'],
   'Hard': ['Difficile', 'Difícil', 'Difícil', 'Schwer'],
   'Very hard': ['Très difficile', 'Muy difícil', 'Muito difícil', 'Sehr schwer'],
@@ -1587,7 +1604,7 @@ function loadLevel() {
   boss = def.boss ? makeBoss(def.boss, def.mega) : null; shots = []; beams = []; shake = 0; slowT = 0; geyserT = 3;
   wind = dark = null; windT = 4; darkT = 6;
   balls = def.b.map(d => makeBall(d, scene.ball));
-  items = []; parts = []; texts = []; freezeT = 0;
+  items = []; parts = []; texts = []; freezeT = 0; ann = null;
   trainT = 0; trainHits = 0; trainDead = '';
   // un monde plus large, c'est plus de chemin : un peu plus de temps
   timeMax = timeLeft = Math.round(levelTime(kind === 'daily' ? dailyPick().level : level, def) * (1 + (W / DW - 1) * .6));
@@ -1602,7 +1619,7 @@ function loadLevel() {
   levelHit = false;
   const pops = def.b.reduce((t, [sz, , , , v]) => t + popsOf(sz, v), 0);
   dropBudget = def.boss ? 3 : clamp(Math.round(pops / 12), 1, 3); dropCd = 0; lifeDropped = false;
-  planCoins(def.boss ? COIN_MAX : clamp(Math.round(pops * .9 / 5) * 5, 10, COIN_MAX));
+  planCoins((def.boss ? COIN_MAX : clamp(Math.round(pops * .9 / 5) * 5, 10, COIN_MAX)) * (weekend() ? 2 : 1));
   unlockTxt = '';
   for (const [t, w] of Object.entries(ADV_UNLOCK)) if (level === (w - 1) * WORLD + 1) unlockTxt = 'New power-up: ' + ITEM_BY[t][3];
   if (level % WORLD === 1 && WORLD_TIPS[worldOf(level)]) unlockTxt = WORLD_TIPS[worldOf(level)];
@@ -1650,6 +1667,7 @@ function startRun(k, lv) {
   if (rule && rule.id === 'glass') players[0].lives = 1;
   tut = null;
   if (k === 'adv' && lv === 1) startTutorial(); else paintHint();
+  if (k === 'adv') levelStat(lv, 'try');
 }
 
 function menuScene() {
@@ -1668,6 +1686,7 @@ function toMenu() {
   $('advStars').textContent = `★ ${fmt(totalStars())}`;
   show(menuO);
   saveMoney(); paintChest(); paintDaily();
+  $('eventLine').hidden = !weekend();
   if ($('msgO').hidden) dailyGift();
 }
 /* ---------- Carte « saga » ---------- */
@@ -1722,7 +1741,7 @@ function drawMap(focus, anim) {
   const hop = anim && mapPin >= 1 && mapPin < pinAt && pinAt - mapPin <= 3 && pos[mapPin] ? mapPin : 0;
   for (let n = 1; n <= last; n++) {
     const st = starsOf(n), open = unlocked(n), boss = n % WORLD === 0, tier = tierOf(n);
-    let inner = (open ? `<span>${n}</span>` : '') + (tier && tier < 4 ? `<i class="tb" style="--tc:${TIER_C[tier]}"></i>` : '');
+    let inner = (open ? `<span>${n}</span>` : '') + (tier && tier < 4 ? `<i class="tb" style="--tc:${TIER_C[tier]}">${tier}</i>` : '');
     if (boss) inner = `<img class="face" src="${BOSS_ART[levelDef(n).boss][0]}" alt="">` + inner;
     if (st) inner += `<span class="st">${[0, 1, 2].map(i => `<i${i < st ? ' class="on"' : ''}>★</i>`).join('')}</span>`;
     const cls = 'node' + (boss ? ' boss' : '') + (tier === 4 ? ' hard' : '') + (!open ? ' lock' : n === cur && !st ? ' cur' : '') + (hop && n === pinAt && !st ? ' pre' : '');
@@ -1778,6 +1797,7 @@ function paintToMe() {
 function openMap(focus) {
   menuScene();
   $('starTotal').textContent = `★ ${fmt(totalStars())}`;
+  paintLives();
   show(mapO);
   drawMap(focus, true);
 }
@@ -1814,6 +1834,7 @@ function update(dt) {
     if (kind !== 'train') MONEY.playT += dt;
     const learning = tut && tut.step < 2;
     stepTutorial(dt, players[0]);
+    if (ann && (ann.t -= dt) <= 0) ann = null;
     if (kind === 'surv') updateSurvival(dt); else if (!learning) { if (!(kind === 'train' && train.box)) timeLeft -= dt; if (kind === 'train') trainT += dt; if (dropCd > 0) dropCd -= dt; }
     if (coinCd > 0) coinCd -= dt;
     const frozen = freezeT > 0 || learning, slow = slowT > 0 ? .45 : 1;
@@ -1893,7 +1914,11 @@ const DOOR_H = 48;
 function moveGates(dt) {
   for (const g of blocks) {
     if (g.t !== 'g') continue;
-    if (!g.opening && !balls.some(b => b.x < g.x + g.w / 2)) { g.opening = true; sfx.gate(); }
+    if (!g.opening && !balls.some(b => b.x < g.x + g.w / 2)) {
+      g.opening = true; sfx.gate();
+      // la première porte ouverte de sa vie : on explique
+      if (!store.get('doorTip', false)) { store.set('doorTip', true); ann = { big: 'The door is open!', small: 'Walk under the wall into the next room', t: 3 }; }
+    }
     if (g.opening && g.h > FLOOR - DOOR_H) g.h = Math.max(FLOOR - DOOR_H, g.h - 120 * dt);
   }
 }
@@ -2047,8 +2072,10 @@ function popBall(j, p, noDrop) {
 // au hasard en pièces de 5, 10 et 15 ; elles tombent au fil du niveau, et plus sûrement d'une bulle dorée.
 const ITEM_LIFE = 5, COIN_MAX = 40;
 let coinPlan = [], coinCd = 0;
+// Événement du week-end : le samedi et le dimanche, deux fois plus de pièces tombent (au plus 80 par partie).
+const weekend = () => [0, 6].includes(new Date().getDay());
 function planCoins(budget) {
-  budget = Math.min(COIN_MAX, budget);
+  budget = Math.min(COIN_MAX * (weekend() ? 2 : 1), budget);
   coinPlan = []; coinCd = 0;
   while (budget >= 5) {
     const r = Math.random(), v = budget >= 15 && r < .18 ? 15 : budget >= 10 && r < .45 ? 10 : 5;
@@ -2213,7 +2240,7 @@ function levelClear() {
   lastStars = 1 + (levelHit ? 0 : 1) + (!levelHit && clearTime > timeMax / 2 ? 1 : 0);
   if (kind === 'daily') {
     prevStars = 0; dailyStreak = winDaily();
-    if (dailyStreak) runCoins += EARN.dailyWin + EARN.dailyStep * (Math.min(dailyStreak, 7) - 1);
+    if (dailyStreak) runCoins += EARN.dailyWin + EARN.dailyWinStep * (Math.min(dailyStreak, 7) - 1);
   } else if (kind === 'train') {
     prevStars = 0;
     // mode infini : les étoiles qu'on aurait eues en vrai (aucune si le temps ou les cœurs ont manqué)
@@ -2221,6 +2248,12 @@ function levelClear() {
     if (trainDead) lastStars = 0;
   } else {
     prevStars = starsOf(level);
+    // 5 pièces par étoile gagnée pour la 1re fois, et 100 pour un monde fini (son boss battu la 1re fois)
+    if (kind === 'adv') {
+      runCoins += Math.max(0, lastStars - prevStars) * EARN.star;
+      if (level % WORLD === 0 && !prevStars) runCoins += EARN.world;
+      levelStat(level, 'win', timeMax - timeLeft);
+    }
     if (lastStars > prevStars) { adv[level] = lastStars; store.set('adv', adv); }
   }
   if (!levelHit) bump('flawless'); else checkAch();
@@ -2274,11 +2307,12 @@ function showResult() {
 
 function showFail() {
   lastOver = 'fail';
+  if (kind === 'adv') loseLife();
   paintOver({
     coins: payRun(),
     title: 'Failed!',
     result: (deathMsg === "Time's up!" ? 'Time ran out.' : deathMsg.startsWith('The black') ? 'You touched a black bubble.' : 'You ran out of hearts.'),
-    record: kind === 'train' ? trainReport() : '',
+    record: kind === 'train' ? trainReport() : kind === 'adv' ? L(`−1 life: ${lifeState().n} left`, `−1 vie : il en reste ${lifeState().n}`, `−1 vida: quedan ${lifeState().n}`, `−1 vida: restam ${lifeState().n}`, `−1 Leben: noch ${lifeState().n}`) : '',
     again: 'Try again', menu: backLabel(),
   });
   sfx.over();
@@ -2343,7 +2377,7 @@ function startSurvival() {
   useWidth();
   level = 1; survT = 0; waveT = 3; bossT = BOSS_EVERY; terrainT = TERRAIN_EVERY; terrainI = 0; bossKills = 0;
   drops = []; ann = null; slowT = 0; survSeen.clear();
-  planCoins(COIN_MAX);
+  planCoins(COIN_MAX * (weekend() ? 2 : 1));
   scene = SCENES[0];
   blocks = []; boss = null; shots = []; beams = []; shake = 0; geyserT = 3;
   wind = dark = null; windT = 4; darkT = 6;
@@ -2360,7 +2394,6 @@ function startSurvival() {
 function updateSurvival(dt) {
   survT += dt;
   if ((survT | 0) > STATS.surv) best('surv', survT | 0);
-  if (ann && (ann.t -= dt) <= 0) ann = null;
   // Vagues : une marque clignote en haut, puis la bulle tombe.
   drops = drops.filter(d => {
     if ((d.t -= dt) > 0) return true;
@@ -4077,7 +4110,7 @@ new ResizeObserver(() => {
   drawMap(best, false);
 }).observe(saga);
 $('bResume').addEventListener('click', () => togglePause(false));
-$('bQuit').addEventListener('click', quitRun);
+$('bQuit').addEventListener('click', () => { if (kind === 'adv' && mode && state !== 'over') loseLife(); quitRun(); });
 $('bNext').addEventListener('click', () => leaveResults(() => kind === 'train' ? trainGo(level + 1) : prep('adv', level + 1)));
 $('bAgain').addEventListener('click', () => leaveResults(() => kind === 'train' ? trainGo(level) : prep(kind, level)));
 $('bMenu').addEventListener('click', () => leaveResults(quitRun));
@@ -4165,6 +4198,10 @@ function renderTrain() {
   $('tLv').max = ADV_COUNT; $('tLv').value = n;
   $('tLvName').textContent = [`Level ${n}`, `World ${w + 1}`, WORLD_NAMES[w],
     ...(d.boss ? [(d.mega ? 'Mega ' : '') + BOSSES[d.boss].name] : [TIERS[tierOf(n)]])].join(' · ');
+  // ce qu'on a fait de ce niveau en Aventure sur cet appareil
+  const st = store.get('lvstats', {})[n];
+  if (st) $('tLvName').textContent += ' · ' + L(`${st[0]} tries, ${st[1]} wins` + (st[2] ? `, best ${clock(st[2])}` : ''), `${st[0]} essais, ${st[1]} réussis` + (st[2] ? `, meilleur ${clock(st[2])}` : ''),
+    `${st[0]} intentos, ${st[1]} ganados` + (st[2] ? `, mejor ${clock(st[2])}` : ''), `${st[0]} tentativas, ${st[1]} vitórias` + (st[2] ? `, melhor ${clock(st[2])}` : ''), `${st[0]} Versuche, ${st[1]} geschafft` + (st[2] ? `, beste ${clock(st[2])}` : ''));
   $('tMods').replaceChildren(chip('None', !train.mod, () => { train.mod = ''; saveTrain(); renderTrain(); }),
     ...DAILY_MODS.map(m => chip(m.name, train.mod === m.id, () => { train.mod = m.id; saveTrain(); renderTrain(); }, m.v ? [VARIANTS[m.v].c, .9] : null)));
   $('tOpts').replaceChildren(...trainModes(renderTrain));
@@ -4284,7 +4321,10 @@ if (logoImg.complete && !logoImg.naturalWidth) noLogo();
 /* ---------- Monétisation : pièces, boutique, pubs et achats ---------- */
 // Les pubs (showAd) et les achats (buyProduct) sont simulés ici : faux écran de pub, faux paiement.
 // Dans l'appli Android, seules ces deux fonctions changent (AdMob et Google Play Billing).
-const EARN = { cont: 150, daily: 50, dailyStep: 25, boost: 100, dailyWin: 150 };
+// Économie : en jouant, on gagne au plus 40 pièces par partie (celles qui tombent des bulles). À côté :
+// 5 pièces par nouvelle étoile, 100 pour un monde fini (son boss battu la 1re fois), le cadeau du jour,
+// la victoire du jour, les coffres et les trophées. Les prix suivent : un boost vaut environ 2 parties.
+const EARN = { cont: 100, daily: 20, dailyStep: 10, boost: 75, dailyWin: 60, dailyWinStep: 10, star: 5, world: 100, refill: 100 };
 const SKINS = [
   { id: 'classic', name: 'Red Hood', price: 0 },
   { id: 'robin', name: 'Robin', price: 800 },
@@ -4299,7 +4339,15 @@ const TRAILS = [
   { id: 'ice', name: 'Ice', price: 300, css: 'linear-gradient(#ffffff,#9fe8ff,#3fa9e0)' },
   { id: 'rainbow', name: 'Rainbow', price: 600, css: 'linear-gradient(#ff5a4e,#ffc83d,#63d68f,#2ec4e6,#b45cff)' },
 ];
-const BOOSTS = ['shield', 'double'];
+const BOOSTS = ['shield', 'double', 'time', 'heart'];
+// boosts qui ne sont pas des bonus du jeu : +15 s au chrono, un cœur de plus
+const BOOST_ART = { shield: 'shield', double: 'double', time: 'slow', heart: 'life' };
+const boostName = t => t === 'time' ? '+15 s' : t === 'heart' ? '+1 heart' : ITEM_BY[t][3];
+function applyBoost(p, t) {
+  if (t === 'time') { timeLeft += 15; timeMax += 15; float(p.x, FLOOR - 44, '+15 s', '#7a8cff'); sfx.pick(); }
+  else if (t === 'heart') { p.lives = Math.min(p.lives + 1, 9); float(p.x, FLOOR - 44, '+1 heart', '#ff4f7a'); sfx.pick(); }
+  else applyItem(p, t);
+}
 const PRODUCTS = [
   { id: 'noads', name: 'No ads', price: '€2.99', desc: 'No more ads between levels' },
   { id: 'starter', name: 'Starter pack', price: '€3.99', desc: 'No ads + 1,000 coins + Royal outfit' },
@@ -4310,7 +4358,7 @@ const PRODUCTS = [
 const MONEY = {
   coins: store.get('coins', 0), owned: store.get('owned', ['classic', 'none']),
   skin: store.get('skin', 'classic'), trail: store.get('trail', 'none'),
-  boosts: store.get('boosts', { shield: 0, double: 0 }),
+  boosts: Object.assign({ shield: 0, double: 0, time: 0, heart: 0 }, store.get('boosts', {})),
   noAds: store.get('noAds', false), starter: store.get('starter', false), playT: store.get('playT', 0),
 };
 function saveMoney() {
@@ -4410,7 +4458,7 @@ function spend(n) {
   return true;
 }
 
-// Cadeau du jour : 50 pièces, +25 par jour d'affilée (jusqu'au 7e jour), doublé avec une pub.
+// Cadeau du jour : 20 pièces, +10 par jour d'affilée (jusqu'au 7e jour), doublé avec une pub.
 function dailyGift() {
   const d = store.get('daily', { day: '', streak: 0 });
   const today = new Date().toDateString(), yesterday = new Date(Date.now() - 864e5).toDateString();
@@ -4441,19 +4489,71 @@ async function openChest() {
   if (c.n >= 3 || !(await showAd(true))) return;
   c.n++; store.set('chest', c); paintChest();
   if (Math.random() < .6) {
-    const n = 30 + Math.floor(Math.random() * 8) * 10;
+    const n = 20 + Math.floor(Math.random() * 5) * 10;
     MONEY.coins += n; saveMoney();
     message('Chest opened!', `+${n} coins`, [['Great!']], coinArt(2));
   } else {
     const t = BOOSTS[Math.floor(Math.random() * BOOSTS.length)];
     MONEY.boosts[t]++; saveMoney();
-    message('Chest opened!', `+1 ${ITEM_BY[t][3]} boost`, [['Great!']], `<img src="img/item-${t}.webp" alt="">`);
+    message('Chest opened!', `+1 ${boostName(t)} boost`, [['Great!']], `<img src="img/item-${BOOST_ART[t]}.webp" alt="">`);
   }
+}
+
+// Vies de l'Aventure, façon Candy Crush : 5 au plus. Rater un niveau (ou le quitter en cours) en coûte une ;
+// elles reviennent seules, une toutes les 20 min, même jeu fermé. Sans vie, on attend, on regarde une pub
+// (+1 vie) ou on paie 100 pièces pour les 5. Continuer après un échec rend la vie perdue.
+const LIFE_MAX = 5, LIFE_REGEN = 20 * 60e3;
+function lifeState() {
+  const l = store.get('lives', { n: LIFE_MAX, t: 0 });
+  if (l.n < LIFE_MAX) {
+    const k = Math.floor((Date.now() - l.t) / LIFE_REGEN);
+    if (k > 0) { l.n = Math.min(LIFE_MAX, l.n + k); l.t = l.n >= LIFE_MAX ? 0 : l.t + k * LIFE_REGEN; store.set('lives', l); }
+  }
+  return l;
+}
+function loseLife() {
+  const l = lifeState();
+  if (l.n >= LIFE_MAX) l.t = Date.now();
+  l.n = Math.max(0, l.n - 1); store.set('lives', l); paintLives();
+}
+function addLives(k) {
+  const l = lifeState();
+  l.n = Math.min(LIFE_MAX, l.n + k); if (l.n >= LIFE_MAX) l.t = 0;
+  store.set('lives', l); paintLives();
+}
+const nextLife = () => { const l = lifeState(); return l.n >= LIFE_MAX ? 0 : Math.max(0, l.t + LIFE_REGEN - Date.now()); };
+function paintLives() {
+  const l = lifeState(), el = $('bLives');
+  el.innerHTML = `<i>♥</i> ${l.n}` + (l.n < LIFE_MAX ? ` <small>${clock(nextLife() / 1000 + .999)}</small>` : '');
+  el.setAttribute('aria-label', L(`${l.n} lives`, `${l.n} vies`, `${l.n} vidas`, `${l.n} vidas`, `${l.n} Leben`));
+}
+setInterval(() => { if (!mapO.hidden || !prepO.hidden) paintLives(); }, 1000);
+function outOfLives(then) {
+  message('Out of lives', L(`Next life in ${clock(nextLife() / 1000 + .999)}. Watch an ad for one now, or refill all 5.`,
+    `Prochaine vie dans ${clock(nextLife() / 1000 + .999)}. Regarde une pub pour en avoir une tout de suite, ou recharge les 5.`,
+    `Próxima vida en ${clock(nextLife() / 1000 + .999)}. Mira un anuncio para tener una ya, o recarga las 5.`,
+    `Próxima vida em ${clock(nextLife() / 1000 + .999)}. Veja um anúncio para ganhar uma agora, ou recarregue as 5.`,
+    `Nächstes Leben in ${clock(nextLife() / 1000 + .999)}. Sieh dir Werbung für eins an oder fülle alle 5 auf.`), [
+    ['▶ ' + L('+1 life', '+1 vie', '+1 vida', '+1 vida', '+1 Leben'), async () => { if (await showAd(true)) { addLives(1); if (then) then(); } }, 'alt'],
+    [L('5 lives', '5 vies', '5 vidas', '5 vidas', '5 Leben') + ' · ' + coinHTML(EARN.refill), () => { if (spend(EARN.refill)) { addLives(LIFE_MAX); if (then) then(); } }],
+    ['Wait', null, 'ghost'],
+  ], '<span class="bigheart">♥</span>');
+}
+$('bLives').addEventListener('click', () => { if (lifeState().n < LIFE_MAX) outOfLives(); });
+
+// Statistiques de chaque niveau d'Aventure sur cet appareil : essais, victoires, meilleur temps utilisé.
+// Elles serviront à recaler les temps avec de vrais joueurs ; l'Entraînement les affiche.
+function levelStat(n, what, used) {
+  const all = store.get('lvstats', {}), st = all[n] || [0, 0, 0];
+  if (what === 'try') st[0]++;
+  if (what === 'win') { st[1]++; st[2] = st[2] ? Math.min(st[2], Math.round(used)) : Math.round(used); }
+  all[n] = st; store.set('lvstats', all);
 }
 
 // Écran avant la partie : un seul boost au choix (stock, pièces, ou bouclier contre une pub).
 let prepKind = 'adv', prepLevel = 1, armed = null;
 function prep(k, lv) {
+  if (k === 'adv' && !lifeState().n) { outOfLives(() => prep(k, lv)); return; }
   prepKind = k; prepLevel = lv; armed = null;
   $('prepTitle').textContent = k === 'surv' ? 'Survival' : k === 'daily' ? 'Daily challenge' : `Level ${lv}` + (lv % WORLD === 0 ? ' · Boss' : '');
   const m = k === 'daily' && dailyPick().mod, tier = k === 'surv' ? 0 : tierOf(lv);
@@ -4472,7 +4572,7 @@ function paintTier(el, tier) {
   el.innerHTML = `<span>${TIERS[tier]}</span><span>${[1, 2, 3, 4].map(i => `<i${i <= tier ? ' class="on"' : ''}></i>`).join('')}</span>`;
 }
 function renderPrep() {
-  $('prepCards').replaceChildren(...BOOSTS.map(t => {
+  $('prepCards').replaceChildren(...BOOSTS.filter(t => prepKind !== 'surv' || t !== 'time').map(t => {
     const have = MONEY.boosts[t], on = armed && armed.t === t;
     const acts = on ? [['✓ Ready — tap to remove', () => { armed = null; renderPrep(); }, 'alt']]
       : [
@@ -4480,14 +4580,14 @@ function renderPrep() {
           : [coinHTML(EARN.boost), () => { if (spend(EARN.boost)) { MONEY.boosts[t]++; saveMoney(); armed = { t, stock: true }; renderPrep(); } }],
         ...(t === 'shield' ? [['▶ Free', async () => { if (await showAd(true)) { armed = { t, stock: false }; renderPrep(); } }, 'alt']] : []),
       ];
-    return card({ art: `<img src="img/item-${t}.webp" alt="">`, name: ITEM_BY[t][3], desc: have ? `You have ${have}` : 'One run', on, acts });
+    return card({ art: `<img src="img/item-${BOOST_ART[t]}.webp" alt="">`, name: boostName(t), desc: have ? `You have ${have}` : 'One run', on, acts });
   }));
 }
 function play() {
   startRun(prepKind, prepLevel);
   if (armed) {
     if (armed.stock) { MONEY.boosts[armed.t]--; saveMoney(); }
-    applyItem(players[0], armed.t);
+    applyBoost(players[0], armed.t);
     armed = null;
   }
 }
@@ -4550,7 +4650,7 @@ const dailyWins = () => store.get('dailyWin', { day: '', streak: 0, total: 0, be
 const dailyDone = () => dailyWins().day === dayKey();
 function dailyReward() {
   const w = dailyWins(), streak = w.day === dayKey(Date.now() - 864e5) ? w.streak + 1 : 1;
-  return EARN.dailyWin + EARN.dailyStep * (Math.min(streak, 7) - 1);
+  return EARN.dailyWin + EARN.dailyWinStep * (Math.min(streak, 7) - 1);
 }
 // Première victoire du jour : renvoie la série (jours d'affilée), 0 si le défi était déjà fait.
 function winDaily() {
@@ -4570,19 +4670,19 @@ function bump(k, n = 1) { if (kind === 'train') return; STATS[k] += n; store.set
 function best(k, v) { if (kind !== 'train' && v > STATS[k]) { STATS[k] = v; store.set('stats', STATS); checkAch(); } }
 const plural = (n, one, many) => `${fmt(n)} ${n === 1 ? one : many}`;
 const ACH = [
-  { id: 'pops', icon: 'ach-bubbles', name: 'Bubble Popper', goal: n => L(`Pop ${plural(n, 'bubble', 'bubbles')}`, `Éclate ${plural(n, 'bulle', 'bulles')}`, `Revienta ${plural(n, 'burbuja', 'burbujas')}`, `Estoure ${plural(n, 'bolha', 'bolhas')}`, `Lass ${plural(n, 'Blase', 'Blasen')} platzen`), tiers: [100, 1000, 10000], pay: [50, 150, 500], val: () => STATS.pops },
-  { id: 'stars', icon: 'item-star', name: 'Star Collector', goal: n => L(`Earn ${plural(n, 'star', 'stars')} in Adventure`, `Gagne ${plural(n, 'étoile', 'étoiles')} en Aventure`, `Consigue ${plural(n, 'estrella', 'estrellas')} en Aventura`, `Ganhe ${plural(n, 'estrela', 'estrelas')} na Aventura`, `Sammle ${plural(n, 'Stern', 'Sterne')} im Abenteuer`), tiers: [30, 100, 250], pay: [100, 300, 1000], val: totalStars },
-  { id: 'bosses', icon: 'ach-crown', name: 'Boss Hunter', goal: n => n === 1 ? L('Defeat a boss in Adventure', 'Bats un boss en Aventure', 'Derrota a un jefe en Aventura', 'Derrote um chefe na Aventura', 'Besiege einen Boss im Abenteuer') : L(`Defeat ${n} different bosses`, `Bats ${n} boss différents`, `Derrota a ${n} jefes distintos`, `Derrote ${n} chefes diferentes`, `Besiege ${n} verschiedene Bosse`), tiers: [1, 3, BOSS_ORDER.length], pay: [100, 300, 800],
+  { id: 'pops', icon: 'ach-bubbles', name: 'Bubble Popper', goal: n => L(`Pop ${plural(n, 'bubble', 'bubbles')}`, `Éclate ${plural(n, 'bulle', 'bulles')}`, `Revienta ${plural(n, 'burbuja', 'burbujas')}`, `Estoure ${plural(n, 'bolha', 'bolhas')}`, `Lass ${plural(n, 'Blase', 'Blasen')} platzen`), tiers: [100, 1000, 10000], pay: [20, 80, 250], val: () => STATS.pops },
+  { id: 'stars', icon: 'item-star', name: 'Star Collector', goal: n => L(`Earn ${plural(n, 'star', 'stars')} in Adventure`, `Gagne ${plural(n, 'étoile', 'étoiles')} en Aventure`, `Consigue ${plural(n, 'estrella', 'estrellas')} en Aventura`, `Ganhe ${plural(n, 'estrela', 'estrelas')} na Aventura`, `Sammle ${plural(n, 'Stern', 'Sterne')} im Abenteuer`), tiers: [30, 100, 250], pay: [50, 150, 500], val: totalStars },
+  { id: 'bosses', icon: 'ach-crown', name: 'Boss Hunter', goal: n => n === 1 ? L('Defeat a boss in Adventure', 'Bats un boss en Aventure', 'Derrota a un jefe en Aventura', 'Derrote um chefe na Aventura', 'Besiege einen Boss im Abenteuer') : L(`Defeat ${n} different bosses`, `Bats ${n} boss différents`, `Derrota a ${n} jefes distintos`, `Derrote ${n} chefes diferentes`, `Besiege ${n} verschiedene Bosse`), tiers: [1, 3, BOSS_ORDER.length], pay: [50, 150, 400],
     val: () => BOSS_ORDER.filter((_, i) => starsOf((i + 1) * WORLD) > 0).length },
-  { id: 'flawless', icon: 'item-shield', name: 'Untouchable', goal: n => L(`Clear ${plural(n, 'level', 'levels')} without a hit`, `Réussis ${plural(n, 'niveau', 'niveaux')} sans être touché`, `Supera ${plural(n, 'nivel', 'niveles')} sin recibir golpes`, `Conclua ${plural(n, 'nível', 'níveis')} sem ser atingido`, `Schaffe ${plural(n, 'Level', 'Level')} ohne Treffer`), tiers: [5, 25, 60], pay: [80, 250, 600], val: () => STATS.flawless },
-  { id: 'daily', icon: 'ach-calendar', name: 'Daily Hero', goal: n => n === 1 ? L('Win a daily challenge', 'Réussis un défi du jour', 'Gana un reto diario', 'Vença um desafio diário', 'Schaffe eine Tagesaufgabe') : L(`Win ${n} daily challenges`, `Réussis ${n} défis du jour`, `Gana ${n} retos diarios`, `Vença ${n} desafios diários`, `Schaffe ${n} Tagesaufgaben`), tiers: [1, 7, 30], pay: [100, 300, 1000], val: () => dailyWins().total },
-  { id: 'streak', icon: 'ach-flame', name: 'On a Roll', goal: n => L(`Win the daily challenge ${n} days in a row`, `Réussis le défi du jour ${n} jours d’affilée`, `Gana el reto diario ${n} días seguidos`, `Vença o desafio diário ${n} dias seguidos`, `Schaffe die Tagesaufgabe ${n} Tage in Folge`), tiers: [3, 7], pay: [200, 600], val: () => dailyWins().best || 0 },
-  { id: 'surv', icon: 'item-slow', name: 'Survivor', goal: n => L(`Last ${clock(n)} in Survival`, `Tiens ${clock(n)} en Survie`, `Aguanta ${clock(n)} en Supervivencia`, `Aguente ${clock(n)} na Sobrevivência`, `Halte ${clock(n)} im Überleben durch`), tiers: [60, 180, 420], pay: [80, 250, 700], val: () => STATS.surv, show: clock },
-  { id: 'combo', icon: 'item-x2', name: 'Combo Master', goal: n => L(`Reach a x${n} combo in Survival`, `Fais un combo x${n} en Survie`, `Haz un combo x${n} en Supervivencia`, `Faça um combo x${n} na Sobrevivência`, `Schaffe eine x${n}-Combo im Überleben`), tiers: [3, 5], pay: [80, 300], val: () => STATS.combo, show: n => 'x' + Math.max(1, n) },
-  { id: 'gold', icon: 'item-bonus', name: 'Golden Touch', goal: n => L(`Pop ${plural(n, 'gold bubble', 'gold bubbles')}`, `Éclate ${plural(n, 'bulle dorée', 'bulles dorées')}`, `Revienta ${plural(n, 'burbuja dorada', 'burbujas doradas')}`, `Estoure ${plural(n, 'bolha dourada', 'bolhas douradas')}`, `Lass ${plural(n, 'Goldblase', 'Goldblasen')} platzen`), tiers: [10, 100], pay: [60, 250], val: () => STATS.gold },
-  { id: 'steel', icon: 'ach-steel', name: 'Metal Breaker', goal: n => L(`Pop ${plural(n, 'steel bubble', 'steel bubbles')}`, `Éclate ${plural(n, 'bulle d’acier', 'bulles d’acier')}`, `Revienta ${plural(n, 'burbuja de acero', 'burbujas de acero')}`, `Estoure ${plural(n, 'bolha de aço', 'bolhas de aço')}`, `Lass ${plural(n, 'Stahlblase', 'Stahlblasen')} platzen`), tiers: [10, 100], pay: [60, 250], val: () => STATS.steel },
-  { id: 'bomb', icon: 'item-bomb', name: 'Demolition', goal: n => L(`Pop ${plural(n, 'bomb bubble', 'bomb bubbles')}`, `Éclate ${plural(n, 'bulle bombe', 'bulles bombes')}`, `Revienta ${plural(n, 'burbuja bomba', 'burbujas bomba')}`, `Estoure ${plural(n, 'bolha bomba', 'bolhas bomba')}`, `Lass ${plural(n, 'Bombenblase', 'Bombenblasen')} platzen`), tiers: [10, 50], pay: [60, 250], val: () => STATS.bomb },
-  { id: 'style', icon: 'ach-hanger', name: 'Fashionista', goal: n => L(`Own ${n} outfits`, `Possède ${n} tenues`, `Ten ${n} trajes`, `Tenha ${n} roupas`, `Besitze ${n} Outfits`), tiers: [2, 4], pay: [100, 300], val: () => SKINS.filter(k => owns(k.id)).length },
+  { id: 'flawless', icon: 'item-shield', name: 'Untouchable', goal: n => L(`Clear ${plural(n, 'level', 'levels')} without a hit`, `Réussis ${plural(n, 'niveau', 'niveaux')} sans être touché`, `Supera ${plural(n, 'nivel', 'niveles')} sin recibir golpes`, `Conclua ${plural(n, 'nível', 'níveis')} sem ser atingido`, `Schaffe ${plural(n, 'Level', 'Level')} ohne Treffer`), tiers: [5, 25, 60], pay: [40, 120, 300], val: () => STATS.flawless },
+  { id: 'daily', icon: 'ach-calendar', name: 'Daily Hero', goal: n => n === 1 ? L('Win a daily challenge', 'Réussis un défi du jour', 'Gana un reto diario', 'Vença um desafio diário', 'Schaffe eine Tagesaufgabe') : L(`Win ${n} daily challenges`, `Réussis ${n} défis du jour`, `Gana ${n} retos diarios`, `Vença ${n} desafios diários`, `Schaffe ${n} Tagesaufgaben`), tiers: [1, 7, 30], pay: [50, 150, 500], val: () => dailyWins().total },
+  { id: 'streak', icon: 'ach-flame', name: 'On a Roll', goal: n => L(`Win the daily challenge ${n} days in a row`, `Réussis le défi du jour ${n} jours d’affilée`, `Gana el reto diario ${n} días seguidos`, `Vença o desafio diário ${n} dias seguidos`, `Schaffe die Tagesaufgabe ${n} Tage in Folge`), tiers: [3, 7], pay: [100, 300], val: () => dailyWins().best || 0 },
+  { id: 'surv', icon: 'item-slow', name: 'Survivor', goal: n => L(`Last ${clock(n)} in Survival`, `Tiens ${clock(n)} en Survie`, `Aguanta ${clock(n)} en Supervivencia`, `Aguente ${clock(n)} na Sobrevivência`, `Halte ${clock(n)} im Überleben durch`), tiers: [60, 180, 420], pay: [40, 120, 350], val: () => STATS.surv, show: clock },
+  { id: 'combo', icon: 'item-x2', name: 'Combo Master', goal: n => L(`Reach a x${n} combo in Survival`, `Fais un combo x${n} en Survie`, `Haz un combo x${n} en Supervivencia`, `Faça um combo x${n} na Sobrevivência`, `Schaffe eine x${n}-Combo im Überleben`), tiers: [3, 5], pay: [40, 150], val: () => STATS.combo, show: n => 'x' + Math.max(1, n) },
+  { id: 'gold', icon: 'item-bonus', name: 'Golden Touch', goal: n => L(`Pop ${plural(n, 'gold bubble', 'gold bubbles')}`, `Éclate ${plural(n, 'bulle dorée', 'bulles dorées')}`, `Revienta ${plural(n, 'burbuja dorada', 'burbujas doradas')}`, `Estoure ${plural(n, 'bolha dourada', 'bolhas douradas')}`, `Lass ${plural(n, 'Goldblase', 'Goldblasen')} platzen`), tiers: [10, 100], pay: [30, 120], val: () => STATS.gold },
+  { id: 'steel', icon: 'ach-steel', name: 'Metal Breaker', goal: n => L(`Pop ${plural(n, 'steel bubble', 'steel bubbles')}`, `Éclate ${plural(n, 'bulle d’acier', 'bulles d’acier')}`, `Revienta ${plural(n, 'burbuja de acero', 'burbujas de acero')}`, `Estoure ${plural(n, 'bolha de aço', 'bolhas de aço')}`, `Lass ${plural(n, 'Stahlblase', 'Stahlblasen')} platzen`), tiers: [10, 100], pay: [30, 120], val: () => STATS.steel },
+  { id: 'bomb', icon: 'item-bomb', name: 'Demolition', goal: n => L(`Pop ${plural(n, 'bomb bubble', 'bomb bubbles')}`, `Éclate ${plural(n, 'bulle bombe', 'bulles bombes')}`, `Revienta ${plural(n, 'burbuja bomba', 'burbujas bomba')}`, `Estoure ${plural(n, 'bolha bomba', 'bolhas bomba')}`, `Lass ${plural(n, 'Bombenblase', 'Bombenblasen')} platzen`), tiers: [10, 50], pay: [30, 120], val: () => STATS.bomb },
+  { id: 'style', icon: 'ach-hanger', name: 'Fashionista', goal: n => L(`Own ${n} outfits`, `Possède ${n} tenues`, `Ten ${n} trajes`, `Tenha ${n} roupas`, `Besitze ${n} Outfits`), tiers: [2, 4], pay: [50, 150], val: () => SKINS.filter(k => owns(k.id)).length },
 ];
 const ROMAN = ['', ' I', ' II', ' III'];
 const achName = (a, t) => tr(a.name) + (a.tiers.length > 1 ? ROMAN[t] : '');
@@ -4673,7 +4773,7 @@ function renderShop() {
   }
   if (shopTab === 'boosts') for (const t of BOOSTS) {
     cards.push(card({
-      art: `<img src="img/item-${t}.webp" alt="">`, name: ITEM_BY[t][3], desc: `You have ${MONEY.boosts[t]}`,
+      art: `<img src="img/item-${BOOST_ART[t]}.webp" alt="">`, name: boostName(t), desc: `You have ${MONEY.boosts[t]}`,
       acts: [[coinHTML(EARN.boost), () => { if (spend(EARN.boost)) { MONEY.boosts[t]++; saveMoney(); renderShop(); } }]],
     }));
   }
@@ -4714,6 +4814,7 @@ function rewardButtons() {
 }
 function revive() {
   continued = true;
+  if (kind === 'adv') addLives(1);   // continuer rend la vie perdue
   if (kind === 'surv') store.set('surv1', boardOf().filter(e => e.id !== lastEntryId));
   for (const p of players) { p.dead = false; p.dy = 0; p.dvy = 0; p.lives = Math.max(p.lives, 1); p.inv = 2.5; p.harpoons = []; }
   if (kind !== 'surv' && timeLeft < 15) timeLeft = 15;

@@ -161,6 +161,9 @@ La carte est un long chemin qui monte, façon jeu « saga » : on la fait défil
   - Sur la carte : une pastille de couleur en haut à droite du rond, verte pour facile, jaune pour moyen, orange pour difficile ; un très difficile est un rond rouge avec une tête de mort. L'écran avant la partie montre une pastille de couleur avec le nom et 1 à 4 barres (et, en difficile ou très difficile, conseille un boost) ; le bandeau de départ dit « Très difficile · Prêt ? » ; la barre du haut « Niveau 5 · Difficile ».
   - Un niveau sans mesure (une région toute neuve) prend le temps de la formule : 18 s, plus 1,7 s par coup nécessaire (20 % de plus pour les bulles noires, fantômes et rebondissantes, 6 s par barrière) ; les boss ont chacun leur temps (35 % de plus en méga).
 - **Tailles de bulles** : de la mini à la grosse, plus deux nouvelles : l'**énorme** (dès le monde 1) et le **titan** (à partir du monde 4, et en Survie). Une grosse bulle se coupe en deux à chaque coup, jusqu'à la mini qui éclate. Les morceaux partent toujours vers le haut (d'autant plus haut qu'ils sont gros), même quand la bulle retombait au moment du tir.
+- **Portes** : la première fois qu'une porte s'ouvre, un message explique qu'il faut passer sous le mur.
+- **Statistiques par niveau** : pour chaque niveau d'Aventure, l'appareil garde le nombre d'essais, de victoires et le meilleur temps utilisé (`lvstats`). L'Entraînement les affiche ; elles serviront à recaler les temps avec de vrais joueurs.
+- **Pastilles de difficulté** : elles portent aussi un chiffre (1 facile, 2 moyen, 3 difficile) pour ceux qui distinguent mal les couleurs.
 - **Vitesse** : tout le jeu (bulles, archer, flèches, boss, chrono) tourne à 88 % du temps réel (`GAME_SPEED`), pour un rythme un peu plus calme. Les temps des niveaux sont en secondes de jeu et restent justes.
 - **Bulles spéciales**, chacune avec sa couleur et son signe. Un message les présente la première fois qu'elles apparaissent :
 
@@ -214,24 +217,28 @@ Règle d'or : **aucune pub pendant qu'on joue**. Les pubs et les achats sont **s
     - en niveau, elles tombent au fil des bulles éclatées, étalées jusqu'à la fin (la chance suit les pièces qui restent sur les coups qui restent) ; une bulle dorée en fait toujours tomber une s'il en reste ; face à un boss, un coup au boss compte comme une bulle ; en Survie, une de temps en temps (au plus une toutes les 7 s) ;
     - les pièces encore au sol quand le niveau est réussi sont ramassées d'office ;
     - plus rien d'autre en partie : ni pièces par niveau réussi, par étoile, par boss ou pour le score de Survie ;
-  - la victoire du jour au défi du jour (voir plus haut) ;
-  - cadeau du jour : 50, plus 25 par jour d'affilée (jusqu'à 200 au 7e jour), doublable avec une pub.
+  - **le week-end** (samedi et dimanche), deux fois plus de pièces tombent (au plus 80 par partie) ; le menu l'annonce ;
+  - **5 pièces par nouvelle étoile** en Aventure (seulement la 1re fois qu'on la gagne) et **100 pour un monde fini** (son boss battu la 1re fois) ;
+  - la victoire du jour au défi du jour : 60, plus 10 par jour d'affilée (jusqu'à 120) ;
+  - cadeau du jour : 20, plus 10 par jour d'affilée (jusqu'à 80 au 7e jour), doublable avec une pub ;
+  - coffre gratuit : 20 à 60 pièces ou un boost ; trophées : 20 à 500 par palier (la moitié d'avant).
+- **Vies de l'Aventure**, façon Candy Crush : **5 au plus**. Rater un niveau ou le quitter en cours en coûte une (l'écran d'échec dit combien il en reste) ; elles reviennent seules, **une toutes les 20 min**, même jeu fermé. Sur la carte, un compteur ♥ montre les vies et le temps avant la prochaine. Sans vie, on ne peut pas lancer de niveau : on attend, on regarde une pub (+1 vie) ou on paie 100 pièces pour les 5. Continuer après un échec rend la vie perdue. Le défi du jour, la Survie et l'Entraînement ne coûtent pas de vie.
 - **Pubs récompensées** (le joueur choisit) :
   - **Continuer** après un échec ou un game over : +1 cœur, +15 s si le temps était écoulé, ou +1 vie en Survie. Une seule fois par partie. Un score de Survie « continué » est marqué ↻ dans le classement ;
   - **Doubler les pièces** en fin de niveau ;
   - **Bouclier gratuit** avant une partie ;
   - **Coffre gratuit** au menu, 3 par jour : des pièces ou un boost au hasard.
-  - Chaque récompense existe aussi sans pub : continuer coûte 150 pièces, un boost 100 pièces.
+  - Chaque récompense existe aussi sans pub : continuer coûte 100 pièces, un boost 75 pièces, les 5 vies 100 pièces.
 - **Pubs imposées**, seulement en quittant l'écran de fin :
   - un niveau réussi sur trois en Aventure, une partie sur deux en Survie ;
   - jamais après un échec, jamais juste avant un boss, jamais pendant les 10 premières minutes de jeu ni avant le niveau 6 ;
   - au plus une toutes les 3 minutes, pub récompensée comprise ;
   - pas de bannière.
-- **Écran avant la partie** : un seul boost au choix (Bouclier ou Double flèche), pris dans le stock, acheté 100 pièces, ou bouclier contre une pub.
+- **Écran avant la partie** : un seul boost au choix, pris dans le stock ou acheté 75 pièces (le bouclier aussi contre une pub) : **Bouclier**, **Double flèche**, **+15 s** au chrono (pas en Survie) ou **+1 cœur**. La difficulté du niveau est affichée juste au-dessus ; en difficile et très difficile, le jeu conseille un boost.
 - **Boutique** (bouton *Shop* du menu) :
   - **costumes** faits sur Canva, chacun en 3 poses : Red Hood (de base), Robin 800, Nomad 1 200, Sailor 1 500, Astronaut 2 000, Royal (pack de départ uniquement) ;
   - **flèches** : Fire et Ice 300, Rainbow 600 (couleur de la corde et étincelles) ;
-  - **boosts** : 100 pièces l'unité ;
+  - **boosts** : 75 pièces l'unité (les 4 boosts) ;
   - **achats** : Sans pub 2,99 €, Pack de départ 3,99 € (sans pub + 1 000 pièces + costume Royal), 500 pièces 0,99 €, 2 000 pièces 2,99 €, 6 000 pièces 6,99 €. L'achat « sans pub » retire les pubs imposées ; les pubs récompensées restent au choix.
 
 Les réglages (gains, prix, rythme des pubs) sont regroupés en haut du bloc « Monétisation » dans `index.html` (`EARN`, `SKINS`, `TRAILS`, `PRODUCTS`, `interstitialDue`).
