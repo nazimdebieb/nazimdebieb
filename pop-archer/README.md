@@ -5,10 +5,10 @@ Jeu d'arcade dans l'esprit de Pang / Bubble Trouble : on tire un harpon vers le 
 **Pop Archer** (anciennement « Éclate-Bulles ») est entièrement en anglais. On joue seul un petit **archer** à capuche rouge qui tire des flèches-grappins vers le haut. Chaque monde a son décor : forêt, désert en ruines, fonds marins, cosmos, pics gelés et volcan, avec des obstacles dans la matière du monde. Les bulles et les portes sont dessinées dans le code. Sont des images générées avec Canva, rangées dans `img/` (le dossier doit rester à côté de `index.html`) :
 
 - le logo « Pop Archer » ;
-- les décors des 6 mondes, 2 ambiances chacun : forêt de jour et au couchant, désert de jour et au crépuscule, fonds marins clairs et grand fond, cosmos violet et bleu nuit, pics gelés de jour et sous les aurores boréales, volcan en éruption et grotte de lave ;
-- les 6 boss : Bubble King, Great Storm, Ink Octopus, Void Eye, Frost Yeti et Lava Dragon. Leur portrait apparaît aussi sur la case « Boss » de la carte.
+- les décors des 8 mondes, 2 ambiances chacun : forêt de jour et au couchant, désert de jour et au crépuscule, fonds marins clairs et grand fond, cosmos violet et bleu nuit, pics gelés de jour et sous les aurores boréales, volcan en éruption et grotte de lave, royaume des nuages de jour et au couchant, cour et grande salle du château hanté ;
+- les 8 boss : Bubble King, Great Storm, Ink Octopus, Void Eye, Frost Yeti, Lava Dragon, Sky Pirate et Lantern Phantom. Leur portrait apparaît aussi sur la case « Boss » de la carte.
 - l'archer (`archer-*.webp`) en 3 poses : debout, en marche et en train de tirer vers le haut. Il est dessiné tourné vers la droite et retourné en miroir quand il va à gauche ;
-- les plateformes et briques de chaque monde (`plat-*.webp`, `brick-*.webp`) : rondin herbeux et caisse en bois (forêt), dalle de grès gravée et brique d'argile (désert), roche à coquillages et bloc de corail (fonds marins), plateforme métal néon et bloc de cristal (cosmos), corniche enneigée et bloc de glace (pics gelés), roche volcanique et bloc de lave (volcan). Les plateformes gardent leurs bouts arrondis quelle que soit leur longueur ; le milieu est répété ;
+- les plateformes et briques de chaque monde (`plat-*.webp`, `brick-*.webp`) : rondin herbeux et caisse en bois (forêt), dalle de grès gravée et brique d'argile (désert), roche à coquillages et bloc de corail (fonds marins), plateforme métal néon et bloc de cristal (cosmos), corniche enneigée et bloc de glace (pics gelés), roche volcanique et bloc de lave (volcan), nuage doré et bloc de nuage (royaume des nuages), planche aux bougies et pierre violette (château hanté ; un halo pâle les détache des murs sombres). Les plateformes gardent leurs bouts arrondis quelle que soit leur longueur ; le milieu est répété ;
 - les 12 icônes de bonus (`item-*.webp`), dans le même style : pastille arrondie brillante avec un symbole blanc. Elles servent pour les bonus qui tombent et pour les pastilles d'effet en haut à gauche.
 
 Si une image manque, le dessin fait par le code prend le relais.
@@ -40,13 +40,15 @@ Sur téléphone, le jeu est toujours en paysage : si l'écran est tenu droit, le
 
 ## Modes
 
-- **Aventure** : 72 niveaux répartis en 6 mondes de 12, à jouer un par un depuis une carte. Chaque niveau réussi débloque le suivant et la progression est sauvegardée. On a 3 cœurs par niveau (une bulle touchée = un cœur en moins) ; sans cœur ou sans temps, on recommence **juste ce niveau**. Étoiles :
+- **Aventure** : 96 niveaux répartis en 8 mondes de 12, à jouer un par un depuis une carte. Chaque niveau réussi débloque le suivant et la progression est sauvegardée. On a 3 cœurs par niveau (une bulle touchée = un cœur en moins) ; sans cœur ou sans temps, on recommence **juste ce niveau**. Étoiles :
   - ★ niveau fini ;
   - ★★ niveau fini sans être touché ;
   - ★★★ sans être touché et avec plus de la moitié du temps restant.
 - **Boss** : le 12e niveau de chaque monde est un combat de boss, avec une barre de vie. Chaque coup de harpon lui retire un point ; une fois vaincu, toutes les bulles restantes éclatent.
 - **Monde 5, Frozen Peaks** (niveaux 49 à 60) : le sol est en glace, l'archer glisse et met un peu de temps à s'arrêter ou à repartir. Boss : le **Frost Yeti**, qui lance des boules de neige puis fait de grands sauts d'un côté à l'autre ; à chaque atterrissage, des stalactites tombent du plafond (signalées en rouge avant de tomber). Au sol sa fourrure arrête les flèches : on ne peut le blesser que pendant ses sauts.
 - **Monde 6, Volcano** (niveaux 61 à 72) : des geysers de lave jaillissent du sol, annoncés par des bulles et des pointillés 1,3 s avant. Boss : le **Lava Dragon**, qui vole en haut de l'écran, crache des boules de feu en cloche (3 d'un coup quand il enrage) et un souffle de flammes visé sur l'archer.
+- **Monde 7, Sky Kingdom** (niveaux 73 à 84) : des rafales de vent, annoncées par des traînées et des flèches « » » sur le bord de l'écran 1,2 s avant, poussent l'archer pendant 3 à 4 s (il peut marcher contre le vent, plus lentement). Boss : le **Sky Pirate**, un bateau volant qui tire des boulets en cloche (2 quand il enrage) et lâche des ancres annoncées au plafond.
+- **Monde 8, Haunted Castle** (niveaux 85 à 96) : de temps en temps les lumières s'éteignent (elles clignotent d'abord) : seul un halo autour de l'archer reste éclairé, et on devine les bulles à leur contour. Boss : le **Lantern Phantom**, qui disparaît (les flèches le traversent alors), réapparaît ailleurs, glisse d'un côté à l'autre et lance des volées de feux follets ; quand il enrage, il éteint lui-même les lumières.
   - Monde 1, **Roi Bulle** : une bulle géante couronnée qui rebondit de plus en plus vite et lâche des petites bulles tous les 3 coups.
   - Monde 2, **Grand Orage** : un nuage qui fait pleuvoir des gouttes et des bulles, puis lance des éclairs (une ligne en pointillés prévient avant la frappe).
   - Monde 3, **Pieuvre Encre** : elle crache de l'encre en éventail et plonge sur toi après avoir tremblé.

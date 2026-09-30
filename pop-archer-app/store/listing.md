@@ -3,7 +3,7 @@
 **App name** (30 characters max): Pop Archer
 
 **Short description** (80 characters max):
-Aim, shoot, split! Pop every bubble in 72 levels and an endless Survival mode.
+Aim, shoot, split! Pop every bubble in 96 levels and an endless Survival mode.
 
 **Full description** (4,000 characters max):
 
@@ -12,11 +12,11 @@ Pop Archer is a colorful arcade shooter inspired by the classic bubble-splitting
 Aim your bow and shoot straight up: every bubble you hit splits in two, then in two again, until the smallest ones pop. Clear the screen before time runs out, and never let a bubble touch you!
 
 🏹 ADVENTURE
-• 72 levels across 6 worlds: an enchanted forest, desert ruins, the deep sea, outer space, the frozen peaks and a fiery volcano
-• Slide on slippery ice and dodge erupting lava geysers
+• 96 levels across 8 worlds: an enchanted forest, desert ruins, the deep sea, outer space, the frozen peaks, a fiery volcano, the Sky Kingdom and a haunted castle
+• Slide on slippery ice, dodge lava geysers, fight the wind and keep your aim when the lights go out
 • Earn up to 3 stars per level
 • Platforms, breakable bricks and gates that open as you clear each zone
-• A boss at the end of every world: the Bubble King, the Great Storm, the Ink Octopus, the Void Eye, the Frost Yeti and the Lava Dragon
+• A boss at the end of every world: the Bubble King, the Great Storm, the Ink Octopus, the Void Eye, the Frost Yeti, the Lava Dragon, the Sky Pirate and the Lantern Phantom
 
 🎈 SPECIAL BUBBLES
 • Gold bubbles for bonus points and coins
@@ -25,6 +25,10 @@ Aim your bow and shoot straight up: every bubble you hit splits in two, then in 
 • Ghost bubbles that float through platforms
 • Bomb bubbles that blow up everything around them
 • And the black bubble: one touch and the run is over!
+
+📅 DAILY CHALLENGE & TROPHIES
+• A new challenge every day with a special twist (Gold Rush, Giants, Ghost Night…) and a reward that grows with your streak
+• 30 trophies to unlock, each with a coin reward
 
 ⏱️ SURVIVAL
 Endless waves, combos up to x5, a changing battlefield and a boss every two minutes. How long can you last?
@@ -60,5 +64,5 @@ Collect coins to unlock outfits for your archer — Robin, Nomad, Sailor, Astron
 4. Tricky obstacles (desert, bricks and a gate)
 5. Endless Survival mode (x4 combo)
 6. Unlock fun outfits (shop)
-7. 72 levels in 6 worlds (level map)
+7. 96 levels in 8 worlds (level map)
 8. Ice and lava worlds (Lava Dragon boss)

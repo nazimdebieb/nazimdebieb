@@ -479,7 +479,7 @@ function popsOf(s, v) {
 const HARD_V = ['black', 'ghost', 'bouncy'];   // plus dures à viser : un peu plus de temps
 const vxOf = (s, v) => VX[s] * (v === 'bouncy' ? 1.3 : 1);
 const hopOf = b => b.v === 'bouncy' ? Math.min(HOP[b.s] * 1.3, FLOOR - 2 * RAD[b.s] - 6) : HOP[b.s];
-const PLAYER_SPEED = 165, HARPOON_SPEED = 470;
+const PLAYER_SPEED = 165, HARPOON_SPEED = 470, WIND_PUSH = 75;
 const COL = [
   { main: '#ff5a4e', dark: '#a32a22' },
 ];
@@ -498,10 +498,14 @@ const SCENES = [
   { theme: 'ice', sky: ['#0b1a3d', '#1f5a6e'], sun: '#e8f4ff', far: '#1b3056', near: '#2c4f78', ground: '#c9e4f5', ball: '#ffd23b', art: 'iceNight' },
   { theme: 'volcano', sky: ['#5a1a1a', '#ff8a3d'], far: '#3a1414', lava: '#ff7a1f', ground: '#2a1a1a', ball: '#3bd1ff', art: 'volcano' },
   { theme: 'volcano', sky: ['#140a1c', '#3a1426'], far: '#241028', lava: '#ff7a1f', ground: '#1c1218', ball: '#9dff5a', art: 'lavaCave' },
+  { theme: 'sky', sky: ['#5ec2ff', '#e0f4ff'], sun: '#fff8e0', far: '#cfe8ff', near: '#ffffff', ground: '#f4f8ff', ball: '#ff7a3d', clouds: true, art: 'skyDay' },
+  { theme: 'sky', sky: ['#ff8fb1', '#ffd29a'], sun: '#fff1c9', far: '#f0b8d0', near: '#fff0f6', ground: '#fde8f0', ball: '#6a4cff', clouds: true, art: 'skySunset' },
+  { theme: 'haunted', sky: ['#1a0f33', '#3d1f5a'], far: '#2a1a45', near: '#1c1230', ground: '#2a2238', ball: '#ff5ab4', art: 'hauntedYard' },
+  { theme: 'haunted', sky: ['#120b1e', '#2a1838'], far: '#241733', near: '#171022', ground: '#1f1a28', ball: '#ffb02e', art: 'hauntedHall' },
 ];
 // Noms des mondes (carte) et conseil affiché au premier niveau des mondes qui ont un piège.
-const WORLD_NAMES = ['Enchanted Forest', 'Desert Ruins', 'Deep Sea', 'Outer Space', 'Frozen Peaks', 'Volcano'];
-const WORLD_TIPS = { 4: 'Frozen Peaks: the ice is slippery!', 5: 'Volcano: watch out for lava geysers!' };
+const WORLD_NAMES = ['Enchanted Forest', 'Desert Ruins', 'Deep Sea', 'Outer Space', 'Frozen Peaks', 'Volcano', 'Sky Kingdom', 'Haunted Castle'];
+const WORLD_TIPS = { 4: 'Frozen Peaks: the ice is slippery!', 5: 'Volcano: watch out for lava geysers!', 6: 'Sky Kingdom: gusts of wind push you around!', 7: 'Haunted Castle: sometimes the lights go out!' };
 
 // Obstacles : S = plateforme en métal (arrête le harpon), B = rangée de briques (cassées par le harpon),
 // G = barrière qui se lève quand toutes les bulles à sa gauche ont éclaté.
@@ -566,6 +570,33 @@ const LEVELS_56 = [
   { b: [[5, .2, 1], [3, .8, -1, null, 'gold']], k: [S(380, 170, 260)] },
   { b: [[4, .15, 1, null, 'steel'], [3, .5, -1, null, 'bomb'], [3, .85, 1, null, 'ghost']], k: [G(320), ...B(40, 180, 6)] },
 ];
+// Mondes 7 (Sky Kingdom, rafales de vent) et 8 (Haunted Castle, lumières qui s'éteignent).
+const LEVELS_78 = [
+  { b: [[3, .25, 1], [3, .75, -1, null, 'bouncy']] },
+  { b: [[4, .3, 1], [2, .8, -1, null, 'gold']], k: [S(200, 190, 240)] },
+  { b: [[2, .1, 1, 80], [2, .35, -1, 80, 'ghost'], [2, .65, 1, 80], [2, .9, -1, 80, 'ghost']], k: [S(0, 150, 200), S(440, 150, 200)] },
+  { b: [[3, .2, 1, null, 'steel'], [3, .8, -1, null, 'steel']], k: [G(320)] },
+  { b: [[5, .5, 1]] },
+  { b: [[2, .15, 1, 60], [2, .38, -1, 60, 'bomb'], [2, .62, 1, 60], [2, .85, -1, 60, 'bomb']], k: brickFloor(210) },
+  { b: [[3, .2, 1, null, 'green'], [3, .8, -1, null, 'green']], k: stairs() },
+  { b: [[4, .2, 1], [2, .5, -1, null, 'black'], [4, .8, 1]] },
+  { b: [[3, .12, 1], [3, .38, -1, null, 'gold'], [3, .62, 1], [3, .88, -1, null, 'steel']], k: [G(160), G(320), G(480)] },
+  { b: [[5, .3, 1, null, 'bouncy']], k: [S(420, 160, 200)] },
+  { b: [[4, .15, 1, null, 'ghost'], [3, .5, -1, null, 'bomb'], [4, .85, 1, null, 'steel']], k: [G(320), ...B(40, 180, 6)] },
+  null, // 84 : boss
+  { b: [[3, .25, 1, null, 'ghost'], [3, .75, -1, null, 'ghost']] },
+  { b: [[4, .5, 1, null, 'steel']], k: shelves() },
+  { b: [[2, .1, 1, 262, 'black'], [2, .3, -1, 262], [2, .5, 1, 262, 'gold'], [2, .7, -1, 262], [2, .9, 1, 262, 'black']], k: [S(0, 200, 640)] },
+  { b: [[3, .16, 1, null, 'green'], [3, .5, -1, null, 'bouncy'], [3, .84, 1, null, 'green']], k: [G(213), G(427)] },
+  { b: [[5, .25, 1], [3, .8, -1, null, 'ghost']], k: [S(380, 170, 260)] },
+  { b: [[3, .2, 1, 60, 'steel'], [3, .5, -1, 60, 'bomb'], [3, .8, 1, 60, 'steel']], k: checker(150, 230) },
+  { b: [[4, .2, 1, null, 'bouncy'], [4, .8, -1, null, 'bouncy']], k: [G(320)] },
+  { b: [[2, .1, 1, 60, 'ghost'], [2, .3, -1, 60, 'black'], [2, .5, 1, 60, 'ghost'], [2, .7, -1, 60, 'black'], [2, .9, 1, 60, 'ghost']], k: [...B(80, 150, 6), ...B(320, 150, 6)] },
+  { b: [[5, .2, 1, null, 'steel'], [3, .8, -1, null, 'gold']], k: stairs() },
+  { b: [[4, .15, 1, null, 'green'], [4, .85, -1, null, 'bomb']], k: [G(320), S(70, 205, 120), S(450, 205, 120)] },
+  { b: [[5, .25, 1, null, 'ghost'], [4, .75, -1, null, 'steel'], [2, .62, 1, null, 'black']], k: [G(320)] },
+  null, // 96 : boss
+];
 function stairs() { return [S(40, 250, 100), S(180, 200, 100), S(320, 150, 100), S(460, 100, 100)]; }
 function shelves() { return [S(0, 170, 260), S(380, 170, 260)]; }
 function checker(y1, y2) {
@@ -577,6 +608,7 @@ function checker(y1, y2) {
 function levelDef(n) {
   if (n % 12 === 0) return { boss: BOSS_ORDER[(n / 12 - 1) % BOSS_ORDER.length], b: [], k: [] };
   if (n <= LEVELS.length) return LEVELS[n - 1];
+  if (n > 72) return LEVELS_78[n - 73];
   if (n > 48) return LEVELS_56[n - 49];
   let seed = (n * 2654435761) >>> 0;
   const rnd = () => (seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296;
@@ -628,7 +660,7 @@ function levelDef(n) {
   if (pick === 9) b.forEach(d => { d[3] = 262; });
   return { b, k };
 }
-const timeFor = def => def.boss ? BOSSES[def.boss].time : Math.round(18 + (LEVELS_56.includes(def) ? 1.15 : 1) * def.b.reduce((t, [s, , , , v]) => t + popsOf(s, v) * 1.7 * (HARD_V.includes(v) ? 1.2 : 1), 0)
+const timeFor = def => def.boss ? BOSSES[def.boss].time : Math.round(18 + (LEVELS_78.includes(def) ? 1.2 : LEVELS_56.includes(def) ? 1.15 : 1) * def.b.reduce((t, [s, , , , v]) => t + popsOf(s, v) * 1.7 * (HARD_V.includes(v) ? 1.2 : 1), 0)
   + (def.k || []).reduce((t, k) => t + (k.t === 'g' ? 6 : k.t === 'b' ? .6 : 0), 0));
 
 const ITEMS = [
@@ -754,6 +786,12 @@ const SONGS = {
   volcano: { bpm: 138, lead: 'A4 . C5 . E5 . A5 . G5 . F5 . E5 - D5 . C5 . D5 . E5 . C5 . A4 . B4 . C5 - - .',
              bass: 'A2 A2 . A2 A2 . A2 . F2 F2 . F2 F2 . F2 . G2 G2 . G2 G2 . G2 . E2 E2 . E2 E2 . E2 .',
              drum: 'k . h k s . h . k . h k s . h h k . h k s . h . k k h . s . s s', wave: 'sawtooth' },
+  sky: { bpm: 120, lead: 'G5 . B5 . D6 . B5 . C6 . E6 . D6 - - . B5 . G5 . A5 . B5 . C6 . A5 . G5 - - .',
+         bass: 'G2 . . . D3 . . . C3 . . . G2 . . . A2 . . . D3 . . . G2 . . . D3 . . .',
+         drum: 'k . h . s . h . k . h . s . h h k . h . s . h . k . h . s h h .', wave: 'triangle' },
+  haunted: { bpm: 96, lead: 'D5 . F5 . A5 . G#5 . A5 - - . F5 . D5 . E5 . F5 . E5 . C#5 . D5 - - . A4 . . .',
+             bass: 'D2 . . D2 . . A1 . D2 . . D2 . . A1 . Bb1 . . Bb1 . . F2 . A1 . . A1 . . C#2 .',
+             drum: 'k . . . s . . h k . . . s . h . k . . . s . . h k . k . s . s .', wave: 'square' },
   boss: { bpm: 150, lead: 'C5 . C5 Eb5 . C5 G5 . F5 . Eb5 . D5 . Eb5 . C5 . C5 Eb5 . G5 C6 . Bb5 . Ab5 . G5 . G5 .',
           bass: 'C2 C3 C2 C3 C2 C3 C2 C3 Ab1 Ab2 Ab1 Ab2 G1 G2 G1 G2 C2 C3 C2 C3 C2 C3 C2 C3 Ab1 Ab2 Ab1 Ab2 G1 G2 G1 G2',
           drum: 'k . s . k k s . k . s . k k s s k . s . k k s . k . s . k k s s', wave: 'sawtooth' },
@@ -855,7 +893,7 @@ function paintSound() {
 let mode = 0, level = 1, state = 'menu', stateT = 0, paused = false;
 // kind : 'adv' (Aventure : niveau par niveau, 3 cœurs, étoiles) ou 'surv' (Survie : vagues sans fin, 3 vies, record)
 let kind = 'adv';
-const ADV_COUNT = 72, ADV_HEARTS = 3, WORLD = 12, WORLDS = ADV_COUNT / WORLD;
+const ADV_COUNT = 96, ADV_HEARTS = 3, WORLD = 12, WORLDS = ADV_COUNT / WORLD;
 const worldOf = n => Math.floor((n - 1) / WORLD);
 let mapWorld = 0;
 let adv = store.get('adv', {});
@@ -906,6 +944,7 @@ function loadLevel() {
   scene = SCENES[def.boss ? BOSSES[def.boss].scene : (worldOf(level) % WORLDS) * 2 + (level - 1) % 2];
   blocks = (def.k || []).map(wide);
   boss = def.boss ? makeBoss(def.boss) : null; shots = []; beams = []; shake = 0; slowT = 0; geyserT = 3;
+  wind = dark = null; windT = 4; darkT = 6;
   balls = def.b.map(d => makeBall(d, scene.ball));
   items = []; parts = []; texts = []; freezeT = 0;
   // un monde plus large, c'est plus de chemin : un peu plus de temps
@@ -1134,7 +1173,8 @@ function movePlayers(dt, canFire) {
     // Sur la glace, l'archer prend de l'élan et glisse avant de s'arrêter.
     if (scene.theme === 'ice') p.vx = (p.vx || 0) + (d * PLAYER_SPEED - (p.vx || 0)) * Math.min(1, dt * (d ? 3.4 : 1.6));
     else p.vx = d * PLAYER_SPEED;
-    p.x = clamp(p.x + p.vx * dt, 12, W - 12);
+    const push = wind && wind.warn <= 0 ? wind.dir * WIND_PUSH : 0;
+    p.x = clamp(p.x + (p.vx + push) * dt, 12, W - 12);
     if (p.x <= 12 || p.x >= W - 12) p.vx = 0;
     for (const k of blocks) {
       if (k.y + k.h < FLOOR - 34) continue;
@@ -1526,6 +1566,7 @@ function startSurvival() {
   drops = []; ann = null; slowT = 0; survSeen.clear();
   scene = SCENES[0];
   blocks = []; boss = null; shots = []; beams = []; shake = 0; geyserT = 3;
+  wind = dark = null; windT = 4; darkT = 6;
   items = []; parts = []; texts = []; freezeT = 0;
   balls = [makeBall([2, .25, 1], scene.ball)];
   timeMax = timeLeft = 1;
@@ -1577,7 +1618,7 @@ function updateSurvival(dt) {
     scene = SCENES[(SCENES.indexOf(scene) + 1) % SCENES.length];
     for (const b of balls) b.c = scene.ball;
     renderBg();
-    ann = { big: 'The ground is shifting!', small: { ice: 'The ice is slippery!', volcano: 'Watch out for lava geysers!' }[scene.theme] || '', t: 1.8 };
+    ann = { big: 'The ground is shifting!', small: { ice: 'The ice is slippery!', volcano: 'Watch out for lava geysers!', sky: 'Gusts of wind push you around!', haunted: 'Sometimes the lights go out!' }[scene.theme] || '', t: 1.8 };
     sfx.gate();
   }
   // Un boss toutes les 2 minutes ; les vagues continuent pendant le combat.
@@ -1598,14 +1639,31 @@ const BOSSES = {
   eye:   { name: 'Void Eye',      hp: 20, r: 36, time: 120, scene: 7 },
   yeti:  { name: 'Frost Yeti',    hp: 22, r: 40, time: 120, scene: 9 },
   dragon:{ name: 'Lava Dragon',   hp: 24, r: 38, time: 130, scene: 11 },
+  pirate:{ name: 'Sky Pirate',    hp: 22, r: 38, time: 140, scene: 13 },
+  phantom:{ name: 'Lantern Phantom', hp: 30, r: 36, time: 150, scene: 15 },
 };
-const BOSS_ORDER = ['king', 'storm', 'squid', 'eye', 'yeti', 'dragon'];
+const BOSS_ORDER = ['king', 'storm', 'squid', 'eye', 'yeti', 'dragon', 'pirate', 'phantom'];
 let boss = null, shots = [], beams = [], shake = 0, geyserT = 3;
+// Sky Kingdom : rafales de vent (annoncées) qui poussent l'archer ; Haunted Castle : les lumières s'éteignent.
+let wind = null, windT = 4, dark = null, darkT = 6;
 // Volcan : un geyser de lave jaillit du sol après un avertissement (bulles au sol et pointillés).
 function updateHazards(dt) {
-  if (scene.theme !== 'volcano' || (tut && tut.step < 2)) return;
+  if (dark && ((dark.warn -= dt) <= 0) && (dark.t -= dt) <= 0) dark = null;
+  if (wind && ((wind.warn -= dt) <= 0) && (wind.t -= dt) <= 0) wind = null;
+  if (tut && tut.step < 2) return;
+  const hard = kind === 'surv' ? clamp(survT / 240, 0, 1) : clamp((level - WORLD * worldOf(level) - 1) / 10, 0, 1);
+  if (scene.theme === 'sky' && !wind && (windT -= dt) <= 0) {
+    windT = 5.5 - hard * 1.5 + Math.random() * 2.5;
+    wind = { dir: Math.random() < .5 ? -1 : 1, warn: 1.2, t: 2.8 + hard * 1.2 };
+    noise(1.1, .06, 500);
+  }
+  if (scene.theme === 'haunted' && !boss && !dark && (darkT -= dt) <= 0) {
+    darkT = 8 - hard * 2 + Math.random() * 3;
+    dark = { warn: 1, t: 2.8 + hard * .8 };
+    tone(98, .6, 'sine', .08, 55);
+  }
+  if (scene.theme !== 'volcano') return;
   if ((geyserT -= dt) > 0) return;
-  const hard = kind === 'surv' ? clamp(survT / 240, 0, 1) : clamp((level - 61) / 10, 0, 1);
   geyserT = 4.4 - hard * 1.6 + Math.random() * 1.4;
   const p = players[0], near = p && Math.random() < .5;
   const x = clamp(near ? p.x + (Math.random() - .5) * 180 : 30 + Math.random() * (W - 60), 20, W - 20);
@@ -1628,6 +1686,8 @@ function makeBoss(type) {
   if (type === 'eye') b.orbs = [0, 1, 2].map(i => ({ a: i * Math.PI * 2 / 3, alive: true, t: 0 }));
   if (type === 'yeti') { b.x = W * .82; b.y = FLOOR - b.r; b.mt = 2.2; b.cd = 1; b.jumps = 0; }
   if (type === 'dragon') { b.y = 90; b.cd = 1.5; b.cd2 = 4; b.cd3 = 6; }
+  if (type === 'pirate') { b.y = 78; b.cd = 1.6; b.cd2 = 3.5; b.cd3 = 7; }
+  if (type === 'phantom') { b.y = 110; b.alpha = 1; b.mt = 3; b.cd = 1; b.cd2 = 6; b.cd3 = 5; b.volley = 3; }
   return b;
 }
 const rage = b => 1 - b.hp / b.max;
@@ -1734,15 +1794,58 @@ function updateBoss(dt) {
     }
     if ((b.cd2 -= dt) <= 0) { b.cd2 = 5.5 - rg * 1.5; aimBeam(tgt, '#ff7a1f'); }
     if (rg >= .5 && (b.cd3 -= dt) <= 0) { b.cd3 = 8; spawnMinion(b, 2); }
+  } else if (b.type === 'pirate') {
+    // Le bateau volant va et vient en haut, tire des boulets en cloche et lâche des ancres (annoncées au plafond).
+    // (plus l'écran est large, plus le trajet est long : même vitesse partout)
+    b.x += ((W / 2 + Math.sin(b.t * (.4 + rg * .3) * DW / W) * 240 * W / DW) - b.x) * Math.min(1, dt * 2);
+    b.y = 78 + Math.sin(b.t * 2) * 10;
+    if ((b.cd -= dt) <= 0 && tgt) {
+      b.cd = 2 - rg * .7;
+      throwArc(b, tgt.x, 'cannon', 1.2, 7);
+      if (rg >= .5) throwArc(b, tgt.x + (Math.random() < .5 ? -80 : 80), 'cannon', 1.35, 7);
+      sfx.thud();
+    }
+    if ((b.cd2 -= dt) <= 0) {
+      b.cd2 = 4.6 - rg * 1.4;
+      const n = 2 + Math.round(rg * 2);
+      for (let i = 0; i < n; i++) {
+        const x = i === 0 && tgt ? tgt.x : 40 + Math.random() * (W - 80);
+        shots.push({ x: clamp(x, 16, W - 16), y: 16 + TOP, vx: 0, vy: 0, g: 900, r: 7, kind: 'anchor', wait: .9 + i * .2 });
+      }
+    }
+    if (rg >= .5 && (b.cd3 -= dt) <= 0) { b.cd3 = 7; spawnMinion(b, 1); }
+  } else if (b.type === 'phantom') {
+    // Il se volatilise (et ne craint alors rien), réapparaît ailleurs et lance une volée de feux follets.
+    // Quand il enrage, il éteint parfois les lumières.
+    if (b.mode === 'fade') {
+      b.alpha = Math.max(0, b.alpha - dt * 3);
+      if ((b.mt -= dt) <= 0) { b.x = 60 + Math.random() * (W - 120); b.y = 80 + Math.random() * 50; b.mode = 'appear'; b.mt = .6; }
+    } else if (b.mode === 'appear') {
+      b.alpha = Math.min(1, b.alpha + dt * 2.5);
+      if ((b.mt -= dt) <= 0) { b.mode = 'idle'; b.alpha = 1; b.cd = .5; b.mt = 2.4 - rg * .7; b.volley = rg >= .5 ? 5 : 3; b.vx = (Math.random() < .5 ? -1 : 1) * (90 + rg * 40); }
+    } else {
+      // il glisse d'un côté à l'autre en flottant
+      b.x += (b.vx || 0) * dt; if (b.x < b.r + 10 || b.x > W - b.r - 10) { b.vx = -(b.vx || 0); b.x = clamp(b.x, b.r + 10, W - b.r - 10); }
+      b.y += Math.cos(b.t * 1.9) * 14 * dt;
+      if (b.volley > 0 && (b.cd -= dt) <= 0 && tgt) {
+        b.cd = .38; b.volley--;
+        const a = Math.atan2(FLOOR - 14 - b.y, tgt.x + (Math.random() - .5) * 40 - b.x), sp = 150 + rg * 50;
+        shots.push({ x: b.x, y: b.y + 12, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, g: 0, r: 6, kind: 'wisp' });
+        sfx.ink();
+      }
+      if ((b.mt -= dt) <= 0) { b.mode = 'fade'; b.mt = .45; }
+      if ((b.cd2 -= dt) <= 0) { b.cd2 = 8; spawnMinion(b, 1); }
+      if (rg >= .5 && (b.cd3 -= dt) <= 0) { b.cd3 = 12; dark = { warn: .8, t: 2.6 }; }
+    }
   }
 }
 
-const SHOT_COL = { ink: '#5a2f78', drop: '#8fd0ff', snow: '#ffffff', icicle: '#bfe9ff', fire: '#ff7a1f' };
+const SHOT_COL = { ink: '#5a2f78', drop: '#8fd0ff', snow: '#ffffff', icicle: '#bfe9ff', fire: '#ff7a1f', cannon: '#3a3a4a', anchor: '#9aa8b8', wisp: '#7dff9a' };
 function moveShots(dt) {
   shots = shots.filter(s => {
     if (s.wait > 0) { s.wait -= dt; return true; }
     s.vy += s.g * dt; s.x += s.vx * dt; s.y += s.vy * dt;
-    if (s.y > FLOOR - s.r) { burst(s.x, FLOOR - 2, SHOT_COL[s.kind] || '#8fd0ff', s.kind === 'icicle' || s.kind === 'snow' ? 7 : 3); return false; }
+    if (s.y > FLOOR - s.r) { burst(s.x, FLOOR - 2, SHOT_COL[s.kind] || '#8fd0ff', s.kind === 'icicle' || s.kind === 'snow' || s.kind === 'anchor' ? 7 : 3); return false; }
     return s.x > -10 && s.x < W + 10;
   });
   beams = beams.filter(bm => {
@@ -1772,7 +1875,7 @@ function harpoonHitsBoss(h, p) {
     const hh = ry * Math.sqrt(Math.max(0, 1 - dx * dx));
     hit = Math.abs(dx) < 1 && h.top <= b.y + hh && segBottom(h) >= b.y - hh;
   } else hit = segHits(h, b.x, b.y, b.r * .95);
-  if (!hit) return false;
+  if (!hit || (b.type === 'phantom' && b.alpha < .6)) return false;
   // Le yéti au sol est protégé par sa fourrure : la flèche rebondit, il faut le toucher en plein saut.
   if (b.type === 'yeti' && b.mode === 'idle') { burst(h.x, Math.max(h.top, b.y - b.r), '#ffffff', 5); sfx.brick(); return true; }
   damageBoss(p);
@@ -1809,7 +1912,7 @@ function bossTouch() {
     if (p.out || p.dead || p.inv > 0 || p.star > 0) continue;
     const x0 = p.x - 8, x1 = p.x + 8, y0 = FLOOR - 26, y1 = FLOOR;
     const touches = (x, y, r) => { const dx = x - clamp(x, x0, x1), dy = y - clamp(y, y0, y1); return dx * dx + dy * dy < r * r; };
-    let hit = !!boss && !boss.dead && boss.type !== 'storm' && touches(boss.x, boss.y, boss.r * .85);
+    let hit = !!boss && !boss.dead && boss.type !== 'storm' && !(boss.alpha < .6) && touches(boss.x, boss.y, boss.r * .85);
     for (let i = shots.length - 1; i >= 0 && !hit; i--) if (!(shots[i].wait > 0) && touches(shots[i].x, shots[i].y, shots[i].r)) { shots.splice(i, 1); hit = true; }
     if (!hit) hit = beams.some(bm => bm.warn <= 0 && Math.abs(bm.x - p.x) < 15);
     if (hit) hitPlayer(p);
@@ -1846,6 +1949,7 @@ function drawBoss() {
   if (b.dead) { sc = Math.max(.05, b.deadT / 1.6); ctx.globalAlpha = Math.floor(b.deadT * 12) % 2 ? .5 : 1; }
   const wob = b.mode === 'windup' ? (Math.random() - .5) * 4 : 0;
   ctx.translate(b.x + wob, b.y); ctx.scale(sc, sc); ctx.translate(-b.x, -b.y);
+  if (b.type === 'phantom' && !b.dead) ctx.globalAlpha = b.alpha;
   const spr = BOSS_SPRITES[b.type];
   if (spr) {
     if (b.type === 'eye') drawOrbs(b);
@@ -1867,8 +1971,8 @@ function drawBoss() {
     ctx.restore();
     return;
   }
-  if (b.type === 'yeti' || b.type === 'dragon') {
-    const c = b.type === 'yeti' ? '#dff1ff' : '#ff5a1f', sh = shades(c);
+  if (b.type === 'yeti' || b.type === 'dragon' || b.type === 'pirate' || b.type === 'phantom') {
+    const c = { yeti: '#dff1ff', dragon: '#ff5a1f', pirate: '#b8743a', phantom: '#d9ccff' }[b.type], sh = shades(c);
     ctx.fillStyle = c; ctx.strokeStyle = sh.dark; ctx.lineWidth = 3;
     ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
     drawEyes(b.x, b.y - 4, 9, look, true);
@@ -1959,6 +2063,28 @@ function drawShotsAndBeams() {
       if (fire) { ctx.fillStyle = 'rgba(255,120,30,.35)'; ctx.beginPath(); ctx.arc(sh.x, sh.y, sh.r + 4, 0, Math.PI * 2); ctx.fill(); }
       ctx.fillStyle = g; ctx.beginPath(); ctx.arc(sh.x, sh.y, sh.r, 0, Math.PI * 2); ctx.fill();
       ctx.strokeStyle = fire ? 'rgba(90,20,0,.6)' : 'rgba(40,70,110,.5)'; ctx.lineWidth = 1; ctx.stroke();
+    } else if (sh.kind === 'anchor') {
+      if (sh.wait > 0) {
+        if (Math.floor(sh.wait * 10) % 2) continue;
+        ctx.fillStyle = '#ff4f5e'; ctx.beginPath(); ctx.moveTo(sh.x - 8, 2 + TOP); ctx.lineTo(sh.x + 8, 2 + TOP); ctx.lineTo(sh.x, 14 + TOP); ctx.closePath(); ctx.fill();
+      }
+      // ancre : anneau, tige, barre et bras recourbés
+      ctx.strokeStyle = '#2a2f3a'; ctx.lineWidth = 5; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(sh.x, sh.y - 12); ctx.lineTo(sh.x, sh.y + 8); ctx.moveTo(sh.x - 6, sh.y - 6); ctx.lineTo(sh.x + 6, sh.y - 6);
+      ctx.moveTo(sh.x - 9, sh.y + 1); ctx.quadraticCurveTo(sh.x - 7, sh.y + 10, sh.x, sh.y + 10); ctx.quadraticCurveTo(sh.x + 7, sh.y + 10, sh.x + 9, sh.y + 1); ctx.stroke();
+      ctx.strokeStyle = '#b8c4d0'; ctx.lineWidth = 2.5; ctx.stroke();
+      ctx.beginPath(); ctx.arc(sh.x, sh.y - 15, 3.5, 0, Math.PI * 2); ctx.strokeStyle = '#2a2f3a'; ctx.lineWidth = 4; ctx.stroke(); ctx.strokeStyle = '#b8c4d0'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.lineCap = 'butt';
+    } else if (sh.kind === 'cannon') {
+      const g = ctx.createRadialGradient(sh.x - 2, sh.y - 2, 1, sh.x, sh.y, sh.r);
+      g.addColorStop(0, '#8a8aa0'); g.addColorStop(1, '#1e1e2a');
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(sh.x, sh.y, sh.r, 0, Math.PI * 2); ctx.fill();
+    } else if (sh.kind === 'wisp') {
+      const t = performance.now() / 150;
+      ctx.fillStyle = 'rgba(125,255,154,.3)'; ctx.beginPath(); ctx.arc(sh.x, sh.y, sh.r + 4 + Math.sin(t) * 1.5, 0, Math.PI * 2); ctx.fill();
+      const g = ctx.createRadialGradient(sh.x, sh.y, 1, sh.x, sh.y, sh.r);
+      g.addColorStop(0, '#f2fff4'); g.addColorStop(1, '#3fd46a');
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(sh.x, sh.y, sh.r, 0, Math.PI * 2); ctx.fill();
     } else if (sh.kind === 'drop') {
       ctx.fillStyle = '#8fd0ff';
       ctx.beginPath(); ctx.moveTo(sh.x, sh.y - 9); ctx.quadraticCurveTo(sh.x + 5, sh.y, sh.x, sh.y + 4); ctx.quadraticCurveTo(sh.x - 5, sh.y, sh.x, sh.y - 9); ctx.fill();
@@ -1990,6 +2116,38 @@ function drawGeyser(bm) {
   ctx.fillStyle = g; ctx.beginPath(); ctx.roundRect(bm.x - 13, y, 26, h + 2, 12); ctx.fill();
   ctx.fillStyle = 'rgba(255,240,170,.9)';
   for (let i = 0; i < 5; i++) { ctx.beginPath(); ctx.arc(bm.x + Math.sin(t * 13 + i) * 9, y + 4 + ((t * 60 + i * 11) % Math.max(8, h - 6)), 2.2, 0, Math.PI * 2); ctx.fill(); }
+}
+// Rafale : traînées blanches dans le sens du vent (et flèches qui clignotent sur le bord avant qu'elle arrive).
+// Obscurité : tout est sombre sauf un halo autour de l'archer ; les bulles restent devinables à leur contour.
+function drawWeather() {
+  const t = performance.now() / 1000;
+  if (wind) {
+    const on = wind.warn <= 0, a = on ? .5 : (Math.floor(t * 8) % 2 ? .45 : .15);
+    ctx.strokeStyle = `rgba(255,255,255,${a})`; ctx.lineWidth = 2; ctx.lineCap = 'round';
+    for (let i = 0; i < (on ? 14 : 5); i++) {
+      const y = 30 + ((i * 53) % (FLOOR - 50)), sp = on ? 520 : 160;
+      let x = ((i * 137 + t * sp * wind.dir) % (W + 120) + W + 120) % (W + 120) - 60;
+      ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - wind.dir * (on ? 46 : 24), y); ctx.stroke();
+    }
+    if (!on) {
+      ctx.fillStyle = `rgba(255,255,255,${a + .3})`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.font = fontOf(26); ctx.fillText(wind.dir > 0 ? '»' : '«', wind.dir > 0 ? 20 : W - 20, FLOOR - 70);
+    }
+    ctx.lineCap = 'butt';
+  }
+  if (dark) {
+    const p = players.find(q => !q.out && !q.dead) || players[0];
+    const flick = dark.warn > 0 ? (Math.floor(t * 9) % 2 ? .25 : .7) : .93;
+    const px = p ? p.x : W / 2, py = FLOOR - 30;
+    const g = ctx.createRadialGradient(px, py, 45, px, py, 150);
+    g.addColorStop(0, 'rgba(8,3,20,0)'); g.addColorStop(1, `rgba(8,3,20,${flick})`);
+    ctx.fillStyle = g; ctx.fillRect(-W, -H, W * 3, H * 3);
+    if (dark.warn <= 0) {
+      ctx.strokeStyle = 'rgba(220,210,255,.4)'; ctx.lineWidth = 1.5;
+      for (const b of balls) { ctx.beginPath(); ctx.arc(b.x, b.y, RAD[b.s], 0, Math.PI * 2); ctx.stroke(); }
+      for (const sh of shots) if (!(sh.wait > 0)) { ctx.fillStyle = SHOT_COL[sh.kind] || '#fff'; ctx.beginPath(); ctx.arc(sh.x, sh.y, sh.r * .8, 0, Math.PI * 2); ctx.fill(); }
+    }
+  }
 }
 function drawBossBar() {
   const b = boss, w = 240, x = (W - w) / 2, y = 22 + TOP;
@@ -2106,6 +2264,10 @@ loadArt('iceDay', 'img/ice-day.webp', .942);
 loadArt('iceNight', 'img/ice-night.webp', .912);
 loadArt('volcano', 'img/volcano.webp', .95);
 loadArt('lavaCave', 'img/lava-cave.webp', .922);
+loadArt('skyDay', 'img/sky-day.webp', .93);
+loadArt('skySunset', 'img/sky-sunset.webp', .92);
+loadArt('hauntedYard', 'img/haunted-yard.webp', .895);
+loadArt('hauntedHall', 'img/haunted-hall.webp', .842);
 // Boss peints (Canva) : [fichier, largeur affichée, décalage vertical du centre de l'image]
 const BOSS_ART = {
   king: ['img/boss-king.webp', 110, -8],
@@ -2114,6 +2276,8 @@ const BOSS_ART = {
   eye: ['img/boss-eye.webp', 90, -3],
   yeti: ['img/boss-yeti.webp', 100, -20],
   dragon: ['img/boss-dragon.webp', 120, 2],
+  pirate: ['img/boss-pirate.webp', 112, -2],
+  phantom: ['img/boss-phantom.webp', 104, 0],
 };
 const BOSS_SPRITES = {};
 // Icônes des bonus (Canva), une par type : img/item-<type>.webp
@@ -2173,6 +2337,18 @@ function tree(b, x, y, r, leaf, trunk) {
 }
 
 const BACKDROPS = {
+  sky(b, sc, rnd) {
+    sunDisc(b, sc, rnd, 22);
+    cloudPuffs(b, rnd, 6);
+    hillLine(b, rnd, FLOOR - 40, 16, sc.near, .02, .06);
+    groundBand(b, rnd, sc.ground, '#d8e8f8');
+  },
+  haunted(b, sc, rnd) {
+    b.fillStyle = '#f4f0d8'; b.beginPath(); b.arc(W * .78, 70, 26, 0, Math.PI * 2); b.fill();
+    hillLine(b, rnd, FLOOR - 100, 30, sc.far, .012, .03);
+    hillLine(b, rnd, FLOOR - 50, 14, sc.near, .02, .05);
+    groundBand(b, rnd, sc.ground, '#3a3050');
+  },
   ice(b, sc, rnd) {
     sunDisc(b, sc, rnd, 20);
     hillLine(b, rnd, FLOOR - 120, 40, sc.far, .012, .03);
@@ -2579,6 +2755,8 @@ const MATERIALS = {
   space:  { s: ['#6d71a3', '#33365e', '#1c1e3c'], b: ['#5bc8f0', '#b8f0ff', '#2a7fa8', '#1d5a7a'] },
   ice:    { s: ['#f4fbff', '#9fd0f0', '#4a7fa8'], b: ['#cdeeff', '#ffffff', '#7fb8dc', '#4a7fa8'] },
   volcano:{ s: ['#5a4a4a', '#2a1e1e', '#140c0c'], b: ['#8a2a14', '#ff9a3d', '#3a1008', '#1c0804'] },
+  sky:    { s: ['#ffffff', '#cfe4f5', '#8aa8c8'], b: ['#ffffff', '#fff6d8', '#e0b84a', '#b08a2a'] },
+  haunted:{ s: ['#6a4a3a', '#3a2418', '#1e120a'], b: ['#8a7aa8', '#b8a8d8', '#4a3a68', '#2a1e40'] },
 };
 // Plateformes et briques peintes (Canva), une paire par thème.
 const BLOCK_ART = {};
@@ -2611,8 +2789,11 @@ function drawBlock(k) {
   const art = BLOCK_ART[scene.theme] && BLOCK_ART[scene.theme][k.t];
   if (art && k.t === 'b') { ctx.drawImage(art, k.x - 1, k.y - 1, k.w + 2, k.h + 2); return; }
   if (art && k.t === 's') {
+    // château hanté : un halo pâle détache les planches sombres des murs sombres
+    if (scene.theme === 'haunted') { ctx.save(); ctx.shadowColor = 'rgba(214,190,255,.85)'; ctx.shadowBlur = 8; }
     if (k.w >= k.h) drawSlab(art, k.x, k.y - 1, k.w, k.h + 2);
     else { ctx.save(); ctx.translate(k.x - 1, k.y + k.h); ctx.rotate(-Math.PI / 2); drawSlab(art, 0, 0, k.h, k.w + 2); ctx.restore(); }
+    if (scene.theme === 'haunted') ctx.restore();
     return;
   }
   const m = MATERIALS[scene.theme] || MATERIALS.forest;
@@ -2760,6 +2941,7 @@ function draw() {
   for (const t of texts) { ctx.globalAlpha = Math.min(1, t.life / t.max * 2); outlined(t.s, t.x, t.y, 11, t.c); }
   ctx.globalAlpha = 1;
 
+  drawWeather();
   if (boss && state !== 'menu') drawBossBar();
   if (kind === 'surv' && state !== 'menu') drawSurvival();
   if (state !== 'menu') drawPowers();
