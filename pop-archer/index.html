@@ -51,6 +51,9 @@ body{
 .timer{width:clamp(80px,22vw,220px);height:8px;border-radius:99px;background:var(--cab-hi);overflow:hidden;box-shadow:inset 0 0 0 1px var(--edge)}
 .timer i{display:block;height:100%;background:var(--gold);transform-origin:left center}
 .timer.low i{background:var(--p1)}
+.tsec{font-family:var(--display);font-weight:400;font-size:12px;color:var(--ink);min-width:1.8em;text-align:left;font-variant-numeric:tabular-nums}
+.tsec.low{color:var(--p1)}
+body[data-state="menu"] .tsec{visibility:hidden}
 .tools{display:flex;gap:6px}
 .iconbtn{
   width:36px;height:36px;border-radius:10px;border:0;cursor:pointer;display:grid;place-items:center;
@@ -116,7 +119,10 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
 .land .pl{flex-direction:row;align-items:center;gap:8px}
 .land .score{font-size:16px}
 .land .mid{flex-direction:row;gap:10px}
-.land .iconbtn{width:32px;height:32px}
+.land .iconbtn{width:32px;height:32px;position:relative}
+/* zone de contact d'environ 44 px autour des boutons de 32 px */
+.land .iconbtn::after{content:"";position:absolute;inset:-6px}
+.land .tools{gap:10px}
 /* Téléphone tenu droit : le jeu est dessiné couché, il suffit de tourner le téléphone. */
 .turned .app{
   position:fixed;top:0;left:0;max-width:none;margin:0;transform-origin:top left;
@@ -357,6 +363,7 @@ body.onmap .mid{visibility:hidden}
 .pbar i{display:block;height:100%;background:var(--gold);border-radius:99px}
 #passCards .desc{font-size:.82em}
 .streak{margin:0;font-weight:800;color:#ff9a3d;font-size:min(2.1cqw,4.2cqh)}
+.streak.assist{color:#7ad0ff}
 .gains{margin:0;font-weight:800;color:var(--muted);font-size:min(1.9cqw,3.8cqh)}
 #bChest.ready{box-shadow:inset 0 0 0 2px var(--gold),0 0 12px rgba(255,200,61,.5)}
 .toast{position:absolute;z-index:7;left:50%;top:4px;display:flex;align-items:center;gap:10px;padding:6px 16px 6px 6px;border-radius:14px;
@@ -422,6 +429,7 @@ body[data-state="ready"] .coinpill,body[data-state="play"] .coinpill,body[data-s
     <div class="mid">
       <div class="lvl" id="lvl">Pop Archer</div>
       <div class="timer" id="timer"><i id="tbar"></i></div>
+      <b class="tsec" id="tsec"></b>
     </div>
     <div class="tools">
       <span class="coinpill" id="coinPill" title="Coins"><i class="coin" aria-hidden="true"></i><b id="coinN">0</b></span>
@@ -488,6 +496,7 @@ body[data-state="ready"] .coinpill,body[data-state="play"] .coinpill,body[data-s
           <p class="tierpill" id="prepTier" hidden></p>
           <p class="help" id="prepHelp">Take one boost into this run, or just play.</p>
           <p class="streak" id="prepStreak" hidden></p>
+          <p class="streak assist" id="prepAssist" hidden></p>
           <div class="cards boosts" id="prepCards"></div>
           <div class="row">
             <button class="btn" id="bPlay" type="button">Play</button>
@@ -539,6 +548,7 @@ body[data-state="ready"] .coinpill,body[data-state="play"] .coinpill,body[data-s
             <button class="toggle" id="tMusic" type="button" role="switch" aria-checked="true">Music<i aria-hidden="true"></i></button>
             <button class="toggle" id="tVibe" type="button" role="switch" aria-checked="true">Vibration<i aria-hidden="true"></i></button>
             <button class="toggle touch-only" id="tBand" type="button" role="switch" aria-checked="true">Control strip<i aria-hidden="true"></i></button>
+            <button class="toggle" id="tHold" type="button" role="switch" aria-checked="true">Hold to fire<i aria-hidden="true"></i></button>
             <button class="toggle" id="tLang" type="button">Language<b id="langName">English</b></button>
           </div>
           <div class="row">
@@ -654,7 +664,7 @@ const VX  = [100, 90, 80, 72, 64, 58];       // vitesse horizontale par taille
 const PTS = [100, 70, 50, 30, 20, 10];       // les petites rapportent plus
 // Bulles spéciales : couleur propre et comportement différent.
 const VARIANTS = {
-  black:  { c: '#241530', name: 'Black bubble', tip: 'One touch and you lose all your hearts!' },
+  black:  { c: '#241530', name: 'Black bubble', tip: 'One touch takes all your hearts, even with a shield!' },
   gold:   { c: '#ffc83d', name: 'Gold bubble', tip: 'Triple points and bonus coins' },
   steel:  { c: '#a7b1c4', name: 'Steel bubble', tip: 'Takes 2 hits to crack' },
   green:  { c: '#3fbf6f', name: 'Green bubble', tip: 'Splits into 3 instead of 2' },
@@ -832,8 +842,10 @@ function regionLevel(n) {
 const LEVEL_DEFS = {};
 function levelDef(n) {
   if (LEVEL_DEFS[n]) return LEVEL_DEFS[n];
-  const raw = rawLevelDef(n);
-  return (LEVEL_DEFS[n] = orderRooms(raw, LEVELS_78.includes(raw) ? 1.2 : LEVELS_56.includes(raw) ? 1.15 : 1));
+  const raw = rawLevelDef(n), f = LEVELS_78.includes(raw) ? 1.2 : LEVELS_56.includes(raw) ? 1.15 : 1;
+  // le coefficient de temps (_f) est écrit dans la définition : ses copies (défi du jour, Entraînement) le gardent
+  const def = orderRooms(raw, f);
+  return (LEVEL_DEFS[n] = def._f ? def : { ...def, _f: f });
 }
 function orderRooms(def, f) {
   const gates = (def.k || []).filter(k => k.t === 'g').map(k => k.x + k.w / 2).sort((a, b) => a - b);
@@ -1015,6 +1027,14 @@ const T = {
   'Vibration': ['Vibrations', 'Vibración', 'Vibração', 'Vibration'],
   'Language': ['Langue', 'Idioma', 'Idioma', 'Sprache'],
   'Control strip': ['Bande de commandes', 'Barra de controles', 'Barra de controles', 'Steuerleiste'],
+  'Hold to fire': ['Tir continu', 'Disparo continuo', 'Tiro contínuo', 'Dauerfeuer'],
+  'At most one hit': ['Touché une fois au plus', 'Un golpe como máximo', 'No máximo um golpe', 'Höchstens ein Treffer'],
+  'Careful!': ['Attention !', '¡Cuidado!', 'Cuidado!', 'Vorsicht!'],
+  'Next time a black bubble takes all your hearts, even through a shield': ['La prochaine fois, une bulle noire te prendra tous tes cœurs, même avec un bouclier', 'La próxima vez, una burbuja negra te quitará todos los corazones, incluso con escudo', 'Da próxima vez, uma bolha preta tira todos os seus corações, mesmo com escudo', 'Beim nächsten Mal nimmt dir eine schwarze Blase alle Herzen, auch durch den Schild'],
+  'One touch takes all your hearts, even with a shield!': ['Un seul contact te prend tous tes cœurs, même avec un bouclier !', '¡Un solo toque te quita todos los corazones, incluso con escudo!', 'Um toque tira todos os seus corações, mesmo com escudo!', 'Eine Berührung nimmt dir alle Herzen, auch mit Schild!'],
+  'Its fur stops arrows: hit it while it jumps!': ['Sa fourrure arrête les flèches : touche-le pendant ses sauts !', 'Su pelaje frena las flechas: ¡dale mientras salta!', 'O pelo dele para as flechas: acerte enquanto ele pula!', 'Sein Fell stoppt Pfeile: Triff ihn, während er springt!'],
+  'Shoot while its shell is open: closed, it bounces arrows!': ['Tire quand sa carapace est ouverte : fermée, elle renvoie les flèches !', 'Dispara cuando su caparazón está abierto: ¡cerrado, rebota las flechas!', 'Atire quando a carapaça estiver aberta: fechada, ela rebate as flechas!', 'Schieß, wenn sein Panzer offen ist: Geschlossen prallen Pfeile ab!'],
+  'Mega: tougher and faster!': ['Méga : plus solide et plus rapide !', 'Mega: ¡más duro y más rápido!', 'Mega: mais forte e mais rápido!', 'Mega: zäher und schneller!'],
   'Done': ['OK', 'Listo', 'Pronto', 'Fertig'],
   'Reset progress': ['Tout effacer', 'Borrar progreso', 'Apagar progresso', 'Fortschritt löschen'],
   'Pause': ['Pause', 'Pausa', 'Pausa', 'Pause'],
@@ -1407,6 +1427,7 @@ function applyLang() {
 let muted = store.get('muted', false);          // bruitages coupés
 let musicOn = store.get('music', true);          // musique
 let vibeOn = store.get('vibe', true);            // vibrations
+let holdFire = store.get('hold', true);          // tir continu tant qu'on reste appuyé
 // Écran tactile : bande de sol en bas de l'écran, sous l'aire de jeu, pour y poser les pouces sans cacher le jeu.
 let bandOn = store.get('band', true), BAND = 0;
 
@@ -1460,6 +1481,7 @@ const sfx = {
   brick: () => { noise(.12, .14, 900); tone(180, .1, 'square', .05, 90); },
   gate: () => { tone(140, .5, 'sawtooth', .06, 420); noise(.4, .05, 300); },
   over: () => [392, 330, 262, 196].forEach((f, i) => tone(f, .25, 'triangle', .13, 0, i * .18)),
+  tick: () => tone(200, .05, 'square', .03),
 };
 // Musique : de petites boucles jouées en direct (lead, basse, batterie), une par monde,
 // plus le menu et les boss. Notation : une note (C5, F#4, Bb2) ou « . » (silence) ou « - » (tenue) par croche.
@@ -1588,7 +1610,7 @@ const ICON_GEAR = '<svg viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="
 function paintSound() {
   $('btnSound').innerHTML = ICON_GEAR;
   $('btnSound').setAttribute('aria-label', 'Settings');
-  for (const [id, on] of [['tSfx', !muted], ['tMusic', musicOn], ['tVibe', vibeOn], ['tBand', bandOn]]) $(id).setAttribute('aria-checked', on);
+  for (const [id, on] of [['tSfx', !muted], ['tMusic', musicOn], ['tVibe', vibeOn], ['tBand', bandOn], ['tHold', holdFire]]) $(id).setAttribute('aria-checked', on);
 }
 
 /* ---------- État du jeu ---------- */
@@ -1610,7 +1632,7 @@ let trainT = 0, trainHits = 0, trainDead = '';
 const WORLD = 12, WORLDS = WORLD_NAMES.length, ADV_COUNT = WORLDS * WORLD, ADV_HEARTS = 3;
 const worldOf = n => Math.floor((n - 1) / WORLD);
 let adv = store.get('adv', {});
-let levelHit = false, lastStars = 0, prevStars = 0, clearTime = 0;
+let levelHit = false, levelHits = 0, lastStars = 0, prevStars = 0, clearTime = 0;
 const starsOf = n => adv[n] || 0;
 const unlocked = n => n === 1 || starsOf(n - 1) > 0;
 const totalStars = () => Object.values(adv).reduce((t, v) => t + v, 0);
@@ -1676,7 +1698,7 @@ function loadLevel() {
   items = []; parts = []; texts = []; freezeT = 0; ann = null;
   trainT = 0; trainHits = 0; trainDead = '';
   // un monde plus large, c'est plus de chemin : un peu plus de temps
-  timeMax = timeLeft = Math.round(levelTime(kind === 'daily' ? dailyPick().level : level, def) * (1 + (W / DW - 1) * .6));
+  timeMax = timeLeft = Math.round(levelTime(kind === 'daily' ? dailyPick().level : level, def) * (1 + (W / DW - 1) * .6) * (1 + assist(level)));
   const act = active();
   const gate = blocks.filter(k => k.t === 'g').sort((a, b) => a.x - b.x)[0];
   const zone = gate ? gate.x : W;
@@ -1685,7 +1707,7 @@ function loadLevel() {
     p.harpoons = []; p.inv = 0; p.dead = false; p.dy = 0; p.dvy = 0; p.moving = false; p.vx = 0;
   });
   fireQueued = false;
-  levelHit = false;
+  levelHit = false; levelHits = 0;
   const pops = def.b.reduce((t, [sz, , , , v]) => t + popsOf(sz, v), 0);
   dropBudget = def.boss ? 3 : clamp(Math.round(pops / 12), 1, 3); dropCd = 0; lifeDropped = false;
   planCoins((def.boss ? EARN.boss : clamp(Math.round(pops * .4 / 5) * 5, 10, 30)) * (weekend() ? 2 : 1));
@@ -1694,6 +1716,7 @@ function loadLevel() {
   if (level % WORLD === 1 && WORLD_TIPS[worldOf(level)]) unlockTxt = WORLD_TIPS[worldOf(level)];
   const fresh = def.b.map(d => d[4]).find(v => v && firstLevelOf(v) === level);
   if (fresh) unlockTxt = `${VARIANTS[fresh].name}: ${VARIANTS[fresh].tip}`;
+  if (def.boss) unlockTxt = BOSSES[def.boss].tip || (def.mega ? 'Mega: tougher and faster!' : '');
   if (kind === 'daily') unlockTxt = `${dailyPick().mod.name}: ${dailyPick().mod.tip}`;
   if (kind === 'train' && (train.box || trainMod())) unlockTxt = train.box ? 'Sandbox: the wrench opens the tools' : `${trainMod().name}: ${trainMod().tip}`;
   setState('ready', unlockTxt ? 2.6 : 1.7);
@@ -1756,7 +1779,9 @@ function toMenu() {
   show(menuO);
   saveMoney(); paintChest(); paintDaily(); paintPassBadge();
   $('eventLine').hidden = !weekend();
-  if ($('msgO').hidden) dailyGift();
+  // le cadeau du jour n'arrive qu'après une première victoire ; coffres et pass après le niveau 3
+  if ($('msgO').hidden && totalStars() > 0) dailyGift();
+  $('bChest').hidden = $('bPass').hidden = !starsOf(3);
 }
 /* ---------- Carte « saga » ---------- */
 // Les niveaux montent le long d'un chemin, de bas en haut, à travers les décors de chaque monde.
@@ -2017,7 +2042,18 @@ function movePlayers(dt, canFire) {
     if (p.star > 0) p.star -= dt;
     if (p.x2 > 0) p.x2 -= dt;
     if (p.shootT > 0) p.shootT -= dt;
-    if (fireQueued) { fireQueued = false; if (canFire) { fire(p); p.shootT = .3; } }
+    if (p.refuseT > 0) p.refuseT -= dt;
+    // un appui tire une flèche ; en restant appuyé, une nouvelle part dès qu'il y a de la place (réglage « Hold to fire »)
+    const held = holdFire && (kb.fire || fireTouch.size > 0);
+    if (fireQueued || held) {
+      const tap = fireQueued; fireQueued = false;
+      if (canFire) {
+        const n = p.harpoons.length;
+        fire(p);
+        if (p.harpoons.length > n) p.shootT = .3;
+        else if (tap) { p.refuseT = .35; sfx.tick(); }   // tir refusé : une flèche est déjà en l'air
+      }
+    }
   }
 }
 
@@ -2272,6 +2308,13 @@ function hitPlayer(p) {
 // Bulle noire : ni le bouclier ni les cœurs ne protègent, la partie est perdue d'un coup.
 function blackHit(p) {
   if (godSave(p, true)) return;
+  // première rencontre (niveau où elle apparaît) : un seul cœur, et on explique la vraie règle
+  if (kind === 'adv' && level === firstLevelOf('black') && !store.get('blackTaught', false)) {
+    store.set('blackTaught', true);
+    p.shield = false; hurt(p);
+    ann = { big: 'Careful!', small: 'Next time a black bubble takes all your hearts, even through a shield', t: 3.5 };
+    return;
+  }
   p.shield = false; p.lives = 1;
   hurt(p);
   deathMsg = 'The black bubble got you!';
@@ -2283,7 +2326,7 @@ function blackHit(p) {
 function hurt(p) {
   if (godSave(p)) return;
   if (kind === 'train') trainHits++;
-  levelHit = true; p.lives--;
+  levelHit = true; levelHits++; p.lives--;
   sfx.hit(); vibe(p.lives > 0 ? 120 : [120, 80, 260]);
   burst(p.x, FLOOR - 15, COL[p.id].main, 14);
   if (p.lives > 0) { p.inv = 2; float(p.x, FLOOR - 44, kind === 'surv' ? '-1 life' : '-1 heart', COL[p.id].main); return; }
@@ -2305,7 +2348,8 @@ function afterDeath() {
 
 function levelClear() {
   clearTime = timeLeft;
-  lastStars = 1 + (levelHit ? 0 : 1) + (!levelHit && clearTime > timeMax / 2 ? 1 : 0);
+  // étoiles : 1 pour la victoire, 2 en étant touché une fois au plus, 3 sans être touché (le temps ne compte pas)
+  lastStars = 1 + (levelHits <= 1 ? 1 : 0) + (!levelHit ? 1 : 0);
   if (kind === 'daily') {
     prevStars = 0; dailyStreak = winDaily();
     if (dailyStreak) {
@@ -2331,6 +2375,7 @@ function levelClear() {
       if (level % WORLD === 0 && !prevStars) pendingBox = ['World chest', { coins: 150, boosts: 1, arrow: .35 }];
       gains = { piggy: feedPiggy(PIGGY.level + PIGGY.star * fresh), pass: passPoints(lastStars) };
       store.set('wstreak', winStreak() + 1);
+      if (store.get('fails', { n: 0 }).n === level) store.set('fails', { n: 0, c: 0 });
       levelStat(level, 'win', timeMax - timeLeft);
     }
     if (lastStars > prevStars) { adv[level] = lastStars; store.set('adv', adv); }
@@ -2370,27 +2415,51 @@ function gameOver() {
 }
 
 function showResult() {
-  const fast = !levelHit && clearTime > timeMax / 2;
   if (kind === 'train') lastOver = 'train'; else { lastOver = 'clear'; ADS.clears++; }
   paintOver({
     coins: payRun(),
     title: kind === 'daily' ? 'Daily challenge done!' : `Level ${level} cleared!`,
     stars: lastStars,
     result: kind === 'train' ? trainReport() : '',
-    crit: [['Level cleared', !trainDead], ['No hits taken', !levelHit], ['No hits, with over half the time left', fast]],
+    crit: [['Level cleared', !trainDead], ['At most one hit', levelHits <= 1], ['No hits taken', !levelHit]],
     record: kind === 'train' ? (train.mode === 'inf' ? 'Normal game: ' + (trainDead ? TRAIN_FAIL[trainDead] : 'cleared') : '')
       : kind === 'daily' ? (dailyStreak ? `Daily streak: ${dailyStreak} day${dailyStreak > 1 ? 's' : ''}!` : 'Already done today: come back tomorrow!')
       : prevStars && lastStars > prevStars ? 'New star record!' : '',
     gains, next: (kind === 'adv' || kind === 'train') && level < ADV_COUNT, again: 'Play again', menu: backLabel(),
   });
-  // après l'écran : le coffre gagné, puis (une seule fois, vers le niveau 10) le pack de départ
+  // après l'écran : le coffre gagné, puis la fin de l'aventure (dernier niveau battu la 1re fois)
+  // ou, une seule fois vers le niveau 10, le pack de départ
   const box = pendingBox; pendingBox = null;
-  if (box) giveBox(box[0], box[1], () => starterOffer()); else if (kind === 'adv') starterOffer();
+  const fin = kind === 'adv' && level === ADV_COUNT && !prevStars;
+  const after = () => fin ? finale() : starterOffer();
+  if (box) giveBox(box[0], box[1], after); else if (kind === 'adv') after();
 }
 
+// Coup de pouce : chaque échec d'affilée sur un même niveau d'Aventure donne 10 % de temps en plus
+// à l'essai suivant, jusqu'à 30 %. Il disparaît quand le niveau est réussi.
+const ASSIST = { step: .1, max: 3 };
+const assist = n => { if (kind !== 'adv') return 0; const f = store.get('fails', { n: 0, c: 0 }); return f.n === n ? Math.min(f.c, ASSIST.max) * ASSIST.step : 0; };
+function noteFail(n) { const f = store.get('fails', { n: 0, c: 0 }); store.set('fails', { n, c: f.n === n ? f.c + 1 : 1 }); }
+// Fin de l'aventure : un bilan, une récompense, et l'invitation à aller chercher les étoiles qui manquent.
+function finale() {
+  const got = totalStars(), max = ADV_COUNT * 3;
+  MONEY.coins += 500; MONEY.boosts.shield++; MONEY.boosts.double++; MONEY.boosts.time++; saveMoney(); sfx.clear();
+  let miss = 1; while (miss < ADV_COUNT && starsOf(miss) >= 3) miss++;
+  message(L('Adventure complete!', 'Aventure terminée !', '¡Aventura completada!', 'Aventura concluída!', 'Abenteuer geschafft!'),
+    L(`You beat all ${ADV_COUNT} levels and ${BOSS_KINDS().length} bosses, with ${fmt(got)} of ${fmt(max)} stars. Reward: 500 coins and 3 boosts.`,
+      `Tu as battu les ${ADV_COUNT} niveaux et ${BOSS_KINDS().length} boss, avec ${fmt(got)} étoiles sur ${fmt(max)}. Récompense : 500 pièces et 3 boosts.`,
+      `Superaste los ${ADV_COUNT} niveles y ${BOSS_KINDS().length} jefes, con ${fmt(got)} de ${fmt(max)} estrellas. Premio: 500 monedas y 3 potenciadores.`,
+      `Você venceu os ${ADV_COUNT} níveis e ${BOSS_KINDS().length} chefes, com ${fmt(got)} de ${fmt(max)} estrelas. Prêmio: 500 moedas e 3 reforços.`,
+      `Du hast alle ${ADV_COUNT} Level und ${BOSS_KINDS().length} Bosse geschafft, mit ${fmt(got)} von ${fmt(max)} Sternen. Belohnung: 500 Münzen und 3 Boosts.`) + ' '
+    + (got < max ? L('Replay levels to win every star.', 'Rejoue des niveaux pour gagner toutes les étoiles.', 'Repite niveles para ganar todas las estrellas.', 'Jogue de novo para ganhar todas as estrelas.', 'Spiel Level erneut für alle Sterne.')
+      : L('Every star is yours!', 'Toutes les étoiles sont à toi !', '¡Todas las estrellas son tuyas!', 'Todas as estrelas são suas!', 'Alle Sterne gehören dir!')) + ' '
+    + L('New worlds are on the way!', 'De nouveaux mondes arrivent !', '¡Llegan nuevos mundos!', 'Novos mundos vêm aí!', 'Neue Welten sind unterwegs!'),
+    [...(got < max ? [[L('Hunt the stars', 'Chasser les étoiles', 'Buscar estrellas', 'Buscar estrelas', 'Sterne jagen'), () => openMap(miss), 'alt']] : []), ['OK', null, got < max ? 'ghost' : '']],
+    '<img src="img/ach-crown.webp" alt="">' + coinArt(4));
+}
 function showFail() {
   lastOver = 'fail';
-  if (kind === 'adv') loseLife();
+  if (kind === 'adv') { loseLife(); noteFail(level); }
   paintOver({
     coins: payRun(),
     title: 'Failed!',
@@ -2536,12 +2605,12 @@ const BOSSES = {
   storm: { name: 'Great Storm',   hp: 16, r: 30, time: 100, scene: 3 },
   squid: { name: 'Ink Octopus',   hp: 20, r: 34, time: 110, scene: 4 },
   eye:   { name: 'Void Eye',      hp: 20, r: 36, time: 120, scene: 7 },
-  yeti:  { name: 'Frost Yeti',    hp: 22, r: 40, time: 120, scene: 9 },
+  yeti:  { name: 'Frost Yeti',    hp: 22, r: 40, time: 120, scene: 9, tip: 'Its fur stops arrows: hit it while it jumps!' },
   dragon:{ name: 'Lava Dragon',   hp: 24, r: 38, time: 130, scene: 11 },
   pirate:{ name: 'Sky Pirate',    hp: 22, r: 38, time: 140, scene: 13 },
   phantom:{ name: 'Lantern Phantom', hp: 30, r: 36, time: 150, scene: 15 },
   // bosses des régions : ils se battent dans le décor de leur monde
-  golem: { name: 'Stone Golem',   hp: 26, r: 40, time: 150 },
+  golem: { name: 'Stone Golem',   hp: 26, r: 40, time: 150, tip: 'Shoot while its shell is open: closed, it bounces arrows!' },
 };
 const BOSS_ORDER = ['king', 'storm', 'squid', 'eye', 'yeti', 'dragon', 'pirate', 'phantom'];
 let boss = null, shots = [], beams = [], shake = 0, geyserT = 3;
@@ -2900,6 +2969,13 @@ function drawBoss() {
     ctx.shadowBlur = 0;
     if (b.flash > 0) { ctx.globalAlpha *= .7; ctx.drawImage(spr.white, -w / 2, -h / 2, w, h); }
     ctx.restore();
+    // yéti : un anneau doré quand il peut être touché (en l'air)
+    if (b.type === 'yeti' && b.mode !== 'idle' && !b.dead) {
+      ctx.globalAlpha = .55 + Math.sin(b.t * 12) * .3;
+      ctx.lineWidth = 3; ctx.strokeStyle = '#ffd24a'; ctx.setLineDash([8, 6]);
+      ctx.beginPath(); ctx.arc(b.x, b.y, b.r + 8, 0, Math.PI * 2); ctx.stroke();
+      ctx.setLineDash([]); ctx.globalAlpha = 1;
+    }
     if (b.type === 'storm' && rage(b) >= .5 && Math.floor(b.t * 6) % 5 === 0) {
       ctx.strokeStyle = '#ffe066'; ctx.lineWidth = 2.5; ctx.beginPath();
       ctx.moveTo(b.x - 4, b.y + 38); ctx.lineTo(b.x + 3, b.y + 50); ctx.lineTo(b.x - 5, b.y + 52); ctx.lineTo(b.x + 1, b.y + 68); ctx.stroke();
@@ -3505,6 +3581,8 @@ function drawBall(b) {
   g.addColorStop(0, b.v === 'black' ? '#6a4a80' : sh.lite); g.addColorStop(.35, c); g.addColorStop(1, b.v === 'black' ? '#07030c' : sh.dark);
   ctx.fillStyle = g;
   ctx.beginPath(); ctx.arc(b.x, b.y, r, 0, Math.PI * 2); ctx.fill();
+  // les deux plus petites tailles ont un contour blanc épais, pour rester lisibles sur tous les décors
+  if (b.v !== 'black' && b.s <= 1) { ctx.lineWidth = 2.6; ctx.strokeStyle = 'rgba(255,255,255,.85)'; ctx.stroke(); }
   ctx.lineWidth = b.v === 'black' ? 2 : 1.5; ctx.strokeStyle = b.v === 'black' ? '#ff3b55' : 'rgba(20,10,30,.45)'; ctx.stroke();
   ctx.fillStyle = 'rgba(255,255,255,.8)';
   ctx.beginPath(); ctx.ellipse(b.x - r * .38, b.y - r * .42, r * .22, r * .14, -.6, 0, Math.PI * 2); ctx.fill();
@@ -3719,6 +3797,13 @@ function drawPlayer(p) {
   }
   if (p.inv > 0 && !p.dead && Math.floor(p.inv * 14) % 2) return;
   drawArcher(p);
+  // tir refusé : un petit anneau rouge au-dessus de l'arc
+  if (p.refuseT > 0 && !p.dead) {
+    ctx.globalAlpha = p.refuseT / .35;
+    ctx.lineWidth = 2; ctx.strokeStyle = '#ff5a4e';
+    ctx.beginPath(); ctx.arc(p.x, FLOOR - 46, 6 + (.35 - p.refuseT) * 20, 0, Math.PI * 2); ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
   if (p.shield && !p.dead) {
     const t = performance.now() / 300;
     ctx.beginPath(); ctx.arc(p.x, FLOOR - 16, 21 + Math.sin(t) * 1, 0, Math.PI * 2);
@@ -3953,7 +4038,7 @@ function draw() {
   if (state !== 'menu') drawPowers();
   if (state === 'ready') {
     if (kind === 'surv') banner('Survival', stateT > .45 ? 'Ready?' : 'Go!');
-    else banner(boss ? 'Boss!' : kind === 'daily' ? 'Daily challenge' : kind === 'train' && train.box ? 'Sandbox' : 'Level ' + level, boss ? boss.name : unlockTxt && stateT > .45 ? unlockTxt : stateT > .45 ? (kind !== 'train' || !train.box) && tierOf(level) ? TIERS[tierOf(level)] + ' · Ready?' : 'Ready?' : 'Go!');
+    else banner(boss ? 'Boss!' : kind === 'daily' ? 'Daily challenge' : kind === 'train' && train.box ? 'Sandbox' : 'Level ' + level, boss ? (unlockTxt && stateT < 1.9 ? unlockTxt : boss.name) : unlockTxt && stateT > .45 ? unlockTxt : stateT > .45 ? (kind !== 'train' || !train.box) && tierOf(level) ? TIERS[tierOf(level)] + ' · Ready?' : 'Ready?' : 'Go!');
   } else if (state === 'clear') banner('Well done!', '');
   else if (state === 'dying') banner(deathMsg, '');
   else if (state === 'play' && ann) banner(ann.big, ann.small);
@@ -4042,7 +4127,8 @@ function hud() {
   const noClock = kind === 'train' && train.box;
   const frac = state === 'menu' || noClock ? 1 : surv ? (boss ? 1 : 1 - bossT / BOSS_EVERY) : clamp(timeLeft / timeMax, 0, 1);
   setHud('t', v => $('tbar').style.transform = `scaleX(${v})`, frac.toFixed(3));
-  setHud('low', v => $('timer').classList.toggle('low', v), state !== 'menu' && (surv ? !!boss : !noClock && timeLeft < 10));
+  setHud('low', v => { $('timer').classList.toggle('low', v); $('tsec').classList.toggle('low', v); }, state !== 'menu' && (surv ? !!boss : !noClock && timeLeft < 10));
+  setHud('sec', v => $('tsec').textContent = v, state === 'menu' || surv || noClock ? '' : String(Math.max(0, Math.ceil(timeLeft))));
 }
 function paintBest() {
   const top = boardOf()[0];
@@ -4050,7 +4136,8 @@ function paintBest() {
 }
 
 /* ---------- Commandes ---------- */
-const kb = { l: false, r: false };
+const kb = { l: false, r: false, fire: false };
+const fireTouch = new Set();   // doigts posés sur la moitié droite (tir continu)
 let touch = { l: false, r: false };
 const input = () => ({ l: kb.l || touch.l, r: kb.r || touch.r });
 
@@ -4063,11 +4150,11 @@ addEventListener('keydown', e => {
   const inGame = !paused && (state === 'ready' || state === 'play' || state === 'clear' || state === 'dying');
   if (!inGame && e.code === 'Space') return;
   e.preventDefault();
-  if (k === 'fire') { if (!e.repeat) fireQueued = true; }
+  if (k === 'fire') { if (!e.repeat) fireQueued = true; kb.fire = true; }
   else kb[k] = true;
 });
-addEventListener('keyup', e => { const k = KEYS[e.code]; if (k && k !== 'fire') kb[k] = false; });
-addEventListener('blur', () => { kb.l = kb.r = false; if (state === 'play' || state === 'ready') togglePause(true); });
+addEventListener('keyup', e => { const k = KEYS[e.code]; if (k) kb[k] = false; });
+addEventListener('blur', () => { kb.l = kb.r = kb.fire = false; fireTouch.clear(); if (state === 'play' || state === 'ready') togglePause(true); });
 document.addEventListener('visibilitychange', () => {
   if (document.hidden && (state === 'play' || state === 'ready')) togglePause(true);
   // Appli en arrière-plan : plus de son du tout.
@@ -4116,7 +4203,7 @@ cv.addEventListener('pointerdown', e => {
     try { cv.setPointerCapture(e.pointerId); } catch (err) {}
     setJoy();
   } else {
-    fireQueued = true;
+    fireQueued = true; fireTouch.add(e.pointerId);
     tapEl.style.transform = `translate(${p.x}px,${p.y}px)`;
     tapEl.classList.remove('go'); void tapEl.offsetWidth; tapEl.classList.add('go');
   }
@@ -4128,7 +4215,7 @@ cv.addEventListener('pointermove', e => {
   if (dx > JOY_R) { joy.x = p.x - JOY_R; dx = JOY_R; } else if (dx < -JOY_R) { joy.x = p.x + JOY_R; dx = -JOY_R; }
   joy.dx = dx; setJoy();
 });
-for (const t of ['pointerup', 'pointercancel', 'lostpointercapture']) cv.addEventListener(t, e => { if (e.pointerId === joy.id) releaseJoy(); });
+for (const t of ['pointerup', 'pointercancel', 'lostpointercapture']) cv.addEventListener(t, e => { fireTouch.delete(e.pointerId); if (e.pointerId === joy.id) releaseJoy(); });
 cv.addEventListener('contextmenu', e => e.preventDefault());
 // Repères fantômes (pouce à gauche, arc à droite) : au début de chaque niveau et pendant le tutoriel.
 function paintGhosts() {
@@ -4209,7 +4296,8 @@ new ResizeObserver(() => {
   drawMap(best, false);
 }).observe(saga);
 $('bResume').addEventListener('click', () => togglePause(false));
-$('bQuit').addEventListener('click', () => { if (kind === 'adv' && mode && state !== 'over') loseLife(); quitRun(); });
+// quitter une partie en cours coûte une vie ; après la victoire (clear) ou l'écran de fin (over), rien
+$('bQuit').addEventListener('click', () => { if (kind === 'adv' && mode && state !== 'over' && state !== 'clear') loseLife(); quitRun(); });
 $('bNext').addEventListener('click', () => leaveResults(() => kind === 'train' ? trainGo(level + 1) : prep('adv', level + 1)));
 $('bAgain').addEventListener('click', () => leaveResults(() => kind === 'train' ? trainGo(level) : prep(kind, level)));
 $('bMenu').addEventListener('click', () => leaveResults(quitRun));
@@ -4228,6 +4316,7 @@ $('tSfx').addEventListener('click', () => { muted = !muted; store.set('muted', m
 $('tMusic').addEventListener('click', () => { musicOn = !musicOn; store.set('music', musicOn); paintSound(); audio(); music.want(musicFor()); });
 $('tVibe').addEventListener('click', () => { vibeOn = !vibeOn; store.set('vibe', vibeOn); paintSound(); vibe(40); });
 $('tBand').addEventListener('click', () => { bandOn = !bandOn; store.set('band', bandOn); paintSound(); fit(); sfx.pick(); });
+$('tHold').addEventListener('click', () => { holdFire = !holdFire; store.set('hold', holdFire); paintSound(); sfx.pick(); });
 $('tLang').addEventListener('click', () => {
   const ks = Object.keys(LANGS); lang = ks[(ks.indexOf(lang) + 1) % ks.length]; store.set('lang', lang);
   $('langName').textContent = LANGS[lang];
@@ -4841,12 +4930,17 @@ let prepKind = 'adv', prepLevel = 1, armed = null;
 function prep(k, lv) {
   if (k === 'adv' && !hasLife()) { outOfLives(() => prep(k, lv)); return; }
   prepKind = k; prepLevel = lv; armed = null;
+  // découverte : les 3 premiers niveaux, pas encore réussis, commencent tout de suite
+  if (k === 'adv' && lv <= 3 && !starsOf(lv)) { play(); return; }
   $('prepTitle').textContent = k === 'surv' ? 'Survival' : k === 'daily' ? 'Daily challenge' : `Level ${lv}` + (lv % WORLD === 0 ? ' · Boss' : '');
   const m = k === 'daily' && dailyPick().mod, tier = k === 'surv' ? 0 : tierOf(lv);
   paintTier($('prepTier'), tier);
   $('prepHelp').textContent = m ? tr(`${m.name}: ${m.tip}`) + ' ' + tr(dailyDone() ? 'Already done today: play for fun!' : `Reward: ${fmt(dailyReward())} coins.`)
     : tier === 4 ? 'Very hard: very few make it without a boost!' : tier === 3 ? 'Hard: a boost can help.' : 'Take one boost into this run, or just play.';
   // série de victoires : les boosts offerts au départ de ce niveau
+  const as = k === 'adv' ? store.get('fails', { n: 0, c: 0 }) : null, help = as && as.n === lv ? Math.min(as.c, ASSIST.max) : 0;
+  $('prepAssist').hidden = !help;
+  $('prepAssist').textContent = help ? '⏱ ' + L(`Helping hand: +${help * 10}% time after ${help} failed ${help > 1 ? 'tries' : 'try'}`, `Coup de pouce : +${help * 10} % de temps après ${help} échec${help > 1 ? 's' : ''}`, `Ayuda: +${help * 10} % de tiempo tras ${help} intento${help > 1 ? 's' : ''} fallido${help > 1 ? 's' : ''}`, `Uma ajuda: +${help * 10}% de tempo após ${help} falha${help > 1 ? 's' : ''}`, `Kleine Hilfe: +${help * 10} % Zeit nach ${help} Fehlversuch${help > 1 ? 'en' : ''}`) : '';
   const ws = k === 'adv' ? winStreak() : 0, free = ws ? STREAK_GIFTS[ws - 1].map(t => tr(boostName(t))).join(' + ') : '';
   $('prepStreak').hidden = !ws;
   $('prepStreak').textContent = ws ? '🔥 ' + L(`Win streak ×${ws}: free ${free}`, `Série de victoires ×${ws} : ${free} en cadeau`, `Racha de victorias ×${ws}: ${free} gratis`, `Sequência de vitórias ×${ws}: ${free} grátis`, `Siegesserie ×${ws}: ${free} gratis`) : '';
@@ -4931,7 +5025,7 @@ function withMod(base, mod) {
   if (mod.v) for (const d of b) if (d[4] !== 'black') d[4] = mod.v;
   // en trois morceaux, une bulle donne vite beaucoup de bulles : on les prend une taille plus petites
   if (mod.id === 'green') for (const d of b) d[0] = Math.max(1, d[0] - 1);
-  if (mod.id === 'giant') {
+  if (mod.id === 'giant' && b.length) {
     const i = b.reduce((m, d, j) => d[0] > b[m][0] ? j : m, 0);
     b[i][0] = Math.min((base.k || []).some(k => k.t === 's') ? 4 : 5, b[i][0] + 1);
   }
@@ -4960,11 +5054,14 @@ STATS.surv = Math.max(STATS.surv, ...boardOf().map(e => e.time));   // record d�
 function bump(k, n = 1) { if (kind === 'train') return; STATS[k] += n; store.set('stats', STATS); checkAch(); }
 function best(k, v) { if (kind !== 'train' && v > STATS[k]) { STATS[k] = v; store.set('stats', STATS); checkAch(); } }
 const plural = (n, one, many) => `${fmt(n)} ${n === 1 ? one : many}`;
+// boss de l'Aventure : un par monde ; les méga-boss comptent comme leur boss d'origine
+const bossLevels = () => Array.from({ length: Math.floor(ADV_COUNT / WORLD) }, (_, i) => (i + 1) * WORLD);
+const BOSS_KINDS = () => [...new Set(bossLevels().map(n => levelDef(n).boss))];
 const ACH = [
   { id: 'pops', icon: 'ach-bubbles', name: 'Bubble Popper', goal: n => L(`Pop ${plural(n, 'bubble', 'bubbles')}`, `Éclate ${plural(n, 'bulle', 'bulles')}`, `Revienta ${plural(n, 'burbuja', 'burbujas')}`, `Estoure ${plural(n, 'bolha', 'bolhas')}`, `Lass ${plural(n, 'Blase', 'Blasen')} platzen`), tiers: [100, 1000, 10000], pay: [5, 20, 60], val: () => STATS.pops },
   { id: 'stars', icon: 'item-star', name: 'Star Collector', goal: n => L(`Earn ${plural(n, 'star', 'stars')} in Adventure`, `Gagne ${plural(n, 'étoile', 'étoiles')} en Aventure`, `Consigue ${plural(n, 'estrella', 'estrellas')} en Aventura`, `Ganhe ${plural(n, 'estrela', 'estrelas')} na Aventura`, `Sammle ${plural(n, 'Stern', 'Sterne')} im Abenteuer`), tiers: [30, 100, 250], pay: [10, 40, 125], val: totalStars },
-  { id: 'bosses', icon: 'ach-crown', name: 'Boss Hunter', goal: n => n === 1 ? L('Defeat a boss in Adventure', 'Bats un boss en Aventure', 'Derrota a un jefe en Aventura', 'Derrote um chefe na Aventura', 'Besiege einen Boss im Abenteuer') : L(`Defeat ${n} different bosses`, `Bats ${n} boss différents`, `Derrota a ${n} jefes distintos`, `Derrote ${n} chefes diferentes`, `Besiege ${n} verschiedene Bosse`), tiers: [1, 3, BOSS_ORDER.length], pay: [10, 40, 100],
-    val: () => BOSS_ORDER.filter((_, i) => starsOf((i + 1) * WORLD) > 0).length },
+  { id: 'bosses', icon: 'ach-crown', name: 'Boss Hunter', goal: n => n === 1 ? L('Defeat a boss in Adventure', 'Bats un boss en Aventure', 'Derrota a un jefe en Aventura', 'Derrote um chefe na Aventura', 'Besiege einen Boss im Abenteuer') : L(`Defeat ${n} different bosses`, `Bats ${n} boss différents`, `Derrota a ${n} jefes distintos`, `Derrote ${n} chefes diferentes`, `Besiege ${n} verschiedene Bosse`), tiers: [1, 3, BOSS_KINDS().length], pay: [10, 40, 100],
+    val: () => new Set(bossLevels().filter(n => starsOf(n) > 0).map(n => levelDef(n).boss)).size },
   { id: 'flawless', icon: 'item-shield', name: 'Untouchable', goal: n => L(`Clear ${plural(n, 'level', 'levels')} without a hit`, `Réussis ${plural(n, 'niveau', 'niveaux')} sans être touché`, `Supera ${plural(n, 'nivel', 'niveles')} sin recibir golpes`, `Conclua ${plural(n, 'nível', 'níveis')} sem ser atingido`, `Schaffe ${plural(n, 'Level', 'Level')} ohne Treffer`), tiers: [5, 25, 60], pay: [10, 30, 75], val: () => STATS.flawless },
   { id: 'daily', icon: 'ach-calendar', name: 'Daily Hero', goal: n => n === 1 ? L('Win a daily challenge', 'Réussis un défi du jour', 'Gana un reto diario', 'Vença um desafio diário', 'Schaffe eine Tagesaufgabe') : L(`Win ${n} daily challenges`, `Réussis ${n} défis du jour`, `Gana ${n} retos diarios`, `Vença ${n} desafios diários`, `Schaffe ${n} Tagesaufgaben`), tiers: [1, 7, 30], pay: [10, 40, 125], val: () => dailyWins().total },
   { id: 'streak', icon: 'ach-flame', name: 'On a Roll', goal: n => L(`Win the daily challenge ${n} days in a row`, `Réussis le défi du jour ${n} jours d’affilée`, `Gana el reto diario ${n} días seguidos`, `Vença o desafio diário ${n} dias seguidos`, `Schaffe die Tagesaufgabe ${n} Tage in Folge`), tiers: [3, 7], pay: [25, 75], val: () => dailyWins().best || 0 },
