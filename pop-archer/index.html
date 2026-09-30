@@ -198,6 +198,13 @@ kbd{font-family:var(--body);font-weight:800;font-size:.95em;background:var(--cab
 .node.boss{width:calc(var(--d) * 1.3);height:calc(var(--d) * 1.3);margin:calc(var(--d) * -.65) 0 0 calc(var(--d) * -.65);font-size:calc(var(--d) * .44);
   background:radial-gradient(circle at 34% 26%,#e6ecff 0 9%,#7d97ff 34%,#3b44d8 74%,#2a2a9e);
   box-shadow:0 calc(var(--d) * .09) 0 #1c1a6b,0 calc(var(--d) * .15) calc(var(--d) * .2) rgba(20,8,30,.5);text-shadow:0 .08em 0 rgba(10,10,70,.6)}
+.tierpill{margin:0;display:inline-flex;align-items:center;gap:.5em;padding:.25em .9em;border-radius:99px;font-weight:800;
+  font-size:min(2.4cqw,4.6cqh);color:#fff;background:var(--tc);text-shadow:0 1px 0 rgba(0,0,0,.3)}
+.tierpill i{display:inline-block;width:.35em;height:.9em;border-radius:2px;background:rgba(255,255,255,.35);margin-left:.12em}
+.tierpill i.on{background:#fff}
+/* difficulté : anneau vert (facile), rien (moyen), anneau orange (difficile), rond rouge et tête de mort (très difficile) */
+.node.t1{outline:calc(var(--d) * .07) solid #3fbf6f;outline-offset:calc(var(--d) * .03)}
+.node.t3{outline:calc(var(--d) * .07) solid #ff8a3d;outline-offset:calc(var(--d) * .03)}
 .node.hard{background:radial-gradient(circle at 34% 26%,#ffd9d9 0 9%,#ff6b6b 34%,#d6243f 72%,#9e1330);box-shadow:0 calc(var(--d) * .08) 0 #6e0c22,0 calc(var(--d) * .14) calc(var(--d) * .18) rgba(20,8,30,.45);text-shadow:0 .08em 0 rgba(90,0,20,.6)}
 .node.hard::after{content:"";position:absolute;left:50%;top:-14%;width:36%;height:28%;transform:translateX(-50%);border-radius:50% 50% 40% 40%;
   background:radial-gradient(circle at 33% 45%,#2a1236 0 18%,transparent 20%),radial-gradient(circle at 67% 45%,#2a1236 0 18%,transparent 20%),#fff;box-shadow:0 1px 0 rgba(0,0,0,.35)}
@@ -458,6 +465,7 @@ body[data-state="ready"] .coinpill,body[data-state="play"] .coinpill,body[data-s
 
         <div class="overlay" id="prepO" hidden>
           <h2 class="title2" id="prepTitle">Level 1</h2>
+          <p class="tierpill" id="prepTier" hidden></p>
           <p class="help" id="prepHelp">Take one boost into this run, or just play.</p>
           <div class="cards boosts" id="prepCards"></div>
           <div class="row">
@@ -593,6 +601,7 @@ body[data-state="ready"] .coinpill,body[data-state="play"] .coinpill,body[data-s
 </div>
 
 <script src="levels/region-01.js"></script>
+<script src="levels/timing.js"></script>
 <script>
 (() => {
 'use strict';
@@ -836,12 +845,9 @@ function levelDef(n) {
   if (pick === 9) b.forEach(d => { d[3] = 262; });
   return { b, k };
 }
-// Temps d'un niveau : 1,7 s par coup (+20 % pour les bulles dures à viser), 18 s de base, puis 20 % de moins
-// pour garder de la tension (TIME_SCALE ; l'atelier en tient compte dans ses seuils). Les 6 premiers niveaux,
-// ceux où l'on apprend, n'en perdent que 10 %.
-const TIME_SCALE = .8;
-const timeFor = def => { const i = LEVELS.indexOf(def); return Math.round((i >= 0 && i < 6 ? .9 : TIME_SCALE) * timeBase(def)); };
-const timeBase = def => def.time ? def.time : def.boss ? Math.round(BOSSES[def.boss].time * (def.mega ? 1.35 : 1)) : Math.round(18 + (LEVELS_78.includes(def) ? 1.2 : LEVELS_56.includes(def) ? 1.15 : 1) * def.b.reduce((t, [s, , , , v]) => t + popsOf(s, v) * 1.7 * (HARD_V.includes(v) ? 1.2 : 1), 0)
+// Temps d'un niveau par défaut : 18 s, 1,7 s par coup (+20 % pour les bulles dures à viser), 6 s par barrière.
+// Les niveaux mesurés par tools/chrono.mjs (levels/timing.js) ont leur propre temps et leur difficulté.
+const timeFor = def => def.time ? def.time : def.boss ? Math.round(BOSSES[def.boss].time * (def.mega ? 1.35 : 1)) : Math.round(18 + (LEVELS_78.includes(def) ? 1.2 : LEVELS_56.includes(def) ? 1.15 : 1) * def.b.reduce((t, [s, , , , v]) => t + popsOf(s, v) * 1.7 * (HARD_V.includes(v) ? 1.2 : 1), 0)
   + (def.k || []).reduce((t, k) => t + (k.t === 'g' ? 6 : k.t === 'b' ? .6 : 0), 0));
 
 const ITEMS = [
@@ -1127,7 +1133,12 @@ const T = {
   '✓ Done': ['✓ Fait', '✓ Hecho', '✓ Feito', '✓ Erledigt'],
   'Claim': ['Réclamer', 'Reclamar', 'Resgatar', 'Abholen'],
   // régions
-  'Hard level': ['Niveau difficile', 'Nivel difícil', 'Nível difícil', 'Schweres Level'],
+  'Easy': ['Facile', 'Fácil', 'Fácil', 'Leicht'],
+  'Medium': ['Moyen', 'Medio', 'Médio', 'Mittel'],
+  'Hard': ['Difficile', 'Difícil', 'Difícil', 'Schwer'],
+  'Very hard': ['Très difficile', 'Muy difícil', 'Muito difícil', 'Sehr schwer'],
+  'Very hard: very few make it without a boost!': ['Très difficile : rares sont ceux qui passent sans boost !', 'Muy difícil: ¡pocos lo logran sin un potenciador!', 'Muito difícil: poucos passam sem um reforço!', 'Sehr schwer: Ohne Boost schaffen es nur wenige!'],
+  'Hard: a boost can help.': ['Difficile : un boost peut aider.', 'Difícil: un potenciador puede ayudar.', 'Difícil: um reforço pode ajudar.', 'Schwer: Ein Boost kann helfen.'],
   'Stone Golem': ['Golem de pierre', 'Gólem de Piedra', 'Golem de Pedra', 'Steingolem'],
   // entraînement
   'Training': ['Entraînement', 'Entrenamiento', 'Treino', 'Training'],
@@ -1159,7 +1170,7 @@ const T = {
   'Type': ['Type', 'Tipo', 'Tipo', 'Art'],
   'Tiny': ['Mini', 'Mini', 'Mini', 'Mini'],
   'Small': ['Petite', 'Pequeña', 'Pequena', 'Klein'],
-  'Medium': ['Moyenne', 'Mediana', 'Média', 'Mittel'],
+  'Mid-size': ['Moyenne', 'Mediana', 'Média', 'Mittel'],
   'Big': ['Grosse', 'Grande', 'Grande', 'Groß'],
   'Huge': ['Énorme', 'Enorme', 'Enorme', 'Riesig'],
   'Titan': ['Titan', 'Titán', 'Titã', 'Titan'],
@@ -1502,6 +1513,18 @@ function overlaps(x, y, r, k) {
   return dx * dx + dy * dy < r * r;
 }
 
+// Temps et difficulté de chaque niveau, mesurés en faisant jouer un robot (tools/chrono.mjs, levels/timing.js) :
+// POP_TIMING[n] = [temps en s sur un écran de 640, difficulté 1 facile · 2 moyen · 3 difficile · 4 très difficile (0 boss), temps du robot].
+const TIMING = window.POP_TIMING || {};
+const TIERS = ['', 'Easy', 'Medium', 'Hard', 'Very hard'], TIER_C = ['', '#2fa860', '#d49a00', '#f06a1d', '#e8334f'];
+const tierOf = n => n % WORLD === 0 ? 0 : TIMING[n] ? TIMING[n][1] : levelDef(n).hard ? 4 : 2;
+// Temps du niveau n pour la version def (une règle du défi du jour le change dans la même proportion que la formule).
+function levelTime(n, def) {
+  const t = TIMING[n], base = levelDef(n);
+  if (!t) return timeFor(def);
+  return def === base ? t[0] : Math.round(t[0] * timeFor(def) / timeFor(base));
+}
+
 // Premier niveau d'Aventure où apparaît une bulle spéciale (pour l'annoncer).
 const FIRST_V = {};
 function firstLevelOf(v) {
@@ -1524,7 +1547,7 @@ function loadLevel() {
   items = []; parts = []; texts = []; freezeT = 0;
   trainT = 0; trainHits = 0; trainDead = '';
   // un monde plus large, c'est plus de chemin : un peu plus de temps
-  timeMax = timeLeft = Math.round(timeFor(def) * (1 + (W / DW - 1) * .6));
+  timeMax = timeLeft = Math.round(levelTime(kind === 'daily' ? dailyPick().level : level, def) * (1 + (W / DW - 1) * .6));
   const act = active();
   const gate = blocks.filter(k => k.t === 'g').sort((a, b) => a.x - b.x)[0];
   const zone = gate ? gate.x : W;
@@ -1655,12 +1678,12 @@ function drawMap(focus, anim) {
     ${ci ? `<path class="done" d="${curve(pts, 0, ci)}" stroke-width="${sw(.2)}" stroke-dasharray="${sw(.24)} ${sw(.24)}"/>` : ''}</svg>`;
   const hop = anim && mapPin >= 1 && mapPin < pinAt && pinAt - mapPin <= 3 && pos[mapPin] ? mapPin : 0;
   for (let n = 1; n <= last; n++) {
-    const st = starsOf(n), open = unlocked(n), boss = n % WORLD === 0, hard = !boss && levelDef(n).hard;
+    const st = starsOf(n), open = unlocked(n), boss = n % WORLD === 0, tier = tierOf(n);
     let inner = open ? `<span>${n}</span>` : '';
     if (boss) inner = `<img class="face" src="${BOSS_ART[levelDef(n).boss][0]}" alt="">` + inner;
     if (st) inner += `<span class="st">${[0, 1, 2].map(i => `<i${i < st ? ' class="on"' : ''}>★</i>`).join('')}</span>`;
-    const cls = 'node' + (boss ? ' boss' : '') + (hard ? ' hard' : '') + (!open ? ' lock' : n === cur && !st ? ' cur' : '') + (hop && n === pinAt && !st ? ' pre' : '');
-    const label = !open ? L(`Level ${n}, locked`, `Niveau ${n}, verrouillé`, `Nivel ${n}, bloqueado`, `Nível ${n}, bloqueado`, `Level ${n}, gesperrt`) : L(`Level ${n}, ${st} of 3 stars`, `Niveau ${n}, ${st} étoile${st > 1 ? 's' : ''} sur 3`, `Nivel ${n}, ${st} de 3 estrellas`, `Nível ${n}, ${st} de 3 estrelas`, `Level ${n}, ${st} von 3 Sternen`);
+    const cls = 'node' + (boss ? ' boss' : ` t${tier}`) + (tier === 4 ? ' hard' : '') + (!open ? ' lock' : n === cur && !st ? ' cur' : '') + (hop && n === pinAt && !st ? ' pre' : '');
+    const label = !open ? L(`Level ${n}, locked`, `Niveau ${n}, verrouillé`, `Nivel ${n}, bloqueado`, `Nível ${n}, bloqueado`, `Level ${n}, gesperrt`) : L(`Level ${n}, ${st} of 3 stars`, `Niveau ${n}, ${st} étoile${st > 1 ? 's' : ''} sur 3`, `Nivel ${n}, ${st} de 3 estrellas`, `Nível ${n}, ${st} de 3 estrelas`, `Level ${n}, ${st} von 3 Sternen`) + (tier ? ', ' + tr(TIERS[tier]) : '');
     html += `<button type="button" class="${cls}" data-n="${n}" style="left:${pos[n][0].toFixed(1)}px;top:${ty(pos[n][1]).toFixed(1)}px" aria-label="${label}"${open ? '' : ' disabled'}>${inner}</button>`;
   }
   // repère du joueur : au-dessus du rond ou à côté, là où il y a le plus de place (loin du chemin et des bords)
@@ -2343,11 +2366,9 @@ const BOSSES = {
   storm: { name: 'Great Storm',   hp: 16, r: 30, time: 100, scene: 3 },
   squid: { name: 'Ink Octopus',   hp: 20, r: 34, time: 110, scene: 4 },
   eye:   { name: 'Void Eye',      hp: 20, r: 36, time: 120, scene: 7 },
-  // Yéti, Dragon et Pirate : +15 % (on ne peut les toucher qu'en plein saut ou ils bougent beaucoup ; avec
-  // TIME_SCALE, ils ne perdent que 8 % de leur temps d'avant, sinon le robot n'en venait pas toujours à bout)
-  yeti:  { name: 'Frost Yeti',    hp: 22, r: 40, time: 140, scene: 9 },
-  dragon:{ name: 'Lava Dragon',   hp: 24, r: 38, time: 150, scene: 11 },
-  pirate:{ name: 'Sky Pirate',    hp: 18, r: 38, time: 170, scene: 13 },   // 18 PV et +20 % de temps : combat long, pièces à ramasser en plus
+  yeti:  { name: 'Frost Yeti',    hp: 22, r: 40, time: 120, scene: 9 },
+  dragon:{ name: 'Lava Dragon',   hp: 24, r: 38, time: 130, scene: 11 },
+  pirate:{ name: 'Sky Pirate',    hp: 22, r: 38, time: 140, scene: 13 },
   phantom:{ name: 'Lantern Phantom', hp: 30, r: 36, time: 150, scene: 15 },
   // bosses des régions : ils se battent dans le décor de leur monde
   golem: { name: 'Stone Golem',   hp: 26, r: 40, time: 150 },
@@ -3749,7 +3770,7 @@ function draw() {
   if (state !== 'menu') drawPowers();
   if (state === 'ready') {
     if (kind === 'surv') banner('Survival', stateT > .45 ? 'Ready?' : 'Go!');
-    else banner(boss ? 'Boss!' : kind === 'daily' ? 'Daily challenge' : kind === 'train' && train.box ? 'Sandbox' : 'Level ' + level, boss ? boss.name : unlockTxt && stateT > .45 ? unlockTxt : stateT > .45 ? 'Ready?' : 'Go!');
+    else banner(boss ? 'Boss!' : kind === 'daily' ? 'Daily challenge' : kind === 'train' && train.box ? 'Sandbox' : 'Level ' + level, boss ? boss.name : unlockTxt && stateT > .45 ? unlockTxt : stateT > .45 ? (kind !== 'train' || !train.box) && tierOf(level) ? TIERS[tierOf(level)] + ' · Ready?' : 'Ready?' : 'Go!');
   } else if (state === 'clear') banner('Well done!', '');
   else if (state === 'dying') banner(deathMsg, '');
   else if (state === 'play' && ann) banner(ann.big, ann.small);
@@ -3831,8 +3852,8 @@ function hud() {
   const surv = kind === 'surv' && state !== 'menu';
   setHud('lvl', v => $('lvl').textContent = v, state === 'menu' ? 'Pop Archer'
     : surv ? 'Survival · ' + clock(survT) : kind === 'daily' ? 'Daily · ' + dailyPick().mod.name
-    : kind === 'train' ? 'Training · ' + (train.box ? 'Sandbox · ' + clock(trainT) : `Level ${level} · ${clock(Math.max(0, timeMax - timeLeft))} / ${clock(timeMax)}`)
-    : 'Level ' + level + (level % 12 === 0 ? ' · Boss' : ''));
+    : kind === 'train' ? 'Training · ' + (train.box ? 'Sandbox · ' + clock(trainT) : `Level ${level} · ${level % WORLD ? TIERS[tierOf(level)] : 'Boss'} · ${clock(Math.max(0, timeMax - timeLeft))} / ${clock(timeMax)}`)
+    : 'Level ' + level + (level % 12 === 0 ? ' · Boss' : ' · ' + TIERS[tierOf(level)]));
   setHud('tools', v => $('btnTrain').hidden = !v, kind === 'train' && mode === 1 && state !== 'menu' && state !== 'over');
   // En Survie, la jauge se remplit jusqu'au prochain boss.
   const noClock = kind === 'train' && train.box;
@@ -4092,7 +4113,7 @@ function renderTrain() {
   const n = train.lv = clamp(train.lv, 1, ADV_COUNT), d = levelDef(n), w = worldOf(n);
   $('tLv').max = ADV_COUNT; $('tLv').value = n;
   $('tLvName').textContent = [`Level ${n}`, `World ${w + 1}`, WORLD_NAMES[w],
-    ...(d.boss ? [(d.mega ? 'Mega ' : '') + BOSSES[d.boss].name] : d.hard ? ['Hard level'] : [])].join(' · ');
+    ...(d.boss ? [(d.mega ? 'Mega ' : '') + BOSSES[d.boss].name] : [TIERS[tierOf(n)]])].join(' · ');
   $('tMods').replaceChildren(chip('None', !train.mod, () => { train.mod = ''; saveTrain(); renderTrain(); }),
     ...DAILY_MODS.map(m => chip(m.name, train.mod === m.id, () => { train.mod = m.id; saveTrain(); renderTrain(); }, m.v ? [VARIANTS[m.v].c, .9] : null)));
   $('tOpts').replaceChildren(...trainModes(renderTrain));
@@ -4122,7 +4143,7 @@ $('bTrainPlay').addEventListener('click', () => { train.box = false; trainGo(tra
 $('bTrainBox').addEventListener('click', () => { train.box = true; trainGo(train.lv); });
 
 // Boîte à outils (en partie) : le jeu est en pause tant qu'elle est ouverte.
-const SIZE_NAMES = ['Tiny', 'Small', 'Medium', 'Big', 'Huge', 'Titan'];
+const SIZE_NAMES = ['Tiny', 'Small', 'Mid-size', 'Big', 'Huge', 'Titan'];
 let toolTab = 'bubbles', toolSize = 3, toolV = null;
 function openTools() {
   if (!mode || state === 'menu' || state === 'over') return;
@@ -4383,13 +4404,21 @@ async function openChest() {
 let prepKind = 'adv', prepLevel = 1, armed = null;
 function prep(k, lv) {
   prepKind = k; prepLevel = lv; armed = null;
-  $('prepTitle').textContent = k === 'surv' ? 'Survival' : k === 'daily' ? 'Daily challenge' : `Level ${lv}` + (lv % WORLD === 0 ? ' · Boss' : levelDef(lv).hard ? ' · Hard level' : '');
-  const m = k === 'daily' && dailyPick().mod;
+  $('prepTitle').textContent = k === 'surv' ? 'Survival' : k === 'daily' ? 'Daily challenge' : `Level ${lv}` + (lv % WORLD === 0 ? ' · Boss' : '');
+  const m = k === 'daily' && dailyPick().mod, tier = k === 'surv' ? 0 : tierOf(lv);
+  paintTier($('prepTier'), tier);
   $('prepHelp').textContent = m ? tr(`${m.name}: ${m.tip}`) + ' ' + tr(dailyDone() ? 'Already done today: play for fun!' : `Reward: ${fmt(dailyReward())} coins.`)
-    : 'Take one boost into this run, or just play.';
+    : tier === 4 ? 'Very hard: very few make it without a boost!' : tier === 3 ? 'Hard: a boost can help.' : 'Take one boost into this run, or just play.';
   renderPrep();
   show(prepO);
   $('bPlay').focus({ preventScroll: true });
+}
+// pastille de difficulté : nom et 1 à 4 barres, dans la couleur du niveau
+function paintTier(el, tier) {
+  el.hidden = !tier;
+  if (!tier) return;
+  el.style.setProperty('--tc', TIER_C[tier]);
+  el.innerHTML = `<span>${TIERS[tier]}</span><span>${[1, 2, 3, 4].map(i => `<i${i <= tier ? ' class="on"' : ''}></i>`).join('')}</span>`;
 }
 function renderPrep() {
   $('prepCards').replaceChildren(...BOOSTS.map(t => {

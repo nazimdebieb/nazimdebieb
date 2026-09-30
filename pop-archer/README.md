@@ -81,7 +81,7 @@ Sur téléphone, le jeu est toujours en paysage : si l'écran est tenu droit, le
   - Le panneau permet de choisir **n'importe quel niveau** (curseur, ±1 niveau, les doubles flèches pour passer d'un monde à l'autre, avec le nom du monde et du boss), **n'importe quelle règle du défi du jour**, et la façon de jouer :
     - **Partie normale** : le chrono et 3 cœurs, comme en Aventure ; on peut perdre.
     - **Infini** : on ne perd jamais, pour mesurer un niveau. Le chrono continue sous zéro et les cœurs se vident sans tuer. Le bandeau affiche le temps joué sur le temps du niveau (« 0:42 / 1:10 »).
-    - Dans les deux cas, l'écran de fin donne le temps joué, sa part du temps du niveau et le nombre de touches (« Temps : 0:42 / 1:10 (60 %) · Touches : 2 »), à comparer au seuil de l'atelier (75 %). En Infini, il dit aussi ce qui se serait passé en vrai : « Partie normale : réussi », ou perdu (temps écoulé, plus de cœurs, bulle noire), et les étoiles sont celles qu'on aurait eues.
+    - Dans les deux cas, l'écran de fin donne le temps joué, sa part du temps du niveau et le nombre de touches (« Temps : 0:42 / 1:10 (60 %) · Touches : 2 »), à comparer avec la difficulté du niveau. En Infini, il dit aussi ce qui se serait passé en vrai : « Partie normale : réussi », ou perdu (temps écoulé, plus de cœurs, bulle noire), et les étoiles sont celles qu'on aurait eues.
   - « Play level » lance le niveau choisi ; « Sandbox » ouvre une arène vide dans le décor de ce niveau, sans chrono, qui ne se termine jamais.
   - En partie, une **clé** à côté de la pause ouvre la boîte à outils (le jeu est en pause pendant ce temps) : **Bulles** (lâcher des bulles de la mini au titan, normales ou spéciales : noire, dorée, acier, verte, fantôme, bombe, rebondissante), **Bonus** (prendre tout de suite ou faire tomber n'importe quel bonus ou arme, ou revenir à la flèche normale), **Boss** (faire venir n'importe quel boss, normal ou méga) et **Options** (partie normale ou infinie, n'importe quel décor avec ses pièges : vent, noir, geysers…, recommencer, tout vider).
   - Les écrans de fin proposent « Next level », « Play again » et « Training » (retour au panneau). Les réglages du panneau sont gardés, même après « Reset progress ».
@@ -102,17 +102,38 @@ Le jeu se joue à 1 joueur (le mode à 2 joueurs a été retiré : trop compliqu
   - il flotte en haut ; ouvert, son cœur vert brille et il lance des pierres en cloche ;
   - de temps en temps il se referme dans sa carapace : il devient gris, les flèches ricochent, et il fait tomber des rochers annoncés au plafond (le premier sur l'archer) ;
   - quand il enrage, il lance deux pierres à la fois et appelle des bulles.
-- **Niveaux difficiles** : le 5e et le 10e niveau de chaque monde. Sur la carte ce sont des ronds rouges avec une petite tête de mort ; ils sont plus durs que leurs voisins.
+- **Niveaux difficiles** : l'atelier rend le 5e et le 10e niveau de chaque monde plus chargés que leurs voisins ; le chronomètre les classe en général « très difficile ».
 - **Décors chargés à la demande** : un décor, une plateforme ou une brique n'est chargé qu'au moment où il sert (dans un niveau ou sur la carte). Les régions ajoutées ne ralentissent donc pas le démarrage.
 
 **L'atelier** (`tools/atelier.mjs`) fabrique une région à partir de sa **recette** (`tools/regions/region-XX.mjs` : mondes, décors, textes, boss, difficulté de départ) :
 
 1. chaque niveau est tiré au hasard mais toujours pareil pour une même graine, selon une difficulté en dents de scie dans chaque monde (plus dure au 5e et au 10e niveau) qui monte de monde en monde ; la mécanique de la région est dans plus de la moitié des niveaux, et jamais deux fois de suite la même disposition ;
 2. un robot invincible joue chaque niveau dans le vrai jeu (Chromium sans fenêtre, en accéléré) ;
-3. un niveau est gardé si le robot le finit en utilisant au plus 75 % du temps (94 % pour un boss ; c'était 60 % et 75 % avant que le temps des niveaux baisse de 20 %, donc la même marge), pour laisser de la marge à un joueur qui doit esquiver ; sinon l'atelier en tire un autre, un peu plus facile ;
+3. un niveau est gardé si le robot le finit en utilisant au plus 60 % du temps de la formule (75 % pour un boss), pour laisser de la marge à un joueur qui doit esquiver ; sinon l'atelier en tire un autre, un peu plus facile ;
 4. le résultat est figé dans `levels/region-XX.js`, avec pour chaque niveau le temps mis par le robot ; un niveau publié ne change plus.
 
+5. enfin, le chronomètre (`tools/chrono.mjs`, ci-dessous) donne à chaque niveau de la région sa difficulté et son temps.
+
 Commandes : `node tools/atelier.mjs 1` (fabrique la région 1) et `node tools/atelier.mjs 1 --check` (rejoue les niveaux figés). Il faut Playwright (`npm i -g playwright`).
+
+### Le chronomètre des niveaux
+
+`tools/chrono.mjs` donne à chaque niveau sa difficulté et son temps, et les écrit dans `levels/timing.js` (chargé par le jeu) :
+
+1. un robot (invincible, qui ramasse aussi les pièces proches, au rythme de la boucle du jeu) joue chaque niveau **sans limite de temps** : 3 fois pour un niveau normal (on garde la médiane), 5 fois pour un boss (on garde le 4e plus court, car un boss varie beaucoup d'une partie à l'autre) ;
+2. dans chaque monde, les 11 niveaux normaux sont classés du plus rapide au plus long à finir pour le robot. Les plus rapides (donc ceux avec le moins de bulles) sont **faciles**, les plus longs **très difficiles**, avec une répartition qui change d'un monde à l'autre (`DIST`) :
+
+   | Mondes | Facile | Moyen | Difficile | Très difficile |
+   |---|---|---|---|---|
+   | 1 | 5 | 4 | 2 | 0 |
+   | 2 | 4 | 4 | 2 | 1 |
+   | 3 et 4 | 3 | 4 | 3 | 1 |
+   | 5 et suivants | 2 | 4 | 3 | 2 |
+
+3. le temps du niveau est le temps du robot multiplié par une marge pour un humain, qui doit esquiver et vise moins vite (`MARGIN`) : facile ×2,3 + 5 s, moyen ×1,85 + 4 s, difficile ×1,5 + 3 s, très difficile ×1,25 + 2 s (20 s au moins) ; un boss ×1,45 + 5 s. Le jeu ajoute ensuite un peu de temps sur les écrans larges, et une règle du défi du jour change le temps dans la même proportion que la formule ;
+4. `--verify` rejoue tout avec un « joueur moyen » : un robot 2,5 fois plus lent à réagir, qui recule devant les bulles qui lui tombent dessus, et compte ses réussites par difficulté.
+
+Commandes : `node tools/chrono.mjs --levels 1-156` (mesure et écrit), `node tools/chrono.mjs --retime` (recalcule sans rejouer, après avoir changé `DIST` ou `MARGIN`), `node tools/chrono.mjs --verify`.
 
 **Ajouter une région** :
 
@@ -134,7 +155,11 @@ La carte est un long chemin qui monte, façon jeu « saga » : on la fait défil
 
 ## Règles
 
-- **Temps d'un niveau** : 18 s, plus 1,7 s par coup nécessaire (20 % de plus pour les bulles noires, fantômes et rebondissantes, 6 s par barrière), plus un peu sur les écrans larges, **puis 20 % de moins** pour garder de la tension. Les 6 premiers niveaux, où l'on apprend, ne perdent que 10 %. Les boss ont chacun leur temps (35 % de plus en méga) ; le Yéti, le Dragon et le Pirate ont reçu 15 à 20 % de plus avant la baisse (ils ne perdent donc que 3 à 8 %), et le Pirate est passé de 22 à 18 PV, car le robot ne les battait plus toujours à temps.
+- **Temps et difficulté de chaque niveau** : chaque niveau a un temps mesuré en le faisant jouer, et une difficulté affichée : **facile**, **moyen**, **difficile** ou **très difficile** (voir « Le chronomètre des niveaux » plus bas).
+  - Un niveau facile a peu de bulles et beaucoup de temps ; un niveau très difficile a juste assez de temps pour un joueur rapide : la plupart du temps on échoue, et un boost (double flèche, bouclier…) aide à passer.
+  - Au début, surtout du facile et du moyen ; de monde en monde, de plus en plus de difficile et de très difficile, mélangés dans le monde (les niveaux montent en dents de scie).
+  - Sur la carte : anneau vert pour facile, rien pour moyen, anneau orange pour difficile, rond rouge avec une tête de mort pour très difficile. L'écran avant la partie montre une pastille de couleur avec le nom et 1 à 4 barres (et, en difficile ou très difficile, conseille un boost) ; le bandeau de départ dit « Très difficile · Prêt ? » ; la barre du haut « Niveau 5 · Difficile ».
+  - Un niveau sans mesure (une région toute neuve) prend le temps de la formule : 18 s, plus 1,7 s par coup nécessaire (20 % de plus pour les bulles noires, fantômes et rebondissantes, 6 s par barrière) ; les boss ont chacun leur temps (35 % de plus en méga).
 - **Tailles de bulles** : de la mini à la grosse, plus deux nouvelles : l'**énorme** (dès le monde 1) et le **titan** (à partir du monde 4, et en Survie). Une grosse bulle se coupe en deux à chaque coup, jusqu'à la mini qui éclate.
 - **Bulles spéciales**, chacune avec sa couleur et son signe. Un message les présente la première fois qu'elles apparaissent :
 
