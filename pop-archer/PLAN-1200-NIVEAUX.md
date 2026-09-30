@@ -45,7 +45,7 @@ Faire 100 mondes entièrement différents coûterait trop cher en images et en t
 - **Flèches comptées** : finir le niveau avec un nombre limité de flèches ;
 - **Course** : un temps très court, mais un bonus au départ.
 
-Répartition par monde (12 niveaux) : environ 7 Nettoyages, 1 à 2 Cibles, 1 Survie, 1 Sauvetage ou Flèches comptées, puis le boss. Les objectifs arrivent petit à petit : Cible à partir de la région 1, Survie à partir de la région 2, Sauvetage à partir de la région 3, Flèches comptées à partir de la région 4.
+Répartition par monde (12 niveaux) : environ 7 Nettoyages, 1 à 2 Cibles, 1 Survie, 1 Sauvetage ou Flèches comptées, puis le boss. Les objectifs arrivent petit à petit : Cible et Survie à partir de la région 2, Sauvetage à partir de la région 3, Flèches comptées à partir de la région 4. La région 1 garde le Nettoyage classique pour présenter sa mécanique.
 
 ## 3. Courbe de difficulté
 
@@ -102,7 +102,7 @@ Au total : environ 150 images pour les 100 mondes. Chaque région pèse environ 
 
 - [x] Carte « saga » qui cache la fin
 - [x] Nombre de niveaux calculé à partir de la liste des mondes
-- [ ] Atelier de niveaux (génération, test automatique, niveaux figés)
-- [ ] Région 1 : Jungle Temple (mondes 9 à 13, niveaux 97 à 156)
+- [x] Atelier de niveaux (génération, test automatique, niveaux figés) : `tools/atelier.mjs`
+- [x] Région 1 : Jungle Temple (mondes 9 à 13, niveaux 97 à 156) : plateformes mobiles, 4 méga-boss, Stone Golem, niveaux difficiles marqués sur la carte
 - [ ] Objectifs de niveau
 - [ ] Régions 2 à 20

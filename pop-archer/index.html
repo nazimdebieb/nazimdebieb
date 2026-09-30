@@ -192,6 +192,10 @@ kbd{font-family:var(--body);font-weight:800;font-size:.95em;background:var(--cab
 .node.boss{width:calc(var(--d) * 1.3);height:calc(var(--d) * 1.3);margin:calc(var(--d) * -.65) 0 0 calc(var(--d) * -.65);font-size:calc(var(--d) * .44);
   background:radial-gradient(circle at 34% 26%,#e6ecff 0 9%,#7d97ff 34%,#3b44d8 74%,#2a2a9e);
   box-shadow:0 calc(var(--d) * .09) 0 #1c1a6b,0 calc(var(--d) * .15) calc(var(--d) * .2) rgba(20,8,30,.5);text-shadow:0 .08em 0 rgba(10,10,70,.6)}
+.node.hard{background:radial-gradient(circle at 34% 26%,#ffd9d9 0 9%,#ff6b6b 34%,#d6243f 72%,#9e1330);box-shadow:0 calc(var(--d) * .08) 0 #6e0c22,0 calc(var(--d) * .14) calc(var(--d) * .18) rgba(20,8,30,.45);text-shadow:0 .08em 0 rgba(90,0,20,.6)}
+.node.hard::after{content:"";position:absolute;left:50%;top:-14%;width:36%;height:28%;transform:translateX(-50%);border-radius:50% 50% 40% 40%;
+  background:radial-gradient(circle at 33% 45%,#2a1236 0 18%,transparent 20%),radial-gradient(circle at 67% 45%,#2a1236 0 18%,transparent 20%),#fff;box-shadow:0 1px 0 rgba(0,0,0,.35)}
+.node.hard.lock{background:radial-gradient(circle at 34% 26%,#fff 0 8%,#ffc3cc 36%,#ee8a9c);box-shadow:0 calc(var(--d) * .07) 0 #b85a6c,0 calc(var(--d) * .12) calc(var(--d) * .16) rgba(20,8,30,.35)}
 .node.boss.cur{background:radial-gradient(circle at 34% 26%,#ffe3f1 0 9%,#ff79bd 34%,#f02a86 72%,#c4146a)}
 .node.boss.lock,.node.boss.pre{background:radial-gradient(circle at 34% 26%,#f4f2ff 0 8%,#c3c3f2 38%,#8f8fd0);box-shadow:0 calc(var(--d) * .08) 0 #5f5fa0,0 calc(var(--d) * .14) calc(var(--d) * .18) rgba(20,8,30,.4)}
 .node .face{position:absolute;left:50%;bottom:62%;width:118%;height:auto;transform:translateX(-50%);pointer-events:none;filter:drop-shadow(0 3px 3px rgba(20,8,30,.45))}
@@ -501,6 +505,7 @@ body[data-state="ready"] .coinpill,body[data-state="play"] .coinpill,body[data-s
   </div>
 </div>
 
+<script src="levels/region-01.js"></script>
 <script>
 (() => {
 'use strict';
@@ -562,6 +567,13 @@ const SCENES = [
 // Noms des mondes (carte) et conseil affiché au premier niveau des mondes qui ont un piège.
 const WORLD_NAMES = ['Enchanted Forest', 'Desert Ruins', 'Deep Sea', 'Outer Space', 'Frozen Peaks', 'Volcano', 'Sky Kingdom', 'Haunted Castle'];
 const WORLD_TIPS = { 4: 'Frozen Peaks: the ice is slippery!', 5: 'Volcano: watch out for lava geysers!', 6: 'Sky Kingdom: gusts of wind push you around!', 7: 'Haunted Castle: sometimes the lights go out!' };
+// Régions ajoutées après les 8 premiers mondes (levels/region-XX.js, fabriquées par tools/atelier.mjs) :
+// chacune apporte ses mondes (nom, deux ambiances, conseil), ses niveaux figés et ses traductions.
+const REGIONS = window.POP_REGIONS || [];
+for (const r of REGIONS) for (const w of r.worlds) {
+  if (w.tip) WORLD_TIPS[WORLD_NAMES.length] = w.tip;
+  WORLD_NAMES.push(w.name); SCENES.push(...w.scenes);
+}
 
 // Obstacles : S = plateforme en métal (arrête le harpon), B = rangée de briques (cassées par le harpon),
 // G = barrière qui se lève quand toutes les bulles à sa gauche ont éclaté.
@@ -661,7 +673,28 @@ function checker(y1, y2) {
   return out;
 }
 
+// Niveau d'une région, dans le format compact des fichiers levels/ :
+// b : [taille, x, direction, y, spéciale] ; k : ['s', x, y, largeur, hauteur, ax, ay, période, phase] (plateforme,
+// mobile si ax ou ay), ['b', x, y, nombre, ax, ay, période, phase] (briques), ['g', x] (barrière).
+const REGION_DEFS = {};
+function regionLevel(n) {
+  if (REGION_DEFS[n]) return REGION_DEFS[n];
+  let first = 97;
+  for (const r of REGIONS) {
+    const m = r.worlds.length * WORLD;
+    if (n < first + m) {
+      const d = r.levels[n - first];
+      const mv = (k, [ax, ay, per, ph]) => { if (ax || ay) k.mv = { ax: ax || 0, ay: ay || 0, per: per || 4, ph: ph || 0 }; return k; };
+      const k = (d.k || []).flatMap(([t, ...a]) => t === 's' ? [mv(S(a[0], a[1], a[2], a[3] || 14), a.slice(4))]
+        : t === 'b' ? B(a[0], a[1], a[2] || 1).map(o => mv(o, a.slice(3))) : [G(a[0])]);
+      return (REGION_DEFS[n] = { ...d, b: (d.b || []).map(x => x.slice()), k });
+    }
+    first += m;
+  }
+  return (REGION_DEFS[n] = { b: [[2, .5, 1]] });
+}
 function levelDef(n) {
+  if (n > 96) return regionLevel(n);
   if (n % 12 === 0) return { boss: BOSS_ORDER[(n / 12 - 1) % BOSS_ORDER.length], b: [], k: [] };
   if (n <= LEVELS.length) return LEVELS[n - 1];
   if (n > 72) return LEVELS_78[n - 73];
@@ -716,7 +749,7 @@ function levelDef(n) {
   if (pick === 9) b.forEach(d => { d[3] = 262; });
   return { b, k };
 }
-const timeFor = def => def.boss ? BOSSES[def.boss].time : Math.round(18 + (LEVELS_78.includes(def) ? 1.2 : LEVELS_56.includes(def) ? 1.15 : 1) * def.b.reduce((t, [s, , , , v]) => t + popsOf(s, v) * 1.7 * (HARD_V.includes(v) ? 1.2 : 1), 0)
+const timeFor = def => def.time ? def.time : def.boss ? Math.round(BOSSES[def.boss].time * (def.mega ? 1.35 : 1)) : Math.round(18 + (LEVELS_78.includes(def) ? 1.2 : LEVELS_56.includes(def) ? 1.15 : 1) * def.b.reduce((t, [s, , , , v]) => t + popsOf(s, v) * 1.7 * (HARD_V.includes(v) ? 1.2 : 1), 0)
   + (def.k || []).reduce((t, k) => t + (k.t === 'g' ? 6 : k.t === 'b' ? .6 : 0), 0));
 
 const ITEMS = [
@@ -1000,8 +1033,13 @@ const T = {
   'Fashionista': ['Fashionista', 'Fashionista', 'Fashionista', 'Fashionista'],
   '✓ Done': ['✓ Fait', '✓ Hecho', '✓ Feito', '✓ Erledigt'],
   'Claim': ['Réclamer', 'Reclamar', 'Resgatar', 'Abholen'],
+  // régions
+  'Hard level': ['Niveau difficile', 'Nivel difícil', 'Nível difícil', 'Schweres Level'],
+  'Stone Golem': ['Golem de pierre', 'Gólem de Piedra', 'Golem de Pedra', 'Steingolem'],
 };
 const COLS = ['fr', 'es', 'pt', 'de'];
+// textes des régions (noms des mondes, conseils…), fournis par levels/region-XX.js
+for (const r of window.POP_REGIONS || []) Object.assign(T, r.i18n || {});
 const pl = (n, one, many) => (n > 1 || n === 0 ? many : one);
 // Modèles : [expression régulière, { langue: traduction }] ; une fonction reçoit les groupes capturés.
 const TX = [
@@ -1026,6 +1064,7 @@ const TX = [
   [/^Use \((\d+)\)$/, { fr: n => `Utiliser (${n})`, es: n => `Usar (${n})`, pt: n => `Usar (${n})`, de: n => `Nutzen (${n})` }],
   [/^You have (\d+)$/, { fr: n => `Tu en as ${n}`, es: n => `Tienes ${n}`, pt: n => `Você tem ${n}`, de: n => `Du hast ${n}` }],
   [/^New power-up: (.+)$/, { fr: b => `Nouveau bonus : ${trCore(b)}`, es: b => `Nuevo poder: ${trCore(b)}`, pt: b => `Novo poder: ${trCore(b)}`, de: b => `Neues Extra: ${trCore(b)}` }],
+  [/^Mega (.+)$/, { fr: b => `Méga ${trCore(b)}`, es: b => `Mega ${trCore(b)}`, pt: b => `Mega ${trCore(b)}`, de: b => `Mega-${trCore(b)}` }],
   [/^Boss defeated! \+(\d+)$/, { fr: n => `Boss vaincu ! +${n}`, es: n => `¡Jefe derrotado! +${n}`, pt: n => `Chefe derrotado! +${n}`, de: n => `Boss besiegt! +${n}` }],
 ];
 // La typographie française est appliquée une fois pour toutes aux traductions françaises.
@@ -1169,6 +1208,9 @@ const SONGS = {
   haunted: { bpm: 96, lead: 'D5 . F5 . A5 . G#5 . A5 - - . F5 . D5 . E5 . F5 . E5 . C#5 . D5 - - . A4 . . .',
              bass: 'D2 . . D2 . . A1 . D2 . . D2 . . A1 . Bb1 . . Bb1 . . F2 . A1 . . A1 . . C#2 .',
              drum: 'k . . . s . . h k . . . s . h . k . . . s . . h k . k . s . s .', wave: 'square' },
+  jungle: { bpm: 120, lead: 'G5 . E5 G5 . A5 . G5 E5 . D5 . E5 G5 . . A5 . B5 . A5 G5 . E5 D5 . E5 . G5 - - .',
+            bass: 'G2 . . G2 D3 . G2 . C3 . . C3 G2 . C3 . E2 . . E2 B2 . E2 . D2 . . D2 A2 . D3 .',
+            drum: 'k . h k s . h . k h . k s . h h k . h k s . h . k h . k s h s h', wave: 'triangle' },
   boss: { bpm: 150, lead: 'C5 . C5 Eb5 . C5 G5 . F5 . Eb5 . D5 . Eb5 . C5 . C5 Eb5 . G5 C6 . Bb5 . Ab5 . G5 . G5 .',
           bass: 'C2 C3 C2 C3 C2 C3 C2 C3 Ab1 Ab2 Ab1 Ab2 G1 G2 G1 G2 C2 C3 C2 C3 C2 C3 C2 C3 Ab1 Ab2 Ab1 Ab2 G1 G2 G1 G2',
           drum: 'k . s . k k s . k . s . k k s s k . s . k k s . k . s . k k s s', wave: 'sawtooth' },
@@ -1318,9 +1360,11 @@ function firstLevelOf(v) {
 function loadLevel() {
   useWidth();
   const def = kind === 'daily' ? dailyDef() : levelDef(level);
-  scene = SCENES[def.boss ? BOSSES[def.boss].scene : (worldOf(level) % WORLDS) * 2 + (level - 1) % 2];
+  scene = SCENES[def.boss && !def.mega && BOSSES[def.boss].scene != null ? BOSSES[def.boss].scene : (worldOf(level) % WORLDS) * 2 + (level - 1) % 2];
   blocks = (def.k || []).map(wide);
-  boss = def.boss ? makeBoss(def.boss) : null; shots = []; beams = []; shake = 0; slowT = 0; geyserT = 3;
+  // plateformes mobiles : chacune garde sa position de départ, son trajet suit la largeur du monde
+  for (const k of blocks) if (k.mv) k.mv = { ...k.mv, x0: k.x, y0: k.y, ax: k.mv.ax * W / DW, t: 0 };
+  boss = def.boss ? makeBoss(def.boss, def.mega) : null; shots = []; beams = []; shake = 0; slowT = 0; geyserT = 3;
   wind = dark = null; windT = 4; darkT = 6;
   balls = def.b.map(d => makeBall(d, scene.ball));
   items = []; parts = []; texts = []; freezeT = 0;
@@ -1433,7 +1477,7 @@ function drawMap(focus, anim) {
     const r0 = w ? w * Zh + G * .78 : 0, ph = ((w + 1) * Zh + G * .78 - r0) / 3, full = ph / .72;
     for (let k = 0; k < 3; k++) {
       const sc = SCENES[(w * 2 + (k === 1)) % SCENES.length], src = ART_SRC[sc.art], first = !w && !k;
-      html += `<div class="panel${first ? ' first' : ''}${k === 2 ? ' flip' : ''}${w > worldOf(cur) ? ' dim' : ''}" style="bottom:${(r0 + k * ph - (first ? 0 : full - ph)).toFixed(1)}px;height:${(first ? ph : full).toFixed(1)}px;background-image:${src ? `url(${src}),` : ''}linear-gradient(${sc.sky[0]},${sc.sky[1]})"></div>`;
+      html += `<div class="panel${first ? ' first' : ''}${k === 2 ? ' flip' : ''}${w > worldOf(cur) ? ' dim' : ''}" style="${sc.filter ? `filter:${sc.filter};` : ''}bottom:${(r0 + k * ph - (first ? 0 : full - ph)).toFixed(1)}px;height:${(first ? ph : full).toFixed(1)}px;background-image:${src ? `url(${src}),` : ''}linear-gradient(${sc.sky[0]},${sc.sky[1]})"></div>`;
     }
     html += `<div class="ribbon" style="bottom:${(w * Zh + G * .78).toFixed(1)}px"><small>World ${w + 1}</small>${WORLD_NAMES[w]}</div>`;
     for (let i = 0; i < WORLD; i++) {
@@ -1453,11 +1497,11 @@ function drawMap(focus, anim) {
     ${ci ? `<path class="done" d="${curve(pts, 0, ci)}" stroke-width="${sw(.2)}" stroke-dasharray="${sw(.24)} ${sw(.24)}"/>` : ''}</svg>`;
   const hop = anim && mapPin >= 1 && mapPin < pinAt && pinAt - mapPin <= 3 && pos[mapPin] ? mapPin : 0;
   for (let n = 1; n <= last; n++) {
-    const st = starsOf(n), open = unlocked(n), boss = n % WORLD === 0;
+    const st = starsOf(n), open = unlocked(n), boss = n % WORLD === 0, hard = !boss && levelDef(n).hard;
     let inner = open ? `<span>${n}</span>` : '';
     if (boss) inner = `<img class="face" src="${BOSS_ART[levelDef(n).boss][0]}" alt="">` + inner;
     if (st) inner += `<span class="st">${[0, 1, 2].map(i => `<i${i < st ? ' class="on"' : ''}>★</i>`).join('')}</span>`;
-    const cls = 'node' + (boss ? ' boss' : '') + (!open ? ' lock' : n === cur && !st ? ' cur' : '') + (hop && n === pinAt && !st ? ' pre' : '');
+    const cls = 'node' + (boss ? ' boss' : '') + (hard ? ' hard' : '') + (!open ? ' lock' : n === cur && !st ? ' cur' : '') + (hop && n === pinAt && !st ? ' pre' : '');
     const label = !open ? L(`Level ${n}, locked`, `Niveau ${n}, verrouillé`, `Nivel ${n}, bloqueado`, `Nível ${n}, bloqueado`, `Level ${n}, gesperrt`) : L(`Level ${n}, ${st} of 3 stars`, `Niveau ${n}, ${st} étoile${st > 1 ? 's' : ''} sur 3`, `Nivel ${n}, ${st} de 3 estrellas`, `Nível ${n}, ${st} de 3 estrelas`, `Level ${n}, ${st} von 3 Sternen`);
     html += `<button type="button" class="${cls}" data-n="${n}" style="left:${pos[n][0].toFixed(1)}px;top:${ty(pos[n][1]).toFixed(1)}px" aria-label="${label}"${open ? '' : ' disabled'}>${inner}</button>`;
   }
@@ -1544,11 +1588,12 @@ function update(dt) {
     const frozen = freezeT > 0 || learning, slow = slowT > 0 ? .45 : 1;
     if (slowT > 0) slowT -= dt;
     if (frozen) freezeT -= dt; else moveBalls(dt * slow);
-    if (boss && !frozen) updateBoss(dt * slow);
+    if (boss && !frozen) updateBoss(dt * slow * (boss.mega ? 1.15 : 1));
     if (!learning) updateHazards(dt);
     if (boss || shots.length || beams.length) moveShots(dt * slow);
     movePlayers(dt, true);
     moveGates(dt);
+    moveBlocks(dt);
     moveHarpoons(dt);
     hitBalls();
     moveItems(dt);
@@ -1603,6 +1648,14 @@ function bounceOff(b, k) {
   else if (b.vy < 0) b.vy = -b.vy;
 }
 
+// Plateformes mobiles (va-et-vient ou ascenseur), en douceur (sinus).
+function moveBlocks(dt) {
+  for (const k of blocks) {
+    if (!k.mv) continue;
+    const m = k.mv, s = Math.sin((m.t += dt) * Math.PI * 2 / m.per + m.ph);
+    k.x = m.x0 + m.ax * s; k.y = m.y0 + m.ay * s;
+  }
+}
 function moveGates(dt) {
   for (const g of blocks) {
     if (g.t !== 'g') continue;
@@ -1896,7 +1949,7 @@ function levelClear() {
     prevStars = starsOf(level);
     if (lastStars > prevStars) { adv[level] = lastStars; store.set('adv', adv); }
   }
-  runCoins += EARN.clear + EARN.star * lastStars;
+  runCoins += Math.round((EARN.clear + EARN.star * lastStars) * (kind === 'adv' && levelDef(level).hard ? 1.5 : 1));
   if (!levelHit) bump('flawless'); else checkAch();
   for (const p of players) p.harpoons = [];
   setState('clear', 1.4); vibe([30, 60, 30]);
@@ -2089,6 +2142,8 @@ const BOSSES = {
   dragon:{ name: 'Lava Dragon',   hp: 24, r: 38, time: 130, scene: 11 },
   pirate:{ name: 'Sky Pirate',    hp: 22, r: 38, time: 140, scene: 13 },
   phantom:{ name: 'Lantern Phantom', hp: 30, r: 36, time: 150, scene: 15 },
+  // bosses des régions : ils se battent dans le décor de leur monde
+  golem: { name: 'Stone Golem',   hp: 26, r: 40, time: 150 },
 };
 const BOSS_ORDER = ['king', 'storm', 'squid', 'eye', 'yeti', 'dragon', 'pirate', 'phantom'];
 let boss = null, shots = [], beams = [], shake = 0, geyserT = 3;
@@ -2124,9 +2179,9 @@ function throwArc(b, tx, kind, T, r) {
   shots.push({ x: x0, y: y0, vx: (clamp(tx, 10, W - 10) - x0) / T, vy, g, r, kind });
 }
 
-function makeBoss(type) {
-  const d = BOSSES[type];
-  const b = { type, name: d.name, hp: d.hp, max: d.hp, r: d.r, x: W / 2, y: 90, vx: 0, vy: 0, t: 0,
+function makeBoss(type, mega) {
+  const d = BOSSES[type], hp = mega ? Math.round(d.hp * 1.4) : d.hp;
+  const b = { type, mega: !!mega, name: (mega ? 'Mega ' : '') + d.name, hp, max: hp, r: d.r, x: W / 2, y: 90, vx: 0, vy: 0, t: 0,
               flash: 0, mode: 'idle', mt: 0, cd: 2, cd2: 5, cd3: 3, dx: 0, dead: false, deadT: 0, fx: 0, killer: null, orbs: [] };
   if (type === 'king') { b.x = W * .25; b.y = FLOOR - 190 - b.r; b.vx = 70; }
   if (type === 'storm') b.y = 70;
@@ -2136,6 +2191,7 @@ function makeBoss(type) {
   if (type === 'dragon') { b.y = 90; b.cd = 1.5; b.cd2 = 4; b.cd3 = 6; }
   if (type === 'pirate') { b.y = 78; b.cd = 1.6; b.cd2 = 3.5; b.cd3 = 7; }
   if (type === 'phantom') { b.y = 110; b.alpha = 1; b.mt = 3; b.cd = 1; b.cd2 = 6; b.cd3 = 5; b.volley = 3; }
+  if (type === 'golem') { b.y = 96; b.mt = 4; b.cd = 1.5; b.cd3 = 6; }
   return b;
 }
 const rage = b => 1 - b.hp / b.max;
@@ -2285,15 +2341,39 @@ function updateBoss(dt) {
       if ((b.cd2 -= dt) <= 0) { b.cd2 = 8; spawnMinion(b, 1); }
       if (rg >= .5 && (b.cd3 -= dt) <= 0) { b.cd3 = 12; dark = { warn: .8, t: 2.6 }; }
     }
+  } else if (b.type === 'golem') {
+    // Il flotte en haut. Ouvert, son cœur vert brille : on peut le toucher, et il lance des pierres en cloche.
+    // De temps en temps il se referme dans sa carapace (les flèches rebondissent) et fait tomber des rochers
+    // annoncés au plafond. Même vitesse quelle que soit la largeur de l'écran.
+    b.x += ((W / 2 + Math.sin(b.t * (.35 + rg * .25) * DW / W) * 220 * W / DW) - b.x) * Math.min(1, dt * 2);
+    b.y = 96 + Math.sin(b.t * 1.4) * 8;
+    if (b.mode === 'shell') {
+      if ((b.cd2 -= dt) <= 0) {
+        b.cd2 = .55 - rg * .15;
+        const x = !b.aimed && tgt ? tgt.x : 30 + Math.random() * (W - 60);
+        b.aimed = true;
+        shots.push({ x: clamp(x, 16, W - 16), y: 16 + TOP, vx: 0, vy: 0, g: 900, r: 9, kind: 'rock', wait: .8 });
+      }
+      if ((b.mt -= dt) <= 0) { b.mode = 'idle'; b.mt = 5 - rg * 1.2; b.cd = .8; }
+    } else {
+      if ((b.cd -= dt) <= 0 && tgt) {
+        b.cd = 1.9 - rg * .6;
+        throwArc(b, tgt.x + (Math.random() - .5) * 30, 'rock', 1.2, 8);
+        if (rg >= .5) throwArc(b, tgt.x + (Math.random() < .5 ? -90 : 90), 'rock', 1.35, 7);
+        sfx.thud();
+      }
+      if ((b.mt -= dt) <= 0) { b.mode = 'shell'; b.mt = 2.6 + rg * .6; b.cd2 = .3; b.aimed = false; shake = Math.max(shake, .15); sfx.thud(); }
+      if (rg >= .5 && (b.cd3 -= dt) <= 0) { b.cd3 = 7; spawnMinion(b, 1); }
+    }
   }
 }
 
-const SHOT_COL = { ink: '#5a2f78', drop: '#8fd0ff', snow: '#ffffff', icicle: '#bfe9ff', fire: '#ff7a1f', cannon: '#3a3a4a', anchor: '#9aa8b8', wisp: '#7dff9a' };
+const SHOT_COL = { rock: '#8f8a78', ink: '#5a2f78', drop: '#8fd0ff', snow: '#ffffff', icicle: '#bfe9ff', fire: '#ff7a1f', cannon: '#3a3a4a', anchor: '#9aa8b8', wisp: '#7dff9a' };
 function moveShots(dt) {
   shots = shots.filter(s => {
     if (s.wait > 0) { s.wait -= dt; return true; }
     s.vy += s.g * dt; s.x += s.vx * dt; s.y += s.vy * dt;
-    if (s.y > FLOOR - s.r) { burst(s.x, FLOOR - 2, SHOT_COL[s.kind] || '#8fd0ff', s.kind === 'icicle' || s.kind === 'snow' || s.kind === 'anchor' ? 7 : 3); return false; }
+    if (s.y > FLOOR - s.r) { burst(s.x, FLOOR - 2, SHOT_COL[s.kind] || '#8fd0ff', s.kind === 'icicle' || s.kind === 'snow' || s.kind === 'anchor' || s.kind === 'rock' ? 7 : 3); return false; }
     return s.x > -10 && s.x < W + 10;
   });
   beams = beams.filter(bm => {
@@ -2326,6 +2406,8 @@ function harpoonHitsBoss(h, p) {
   if (!hit || (b.type === 'phantom' && b.alpha < .6)) return false;
   // Le yéti au sol est protégé par sa fourrure : la flèche rebondit, il faut le toucher en plein saut.
   if (b.type === 'yeti' && b.mode === 'idle') { burst(h.x, Math.max(h.top, b.y - b.r), '#ffffff', 5); sfx.brick(); return true; }
+  // le golem refermé dans sa carapace : la flèche ricoche
+  if (b.type === 'golem' && b.mode === 'shell') { burst(h.x, Math.max(h.top, b.y + b.r * .6), '#c9c2a8', 5); sfx.brick(); return true; }
   damageBoss(p);
   return true;
 }
@@ -2408,7 +2490,12 @@ function drawBoss() {
     ctx.translate(b.x + (b.type === 'eye' ? look * 2 : 0), b.y + dy);
     if (b.type === 'squid') ctx.rotate(Math.sin(b.t * 2.2) * .05);
     if (rage(b) >= .5) { ctx.shadowColor = 'rgba(255,60,60,.85)'; ctx.shadowBlur = 10 + Math.sin(b.t * 8) * 5; }
+    // méga-boss : même personnage, autres couleurs
+    const shell = b.type === 'golem' && b.mode === 'shell' && !b.dead;
+    if (b.type === 'golem' && !shell && !b.dead) { ctx.shadowColor = 'rgba(125,255,154,.9)'; ctx.shadowBlur = 12 + Math.sin(b.t * 6) * 5; }
+    if (b.mega || shell) ctx.filter = (b.mega ? 'hue-rotate(150deg) saturate(1.3) ' : '') + (shell ? 'grayscale(1) brightness(.75)' : '');
     ctx.drawImage(spr.img, -w / 2, -h / 2, w, h);
+    ctx.filter = 'none';
     ctx.shadowBlur = 0;
     if (b.flash > 0) { ctx.globalAlpha *= .7; ctx.drawImage(spr.white, -w / 2, -h / 2, w, h); }
     ctx.restore();
@@ -2523,6 +2610,17 @@ function drawShotsAndBeams() {
       ctx.strokeStyle = '#b8c4d0'; ctx.lineWidth = 2.5; ctx.stroke();
       ctx.beginPath(); ctx.arc(sh.x, sh.y - 15, 3.5, 0, Math.PI * 2); ctx.strokeStyle = '#2a2f3a'; ctx.lineWidth = 4; ctx.stroke(); ctx.strokeStyle = '#b8c4d0'; ctx.lineWidth = 2; ctx.stroke();
       ctx.lineCap = 'butt';
+    } else if (sh.kind === 'rock') {
+      if (sh.wait > 0) {
+        if (Math.floor(sh.wait * 10) % 2) continue;
+        ctx.fillStyle = '#ff4f5e'; ctx.beginPath(); ctx.moveTo(sh.x - 8, 2 + TOP); ctx.lineTo(sh.x + 8, 2 + TOP); ctx.lineTo(sh.x, 14 + TOP); ctx.closePath(); ctx.fill();
+      }
+      // rocher : un polygone bosselé, gris-vert, avec un peu de mousse
+      ctx.fillStyle = '#9a947e'; ctx.strokeStyle = '#3a372c'; ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      for (let i = 0; i < 7; i++) { const a = i / 7 * Math.PI * 2, q = sh.r * (.85 + .15 * Math.sin(i * 2.3)); ctx.lineTo(sh.x + Math.cos(a) * q, sh.y + Math.sin(a) * q); }
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#6fa24a'; ctx.beginPath(); ctx.ellipse(sh.x - sh.r * .2, sh.y - sh.r * .55, sh.r * .45, sh.r * .22, 0, 0, Math.PI * 2); ctx.fill();
     } else if (sh.kind === 'cannon') {
       const g = ctx.createRadialGradient(sh.x - 2, sh.y - 2, 1, sh.x, sh.y, sh.r);
       g.addColorStop(0, '#8a8aa0'); g.addColorStop(1, '#1e1e2a');
@@ -2644,15 +2742,18 @@ function renderBg() {
   const g = b.createLinearGradient(0, 0, 0, FLOOR);
   g.addColorStop(0, sc.sky[0]); g.addColorStop(1, sc.sky[1]);
   b.fillStyle = g; b.fillRect(0, 0, W, FLOOR);
+  needArt(sc.art);
   const art = sc.art && ART[sc.art];
   if (art) {
+    b.filter = sc.filter || 'none';
     // Décor peint (Canva) : l'herbe de l'image est calée sur le sol du jeu. S'il est plus large que le
     // monde, on coupe un peu les côtés ; sinon on l'agrandit à la largeur du monde et le haut du ciel déborde.
     const a = art.img.width / art.img.height;
     let h = (FLOOR - 2) / art.ground, w = h * a;
     if (w < W) { w = W; h = W / a; }
     b.drawImage(art.img, (W - w) / 2, FLOOR - 2 - art.ground * h, w, h);
-  } else BACKDROPS[sc.theme](b, sc, rnd);
+    b.filter = 'none';
+  } else (BACKDROPS[sc.theme] || BACKDROPS.forest)(b, sc, rnd);
   extendBg();
 }
 // Écran plus large que le 16:9 : le décor continue en miroir sur les côtés (un peu assombri, ce sont
@@ -2694,12 +2795,16 @@ function extendBg() {
 
 // Images générées avec Canva, rangées dans img/ ; tant qu'une image n'est pas chargée
 // (ou si elle manque), le décor dessiné par le code prend le relais.
-const ART = {}, ART_SRC = {};
-function loadArt(name, src, ground) {
-  ART_SRC[name] = src;
+// Chaque décor n'est chargé qu'au moment où il sert (niveau, carte), pour que les régions
+// ajoutées ne ralentissent pas le démarrage.
+const ART = {}, ART_SRC = {}, ART_GROUND = {};
+function loadArt(name, src, ground) { ART_SRC[name] = src; ART_GROUND[name] = ground; }
+function needArt(name) {
+  if (!name || ART[name] !== undefined || !ART_SRC[name]) return;
+  ART[name] = null;
   const img = new Image();
-  img.onload = () => { ART[name] = { img, ground }; renderBg(); };
-  img.src = src;
+  img.onload = () => { ART[name] = { img, ground: ART_GROUND[name] }; renderBg(); };
+  img.src = ART_SRC[name];
 }
 loadArt('forest', 'img/forest.webp', .925);
 loadArt('sunset', 'img/sunset.webp', .918);
@@ -2717,6 +2822,7 @@ loadArt('skyDay', 'img/sky-day.webp', .93);
 loadArt('skySunset', 'img/sky-sunset.webp', .92);
 loadArt('hauntedYard', 'img/haunted-yard.webp', .895);
 loadArt('hauntedHall', 'img/haunted-hall.webp', .842);
+for (const r of REGIONS) for (const [name, [src, ground]] of Object.entries(r.art || {})) loadArt(name, src, ground);
 // Boss peints (Canva) : [fichier, largeur affichée, décalage vertical du centre de l'image]
 const BOSS_ART = {
   king: ['img/boss-king.webp', 110, -8],
@@ -2727,6 +2833,7 @@ const BOSS_ART = {
   dragon: ['img/boss-dragon.webp', 120, 2],
   pirate: ['img/boss-pirate.webp', 112, -2],
   phantom: ['img/boss-phantom.webp', 104, 0],
+  golem: ['img/boss-golem.webp', 124, 4],
 };
 const BOSS_SPRITES = {};
 // Icônes des bonus (Canva), une par type : img/item-<type>.webp
@@ -2786,6 +2893,8 @@ function tree(b, x, y, r, leaf, trunk) {
 }
 
 const BACKDROPS = {
+  // jungle : la forêt dessinée sert de secours, avec des couleurs par défaut pour ce qui manque
+  jungle(b, sc, rnd) { BACKDROPS.forest(b, { sun: '#fff8e0', far: '#8fcf8a', trees2: '#5fb86a', trees: '#2f8a4c', trunk: '#5b3a22', ground: '#6b5a3a', grass: '#5cc254', ...sc }, rnd); },
   sky(b, sc, rnd) {
     sunDisc(b, sc, rnd, 22);
     cloudPuffs(b, rnd, 6);
@@ -3206,16 +3315,21 @@ const MATERIALS = {
   volcano:{ s: ['#5a4a4a', '#2a1e1e', '#140c0c'], b: ['#8a2a14', '#ff9a3d', '#3a1008', '#1c0804'] },
   sky:    { s: ['#ffffff', '#cfe4f5', '#8aa8c8'], b: ['#ffffff', '#fff6d8', '#e0b84a', '#b08a2a'] },
   haunted:{ s: ['#6a4a3a', '#3a2418', '#1e120a'], b: ['#8a7aa8', '#b8a8d8', '#4a3a68', '#2a1e40'] },
+  jungle: { s: ['#9aa88a', '#5f6e4c', '#34402a'], b: ['#a7a98f', '#cfd1b8', '#6a6d55', '#474a38'] },
 };
 // Plateformes et briques peintes (Canva), une paire par thème.
+// Chargées à la première utilisation du thème (le dessin de secours sert en attendant).
 const BLOCK_ART = {};
-for (const th of Object.keys(MATERIALS)) {
-  BLOCK_ART[th] = {};
-  for (const [t, name] of [['s', 'plat'], ['b', 'brick']]) {
-    const img = new Image();
-    img.onload = () => { BLOCK_ART[th][t] = img; };
-    img.src = `img/${name}-${th}.webp`;
+function blockArt(th) {
+  if (!BLOCK_ART[th]) {
+    BLOCK_ART[th] = {};
+    for (const [t, name] of [['s', 'plat'], ['b', 'brick']]) {
+      const img = new Image();
+      img.onload = () => { BLOCK_ART[th][t] = img; };
+      img.src = `img/${name}-${th}.webp`;
+    }
   }
+  return BLOCK_ART[th];
 }
 // Plateforme horizontale : les deux bouts gardent leurs proportions, le milieu est répété
 // (une copie sur deux en miroir pour cacher les raccords).
@@ -3235,7 +3349,7 @@ function drawSlab(img, x, y, w, h) {
   }
 }
 function drawBlock(k) {
-  const art = BLOCK_ART[scene.theme] && BLOCK_ART[scene.theme][k.t];
+  const art = MATERIALS[scene.theme] && blockArt(scene.theme)[k.t];
   if (art && k.t === 'b') { ctx.drawImage(art, k.x - 1, k.y - 1, k.w + 2, k.h + 2); return; }
   if (art && k.t === 's') {
     // château hanté : un halo pâle détache les planches sombres des murs sombres
@@ -3860,7 +3974,7 @@ async function openChest() {
 let prepKind = 'adv', prepLevel = 1, armed = null;
 function prep(k, lv) {
   prepKind = k; prepLevel = lv; armed = null;
-  $('prepTitle').textContent = k === 'surv' ? 'Survival' : k === 'daily' ? 'Daily challenge' : `Level ${lv}` + (lv % WORLD === 0 ? ' · Boss' : '');
+  $('prepTitle').textContent = k === 'surv' ? 'Survival' : k === 'daily' ? 'Daily challenge' : `Level ${lv}` + (lv % WORLD === 0 ? ' · Boss' : levelDef(lv).hard ? ' · Hard level' : '');
   const m = k === 'daily' && dailyPick().mod;
   $('prepHelp').textContent = m ? tr(`${m.name}: ${m.tip}`) + ' ' + tr(dailyDone() ? 'Already done today: play for fun!' : `Reward: ${fmt(dailyReward())} coins.`)
     : 'Take one boost into this run, or just play.';

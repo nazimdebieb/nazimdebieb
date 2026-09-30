@@ -78,6 +78,39 @@ Sur téléphone, le jeu est toujours en paysage : si l'écran est tenu droit, le
 
 Le jeu se joue à 1 joueur (le mode à 2 joueurs a été retiré : trop compliqué sur un seul téléphone).
 
+### Régions : les mondes 9 et suivants
+
+À partir du monde 9, les niveaux arrivent par **régions** de 5 mondes (60 niveaux). Chaque région est un fichier de données `levels/region-XX.js`, chargé avant le jeu, qui apporte ses mondes (nom, deux ambiances, conseil), ses décors, ses traductions et ses niveaux figés. Le jeu n'a rien d'autre à connaître : la carte, le nombre de niveaux et le défi du jour suivent tout seuls. Le plan complet (20 régions, 1 200 niveaux) est dans [`PLAN-1200-NIVEAUX.md`](PLAN-1200-NIVEAUX.md).
+
+- **Région 1, Jungle Temple** (mondes 9 à 13, niveaux 97 à 156) :
+  - les mondes sont Jungle Gate, Monkey Canopy, Temple Steps, Hidden Falls et Golden Sanctum ;
+  - 4 nouveaux décors Canva (jungle de jour, au couchant, intérieur du temple, cascade cachée), déclinés en 10 ambiances par un étalonnage des couleurs (`filter`) : cascade de nuit, sanctuaire doré… ;
+  - une pierre moussue en plateforme et une brique du temple, et une musique à elle.
+- **Plateformes mobiles** : une plateforme ou une rangée de briques peut aller et venir (`ax`) ou monter et descendre (`ay`), en douceur (sinus, période `per`). Leur trajet s'étire avec la largeur de l'écran comme le reste du niveau.
+- **Méga-boss** : les boss des 4 premiers mondes d'une région sont des versions renforcées des boss connus. Ils ont d'autres couleurs, 40 % de vie en plus, vont 15 % plus vite et ont 35 % de temps en plus.
+- **Stone Golem**, le boss du monde 13 :
+  - il flotte en haut ; ouvert, son cœur vert brille et il lance des pierres en cloche ;
+  - de temps en temps il se referme dans sa carapace : il devient gris, les flèches ricochent, et il fait tomber des rochers annoncés au plafond (le premier sur l'archer) ;
+  - quand il enrage, il lance deux pierres à la fois et appelle des bulles.
+- **Niveaux difficiles** : le 5e et le 10e niveau de chaque monde. Sur la carte ce sont des ronds rouges avec une petite tête de mort ; ils rapportent 50 % de pièces en plus.
+- **Décors chargés à la demande** : un décor, une plateforme ou une brique n'est chargé qu'au moment où il sert (dans un niveau ou sur la carte). Les régions ajoutées ne ralentissent donc pas le démarrage.
+
+**L'atelier** (`tools/atelier.mjs`) fabrique une région à partir de sa **recette** (`tools/regions/region-XX.mjs` : mondes, décors, textes, boss, difficulté de départ) :
+
+1. chaque niveau est tiré au hasard mais toujours pareil pour une même graine, selon une difficulté en dents de scie dans chaque monde (plus dure au 5e et au 10e niveau) qui monte de monde en monde ; la mécanique de la région est dans plus de la moitié des niveaux, et jamais deux fois de suite la même disposition ;
+2. un robot invincible joue chaque niveau dans le vrai jeu (Chromium sans fenêtre, en accéléré) ;
+3. un niveau est gardé si le robot le finit en utilisant au plus 60 % du temps (75 % pour un boss), pour laisser de la marge à un joueur qui doit esquiver ; sinon l'atelier en tire un autre, un peu plus facile ;
+4. le résultat est figé dans `levels/region-XX.js`, avec pour chaque niveau le temps mis par le robot ; un niveau publié ne change plus.
+
+Commandes : `node tools/atelier.mjs 1` (fabrique la région 1) et `node tools/atelier.mjs 1 --check` (rejoue les niveaux figés). Il faut Playwright (`npm i -g playwright`).
+
+**Ajouter une région** :
+
+1. écrire `tools/regions/region-02.mjs` en s'inspirant de la région 1 ;
+2. faire ses images avec Canva ;
+3. si la région a un nouveau thème : ajouter ses matériaux, sa musique et sa nouvelle mécanique dans `index.html` ;
+4. lancer l'atelier, puis ajouter `<script src="levels/region-02.js"></script>` à `index.html`.
+
 ### La carte de l'Aventure
 
 La carte est un long chemin qui monte, façon jeu « saga » : on la fait défiler du doigt (ou à la molette, ou en la faisant glisser à la souris) et les niveaux se suivent en zigzag à travers les décors de chaque monde, qui se fondent l'un dans l'autre. Un bandeau marque l'entrée de chaque monde, avec son numéro et son nom.

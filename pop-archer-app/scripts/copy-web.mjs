@@ -10,6 +10,7 @@ const www = join(root, 'www');
 rmSync(www, { recursive: true, force: true });
 mkdirSync(www);
 cpSync(join(game, 'img'), join(www, 'img'), { recursive: true });
+cpSync(join(game, 'levels'), join(www, 'levels'), { recursive: true });
 cpSync(join(root, 'fonts'), join(www, 'fonts'), { recursive: true });
 
 let html = readFileSync(join(game, 'index.html'), 'utf8');

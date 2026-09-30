@@ -5,7 +5,7 @@ Add each one in Play Console › Store presence › Main store listing › Manag
 ## Français (fr-FR)
 
 **Short description**:
-Vise, tire, coupe ! Éclate les bulles dans plus de 90 niveaux et en Survie.
+Vise, tire, coupe ! Éclate les bulles dans plus de 150 niveaux et en Survie.
 
 **Full description**:
 
@@ -14,7 +14,7 @@ Pop Archer est un jeu d'arcade coloré, inspiré des grands classiques où l'on 
 Vise avec ton arc et tire vers le haut : chaque bulle touchée se coupe en deux, puis encore en deux, jusqu'à ce que les plus petites éclatent. Vide l'écran avant la fin du temps, et ne laisse jamais une bulle te toucher !
 
 🏹 AVENTURE
-• Plus de 90 niveaux sur une carte qui serpente à travers des mondes à thème : forêt enchantée, ruines du désert, fonds marins, espace, pics gelés, volcan, royaume des nuages, château hanté… et de nouveaux mondes arrivent
+• Plus de 150 niveaux sur une carte qui serpente à travers des mondes à thème : forêt enchantée, ruines du désert, fonds marins, espace, pics gelés, volcan, royaume des nuages, château hanté, temple de la jungle… et de nouveaux mondes arrivent
 • Glisse sur la glace, évite les geysers de lave, lutte contre le vent et garde ton sang-froid quand la lumière s'éteint
 • Jusqu'à 3 étoiles par niveau
 • Plateformes, briques à casser et barrières qui s'ouvrent zone par zone
@@ -49,7 +49,7 @@ Gagne des pièces pour habiller ton archer (Robin, Nomade, Marin, Astronaute) et
 ## Español (es-ES)
 
 **Short description**:
-¡Apunta, dispara y divide! Más de 90 niveles y un modo Supervivencia sin fin.
+¡Apunta, dispara y divide! Más de 150 niveles y un modo Supervivencia sin fin.
 
 **Full description**:
 
@@ -58,7 +58,7 @@ Pop Archer es un colorido juego de arcade inspirado en los clásicos de dividir 
 Apunta con tu arco y dispara hacia arriba: cada burbuja que alcanzas se divide en dos, y otra vez en dos, hasta que revientan las más pequeñas. ¡Limpia la pantalla antes de que se acabe el tiempo y que no te toque ninguna burbuja!
 
 🏹 AVENTURA
-• Más de 90 niveles en un mapa que serpentea por mundos temáticos: un bosque encantado, ruinas del desierto, el mar profundo, el espacio exterior, picos helados, un volcán en erupción, el Reino del Cielo, un castillo embrujado… y nuevos mundos en camino
+• Más de 150 niveles en un mapa que serpentea por mundos temáticos: un bosque encantado, ruinas del desierto, el mar profundo, el espacio exterior, picos helados, un volcán en erupción, el Reino del Cielo, un castillo embrujado, un templo en la selva… y nuevos mundos en camino
 • Resbala sobre el hielo, esquiva géiseres de lava, lucha contra el viento y mantén la puntería cuando se apagan las luces
 • Hasta 3 estrellas por nivel
 • Plataformas, ladrillos que se rompen y barreras que se abren zona a zona
@@ -93,7 +93,7 @@ Consigue monedas para vestir a tu arquera (Robin, Nómada, Marinero, Astronauta)
 ## Português do Brasil (pt-BR)
 
 **Short description**:
-Mire, atire e divida! Estoure bolhas em mais de 90 níveis e na Sobrevivência.
+Mire, atire e divida! Estoure bolhas em mais de 150 níveis e na Sobrevivência.
 
 **Full description**:
 
@@ -102,7 +102,7 @@ Pop Archer é um jogo de arcade colorido, inspirado nos clássicos de dividir bo
 Mire com seu arco e atire para cima: cada bolha atingida se divide em duas, e de novo em duas, até as menores estourarem. Limpe a tela antes que o tempo acabe e não deixe nenhuma bolha encostar em você!
 
 🏹 AVENTURA
-• Mais de 90 níveis em um mapa sinuoso por mundos temáticos: floresta encantada, ruínas do deserto, mar profundo, espaço sideral, picos gelados, um vulcão em erupção, o Reino do Céu, um castelo assombrado… e novos mundos a caminho
+• Mais de 150 níveis em um mapa sinuoso por mundos temáticos: floresta encantada, ruínas do deserto, mar profundo, espaço sideral, picos gelados, um vulcão em erupção, o Reino do Céu, um castelo assombrado, um templo na selva… e novos mundos a caminho
 • Deslize no gelo, desvie dos gêiseres de lava, enfrente o vento e mantenha a mira quando as luzes se apagam
 • Até 3 estrelas por nível
 • Plataformas, tijolos quebráveis e barreiras que se abrem a cada zona
@@ -137,7 +137,7 @@ Ganhe moedas para vestir sua arqueira (Robin, Nômade, Marinheiro, Astronauta) e
 ## Deutsch (de-DE)
 
 **Short description**:
-Zielen, schießen, teilen! Lass Blasen platzen – in über 90 Levels und mehr!
+Zielen, schießen, teilen! Lass Blasen platzen – in über 150 Levels und mehr!
 
 **Full description**:
 
@@ -146,7 +146,7 @@ Pop Archer ist ein farbenfrohes Arcade-Spiel nach dem Vorbild der klassischen Bl
 Ziel mit deinem Bogen und schieß nach oben: Jede getroffene Blase teilt sich in zwei, dann wieder in zwei, bis die kleinsten platzen. Räum den Bildschirm ab, bevor die Zeit abläuft, und lass dich von keiner Blase berühren!
 
 🏹 ABENTEUER
-• Über 90 Levels auf einer verschlungenen Karte durch Themenwelten: Zauberwald, Wüstenruinen, Tiefsee, Weltall, Frostgipfel, ein feuriger Vulkan, das Himmelsreich, ein Spukschloss… und neue Welten sind unterwegs
+• Über 150 Levels auf einer verschlungenen Karte durch Themenwelten: Zauberwald, Wüstenruinen, Tiefsee, Weltall, Frostgipfel, ein feuriger Vulkan, das Himmelsreich, ein Spukschloss, ein Dschungeltempel… und neue Welten sind unterwegs
 • Rutsch über Glatteis, weich Lavageysiren aus, kämpf gegen den Wind und ziel weiter, wenn das Licht ausgeht
 • Bis zu 3 Sterne pro Level
 • Plattformen, zerbrechliche Steine und Schranken, die sich Zone für Zone öffnen
