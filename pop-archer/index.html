@@ -1619,7 +1619,7 @@ function loadLevel() {
   levelHit = false;
   const pops = def.b.reduce((t, [sz, , , , v]) => t + popsOf(sz, v), 0);
   dropBudget = def.boss ? 3 : clamp(Math.round(pops / 12), 1, 3); dropCd = 0; lifeDropped = false;
-  planCoins((def.boss ? COIN_MAX : clamp(Math.round(pops * .2 / 5) * 5, 5, 15)) * (weekend() ? 2 : 1));
+  planCoins((def.boss ? COIN_MAX : clamp(Math.round(pops * .4 / 5) * 5, 10, 30)) * (weekend() ? 2 : 1));
   unlockTxt = '';
   for (const [t, w] of Object.entries(ADV_UNLOCK)) if (level === (w - 1) * WORLD + 1) unlockTxt = 'New power-up: ' + ITEM_BY[t][3];
   if (level % WORLD === 1 && WORLD_TIPS[worldOf(level)]) unlockTxt = WORLD_TIPS[worldOf(level)];
@@ -2067,10 +2067,10 @@ function popBall(j, p, noDrop) {
 }
 
 // Pièces : c'est le seul argent gagné en jouant. Elles tombent des bulles éclatées : une pièce (5),
-// deux collées (10) ou trois (15) ; environ 10 par partie, doublables avec une pub en fin de niveau.
-// Chaque niveau reçoit une réserve (5 à 15 selon sa taille, 20 pour un boss ou en Survie), découpée
+// deux collées (10) ou trois (15) ; environ 20 par partie, doublables avec une pub en fin de niveau.
+// Chaque niveau reçoit une réserve (10 à 30 selon sa taille, 50 pour un boss ou en Survie), découpée
 // au hasard en pièces de 5, 10 et 15 ; elles tombent au fil du niveau, et plus sûrement d'une bulle dorée.
-const ITEM_LIFE = 5, COIN_MAX = 20;
+const ITEM_LIFE = 5, COIN_MAX = 50;
 let coinPlan = [], coinCd = 0;
 // Événement du week-end : le samedi et le dimanche, deux fois plus de pièces tombent (au plus 80 par partie).
 const weekend = () => [0, 6].includes(new Date().getDay());
@@ -4321,10 +4321,10 @@ if (logoImg.complete && !logoImg.naturalWidth) noLogo();
 /* ---------- Monétisation : pièces, boutique, pubs et achats ---------- */
 // Les pubs (showAd) et les achats (buyProduct) sont simulés ici : faux écran de pub, faux paiement.
 // Dans l'appli Android, seules ces deux fonctions changent (AdMob et Google Play Billing).
-// Économie : en jouant, on gagne environ 10 pièces par partie (celles qui tombent des bulles, au plus 15,
-// 20 pour un boss), doublables avec une pub. À côté : 2 pièces par nouvelle étoile, 25 pour un monde fini,
+// Économie : en jouant, on gagne environ 20 pièces par partie (celles qui tombent des bulles, 10 à 30,
+// 50 pour un boss), doublables avec une pub. À côté : 2 pièces par nouvelle étoile, 75 pour un monde fini,
 // le cadeau du jour, la victoire du jour, les coffres et les trophées. Un boost vaut environ 2 à 3 parties.
-const EARN = { cont: 30, daily: 5, dailyStep: 5, boost: 25, dailyWin: 20, dailyWinStep: 5, star: 2, world: 25, refill: 30 };
+const EARN = { cont: 30, boost: 25, dailyWin: 20, dailyWinStep: 5, star: 2, world: 75, refill: 30 };
 const SKINS = [
   { id: 'classic', name: 'Red Hood', price: 0 },
   { id: 'robin', name: 'Robin', price: 250 },
@@ -4458,14 +4458,15 @@ function spend(n) {
   return true;
 }
 
-// Cadeau du jour : 5 pièces, +5 par jour d'affilée (jusqu'au 7e jour), doublé avec une pub.
+// Cadeau du jour : de 5 pièces le 1er jour à 50 au 7e jour d'affilée, doublé avec une pub.
+const GIFTS = [5, 10, 15, 20, 30, 40, 50];
 function dailyGift() {
   const d = store.get('daily', { day: '', streak: 0 });
   const today = new Date().toDateString(), yesterday = new Date(Date.now() - 864e5).toDateString();
   if (d.day === today) return;
   const streak = d.day === yesterday ? d.streak + 1 : 1;
   store.set('daily', { day: today, streak });
-  const gift = EARN.daily + EARN.dailyStep * (Math.min(streak, 7) - 1);
+  const gift = GIFTS[Math.min(streak, GIFTS.length) - 1];
   MONEY.coins += gift; saveMoney();
   message('Daily gift', `Day ${streak}: +${fmt(gift)} coins. Come back tomorrow for more!`, [
     ['▶ Double it', async () => { if (await showAd(true)) { MONEY.coins += gift; saveMoney(); message('Doubled!', `+${fmt(gift)} more coins.`, [['Nice!']], coinArt(3)); } }, 'alt'],

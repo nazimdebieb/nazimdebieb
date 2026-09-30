@@ -213,14 +213,14 @@ Règle d'or : **aucune pub pendant qu'on joue**. Les pubs et les achats sont **s
 - **Pièces** 🪙, gardées sur l'appareil, visibles en haut à droite hors partie :
   - **en jouant, seulement en ramassant les pièces qui tombent des bulles éclatées** (Aventure, défi du jour, Survie) :
     - une pièce vaut 5, deux pièces collées 10, trois 15 ; elles scintillent au sol et, comme les bonus, disparaissent au bout de **5 s** (elles clignotent la dernière seconde et demie) ;
-    - **environ 10 pièces par partie** : chaque niveau reçoit une réserve de 5 à 15 selon son nombre de coups (en moyenne 10 sur les 156 niveaux ; 20 pour un boss et pour une partie de Survie), découpée au hasard en pièces de 5, 10 et 15 ; en fin de niveau, une pub les double ;
+    - **environ 20 pièces par partie** : chaque niveau reçoit une réserve de 10 à 30 selon son nombre de coups (21 en moyenne sur les 156 niveaux ; 50 pour un boss et pour une partie de Survie), découpée au hasard en pièces de 5, 10 et 15 ; en fin de niveau, une pub les double ;
     - en niveau, elles tombent au fil des bulles éclatées, étalées jusqu'à la fin (la chance suit les pièces qui restent sur les coups qui restent) ; une bulle dorée en fait toujours tomber une s'il en reste ; face à un boss, un coup au boss compte comme une bulle ; en Survie, une de temps en temps (au plus une toutes les 7 s) ;
     - les pièces encore au sol quand le niveau est réussi sont ramassées d'office ;
     - plus rien d'autre en partie : ni pièces par niveau réussi, par étoile, par boss ou pour le score de Survie ;
-  - **le week-end** (samedi et dimanche), deux fois plus de pièces tombent (au plus 40 par partie) ; le menu l'annonce ;
-  - **2 pièces par nouvelle étoile** en Aventure (seulement la 1re fois qu'on la gagne) et **25 pour un monde fini** (son boss battu la 1re fois) ;
+  - **le week-end** (samedi et dimanche), deux fois plus de pièces tombent (au plus 60 par niveau, 100 pour un boss) ; le menu l'annonce ;
+  - **2 pièces par nouvelle étoile** en Aventure (seulement la 1re fois qu'on la gagne) et **75 pour un monde fini** (son boss battu la 1re fois) ;
   - la victoire du jour au défi du jour : 20, plus 5 par jour d'affilée (jusqu'à 50) ;
-  - cadeau du jour : 5, plus 5 par jour d'affilée (jusqu'à 35 au 7e jour), doublable avec une pub ;
+  - cadeau du jour : 5, 10, 15, 20, 30, 40 puis 50 pièces du 1er au 7e jour d'affilée, doublable avec une pub ;
   - coffre gratuit : 5 à 20 pièces ou un boost ; trophées : 5 à 125 par palier.
 - **Vies de l'Aventure**, façon Candy Crush : **5 au plus**. Rater un niveau ou le quitter en cours en coûte une (l'écran d'échec dit combien il en reste) ; elles reviennent seules, **une toutes les 20 min**, même jeu fermé. Sur la carte, un compteur ♥ montre les vies et le temps avant la prochaine. Sans vie, on ne peut pas lancer de niveau : on attend, on regarde une pub (+1 vie) ou on paie 30 pièces pour les 5. Continuer après un échec rend la vie perdue. Le défi du jour, la Survie et l'Entraînement ne coûtent pas de vie.
 - **Pubs récompensées** (le joueur choisit) :
