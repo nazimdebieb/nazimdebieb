@@ -34,7 +34,7 @@ const VERIFY = !!opt('verify', false);
 const DIST = w => w === 0 ? [5, 4, 2, 0] : w === 1 ? [4, 4, 2, 1] : w < 4 ? [3, 4, 3, 1] : [2, 4, 3, 2];
 // Marge par niveau de difficulté : temps = robot × a + b
 const MARGIN = { 1: [2.3, 5], 2: [1.85, 4], 3: [1.5, 3], 4: [1.25, 2] };
-const BOSS_MARGIN = [1.45, 5];
+const BOSS_MARGIN = [1.6, 12];
 
 const range = s => s.split(',').flatMap(p => { const [a, b] = p.split('-').map(Number); return b ? Array.from({ length: b - a + 1 }, (_, i) => a + i) : [a]; });
 
@@ -128,7 +128,7 @@ function retime(robot) {
     order.forEach((n, i) => {
       while (k < 3 && i >= dist.slice(0, k + 1).reduce((s, x) => s + x, 0) * ns.length / 11) k++;
       const [a, b] = MARGIN[k + 1];
-      out[n] = [Math.max(20, Math.round(robot[n] * a + b)), k + 1, robot[n]];
+      out[n] = [Math.max(25, Math.round(robot[n] * a + b)), k + 1, robot[n]];
     });
     const bn = (w + 1) * WORLD;
     if (robot[bn] != null) out[bn] = [Math.round(robot[bn] * BOSS_MARGIN[0] + BOSS_MARGIN[1]), 0, robot[bn]];

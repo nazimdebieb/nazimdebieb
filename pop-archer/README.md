@@ -130,7 +130,7 @@ Commandes : `node tools/atelier.mjs 1` (fabrique la région 1) et `node tools/at
    | 3 et 4 | 3 | 4 | 3 | 1 |
    | 5 et suivants | 2 | 4 | 3 | 2 |
 
-3. le temps du niveau est le temps du robot multiplié par une marge pour un humain, qui doit esquiver et vise moins vite (`MARGIN`) : facile ×2,3 + 5 s, moyen ×1,85 + 4 s, difficile ×1,5 + 3 s, très difficile ×1,25 + 2 s (20 s au moins) ; un boss ×1,45 + 5 s. Le jeu ajoute ensuite un peu de temps sur les écrans larges, et une règle du défi du jour change le temps dans la même proportion que la formule ;
+3. le temps du niveau est le temps du robot multiplié par une marge pour un humain, qui doit esquiver et vise moins vite (`MARGIN`) : facile ×2,3 + 5 s, moyen ×1,85 + 4 s, difficile ×1,5 + 3 s, très difficile ×1,25 + 2 s (25 s au moins) ; un boss ×1,6 + 12 s (il faut en plus esquiver ses tirs). Le jeu ajoute ensuite un peu de temps sur les écrans larges, et une règle du défi du jour change le temps dans la même proportion que la formule ;
 4. `--verify` rejoue tout avec un « joueur moyen » : un robot 2,5 fois plus lent à réagir, qui recule devant les bulles qui lui tombent dessus, et compte ses réussites par difficulté.
 
 Commandes : `node tools/chrono.mjs --levels 1-156` (mesure et écrit), `node tools/chrono.mjs --retime` (recalcule sans rejouer, après avoir changé `DIST` ou `MARGIN`), `node tools/chrono.mjs --verify`.
@@ -158,7 +158,7 @@ La carte est un long chemin qui monte, façon jeu « saga » : on la fait défil
 - **Temps et difficulté de chaque niveau** : chaque niveau a un temps mesuré en le faisant jouer, et une difficulté affichée : **facile**, **moyen**, **difficile** ou **très difficile** (voir « Le chronomètre des niveaux » plus bas).
   - Un niveau facile a peu de bulles et beaucoup de temps ; un niveau très difficile a juste assez de temps pour un joueur rapide : la plupart du temps on échoue, et un boost (double flèche, bouclier…) aide à passer.
   - Au début, surtout du facile et du moyen ; de monde en monde, de plus en plus de difficile et de très difficile, mélangés dans le monde (les niveaux montent en dents de scie).
-  - Sur la carte : anneau vert pour facile, rien pour moyen, anneau orange pour difficile, rond rouge avec une tête de mort pour très difficile. L'écran avant la partie montre une pastille de couleur avec le nom et 1 à 4 barres (et, en difficile ou très difficile, conseille un boost) ; le bandeau de départ dit « Très difficile · Prêt ? » ; la barre du haut « Niveau 5 · Difficile ».
+  - Sur la carte : une pastille de couleur en haut à droite du rond, verte pour facile, jaune pour moyen, orange pour difficile ; un très difficile est un rond rouge avec une tête de mort. L'écran avant la partie montre une pastille de couleur avec le nom et 1 à 4 barres (et, en difficile ou très difficile, conseille un boost) ; le bandeau de départ dit « Très difficile · Prêt ? » ; la barre du haut « Niveau 5 · Difficile ».
   - Un niveau sans mesure (une région toute neuve) prend le temps de la formule : 18 s, plus 1,7 s par coup nécessaire (20 % de plus pour les bulles noires, fantômes et rebondissantes, 6 s par barrière) ; les boss ont chacun leur temps (35 % de plus en méga).
 - **Tailles de bulles** : de la mini à la grosse, plus deux nouvelles : l'**énorme** (dès le monde 1) et le **titan** (à partir du monde 4, et en Survie). Une grosse bulle se coupe en deux à chaque coup, jusqu'à la mini qui éclate.
 - **Bulles spéciales**, chacune avec sa couleur et son signe. Un message les présente la première fois qu'elles apparaissent :

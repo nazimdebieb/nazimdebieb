@@ -202,9 +202,8 @@ kbd{font-family:var(--body);font-weight:800;font-size:.95em;background:var(--cab
   font-size:min(2.4cqw,4.6cqh);color:#fff;background:var(--tc);text-shadow:0 1px 0 rgba(0,0,0,.3)}
 .tierpill i{display:inline-block;width:.35em;height:.9em;border-radius:2px;background:rgba(255,255,255,.35);margin-left:.12em}
 .tierpill i.on{background:#fff}
-/* difficulté : anneau vert (facile), rien (moyen), anneau orange (difficile), rond rouge et tête de mort (très difficile) */
-.node.t1{outline:calc(var(--d) * .07) solid #3fbf6f;outline-offset:calc(var(--d) * .03)}
-.node.t3{outline:calc(var(--d) * .07) solid #ff8a3d;outline-offset:calc(var(--d) * .03)}
+/* difficulté : pastille verte (facile), jaune (moyen), orange (difficile) en haut à droite ; rond rouge et tête de mort (très difficile) */
+.node .tb{position:absolute;right:-6%;top:-6%;width:34%;height:34%;border-radius:50%;background:var(--tc);box-shadow:0 0 0 calc(var(--d) * .045) #fff,0 1px 3px rgba(0,0,0,.4)}
 .node.hard{background:radial-gradient(circle at 34% 26%,#ffd9d9 0 9%,#ff6b6b 34%,#d6243f 72%,#9e1330);box-shadow:0 calc(var(--d) * .08) 0 #6e0c22,0 calc(var(--d) * .14) calc(var(--d) * .18) rgba(20,8,30,.45);text-shadow:0 .08em 0 rgba(90,0,20,.6)}
 .node.hard::after{content:"";position:absolute;left:50%;top:-14%;width:36%;height:28%;transform:translateX(-50%);border-radius:50% 50% 40% 40%;
   background:radial-gradient(circle at 33% 45%,#2a1236 0 18%,transparent 20%),radial-gradient(circle at 67% 45%,#2a1236 0 18%,transparent 20%),#fff;box-shadow:0 1px 0 rgba(0,0,0,.35)}
@@ -1679,10 +1678,10 @@ function drawMap(focus, anim) {
   const hop = anim && mapPin >= 1 && mapPin < pinAt && pinAt - mapPin <= 3 && pos[mapPin] ? mapPin : 0;
   for (let n = 1; n <= last; n++) {
     const st = starsOf(n), open = unlocked(n), boss = n % WORLD === 0, tier = tierOf(n);
-    let inner = open ? `<span>${n}</span>` : '';
+    let inner = (open ? `<span>${n}</span>` : '') + (tier && tier < 4 ? `<i class="tb" style="--tc:${TIER_C[tier]}"></i>` : '');
     if (boss) inner = `<img class="face" src="${BOSS_ART[levelDef(n).boss][0]}" alt="">` + inner;
     if (st) inner += `<span class="st">${[0, 1, 2].map(i => `<i${i < st ? ' class="on"' : ''}>★</i>`).join('')}</span>`;
-    const cls = 'node' + (boss ? ' boss' : ` t${tier}`) + (tier === 4 ? ' hard' : '') + (!open ? ' lock' : n === cur && !st ? ' cur' : '') + (hop && n === pinAt && !st ? ' pre' : '');
+    const cls = 'node' + (boss ? ' boss' : '') + (tier === 4 ? ' hard' : '') + (!open ? ' lock' : n === cur && !st ? ' cur' : '') + (hop && n === pinAt && !st ? ' pre' : '');
     const label = !open ? L(`Level ${n}, locked`, `Niveau ${n}, verrouillé`, `Nivel ${n}, bloqueado`, `Nível ${n}, bloqueado`, `Level ${n}, gesperrt`) : L(`Level ${n}, ${st} of 3 stars`, `Niveau ${n}, ${st} étoile${st > 1 ? 's' : ''} sur 3`, `Nivel ${n}, ${st} de 3 estrellas`, `Nível ${n}, ${st} de 3 estrelas`, `Level ${n}, ${st} von 3 Sternen`) + (tier ? ', ' + tr(TIERS[tier]) : '');
     html += `<button type="button" class="${cls}" data-n="${n}" style="left:${pos[n][0].toFixed(1)}px;top:${ty(pos[n][1]).toFixed(1)}px" aria-label="${label}"${open ? '' : ' disabled'}>${inner}</button>`;
   }
