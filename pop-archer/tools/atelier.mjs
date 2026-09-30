@@ -166,10 +166,10 @@ ${lines.join('\n')}
 }
 
 /* ---------- Le robot : chaque niveau joué dans le vrai jeu ---------- */
-// Le robot joue à chaque pas de la boucle du jeu (et pas sur une minuterie) : ses résultats ne dépendent
-// pas de la charge de la machine.
+// Le robot décide tous les 5 pas de la boucle du jeu (environ 40 ms de jeu, un temps de réaction humain)
+// et pas sur une minuterie : ses résultats ne dépendent pas de la charge de la machine.
 const HOOK = `window.__t={adv:n=>startRun('adv',n),st:()=>({state,level,timeLeft,timeMax,balls:balls.length,boss:!!boss}),bot:on=>{window.__on=on;}};
-window.__bot=()=>{if(!window.__on)return;const p=players[0];if(!p)return;p.inv=99;
+window.__bot=()=>{if(!window.__on||(window.__k=(window.__k||0)+1)%5)return;const p=players[0];if(!p)return;p.inv=99;
   let t=balls.filter(b=>!blocks.some(k=>k.t==='g'&&k.x<p.x!==k.x<b.x)).sort((a,c)=>Math.abs(a.x-p.x)-Math.abs(c.x-p.x))[0]||balls[0];
   if(!t&&boss)t={x:boss.x,s:4};if(!t){kb.l=kb.r=false;return;}const dx=t.x-p.x;kb.l=dx<-6;kb.r=dx>6;if(Math.abs(dx)<RAD[t.s]+4)fireQueued=true;};
 `;
