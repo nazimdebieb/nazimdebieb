@@ -296,6 +296,31 @@ body.onmap .mid{visibility:hidden}
   #tLang{grid-column:1 / -1}
 }
 .toggle b{font-family:var(--display);font-weight:400;color:var(--gold)}
+/* Entraînement : choix du niveau, de la règle, puis outils en partie */
+.btn.train{background:#2fb89a;color:#fff;box-shadow:0 4px 0 #1b7a66}
+.btn.train:active{box-shadow:0 1px 0 #1b7a66}
+.train-o{justify-content:flex-start;gap:1.6cqh;overflow-y:auto}
+.thead{display:flex;align-items:center;justify-content:space-between;gap:2cqw;width:min(100%,90cqw)}
+.thead .title2{flex:1}
+.thead .info{min-width:12cqw;font-weight:800;color:var(--gold);font-size:min(2.2cqw,4.4cqh);text-align:right}
+.tsec{display:flex;flex-direction:column;align-items:center;gap:.9cqh;width:min(100%,90cqw)}
+.tsec h3{margin:0;font-family:var(--display);font-weight:400;font-size:min(2.6cqw,5cqh);color:var(--gold)}
+.chips{display:flex;gap:.9cqw;flex-wrap:wrap;justify-content:center}
+.chip{display:inline-flex;align-items:center;gap:.35em;padding:.4em .8em;border:0;border-radius:99px;cursor:pointer;
+  font-family:var(--body);font-weight:800;font-size:min(2.1cqw,4.2cqh);color:var(--ink);background:var(--cab-hi);box-shadow:inset 0 0 0 2px var(--edge)}
+.chip[aria-pressed="true"]{background:var(--gold);color:var(--cab);box-shadow:none}
+.chip:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.chip .dot{flex:none;border-radius:50%;box-shadow:inset -.12em -.12em 0 rgba(0,0,0,.25),0 0 0 1px rgba(255,255,255,.35)}
+.lvlpick{display:flex;align-items:center;gap:1cqw;width:min(100%,70cqw)}
+.lvlpick input{flex:1;min-width:0;accent-color:var(--gold);height:1.6em}
+.lvlpick .btn{padding:.4em .8em .3em}
+.lvlname{margin:0;font-weight:800;color:var(--ink);font-size:min(2.4cqw,4.6cqh)}
+.tpane{display:flex;flex-direction:column;align-items:center;gap:1.6cqh;width:100%}
+.tpane .cards{grid-template-columns:repeat(auto-fill,minmax(14cqw,1fr));max-height:none;overflow:visible}
+.tpane .card{font-size:min(1.9cqw,3.8cqh)}
+.tpane .card .art,.tpane .card .art img{height:min(7.5cqw,13cqh)}
+.train-o .help{font-size:min(2cqw,4cqh)}
+@container (max-height:480px){ .train-o{gap:1.1cqh;padding-bottom:3cqh} .tsec{gap:.6cqh} .chip{font-size:min(2cqw,3.9cqh)} }
 /* Tutoriel : la commande à utiliser clignote */
 .hint{animation:hint 1s ease-in-out infinite}
 @keyframes hint{50%{box-shadow:0 0 0 4px var(--gold),0 0 18px var(--gold)}}
@@ -380,6 +405,9 @@ body[data-state="ready"] .coinpill,body[data-state="play"] .coinpill,body[data-s
         <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3a7 7 0 0 1 6.6 4.7l1.4-.8-.6 4.2-3.6-2.2 1.3-.7A5 5 0 0 0 5.2 8.6L3.3 8A7 7 0 0 1 10 3zm-6.6 9.3 3.6 2.2-1.3.7a5 5 0 0 0 9.1-1.4l1.9.6A7 7 0 0 1 3.4 12.3l-1.4.8z"/></svg>
       </button>
       <button class="iconbtn" id="btnSound" type="button" aria-label="Settings"></button>
+      <button class="iconbtn" id="btnTrain" type="button" aria-label="Training tools" hidden>
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M13.6 2.2a4.4 4.4 0 0 0-4.9 5.9L2.6 14.2a1.9 1.9 0 0 0 2.7 2.7l6.1-6.1a4.4 4.4 0 0 0 5.9-4.9l-2.6 2.6-2.4-.4-.4-2.4z"/></svg>
+      </button>
       <button class="iconbtn" id="btnPause" type="button" aria-label="Pause">
         <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="4" y="3" width="4.5" height="14" rx="1.2"/><rect x="11.5" y="3" width="4.5" height="14" rx="1.2"/></svg>
       </button>
@@ -403,6 +431,7 @@ body[data-state="ready"] .coinpill,body[data-state="play"] .coinpill,body[data-s
             <button class="btn" id="bAdv" type="button">Adventure <small id="advStars"></small></button>
             <button class="btn alt" id="bArc" type="button">Survival</button>
             <button class="btn daily" id="bDaily" type="button">Daily <small id="dailyMark"></small></button>
+            <button class="btn train" id="bTrain" type="button" hidden>Training</button>
           </div>
           <div class="row">
             <button class="btn ghost sm" id="bShop" type="button">Shop</button>
@@ -474,6 +503,51 @@ body[data-state="ready"] .coinpill,body[data-state="play"] .coinpill,body[data-s
             <button class="btn" id="bSetDone" type="button">Done</button>
             <button class="btn ghost sm" id="bReset" type="button">Reset progress</button>
           </div>
+        </div>
+
+        <div class="overlay train-o" id="trainO" hidden>
+          <div class="thead">
+            <button class="btn ghost sm" id="bTrainBack" type="button">Menu</button>
+            <h2 class="title2">Training</h2>
+            <span class="info"></span>
+          </div>
+          <section class="tsec">
+            <div class="lvlpick">
+              <button class="btn ghost sm" id="tLvW" type="button" aria-label="Previous world">«</button>
+              <button class="btn ghost sm" id="tLvM" type="button" aria-label="Previous level">−</button>
+              <input type="range" id="tLv" min="1" max="12" value="1" aria-label="Level">
+              <button class="btn ghost sm" id="tLvP" type="button" aria-label="Next level">+</button>
+              <button class="btn ghost sm" id="tLvN" type="button" aria-label="Next world">»</button>
+            </div>
+            <p class="lvlname" id="tLvName"></p>
+          </section>
+          <section class="tsec">
+            <h3>Daily challenge rule</h3>
+            <div class="chips" id="tMods"></div>
+          </section>
+          <section class="tsec">
+            <div class="chips" id="tOpts"></div>
+          </section>
+          <div class="row">
+            <button class="btn" id="bTrainPlay" type="button">Play level</button>
+            <button class="btn alt" id="bTrainBox" type="button">Sandbox</button>
+          </div>
+          <p class="help">Nothing counts here: no stars, coins, records or trophies. In a game, the wrench opens the tools.</p>
+        </div>
+
+        <div class="overlay train-o" id="toolO" hidden>
+          <div class="thead">
+            <button class="btn sm" id="bToolGo" type="button">Resume</button>
+            <h2 class="title2">Tools</h2>
+            <span class="info" id="toolInfo"></span>
+          </div>
+          <div class="tabs" id="toolTabs" role="tablist">
+            <button class="tab" type="button" role="tab" data-tab="bubbles">Bubbles</button>
+            <button class="tab" type="button" role="tab" data-tab="items">Power-ups</button>
+            <button class="tab" type="button" role="tab" data-tab="bosses">Bosses</button>
+            <button class="tab" type="button" role="tab" data-tab="opts">Options</button>
+          </div>
+          <div class="tpane" id="toolPane" role="tabpanel"></div>
         </div>
 
         <div class="overlay" id="pauseO" hidden>
@@ -1050,6 +1124,45 @@ const T = {
   // régions
   'Hard level': ['Niveau difficile', 'Nivel difícil', 'Nível difícil', 'Schweres Level'],
   'Stone Golem': ['Golem de pierre', 'Gólem de Piedra', 'Golem de Pedra', 'Steingolem'],
+  // entraînement
+  'Training': ['Entraînement', 'Entrenamiento', 'Treino', 'Training'],
+  'Level': ['Niveau', 'Nivel', 'Nível', 'Level'],
+  'Daily challenge rule': ['Règle du défi du jour', 'Regla del reto diario', 'Regra do desafio diário', 'Regel der Tagesaufgabe'],
+  'None': ['Aucune', 'Ninguna', 'Nenhuma', 'Keine'],
+  'Invincible': ['Invincible', 'Invencible', 'Invencível', 'Unverwundbar'],
+  'Infinite time': ['Temps infini', 'Tiempo infinito', 'Tempo infinito', 'Unendlich Zeit'],
+  'Play level': ['Jouer le niveau', 'Jugar el nivel', 'Jogar o nível', 'Level spielen'],
+  'Sandbox': ['Bac à sable', 'Caja de arena', 'Caixa de areia', 'Sandkasten'],
+  'Nothing counts here: no stars, coins, records or trophies. In a game, the wrench opens the tools.': ['Rien ne compte ici : ni étoiles, ni pièces, ni records, ni trophées. En partie, la clé ouvre les outils.', 'Aquí nada cuenta: ni estrellas, ni monedas, ni récords, ni trofeos. En partida, la llave abre las herramientas.', 'Aqui nada conta: nem estrelas, nem moedas, nem recordes, nem troféus. Na partida, a chave abre as ferramentas.', 'Hier zählt nichts: keine Sterne, Münzen, Rekorde oder Trophäen. Im Spiel öffnet der Schlüssel die Werkzeuge.'],
+  'the wrench opens the tools': ['la clé ouvre les outils', 'la llave abre las herramientas', 'a chave abre as ferramentas', 'der Schlüssel öffnet die Werkzeuge'],
+  'Training mode unlocked: the button is on the menu.': ['Mode Entraînement débloqué : le bouton est sur le menu.', 'Modo Entrenamiento desbloqueado: el botón está en el menú.', 'Modo Treino desbloqueado: o botão está no menu.', 'Trainingsmodus freigeschaltet: Der Knopf ist im Menü.'],
+  'Training mode hidden. Tap the logo 5 times to bring it back.': ['Mode Entraînement caché. Touche 5 fois le logo pour le retrouver.', 'Modo Entrenamiento oculto. Toca el logo 5 veces para recuperarlo.', 'Modo Treino oculto. Toque no logo 5 vezes para trazê-lo de volta.', 'Trainingsmodus versteckt. Tippe 5-mal aufs Logo, um ihn zurückzuholen.'],
+  'Tools': ['Outils', 'Herramientas', 'Ferramentas', 'Werkzeuge'],
+  'Bubbles': ['Bulles', 'Burbujas', 'Bolhas', 'Blasen'],
+  'Power-ups': ['Bonus', 'Poderes', 'Poderes', 'Extras'],
+  'Bosses': ['Boss', 'Jefes', 'Chefes', 'Bosse'],
+  'Options': ['Options', 'Opciones', 'Opções', 'Optionen'],
+  'Size': ['Taille', 'Tamaño', 'Tamanho', 'Größe'],
+  'Type': ['Type', 'Tipo', 'Tipo', 'Art'],
+  'Tiny': ['Mini', 'Mini', 'Mini', 'Mini'],
+  'Small': ['Petite', 'Pequeña', 'Pequena', 'Klein'],
+  'Medium': ['Moyenne', 'Mediana', 'Média', 'Mittel'],
+  'Big': ['Grosse', 'Grande', 'Grande', 'Groß'],
+  'Huge': ['Énorme', 'Enorme', 'Enorme', 'Riesig'],
+  'Titan': ['Titan', 'Titán', 'Titã', 'Titan'],
+  'Normal bubble': ['Bulle normale', 'Burbuja normal', 'Bolha normal', 'Normale Blase'],
+  'Drop': ['Lâcher', 'Soltar', 'Soltar', 'Abwerfen'],
+  'Drop ×3': ['Lâcher ×3', 'Soltar ×3', 'Soltar ×3', 'Abwerfen ×3'],
+  'Clear bubbles': ['Vider les bulles', 'Quitar burbujas', 'Limpar bolhas', 'Blasen entfernen'],
+  'Normal arrow': ['Flèche normale', 'Flecha normal', 'Flecha normal', 'Normaler Pfeil'],
+  'Removes every power-up': ['Enlève tous les bonus', 'Quita todos los poderes', 'Remove todos os poderes', 'Entfernt alle Extras'],
+  'Take': ['Prendre', 'Tomar', 'Pegar', 'Nehmen'],
+  'Fight': ['Combattre', 'Luchar', 'Lutar', 'Kämpfen'],
+  'Mega': ['Méga', 'Mega', 'Mega', 'Mega'],
+  'Remove boss': ['Enlever le boss', 'Quitar jefe', 'Remover chefe', 'Boss entfernen'],
+  'Scenery': ['Décor', 'Escenario', 'Cenário', 'Kulisse'],
+  'Restart': ['Recommencer', 'Reiniciar', 'Reiniciar', 'Neustart'],
+  'Clear everything': ['Tout vider', 'Vaciar todo', 'Limpar tudo', 'Alles leeren'],
 };
 const COLS = ['fr', 'es', 'pt', 'de'];
 // textes des régions (noms des mondes, conseils…), fournis par levels/region-XX.js
@@ -1326,8 +1439,13 @@ function paintSound() {
 
 /* ---------- État du jeu ---------- */
 let mode = 0, level = 1, state = 'menu', stateT = 0, paused = false;
-// kind : 'adv' (Aventure : niveau par niveau, 3 cœurs, étoiles) ou 'surv' (Survie : vagues sans fin, 3 vies, record)
+// kind : 'adv' (Aventure : niveau par niveau, 3 cœurs, étoiles), 'surv' (Survie : vagues sans fin, 3 vies, record),
+// 'daily' (défi du jour) ou 'train' (Entraînement : tout au choix, rien n'est enregistré)
 let kind = 'adv';
+// Entraînement (voir plus bas) : réglages gardés d'une fois sur l'autre ; « endless » = sans chrono.
+const train = Object.assign({ lv: 1, mod: '', god: true, inf: true, box: false }, store.get('trainCfg', {}));
+const trainMod = () => DAILY_MODS.find(m => m.id === train.mod) || null;
+const endless = () => kind === 'train' && (train.inf || train.box);
 // Un monde = 12 niveaux ; ajouter un monde (nom, 2 décors, 12 niveaux, un boss) allonge la carte tout seul.
 const WORLD = 12, WORLDS = WORLD_NAMES.length, ADV_COUNT = WORLDS * WORLD, ADV_HEARTS = 3;
 const worldOf = n => Math.floor((n - 1) / WORLD);
@@ -1375,7 +1493,7 @@ function firstLevelOf(v) {
 }
 function loadLevel() {
   useWidth();
-  const def = kind === 'daily' ? dailyDef() : levelDef(level);
+  const def = kind === 'daily' ? dailyDef() : kind === 'train' ? trainDef() : levelDef(level);
   scene = SCENES[def.boss && !def.mega && BOSSES[def.boss].scene != null ? BOSSES[def.boss].scene : (worldOf(level) % WORLDS) * 2 + (level - 1) % 2];
   blocks = (def.k || []).map(wide);
   // plateformes mobiles : chacune garde sa position de départ, son trajet suit la largeur du monde
@@ -1403,6 +1521,7 @@ function loadLevel() {
   const fresh = def.b.map(d => d[4]).find(v => v && firstLevelOf(v) === level);
   if (fresh) unlockTxt = `${VARIANTS[fresh].name}: ${VARIANTS[fresh].tip}`;
   if (kind === 'daily') unlockTxt = `${dailyPick().mod.name}: ${dailyPick().mod.tip}`;
+  if (kind === 'train' && (train.box || trainMod())) unlockTxt = train.box ? 'Sandbox: the wrench opens the tools' : `${trainMod().name}: ${trainMod().tip}`;
   setState('ready', unlockTxt ? 2.6 : 1.7);
   renderBg();
 }
@@ -1439,7 +1558,8 @@ function startRun(k, lv) {
   releaseJoy();
   paused = false; show(null);
   if (k === 'surv') startSurvival(); else loadLevel();
-  if (k === 'daily' && dailyPick().mod.id === 'glass') players[0].lives = 1;
+  const rule = k === 'daily' ? dailyPick().mod : k === 'train' ? trainMod() : null;
+  if (rule && rule.id === 'glass') players[0].lives = 1;
   tut = null;
   if (k === 'adv' && lv === 1) startTutorial(); else paintHint();
 }
@@ -1573,16 +1693,18 @@ function openMap(focus) {
   show(mapO);
   drawMap(focus, true);
 }
-function quitRun() { if (kind === 'adv') openMap(level); else toMenu(); }
+function quitRun() { if (kind === 'adv') openMap(level); else if (kind === 'train') openTrain(); else toMenu(); }
+// bouton « retour » des écrans de pause et de fin
+const backLabel = () => kind === 'adv' ? 'Map' : kind === 'train' ? 'Training' : 'Menu';
 
 function setState(s, t) { state = s; stateT = t; document.body.dataset.state = s; }
-function show(el) { for (const o of [menuO, mapO, pauseO, overO, prepO, shopO, achO, setO]) o.hidden = o !== el; document.body.classList.toggle('onmap', el === mapO); if (el) releaseJoy(); }
+function show(el) { for (const o of [menuO, mapO, pauseO, overO, prepO, shopO, achO, setO, trainO, toolO]) o.hidden = o !== el; document.body.classList.toggle('onmap', el === mapO); if (el) releaseJoy(); }
 
 function togglePause(force) {
   if (state === 'menu' || state === 'over') return;
   paused = force === undefined ? !paused : force;
   music.duck();
-  $('bQuit').textContent = kind === 'adv' ? 'Map' : 'Menu';
+  $('bQuit').textContent = backLabel();
   show(paused ? pauseO : null);
   if (paused) $('bResume').focus({ preventScroll: true });
 }
@@ -1597,10 +1719,10 @@ function update(dt) {
     movePlayers(dt, false);
     if (stateT <= 0) { setState('play', 0); fireQueued = false; }
   } else if (state === 'play') {
-    MONEY.playT += dt;
+    if (kind !== 'train') MONEY.playT += dt;
     const learning = tut && tut.step < 2;
     stepTutorial(dt, players[0]);
-    if (kind === 'surv') updateSurvival(dt); else if (!learning) { timeLeft -= dt; if (dropCd > 0) dropCd -= dt; }
+    if (kind === 'surv') updateSurvival(dt); else if (!learning) { if (!endless()) timeLeft -= dt; if (dropCd > 0) dropCd -= dt; }
     const frozen = freezeT > 0 || learning, slow = slowT > 0 ? .45 : 1;
     if (slowT > 0) slowT -= dt;
     if (frozen) freezeT -= dt; else moveBalls(dt * slow);
@@ -1616,7 +1738,7 @@ function update(dt) {
     touchPlayers();
     if (boss || shots.length || beams.length) bossTouch();
     if (state === 'play' && kind !== 'surv') {
-      if (balls.length === 0 && !boss) levelClear();
+      if (balls.length === 0 && !boss && !(kind === 'train' && train.box)) levelClear();
       else if (timeLeft <= 0) timeUp();
     }
   } else if (state === 'dying') {
@@ -1926,6 +2048,7 @@ function hitPlayer(p) {
 
 // Bulle noire : ni le bouclier ni les cœurs ne protègent, la partie est perdue d'un coup.
 function blackHit(p) {
+  if (godSave(p)) return;
   p.shield = false; p.lives = 1;
   hurt(p);
   deathMsg = 'The black bubble got you!';
@@ -1935,6 +2058,7 @@ function blackHit(p) {
 }
 // Chaque touche coûte un cœur (une vie en Survie) ; sans cœur, c'est perdu.
 function hurt(p) {
+  if (godSave(p)) return;
   levelHit = true; p.lives--;
   sfx.hit(); vibe(p.lives > 0 ? 120 : [120, 80, 260]);
   burst(p.x, FLOOR - 15, COL[p.id].main, 14);
@@ -1961,7 +2085,8 @@ function levelClear() {
   if (kind === 'daily') {
     prevStars = 0; dailyStreak = winDaily();
     if (dailyStreak) runCoins += EARN.dailyWin + EARN.dailyStep * (Math.min(dailyStreak, 7) - 1);
-  } else {
+  } else if (kind === 'train') prevStars = 0;
+  else {
     prevStars = starsOf(level);
     if (lastStars > prevStars) { adv[level] = lastStars; store.set('adv', adv); }
   }
@@ -1999,7 +2124,7 @@ function gameOver() {
 
 function showResult() {
   const fast = !levelHit && clearTime > timeMax / 2;
-  lastOver = 'clear'; ADS.clears++;
+  if (kind === 'train') lastOver = 'train'; else { lastOver = 'clear'; ADS.clears++; }
   paintOver({
     coins: payRun(),
     title: kind === 'daily' ? 'Daily challenge done!' : `Level ${level} cleared!`,
@@ -2007,7 +2132,7 @@ function showResult() {
     crit: [['Level cleared', true], ['No hits taken', !levelHit], ['No hits, with over half the time left', fast]],
     record: kind === 'daily' ? (dailyStreak ? `Daily streak: ${dailyStreak} day${dailyStreak > 1 ? 's' : ''}!` : 'Already done today: come back tomorrow!')
       : prevStars && lastStars > prevStars ? 'New star record!' : '',
-    next: kind === 'adv' && level < ADV_COUNT, again: 'Play again', menu: kind === 'daily' ? 'Menu' : 'Map',
+    next: (kind === 'adv' || kind === 'train') && level < ADV_COUNT, again: 'Play again', menu: backLabel(),
   });
 }
 
@@ -2017,7 +2142,7 @@ function showFail() {
     coins: payRun(),
     title: 'Failed!',
     result: deathMsg === "Time's up!" ? 'Time ran out.' : deathMsg.startsWith('The black') ? 'You touched a black bubble.' : 'You ran out of hearts.',
-    again: 'Try again', menu: kind === 'daily' ? 'Menu' : 'Map',
+    again: 'Try again', menu: backLabel(),
   });
   sfx.over();
 }
@@ -3540,7 +3665,7 @@ function draw() {
   if (state !== 'menu') drawPowers();
   if (state === 'ready') {
     if (kind === 'surv') banner('Survival', stateT > .45 ? 'Ready?' : 'Go!');
-    else banner(boss ? 'Boss!' : kind === 'daily' ? 'Daily challenge' : 'Level ' + level, boss ? boss.name : unlockTxt && stateT > .45 ? unlockTxt : stateT > .45 ? 'Ready?' : 'Go!');
+    else banner(boss ? 'Boss!' : kind === 'daily' ? 'Daily challenge' : kind === 'train' && train.box ? 'Sandbox' : 'Level ' + level, boss ? boss.name : unlockTxt && stateT > .45 ? unlockTxt : stateT > .45 ? 'Ready?' : 'Go!');
   } else if (state === 'clear') banner('Well done!', '');
   else if (state === 'dying') banner(deathMsg, '');
   else if (state === 'play' && ann) banner(ann.big, ann.small);
@@ -3621,11 +3746,13 @@ function hud() {
   }
   const surv = kind === 'surv' && state !== 'menu';
   setHud('lvl', v => $('lvl').textContent = v, state === 'menu' ? 'Pop Archer'
-    : surv ? 'Survival · ' + clock(survT) : kind === 'daily' ? 'Daily · ' + dailyPick().mod.name : 'Level ' + level + (level % 12 === 0 ? ' · Boss' : ''));
+    : surv ? 'Survival · ' + clock(survT) : kind === 'daily' ? 'Daily · ' + dailyPick().mod.name
+    : (kind === 'train' ? 'Training · ' : '') + (kind === 'train' && train.box ? 'Sandbox' : 'Level ' + level + (level % 12 === 0 ? ' · Boss' : '')));
+  setHud('tools', v => $('btnTrain').hidden = !v, kind === 'train' && mode === 1 && state !== 'menu' && state !== 'over');
   // En Survie, la jauge se remplit jusqu'au prochain boss.
-  const frac = state === 'menu' ? 1 : surv ? (boss ? 1 : 1 - bossT / BOSS_EVERY) : clamp(timeLeft / timeMax, 0, 1);
+  const frac = state === 'menu' || endless() ? 1 : surv ? (boss ? 1 : 1 - bossT / BOSS_EVERY) : clamp(timeLeft / timeMax, 0, 1);
   setHud('t', v => $('tbar').style.transform = `scaleX(${v})`, frac.toFixed(3));
-  setHud('low', v => $('timer').classList.toggle('low', v), state !== 'menu' && (surv ? !!boss : timeLeft < 10));
+  setHud('low', v => $('timer').classList.toggle('low', v), state !== 'menu' && (surv ? !!boss : !endless() && timeLeft < 10));
 }
 function paintBest() {
   const top = boardOf()[0];
@@ -3793,8 +3920,8 @@ new ResizeObserver(() => {
 }).observe(saga);
 $('bResume').addEventListener('click', () => togglePause(false));
 $('bQuit').addEventListener('click', quitRun);
-$('bNext').addEventListener('click', () => leaveResults(() => prep('adv', level + 1)));
-$('bAgain').addEventListener('click', () => leaveResults(() => prep(kind, level)));
+$('bNext').addEventListener('click', () => leaveResults(() => kind === 'train' ? trainGo(level + 1) : prep('adv', level + 1)));
+$('bAgain').addEventListener('click', () => leaveResults(() => kind === 'train' ? trainGo(level) : prep(kind, level)));
 $('bMenu').addEventListener('click', () => leaveResults(quitRun));
 $('btnPause').addEventListener('click', () => togglePause());
 // Réglages : pendant une partie, on met d'abord en pause ; « Done » revient à l'écran d'avant.
@@ -3802,7 +3929,7 @@ let setBack = null;
 $('btnSound').addEventListener('click', () => {
   if (!setO.hidden) { closeSettings(); return; }
   if (mode && !paused && state !== 'menu' && state !== 'over') togglePause(true);
-  setBack = [menuO, mapO, pauseO, overO, prepO, shopO, achO].find(o => !o.hidden) || null;
+  setBack = [menuO, mapO, pauseO, overO, prepO, shopO, achO, trainO, toolO].find(o => !o.hidden) || null;
   paintSound(); show(setO); $('tSfx').focus({ preventScroll: true });
 });
 function closeSettings() { show(setBack); }
@@ -3821,10 +3948,161 @@ $('tLang').addEventListener('click', () => {
 $('bReset').addEventListener('click', () => message('Reset progress?',
   'Levels, stars, scores, coins, outfits and purchases will all be erased. This cannot be undone.',
   [['Erase everything', () => {
-    const keep = ['muted', 'music', 'vibe', 'flip', 'tut', 'lang'];
+    const keep = ['muted', 'music', 'vibe', 'flip', 'tut', 'lang', 'band', 'train', 'trainCfg'];
     try { for (const k of Object.keys(localStorage)) if (k.startsWith('eclate-bulles:') && !keep.includes(k.slice(14))) localStorage.removeItem(k); } catch (e) {}
     location.reload();
   }, 'alt'], ['Cancel', null, 'ghost']]));
+
+/* ---------- Entraînement ---------- */
+// Mode caché, pour essayer tout le jeu sans rien débloquer : n'importe quel niveau, n'importe quelle
+// règle du défi du jour, et en partie une boîte à outils (bulles, bonus, armes, boss, décors).
+// Rien n'y compte : ni étoiles, ni pièces, ni records, ni trophées. On l'affiche en touchant 5 fois le logo.
+const saveTrain = () => store.set('trainCfg', train);
+function trainDef() { return train.box ? { b: [], k: [] } : withMod(levelDef(level), trainMod()); }
+// Invincible : la bulle (même noire) ou le tir rebondit sur l'archer sans lui coûter de cœur.
+function godSave(p) {
+  if (kind !== 'train' || !train.god) return false;
+  p.inv = 1.2; sfx.shield();
+  burst(p.x, FLOOR - 15, '#9eeaff', 10);
+  float(p.x, FLOOR - 44, 'Invincible', '#9eeaff');
+  return true;
+}
+function paintTrainBtn() { $('bTrain').hidden = !store.get('train', false); }
+let logoTaps = [];
+document.querySelector('#menuO .logo').addEventListener('click', () => {
+  const t = performance.now();
+  logoTaps = logoTaps.filter(x => t - x < 3000); logoTaps.push(t);
+  if (logoTaps.length < 5) return;
+  logoTaps = [];
+  const on = !store.get('train', false);
+  store.set('train', on); paintTrainBtn(); sfx.pick(); vibe(40);
+  message('Training', on ? 'Training mode unlocked: the button is on the menu.' : 'Training mode hidden. Tap the logo 5 times to bring it back.', [['OK']]);
+});
+paintTrainBtn();
+
+const chip = (label, on, fn, dot) => {
+  const b = document.createElement('button');
+  b.type = 'button'; b.className = 'chip'; b.setAttribute('aria-pressed', !!on);
+  b.innerHTML = (dot ? `<i class="dot" style="background:${dot[0]};width:${dot[1]}em;height:${dot[1]}em"></i>` : '') + `<span>${label}</span>`;
+  b.addEventListener('click', fn);
+  return b;
+};
+function openTrain() {
+  menuScene();
+  renderTrain();
+  show(trainO);
+  $('bTrainPlay').focus({ preventScroll: true });
+}
+function renderTrain() {
+  const n = train.lv = clamp(train.lv, 1, ADV_COUNT), d = levelDef(n), w = worldOf(n);
+  $('tLv').max = ADV_COUNT; $('tLv').value = n;
+  $('tLvName').textContent = [`Level ${n}`, `World ${w + 1}`, WORLD_NAMES[w],
+    ...(d.boss ? [(d.mega ? 'Mega ' : '') + BOSSES[d.boss].name] : d.hard ? ['Hard level'] : [])].join(' · ');
+  $('tMods').replaceChildren(chip('None', !train.mod, () => { train.mod = ''; saveTrain(); renderTrain(); }),
+    ...DAILY_MODS.map(m => chip(m.name, train.mod === m.id, () => { train.mod = m.id; saveTrain(); renderTrain(); }, m.v ? [VARIANTS[m.v].c, .9] : null)));
+  $('tOpts').replaceChildren(...trainToggles(renderTrain));
+}
+const trainToggles = redraw => [
+  chip('Invincible', train.god, () => { train.god = !train.god; saveTrain(); redraw(); }),
+  chip('Infinite time', train.inf, () => { train.inf = !train.inf; saveTrain(); redraw(); }),
+];
+function trainGo(n) {
+  train.lv = clamp(n, 1, ADV_COUNT); saveTrain();
+  startRun('train', train.lv);
+}
+const setLv = n => { train.lv = clamp(n, 1, ADV_COUNT); saveTrain(); renderTrain(); sfx.pick(); };
+$('bTrain').addEventListener('click', openTrain);
+$('bTrainBack').addEventListener('click', toMenu);
+$('tLv').addEventListener('input', e => { train.lv = +e.target.value; saveTrain(); renderTrain(); });
+$('tLvM').addEventListener('click', () => setLv(train.lv - 1));
+$('tLvP').addEventListener('click', () => setLv(train.lv + 1));
+$('tLvW').addEventListener('click', () => setLv(train.lv % WORLD === 1 ? train.lv - WORLD : worldOf(train.lv) * WORLD + 1));
+$('tLvN').addEventListener('click', () => setLv((worldOf(train.lv) + 1) * WORLD + 1));
+$('bTrainPlay').addEventListener('click', () => { train.box = false; trainGo(train.lv); });
+$('bTrainBox').addEventListener('click', () => { train.box = true; trainGo(train.lv); });
+
+// Boîte à outils (en partie) : le jeu est en pause tant qu'elle est ouverte.
+const SIZE_NAMES = ['Tiny', 'Small', 'Medium', 'Big', 'Huge', 'Titan'];
+let toolTab = 'bubbles', toolSize = 3, toolV = null;
+function openTools() {
+  if (!mode || state === 'menu' || state === 'over') return;
+  paused = true; music.duck();
+  $('toolInfo').textContent = '';
+  renderTools(); show(toolO);
+  $('bToolGo').focus({ preventScroll: true });
+}
+function closeTools() { paused = false; show(null); }
+const toolSay = s => { $('toolInfo').textContent = s; sfx.pick(); };
+function dropBubble(s, v) {
+  const r = RAD[s];
+  balls.push(makeBall([s, (r + Math.random() * (W - 2 * r)) / W, Math.random() < .5 ? -1 : 1, r + 4, v], scene.ball));
+}
+function spawnBoss(type, mega) {
+  boss = makeBoss(type, mega); shots = []; beams = [];
+  if (!endless()) timeMax = timeLeft = Math.max(timeLeft, timeFor({ boss: type, mega, b: [] }));
+  closeTools(); setState('ready', 1.6);
+}
+function setScene(i) {
+  scene = SCENES[i];
+  wind = dark = null; windT = 4; darkT = 6; geyserT = 3; beams = beams.filter(b => !b.geyser);
+  renderBg(); renderTools();
+}
+function renderTools() {
+  for (const b of $('toolTabs').children) b.setAttribute('aria-selected', b.dataset.tab === toolTab);
+  const pane = $('toolPane'), p = players[0], sec = (title, ...kids) => {
+    const el = document.createElement('section');
+    el.className = 'tsec';
+    if (title) { const h = document.createElement('h3'); h.textContent = title; el.append(h); }
+    el.append(...kids);
+    return el;
+  };
+  const chips = (...kids) => { const el = document.createElement('div'); el.className = 'chips'; el.append(...kids); return el; };
+  const btns = list => {
+    const el = document.createElement('div'); el.className = 'row';
+    el.append(...list.map(([label, fn, cls]) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'btn sm' + (cls ? ' ' + cls : ''); b.innerHTML = label;
+      b.addEventListener('click', fn);
+      return b;
+    }));
+    return el;
+  };
+  const grid = cards => { const el = document.createElement('div'); el.className = 'cards'; el.append(...cards); return el; };
+  if (toolTab === 'bubbles') {
+    pane.replaceChildren(
+      sec('Size', chips(...SIZE_NAMES.map((name, s) => chip(name, toolSize === s, () => { toolSize = s; renderTools(); }, ['#fff3e6', .45 + s * .17])))),
+      sec('Type', chips(chip('Normal bubble', !toolV, () => { toolV = null; renderTools(); }, [scene.ball, .9]),
+        ...Object.keys(VARIANTS).map(v => chip(VARIANTS[v].name, toolV === v, () => { toolV = v; renderTools(); }, [VARIANTS[v].c, .9])))),
+      btns([
+        ['Drop', () => { dropBubble(toolSize, toolV); toolSay(L(`${balls.length} on screen`, `${balls.length} à l’écran`, `${balls.length} en pantalla`, `${balls.length} na tela`, `${balls.length} im Bild`)); }],
+        ['Drop ×3', () => { for (let i = 0; i < 3; i++) dropBubble(toolSize, toolV); toolSay(L(`${balls.length} on screen`, `${balls.length} à l’écran`, `${balls.length} en pantalla`, `${balls.length} na tela`, `${balls.length} im Bild`)); }, 'alt'],
+        ['Clear bubbles', () => { balls = []; toolSay('✓'); }, 'ghost'],
+      ]));
+  } else if (toolTab === 'items') {
+    pane.replaceChildren(grid([
+      card({ art: '<img src="img/item-bonus.webp" alt="" style="filter:grayscale(1)">', name: 'Normal arrow', desc: 'Removes every power-up',
+        acts: [['Take', () => { p.weapon = 'normal'; p.power = null; p.star = p.x2 = 0; p.shield = false; slowT = freezeT = 0; toolSay('✓'); }]] }),
+      ...Object.keys(ITEM_BY).map(t => card({ art: `<img src="img/item-${t}.webp" alt="">`, name: ITEM_BY[t][3],
+        acts: [['Take', () => { applyItem(p, t); toolSay('✓'); }], ['Drop', () => { items.push({ type: t, x: clamp(p.x + (p.x < W / 2 ? 70 : -70), 10, W - 10), y: 40, vy: -80, t: 7 }); toolSay('✓'); }, 'ghost']] })),
+    ]));
+  } else if (toolTab === 'bosses') {
+    pane.replaceChildren(grid(Object.keys(BOSS_ART).map(t => card({ art: `<img src="${BOSS_ART[t][0]}" alt="">`, name: BOSSES[t].name,
+      acts: [['Fight', () => spawnBoss(t, false)], ['Mega', () => spawnBoss(t, true), 'alt']] }))),
+      btns([['Remove boss', () => { boss = null; shots = []; beams = []; toolSay('✓'); }, 'ghost']]));
+  } else {
+    pane.replaceChildren(
+      sec('', chips(...trainToggles(renderTools))),
+      sec('Scenery', chips(...SCENES.map((sc, i) => chip(WORLD_NAMES[i >> 1] + (i % 2 ? ' · 2' : ''), scene === sc, () => setScene(i), [sc.ball, .8])))),
+      btns([
+        ['Restart', () => trainGo(level)],
+        ['Clear everything', () => { balls = []; items = []; boss = null; shots = []; beams = []; toolSay('✓'); }, 'ghost'],
+        ['Training', openTrain, 'ghost'],
+      ]));
+  }
+}
+$('btnTrain').addEventListener('click', () => (toolO.hidden ? openTools() : closeTools()));
+$('bToolGo').addEventListener('click', closeTools);
+$('toolTabs').addEventListener('click', e => { const b = e.target.closest('.tab'); if (b) { toolTab = b.dataset.tab; renderTools(); toolO.scrollTop = 0; } });
 
 const logoImg = document.querySelector('.logo img');
 const noLogo = () => logoImg.parentNode.classList.add('noimg');
@@ -3878,6 +4156,7 @@ const owns = id => MONEY.owned.includes(id);
 // Pièces de la partie en cours, versées au joueur sur l'écran de fin.
 let runCoins = 0, lastEarn = 0, survPaid = 0, continued = false, lastOver = '', lastEntryId = 0;
 function payRun() {
+  if (kind === 'train') { runCoins = lastEarn = 0; return undefined; }
   lastEarn = runCoins; runCoins = 0;
   MONEY.coins += lastEarn; saveMoney();
   return lastEarn;
@@ -4073,9 +4352,11 @@ function dailyPick() {
   store.set('dailyPick', { key, level, mod: mod.id });
   return { level, mod };
 }
-function dailyDef() {
-  const { level: n, mod } = dailyPick(), base = levelDef(n);
+function dailyDef() { const { level: n, mod } = dailyPick(); return withMod(levelDef(n), mod); }
+// Applique une règle du défi du jour à un niveau (aussi utilisé par l'Entraînement).
+function withMod(base, mod) {
   const b = base.b.map(d => [...d]);
+  if (!mod) return { ...base, b };
   if (mod.v) for (const d of b) if (d[4] !== 'black') d[4] = mod.v;
   // en trois morceaux, une bulle donne vite beaucoup de bulles : on les prend une taille plus petites
   if (mod.id === 'green') for (const d of b) d[0] = Math.max(1, d[0] - 1);
@@ -4105,8 +4386,8 @@ function paintDaily() { $('dailyMark').textContent = dailyDone() ? '✓' : '★'
 // Trophées : chaque trophée a plusieurs paliers, chacun rapporte des pièces à réclamer.
 const STATS = Object.assign({ pops: 0, gold: 0, steel: 0, bomb: 0, flawless: 0, surv: 0, combo: 0 }, store.get('stats', {}));
 STATS.surv = Math.max(STATS.surv, ...boardOf().map(e => e.time));   // record déjà tenu avant les trophées
-function bump(k, n = 1) { STATS[k] += n; store.set('stats', STATS); checkAch(); }
-function best(k, v) { if (v > STATS[k]) { STATS[k] = v; store.set('stats', STATS); checkAch(); } }
+function bump(k, n = 1) { if (kind === 'train') return; STATS[k] += n; store.set('stats', STATS); checkAch(); }
+function best(k, v) { if (kind !== 'train' && v > STATS[k]) { STATS[k] = v; store.set('stats', STATS); checkAch(); } }
 const plural = (n, one, many) => `${fmt(n)} ${n === 1 ? one : many}`;
 const ACH = [
   { id: 'pops', icon: 'ach-bubbles', name: 'Bubble Popper', goal: n => L(`Pop ${plural(n, 'bubble', 'bubbles')}`, `Éclate ${plural(n, 'bulle', 'bulles')}`, `Revienta ${plural(n, 'burbuja', 'burbujas')}`, `Estoure ${plural(n, 'bolha', 'bolhas')}`, `Lass ${plural(n, 'Blase', 'Blasen')} platzen`), tiers: [100, 1000, 10000], pay: [50, 150, 500], val: () => STATS.pops },
@@ -4235,6 +4516,7 @@ function renderShop() {
 
 // Boutons de récompense sur l'écran de fin.
 function rewardButtons() {
+  if (kind === 'train') return [];
   if (lastOver === 'clear') {
     return lastEarn > 0 ? [['▶ Double coins', async function () {
       if (!(await showAd(true))) return;
