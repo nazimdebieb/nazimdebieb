@@ -6,7 +6,7 @@ Jeu d'arcade dans l'esprit de Pang / Bubble Trouble : on tire un harpon vers le 
 
 - le logo « Pop Archer » ;
 - les décors des 8 mondes, 2 ambiances chacun : forêt de jour et au couchant, désert de jour et au crépuscule, fonds marins clairs et grand fond, cosmos violet et bleu nuit, pics gelés de jour et sous les aurores boréales, volcan en éruption et grotte de lave, royaume des nuages de jour et au couchant, cour et grande salle du château hanté ;
-- les 8 boss : Bubble King, Great Storm, Ink Octopus, Void Eye, Frost Yeti, Lava Dragon, Sky Pirate et Lantern Phantom. Leur portrait apparaît aussi sur la case « Boss » de la carte.
+- les 8 boss : Bubble King, Great Storm, Ink Octopus, Void Eye, Frost Yeti, Lava Dragon, Sky Pirate et Lantern Phantom. Leur portrait apparaît aussi au-dessus de leur niveau sur la carte.
 - l'archer (`archer-*.webp`) en 3 poses : debout, en marche et en train de tirer vers le haut. Il est dessiné tourné vers la droite et retourné en miroir quand il va à gauche ;
 - les plateformes et briques de chaque monde (`plat-*.webp`, `brick-*.webp`) : rondin herbeux et caisse en bois (forêt), dalle de grès gravée et brique d'argile (désert), roche à coquillages et bloc de corail (fonds marins), plateforme métal néon et bloc de cristal (cosmos), corniche enneigée et bloc de glace (pics gelés), roche volcanique et bloc de lave (volcan), nuage doré et bloc de nuage (royaume des nuages), planche aux bougies et pierre violette (château hanté ; un halo pâle les détache des murs sombres). Les plateformes gardent leurs bouts arrondis quelle que soit leur longueur ; le milieu est répété ;
 - les 12 icônes de bonus (`item-*.webp`), dans le même style : pastille arrondie brillante avec un symbole blanc. Elles servent pour les bonus qui tombent et pour les pastilles d'effet en haut à gauche.
@@ -44,7 +44,7 @@ Sur téléphone, le jeu est toujours en paysage : si l'écran est tenu droit, le
 
 ## Modes
 
-- **Aventure** : 96 niveaux répartis en 8 mondes de 12, à jouer un par un depuis une carte. Chaque niveau réussi débloque le suivant et la progression est sauvegardée. On a 3 cœurs par niveau (une bulle touchée = un cœur en moins) ; sans cœur ou sans temps, on recommence **juste ce niveau**. Étoiles :
+- **Aventure** : 96 niveaux répartis en 8 mondes de 12, à jouer un par un depuis une carte (voir plus bas). Chaque niveau réussi débloque le suivant et la progression est sauvegardée. On a 3 cœurs par niveau (une bulle touchée = un cœur en moins) ; sans cœur ou sans temps, on recommence **juste ce niveau**. Étoiles :
   - ★ niveau fini ;
   - ★★ niveau fini sans être touché ;
   - ★★★ sans être touché et avec plus de la moitié du temps restant.
@@ -62,6 +62,17 @@ Sur téléphone, le jeu est toujours en paysage : si l'écran est tenu droit, le
 - **Survie** : un seul écran, pas de niveaux, 3 vies. Des bulles tombent par vagues (une marque jaune prévient où), de plus en plus vite et de plus en plus grosses. Éclater des bulles à moins de 2 s d'intervalle fait monter un combo (x2 dès 3 bulles, puis x3, x4, x5). Toutes les 45 s le terrain et le décor changent, et toutes les 2 minutes un boss arrive (plus résistant à chaque fois) pendant que les vagues continuent. Les 5 meilleurs scores sont gardés, avec le temps tenu.
 
 Le jeu se joue à 1 joueur (le mode à 2 joueurs a été retiré : trop compliqué sur un seul téléphone).
+
+### La carte de l'Aventure
+
+La carte est un long chemin qui monte, façon jeu « saga » : on la fait défiler du doigt (ou à la molette, ou en la faisant glisser à la souris) et les niveaux se suivent en zigzag à travers les décors de chaque monde, qui se fondent l'un dans l'autre. Un bandeau marque l'entrée de chaque monde, avec son numéro et son nom.
+
+- Les niveaux finis sont des ronds orange avec leur numéro et leurs étoiles, le niveau à jouer est rose et pulse, les niveaux verrouillés sont des ronds vides, **sans numéro**. Le chemin est rayé rose jusqu'au niveau du joueur.
+- Le boss de chaque monde est un rond plus gros, bleu, avec son portrait au-dessus (gris tant qu'il n'est pas débloqué).
+- Le repère du joueur (son archer, dans la tenue portée) est posé à côté de son niveau. Quand on revient sur la carte après avoir réussi un niveau, le niveau suivant apparaît et le repère y saute, la carte suit.
+- Un bouton rose en bas à droite ramène à son niveau quand on s'en est éloigné.
+- **On ne voit jamais la fin** : seuls le monde du joueur et le suivant sont dessinés ; au-dessus, des nuages et un « ? » (« Continue d'éclater des bulles pour découvrir la suite ! »). Une fois tous les niveaux finis, les nuages annoncent « De nouveaux mondes arrivent bientôt ! ». Le menu affiche le total d'étoiles, sans maximum.
+- **Ajouter un monde** : un nom dans `WORLD_NAMES`, deux ambiances dans `SCENES` (avec leurs images `loadArt`), 12 niveaux (le 12e est un boss) et un boss. Le nombre de niveaux, la carte et ses décors suivent tout seuls.
 
 ## Règles
 

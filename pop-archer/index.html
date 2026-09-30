@@ -158,30 +158,89 @@ kbd{font-family:var(--body);font-weight:800;font-size:.95em;background:var(--cab
 .touch-help{display:none}
 .btn small{font-family:var(--body);font-weight:800;font-size:.8em;margin-left:.25em;opacity:.85}
 .btn.sm{font-size:min(2.4cqw,4.8cqh);padding:.5em .9em .4em}
-.map-head{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:2cqw;width:min(100%,92cqw)}
-.map-head .btn{justify-self:start}
-.star-total{justify-self:end;font-family:var(--display);font-size:min(3cqw,6cqh);color:var(--gold);white-space:nowrap}
-.grid{display:grid;grid-template-columns:repeat(6,1fr);gap:1.6cqw;width:min(100%,80cqw)}
-.world{display:flex;align-items:center;gap:1.5cqw}
-.world .title2{font-size:min(4.6cqw,8.5cqh);white-space:nowrap}
-.world .iconbtn:disabled{opacity:.35;cursor:default}
-.world-stars{font-family:var(--body);font-weight:800;font-size:min(2.4cqw,4.8cqh);color:var(--muted);margin:0}
-.lv{
-  aspect-ratio:1.2;padding:0;border:0;border-radius:1.4cqw;cursor:pointer;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.15em;
-  font-family:var(--display);font-size:min(3cqw,6cqh);color:var(--ink);
-  background:var(--cab-hi);box-shadow:inset 0 0 0 2px var(--edge);
-}
-.lv .st{font-family:var(--body);font-size:.75em;line-height:1;letter-spacing:.04em;color:var(--edge)}
-.lv .st i{font-style:normal}
-.lv .st i.on{color:var(--gold)}
-.lv.next{box-shadow:inset 0 0 0 2px var(--gold)}
-.lv.boss{color:var(--p1);box-shadow:inset 0 0 0 2px var(--p1)}
-.lv.boss span:first-child{font-size:.8em;display:flex;flex-direction:column;align-items:center;gap:.1em}
-.lv.boss img{height:2.1em;width:auto}
-.lv:disabled{cursor:default;opacity:.45}
-.lv svg{width:1em;height:1em;fill:var(--muted)}
-.lv:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+/* Carte de l'Aventure : un chemin qui monte à travers les mondes, comme un jeu « saga ». On ne montre que
+   le monde en cours et le suivant ; au-dessus, des nuages cachent la suite (personne ne sait où ça s'arrête). */
+#mapO{display:block;padding:0;background:#241438;backdrop-filter:none}
+.saga{position:absolute;inset:0;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;scrollbar-width:none}
+.saga::-webkit-scrollbar{display:none}
+.turned .saga{touch-action:none}
+.saga.drag{cursor:grabbing}
+.track{position:relative;width:100%;overflow:hidden}
+.panel{position:absolute;left:0;right:0;background-size:cover;background-position:center bottom;
+  -webkit-mask-image:linear-gradient(to top,transparent,#000 28%);mask-image:linear-gradient(to top,transparent,#000 28%)}
+.panel.first{-webkit-mask-image:none;mask-image:none}
+.panel.flip{transform:scaleX(-1)}
+.panel.dim{filter:saturate(.55) brightness(.8)}
+.trail{position:absolute;left:0;top:0;pointer-events:none;overflow:visible}
+.trail path{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.trail .sh{stroke:rgba(30,12,45,.4)}
+.trail .bd{stroke:#fff6ea}
+.trail .done{stroke:#ff5fa2}
+.trail .ahead{stroke:#f3d9e8}
+.node{position:absolute;width:var(--d);height:var(--d);margin:calc(var(--d) / -2) 0 0 calc(var(--d) / -2);padding:0;border:0;border-radius:50%;cursor:pointer;
+  font-family:var(--display);font-size:calc(var(--d) * .36);line-height:1;color:#fff;letter-spacing:-.02em;
+  text-shadow:0 .08em 0 rgba(90,30,0,.55),0 0 .25em rgba(90,30,0,.35);
+  background:radial-gradient(circle at 34% 26%,#fff6cf 0 9%,#ffc53d 32%,#ff8d1f 72%,#e0660f);
+  box-shadow:0 calc(var(--d) * .08) 0 #a9480b,0 calc(var(--d) * .14) calc(var(--d) * .18) rgba(20,8,30,.45),inset 0 calc(var(--d) * -.08) calc(var(--d) * .1) rgba(160,60,0,.35)}
+.node span{position:relative}
+.node.cur{background:radial-gradient(circle at 34% 26%,#ffe3f1 0 9%,#ff79bd 34%,#f02a86 72%,#c4146a);
+  box-shadow:0 calc(var(--d) * .08) 0 #8e0f4d,0 calc(var(--d) * .14) calc(var(--d) * .18) rgba(20,8,30,.45);text-shadow:0 .08em 0 rgba(110,0,50,.6)}
+.node.cur::before{content:"";position:absolute;inset:-18%;border-radius:50%;box-shadow:0 0 0 calc(var(--d) * .07) rgba(255,255,255,.85),0 0 calc(var(--d) * .5) #ff79bd;animation:ring 1.4s ease-in-out infinite}
+@keyframes ring{50%{transform:scale(1.1);opacity:.45}}
+.node.lock,.node.pre{cursor:default;background:radial-gradient(circle at 34% 26%,#fff 0 8%,#ffd8e7 36%,#f3aac6);
+  box-shadow:0 calc(var(--d) * .07) 0 #c97c9c,0 calc(var(--d) * .12) calc(var(--d) * .16) rgba(20,8,30,.35)}
+.node.boss{width:calc(var(--d) * 1.3);height:calc(var(--d) * 1.3);margin:calc(var(--d) * -.65) 0 0 calc(var(--d) * -.65);font-size:calc(var(--d) * .44);
+  background:radial-gradient(circle at 34% 26%,#e6ecff 0 9%,#7d97ff 34%,#3b44d8 74%,#2a2a9e);
+  box-shadow:0 calc(var(--d) * .09) 0 #1c1a6b,0 calc(var(--d) * .15) calc(var(--d) * .2) rgba(20,8,30,.5);text-shadow:0 .08em 0 rgba(10,10,70,.6)}
+.node.boss.cur{background:radial-gradient(circle at 34% 26%,#ffe3f1 0 9%,#ff79bd 34%,#f02a86 72%,#c4146a)}
+.node.boss.lock,.node.boss.pre{background:radial-gradient(circle at 34% 26%,#f4f2ff 0 8%,#c3c3f2 38%,#8f8fd0);box-shadow:0 calc(var(--d) * .08) 0 #5f5fa0,0 calc(var(--d) * .14) calc(var(--d) * .18) rgba(20,8,30,.4)}
+.node .face{position:absolute;left:50%;bottom:62%;width:118%;height:auto;transform:translateX(-50%);pointer-events:none;filter:drop-shadow(0 3px 3px rgba(20,8,30,.45))}
+.node.pre::before{display:none}
+.node.pre>span{visibility:hidden}
+.node.lock .face,.node.pre .face{filter:grayscale(1) brightness(.45) drop-shadow(0 3px 3px rgba(20,8,30,.45))}
+.node .st{position:absolute;left:50%;top:76%;transform:translateX(-50%);display:flex;align-items:flex-start;gap:0;font-family:var(--body);font-size:.95em;line-height:1;text-shadow:none}
+.node .st i{font-style:normal;color:#5b3b68;-webkit-text-stroke:.05em #2a1236}
+.node .st i:nth-child(2){transform:translateY(.2em)}
+.node .st i.on{color:var(--gold);-webkit-text-stroke:.05em #9a5a00}
+.node:focus-visible{outline:3px solid #fff;outline-offset:4px}
+.node.fresh{animation:fresh .6s cubic-bezier(.3,1.7,.5,1) both}
+@keyframes fresh{from{transform:scale(.3)}}
+.pin{position:absolute;z-index:2;width:calc(var(--d) * 1.05);height:calc(var(--d) * 1.05);margin-left:calc(var(--d) * -.525);pointer-events:none;
+  transition:left .9s cubic-bezier(.5,0,.4,1),bottom .9s cubic-bezier(.5,0,.4,1)}
+.pin>div{position:absolute;inset:0;border-radius:50%;overflow:hidden;background:radial-gradient(circle at 50% 30%,#fff,#ffd7ea);
+  box-shadow:0 0 0 calc(var(--d) * .07) #ff4f9e,0 calc(var(--d) * .1) calc(var(--d) * .16) rgba(20,8,30,.45);animation:bob 1.6s ease-in-out infinite}
+.pin img{position:absolute;left:50%;top:0;width:auto;height:180%;transform:translateX(-58%)}
+.pin::after{content:"";position:absolute;top:50%;margin-top:calc(var(--d) * -.14);border:calc(var(--d) * .14) solid transparent;animation:bob 1.6s ease-in-out infinite}
+.pin.l::after{right:calc(var(--d) * -.2);border-left:calc(var(--d) * .17) solid #ff4f9e;border-right:0}
+.pin.u::after{left:50%;top:auto;bottom:calc(var(--d) * -.2);margin:0 0 0 calc(var(--d) * -.14);border-top:calc(var(--d) * .17) solid #ff4f9e;border-bottom:0}
+.pin.r::after{left:calc(var(--d) * -.2);border-right:calc(var(--d) * .17) solid #ff4f9e;border-left:0}
+@keyframes bob{50%{transform:translateY(calc(var(--d) * -.1))}}
+.pin.hop>div,.pin.hop::after{animation:none}
+.ribbon{position:absolute;left:50%;z-index:1;transform:translate(-50%,50%);display:flex;flex-direction:column;align-items:center;pointer-events:none;
+  padding:.3em 1.6em .35em;font-family:var(--display);line-height:1.05;color:#fff;white-space:nowrap;font-size:calc(var(--d) * .34);
+  background:linear-gradient(#ffcf4d,#f59a1b);border-radius:.4em;box-shadow:0 .14em 0 #a85a08,0 .3em .5em rgba(20,8,30,.4);text-shadow:0 .08em 0 rgba(120,50,0,.55)}
+.ribbon small{font-family:var(--body);font-weight:800;font-size:.55em;letter-spacing:.08em;text-transform:uppercase;color:#fff7dc}
+.ribbon::before,.ribbon::after{content:"";position:absolute;top:28%;z-index:-1;width:1.2em;height:100%;background:#e0800f;box-shadow:0 .14em 0 #a85a08}
+.ribbon::before{left:-.8em;clip-path:polygon(0 0,100% 0,100% 100%,0 100%,.45em 50%)}
+.ribbon::after{right:-.8em;clip-path:polygon(0 0,100% 0,calc(100% - .45em) 50%,100% 100%,0 100%)}
+.fog{position:absolute;left:0;right:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.4em;text-align:center;padding:0 8% 12%;
+  background:radial-gradient(closest-side,#fff 70%,transparent) 0 100%/34% 36% repeat-x,radial-gradient(closest-side,#faf6ff 70%,transparent) 17% 92%/30% 30% repeat-x,
+    linear-gradient(to top,transparent 6%,#f7f1ff 22%,#efe6fb);pointer-events:none}
+.fog b{font-family:var(--display);font-weight:400;font-size:calc(var(--d) * 1.1);line-height:1;color:#b58ad6;text-shadow:0 .06em 0 #fff}
+.fog span{font-weight:800;font-size:calc(var(--d) * .32);color:#7b4f9c;max-width:26em}
+.maphud{position:absolute;z-index:4;top:8px;left:10px;display:flex;align-items:center;gap:8px;pointer-events:none}
+.maphud>*{pointer-events:auto}
+.land .maphud{top:5px;left:max(14px,env(safe-area-inset-left,0px))}
+.maphud .btn{font-size:13px}
+.starpill{display:flex;align-items:center;height:32px;padding:0 12px;border-radius:10px;background:rgba(33,17,48,.82);box-shadow:inset 0 0 0 2px var(--edge);
+  font-family:var(--display);font-size:14px;color:var(--gold);font-variant-numeric:tabular-nums;white-space:nowrap}
+.tome{position:absolute;z-index:4;right:max(14px,env(safe-area-inset-right,0px));bottom:14px;width:48px;height:48px;border-radius:50%;
+  background:#ff4f9e;box-shadow:0 4px 0 #a3135a,0 6px 14px rgba(20,8,30,.4)}
+.land .tome{width:46px;height:46px}
+.tome.down svg{transform:rotate(180deg)}
+.tome svg{width:22px;height:22px}
+body.onmap .mid{visibility:hidden}
+@media (prefers-reduced-motion:reduce){ .node.cur::before,.pin>div,.pin::after{animation:none} .pin{transition:none} }
 .stars{display:flex;gap:1.5cqw;font-size:min(9cqw,16cqh);line-height:1}
 .stars i{font-style:normal;color:var(--cab-hi);text-shadow:0 .05em 0 rgba(0,0,0,.35)}
 .stars i.on{color:var(--gold);animation:pop .45s cubic-bezier(.3,1.6,.5,1) both}
@@ -344,17 +403,12 @@ body[data-state="ready"] .coinpill,body[data-state="play"] .coinpill,body[data-s
         </div>
 
         <div class="overlay" id="mapO" hidden>
-          <div class="map-head">
+          <div class="saga" id="saga"><div class="track" id="track"></div></div>
+          <div class="maphud">
             <button class="btn ghost sm" id="bMapBack" type="button">Menu</button>
-            <div class="world">
-              <button class="iconbtn" id="wPrev" type="button" aria-label="Previous world"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M13 3v14L4 10z"/></svg></button>
-              <h2 class="title2" id="worldName">World 1</h2>
-              <button class="iconbtn" id="wNext" type="button" aria-label="Next world"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 3v14l9-7z"/></svg></button>
-            </div>
-            <span class="star-total" id="starTotal"></span>
+            <span class="starpill" id="starTotal"></span>
           </div>
-          <p class="world-stars" id="worldStars"></p>
-          <div class="grid" id="grid"></div>
+          <button class="iconbtn tome" id="bToMe" type="button" aria-label="My level" hidden><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 4 3 13h14z"/></svg></button>
         </div>
 
         <div class="overlay" id="prepO" hidden>
@@ -721,6 +775,7 @@ const nb = s => s.replace(/ ([!?:;»])/g, ' $1').replace(/« /g, '« ');
 const FR = {
   // menu, carte, réglages
   'Adventure': 'Aventure', 'Survival': 'Survie', 'Daily': 'Défi', 'Shop': 'Boutique', 'Free chest': 'Coffre gratuit',
+  'New worlds coming soon!': 'De nouveaux mondes arrivent bientôt !', "Keep popping to find out what's next!": 'Continue d’éclater des bulles pour découvrir la suite !',
   'Trophies': 'Trophées', 'Best survival:': 'Meilleure survie :', 'Menu': 'Menu', 'Map': 'Carte', 'Back': 'Retour',
   'Split every bubble in two, then in two again, until the last one pops.': 'Coupe chaque bulle en deux, puis encore en deux, jusqu’à ce que la dernière éclate.',
   'Slide a thumb on the left half to move · tap the right half to shoot': 'Glisse le pouce à gauche pour bouger · touche la droite pour tirer',
@@ -1065,9 +1120,9 @@ function paintSound() {
 let mode = 0, level = 1, state = 'menu', stateT = 0, paused = false;
 // kind : 'adv' (Aventure : niveau par niveau, 3 cœurs, étoiles) ou 'surv' (Survie : vagues sans fin, 3 vies, record)
 let kind = 'adv';
-const ADV_COUNT = 96, ADV_HEARTS = 3, WORLD = 12, WORLDS = ADV_COUNT / WORLD;
+// Un monde = 12 niveaux ; ajouter un monde (nom, 2 décors, 12 niveaux, un boss) allonge la carte tout seul.
+const WORLD = 12, WORLDS = WORLD_NAMES.length, ADV_COUNT = WORLDS * WORLD, ADV_HEARTS = 3;
 const worldOf = n => Math.floor((n - 1) / WORLD);
-let mapWorld = 0;
 let adv = store.get('adv', {});
 let levelHit = false, lastStars = 0, prevStars = 0, clearTime = 0;
 const starsOf = n => adv[n] || 0;
@@ -1192,55 +1247,126 @@ function menuScene() {
 function toMenu() {
   menuScene();
   paintBest();
-  $('advStars').textContent = `★ ${totalStars()}/${ADV_COUNT * 3}`;
+  $('advStars').textContent = `★ ${fmt(totalStars())}`;
   show(menuO);
   saveMoney(); paintChest(); paintDaily();
   if ($('msgO').hidden) dailyGift();
 }
-const LOCK = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 8V6a4 4 0 0 1 8 0v2h1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1zm2 0h4V6a2 2 0 0 0-4 0z"/></svg>';
-function openMap(world) {
-  if (world == null) {
-    let n = 1;
-    while (n < ADV_COUNT && starsOf(n)) n++;
-    world = worldOf(n);
+/* ---------- Carte « saga » ---------- */
+// Les niveaux montent le long d'un chemin, de bas en haut, à travers les décors de chaque monde.
+// Seuls le monde du joueur et le suivant sont dessinés ; plus haut, des nuages : impossible de deviner
+// combien de niveaux il reste. Les niveaux verrouillés sont des ronds vides, sans numéro.
+const saga = $('saga'), track = $('track');
+let mapPin = store.get('pin', 0), mapGeo = null, sagaSize = '';
+const curLevel = () => { let n = 1; while (n < ADV_COUNT && starsOf(n)) n++; return n; };
+// décalage horizontal du niveau n sur le chemin, de -1 à 1 (le boss est au milieu)
+const mapX = n => n % WORLD ? Math.sin((n - 1) * .62 + worldOf(n) * 1.3) * .8 + Math.sin((n - 1) * 1.9) * .14 : 0;
+function curve(pts, from, to) {
+  let d = `M${pts[from][0].toFixed(1)},${pts[from][1].toFixed(1)}`;
+  for (let i = from; i < to; i++) {
+    const p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2;
+    d += `C${(p1[0] + (p2[0] - p0[0]) / 6).toFixed(1)},${(p1[1] + (p2[1] - p0[1]) / 6).toFixed(1)} ${(p2[0] - (p3[0] - p1[0]) / 6).toFixed(1)},${(p2[1] - (p3[1] - p1[1]) / 6).toFixed(1)} ${p2[0].toFixed(1)},${p2[1].toFixed(1)}`;
   }
-  mapWorld = clamp(world, 0, ADV_COUNT / WORLD - 1);
-  menuScene();
-  const grid = $('grid');
-  grid.replaceChildren();
-  let next = null;
-  const first = mapWorld * WORLD + 1;
-  for (let n = first; n < first + WORLD; n++) {
-    const b = document.createElement('button');
-    b.type = 'button'; b.className = 'lv';
-    const st = starsOf(n);
-    if (!unlocked(n)) {
-      b.disabled = true; b.innerHTML = LOCK;
-      b.setAttribute('aria-label', `Level ${n}, locked`);
-    } else {
-      if (n % 12 === 0) b.classList.add('boss');
-      b.innerHTML = `<span>${n % 12 === 0 ? `<img src="${BOSS_ART[levelDef(n).boss][0]}" alt="">Boss` : n}</span><span class="st">${[0, 1, 2].map(i => `<i${i < st ? ' class="on"' : ''}>★</i>`).join('')}</span>`;
-      b.setAttribute('aria-label', `Level ${n}, ${st} of 3 stars`);
-      b.addEventListener('click', () => prep('adv', n));
-      if (!st && !next) { next = b; b.classList.add('next'); }
-    }
-    grid.append(b);
-  }
-  let ws = 0;
-  for (let n = first; n < first + WORLD; n++) ws += starsOf(n);
-  $('worldName').textContent = `World ${mapWorld + 1}`;
-  $('worldStars').textContent = `${WORLD_NAMES[mapWorld]} · ★ ${ws}/${WORLD * 3}`;
-  $('wPrev').disabled = mapWorld === 0;
-  $('wNext').disabled = mapWorld === ADV_COUNT / WORLD - 1;
-  $('starTotal').textContent = `★ ${totalStars()}/${ADV_COUNT * 3}`;
-  show(mapO);
-  const focus = next || grid.querySelector('.lv:not(:disabled)');
-  if (focus) focus.focus({ preventScroll: true });
+  return d;
 }
-function quitRun() { if (kind === 'adv') openMap(worldOf(level)); else toMenu(); }
+function drawMap(focus, anim) {
+  const vw = saga.clientWidth, vh = saga.clientHeight;
+  sagaSize = vw + 'x' + vh;
+  const S = clamp(vh * .16, 54, 100), D = Math.round(clamp(vh * .125, 38, 66)), G = S * 2.8;
+  const cur = curLevel(), done = starsOf(ADV_COUNT) > 0, pinAt = done ? ADV_COUNT : cur;
+  const R = Math.min(WORLDS, worldOf(cur) + 2), Zh = WORLD * S + G, C = Math.max(vh * .95, S * 4), T = R * Zh + C;
+  const A = Math.min(vw * .32, 320), cx = vw / 2, pos = [];
+  let html = '';
+  for (let w = 0; w < R; w++) {
+    // trois pans de décor par monde (ambiance 1, 2, puis 1 en miroir), fondus l'un dans l'autre
+    // le décor du monde commence à son bandeau (en fondu sur le monde d'avant)
+    const r0 = w ? w * Zh + G * .78 : 0, ph = ((w + 1) * Zh + G * .78 - r0) / 3, full = ph / .72;
+    for (let k = 0; k < 3; k++) {
+      const sc = SCENES[(w * 2 + (k === 1)) % SCENES.length], src = ART_SRC[sc.art], first = !w && !k;
+      html += `<div class="panel${first ? ' first' : ''}${k === 2 ? ' flip' : ''}${w > worldOf(cur) ? ' dim' : ''}" style="bottom:${(r0 + k * ph - (first ? 0 : full - ph)).toFixed(1)}px;height:${(first ? ph : full).toFixed(1)}px;background-image:${src ? `url(${src}),` : ''}linear-gradient(${sc.sky[0]},${sc.sky[1]})"></div>`;
+    }
+    html += `<div class="ribbon" style="bottom:${(w * Zh + G * .78).toFixed(1)}px"><small>World ${w + 1}</small>${WORLD_NAMES[w]}</div>`;
+    for (let i = 0; i < WORLD; i++) {
+      const n = w * WORLD + i + 1;
+      pos[n] = [cx + A * mapX(n), w * Zh + G + (i + .5) * S];
+    }
+  }
+  // chemin : rayé rose jusqu'au niveau du joueur, pâle ensuite, et il se perd dans les nuages
+  const last = R * WORLD, pts = [], ty = y => T - y;
+  for (let n = 1; n <= last; n++) pts.push([pos[n][0], ty(pos[n][1])]);
+  pts.push([cx, ty(R * Zh + S * 2.2)]);
+  const ci = pinAt - 1, sw = k => (D * k).toFixed(1);
+  html += `<svg class="trail" width="${vw}" height="${T.toFixed(0)}" aria-hidden="true">
+    <path class="sh" d="${curve(pts, 0, pts.length - 1)}" stroke-width="${sw(.5)}" transform="translate(0 ${sw(.07)})"/>
+    <path class="bd" d="${curve(pts, 0, pts.length - 1)}" stroke-width="${sw(.38)}"/>
+    <path class="ahead" d="${curve(pts, ci, pts.length - 1)}" stroke-width="${sw(.2)}"/>
+    ${ci ? `<path class="done" d="${curve(pts, 0, ci)}" stroke-width="${sw(.2)}" stroke-dasharray="${sw(.24)} ${sw(.24)}"/>` : ''}</svg>`;
+  const hop = anim && mapPin >= 1 && mapPin < pinAt && pinAt - mapPin <= 3 && pos[mapPin] ? mapPin : 0;
+  for (let n = 1; n <= last; n++) {
+    const st = starsOf(n), open = unlocked(n), boss = n % WORLD === 0;
+    let inner = open ? `<span>${n}</span>` : '';
+    if (boss) inner = `<img class="face" src="${BOSS_ART[levelDef(n).boss][0]}" alt="">` + inner;
+    if (st) inner += `<span class="st">${[0, 1, 2].map(i => `<i${i < st ? ' class="on"' : ''}>★</i>`).join('')}</span>`;
+    const cls = 'node' + (boss ? ' boss' : '') + (!open ? ' lock' : n === cur && !st ? ' cur' : '') + (hop && n === pinAt && !st ? ' pre' : '');
+    const label = !open ? L(`Level ${n}, locked`, `Niveau ${n}, verrouillé`) : L(`Level ${n}, ${st} of 3 stars`, `Niveau ${n}, ${st} étoile${st > 1 ? 's' : ''} sur 3`);
+    html += `<button type="button" class="${cls}" data-n="${n}" style="left:${pos[n][0].toFixed(1)}px;top:${ty(pos[n][1]).toFixed(1)}px" aria-label="${label}"${open ? '' : ' disabled'}>${inner}</button>`;
+  }
+  // repère du joueur : au-dessus du rond ou à côté, là où il y a le plus de place (loin du chemin et des bords)
+  const segDist = (px, py, [ax, ay], [bx, by]) => {
+    const dx = bx - ax, dy = by - ay, t = clamp(((px - ax) * dx + (py - ay) * dy) / (dx * dx + dy * dy || 1), 0, 1);
+    return Math.hypot(ax + t * dx - px, ay + t * dy - py);
+  };
+  const pinPos = n => {
+    const [x, y] = pos[n], off = D * (n % WORLD ? 1.3 : 1.55);
+    const cands = [[x - off, y - D * .1, 'l'], [x + off, y - D * .1, 'r']];
+    if (n % WORLD) cands.push([x, y + D * 1.25, 'u']);
+    const room = ([cx2, cy2]) => Math.min(cx2 - D * .6, vw - D * .6 - cx2,
+      ...[pos[n - 1], pos[n + 1]].filter(Boolean).map(q => segDist(cx2, cy2, pos[n], q)));
+    const best = cands.reduce((a, c) => room(c) > room(a) + 2 ? c : a);
+    return [best[0], best[1] - D * .525, best[2]];
+  };
+  const [px, py, pside] = pinPos(hop || pinAt);
+  html += `<div class="pin ${pside}" id="pin" style="left:${px.toFixed(1)}px;bottom:${py.toFixed(1)}px"><div><img src="${skinSrc(MONEY.skin, 'idle')}" alt=""></div></div>`;
+  html += `<div class="fog" style="bottom:${(R * Zh + S * .7).toFixed(1)}px;height:${(C - S * .7).toFixed(1)}px"><b>?</b><span>${done ? 'New worlds coming soon!' : "Keep popping to find out what's next!"}</span></div>`;
+  track.style.height = T.toFixed(0) + 'px';
+  track.style.setProperty('--d', D + 'px');
+  track.innerHTML = html;
+  mapGeo = { T, vh, pos, cur: pinAt };
+  const toY = n => T - pos[clamp(n, 1, last)][1] - vh * .55;
+  saga.scrollTop = toY(hop || focus || pinAt);
+  if (hop) {
+    // le niveau suivant vient d'être débloqué : il apparaît, et le repère du joueur y saute
+    const node = track.querySelector(`.node[data-n="${pinAt}"]`), pin = $('pin');
+    setTimeout(() => {
+      node.classList.remove('pre'); node.classList.add('fresh'); sfx.pick();
+      const [x, y, side] = pinPos(pinAt);
+      pin.className = 'pin hop ' + side; pin.style.left = x.toFixed(1) + 'px'; pin.style.bottom = y.toFixed(1) + 'px';
+      setTimeout(() => pin.classList.remove('hop'), 950);
+      saga.scrollTo({ top: toY(pinAt), behavior: 'smooth' });
+    }, 450);
+  }
+  mapPin = pinAt; store.set('pin', pinAt);
+  paintToMe();
+  const me = track.querySelector('.node.cur') || track.querySelector(`.node[data-n="${pinAt}"]`);
+  if (me && !hop) me.focus({ preventScroll: true });
+}
+// bouton « revenir à mon niveau » quand le repère du joueur est hors de l'écran
+function paintToMe() {
+  if (!mapGeo) return;
+  const y = mapGeo.T - mapGeo.pos[mapGeo.cur][1], top = saga.scrollTop, b = $('bToMe');
+  const off = y < top + 20 ? 'up' : y > top + saga.clientHeight - 20 ? 'down' : '';
+  b.hidden = !off; b.classList.toggle('down', off === 'down');
+}
+function openMap(focus) {
+  menuScene();
+  $('starTotal').textContent = `★ ${fmt(totalStars())}`;
+  show(mapO);
+  drawMap(focus, true);
+}
+function quitRun() { if (kind === 'adv') openMap(level); else toMenu(); }
 
 function setState(s, t) { state = s; stateT = t; document.body.dataset.state = s; }
-function show(el) { for (const o of [menuO, mapO, pauseO, overO, prepO, shopO, achO, setO]) o.hidden = o !== el; if (el) releaseJoy(); }
+function show(el) { for (const o of [menuO, mapO, pauseO, overO, prepO, shopO, achO, setO]) o.hidden = o !== el; document.body.classList.toggle('onmap', el === mapO); if (el) releaseJoy(); }
 
 function togglePause(force) {
   if (state === 'menu' || state === 'over') return;
@@ -2418,8 +2544,9 @@ function extendBg() {
 
 // Images générées avec Canva, rangées dans img/ ; tant qu'une image n'est pas chargée
 // (ou si elle manque), le décor dessiné par le code prend le relais.
-const ART = {};
+const ART = {}, ART_SRC = {};
 function loadArt(name, src, ground) {
+  ART_SRC[name] = src;
   const img = new Image();
   img.onload = () => { ART[name] = { img, ground }; renderBg(); };
   img.src = src;
@@ -3329,8 +3456,48 @@ layout();
 $('bAdv').addEventListener('click', () => openMap());
 $('bArc').addEventListener('click', () => prep('surv', 1));
 $('bMapBack').addEventListener('click', toMenu);
-$('wPrev').addEventListener('click', () => { openMap(mapWorld - 1); $('wPrev').focus({ preventScroll: true }); });
-$('wNext').addEventListener('click', () => { openMap(mapWorld + 1); $('wNext').focus({ preventScroll: true }); });
+track.addEventListener('click', e => { const b = e.target.closest('.node'); if (b && !b.disabled) prep('adv', +b.dataset.n); });
+saga.addEventListener('scroll', paintToMe, { passive: true });
+$('bToMe').addEventListener('click', () => { if (mapGeo) saga.scrollTo({ top: mapGeo.T - mapGeo.pos[mapGeo.cur][1] - mapGeo.vh * .55, behavior: 'smooth' }); });
+// souris (et doigt quand le jeu est dessiné couché) : on fait glisser la carte soi-même, avec de l'élan
+let mapDrag = null, glide = 0;
+saga.addEventListener('pointerdown', e => {
+  if (e.pointerType === 'mouse' ? e.button : !turned) return;
+  cancelAnimationFrame(glide);
+  const y = local(e).y;
+  mapDrag = { id: e.pointerId, y, ly: y, t: e.timeStamp, top: saga.scrollTop, moved: false, v: 0 };
+});
+addEventListener('pointermove', e => {
+  if (!mapDrag || e.pointerId !== mapDrag.id) return;
+  const y = local(e).y, dy = y - mapDrag.y;
+  if (Math.abs(dy) > 6) { mapDrag.moved = true; saga.classList.add('drag'); }
+  if (!mapDrag.moved) return;
+  saga.scrollTop = mapDrag.top - dy;
+  const dt = Math.max(1, e.timeStamp - mapDrag.t);
+  mapDrag.v = .6 * mapDrag.v + .4 * (y - mapDrag.ly) / dt; mapDrag.ly = y; mapDrag.t = e.timeStamp;
+});
+const endDrag = e => {
+  if (!mapDrag || e.pointerId !== mapDrag.id) return;
+  if (mapDrag.moved) {
+    saga.addEventListener('click', ev => { ev.stopPropagation(); ev.preventDefault(); }, { capture: true, once: true });
+    let v = e.timeStamp - mapDrag.t < 80 ? mapDrag.v * 16 : 0;
+    const step = () => { if (Math.abs(v) < .5) return; saga.scrollTop -= v; v *= .94; glide = requestAnimationFrame(step); };
+    step();
+  }
+  mapDrag = null; saga.classList.remove('drag');
+};
+addEventListener('pointerup', endDrag);
+addEventListener('pointercancel', endDrag);
+// l'écran change de taille : on redessine autour du niveau qui était au milieu
+new ResizeObserver(() => {
+  const sz = saga.clientWidth + 'x' + saga.clientHeight;
+  if (sz === sagaSize || mapO.hidden || !mapGeo) { sagaSize = sz; return; }
+  sagaSize = sz;
+  const mid = mapGeo.T - saga.scrollTop - mapGeo.vh * .55;
+  let best = 1;
+  for (let n = 1; n < mapGeo.pos.length; n++) if (mapGeo.pos[n] && Math.abs(mapGeo.pos[n][1] - mid) < Math.abs(mapGeo.pos[best][1] - mid)) best = n;
+  drawMap(best, false);
+}).observe(saga);
 $('bResume').addEventListener('click', () => togglePause(false));
 $('bQuit').addEventListener('click', quitRun);
 $('bNext').addEventListener('click', () => leaveResults(() => prep('adv', level + 1)));
@@ -3354,7 +3521,7 @@ $('tLang').addEventListener('click', () => {
   lang = lang === 'fr' ? 'en' : 'fr'; store.set('lang', lang);
   $('langName').textContent = lang === 'fr' ? 'Français' : 'English';
   applyLang(); paintCoins(); paintBest(); paintAchBadge();
-  $('advStars').textContent = `★ ${fmt(totalStars())}/${fmt(ADV_COUNT * 3)}`;
+  $('advStars').textContent = `★ ${fmt(totalStars())}`;
   sfx.pick();
 });
 $('bReset').addEventListener('click', () => message('Reset progress?',
@@ -3649,7 +3816,7 @@ function best(k, v) { if (v > STATS[k]) { STATS[k] = v; store.set('stats', STATS
 const plural = (n, one, many) => `${fmt(n)} ${n === 1 ? one : many}`;
 const ACH = [
   { id: 'pops', icon: 'ach-bubbles', name: 'Bubble Popper', goal: n => L(`Pop ${plural(n, 'bubble', 'bubbles')}`, `Éclate ${plural(n, 'bulle', 'bulles')}`), tiers: [100, 1000, 10000], pay: [50, 150, 500], val: () => STATS.pops },
-  { id: 'stars', icon: 'item-star', name: 'Star Collector', goal: n => L(`Earn ${plural(n, 'star', 'stars')} in Adventure`, `Gagne ${plural(n, 'étoile', 'étoiles')} en Aventure`), tiers: [30, 100, ADV_COUNT * 3], pay: [100, 300, 1000], val: totalStars },
+  { id: 'stars', icon: 'item-star', name: 'Star Collector', goal: n => L(`Earn ${plural(n, 'star', 'stars')} in Adventure`, `Gagne ${plural(n, 'étoile', 'étoiles')} en Aventure`), tiers: [30, 100, 250], pay: [100, 300, 1000], val: totalStars },
   { id: 'bosses', icon: 'ach-crown', name: 'Boss Hunter', goal: n => n === 1 ? L('Defeat a boss in Adventure', 'Bats un boss en Aventure') : L(`Defeat ${n} different bosses`, `Bats ${n} boss différents`), tiers: [1, 3, BOSS_ORDER.length], pay: [100, 300, 800],
     val: () => BOSS_ORDER.filter((_, i) => starsOf((i + 1) * WORLD) > 0).length },
   { id: 'flawless', icon: 'item-shield', name: 'Untouchable', goal: n => L(`Clear ${plural(n, 'level', 'levels')} without a hit`, `Réussis ${plural(n, 'niveau', 'niveaux')} sans être touché`), tiers: [5, 25, 60], pay: [80, 250, 600], val: () => STATS.flawless },
@@ -3807,7 +3974,7 @@ $('bDaily').addEventListener('click', () => prep('daily', dailyPick().level));
 $('bAch').addEventListener('click', openAch);
 $('bAchBack').addEventListener('click', () => { show(menuO); paintAchBadge(); });
 $('bPlay').addEventListener('click', play);
-$('bPrepBack').addEventListener('click', () => { if (prepKind === 'adv') openMap(worldOf(prepLevel)); else toMenu(); });
+$('bPrepBack').addEventListener('click', () => { if (prepKind === 'adv') openMap(prepLevel); else toMenu(); });
 
 /* ---------- Taille de l'écran ---------- */
 // Sur ordinateur, l'aire de jeu est un 16:9 encadré. Sur écran tactile, le canvas couvre tout l'écran :
