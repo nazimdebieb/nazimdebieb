@@ -13,7 +13,8 @@
 //    (DIST) : surtout du facile au début, de plus en plus de difficile et de très difficile ensuite.
 // 3. Le temps d'un niveau = temps du robot (médiane) × marge du niveau de difficulté + quelques secondes (MARGIN).
 //    Un humain doit esquiver et vise moins vite que le robot : large marge en facile, presque rien en très
-//    difficile, où il faudra souvent un boost. Un boss : 3e plus long des 5 essais × 1,45 + 5 s.
+//    difficile, où il faudra souvent un boost. Un boss : 4e plus court des 5 essais × 2,2 + 15 s, entre 60 et 240 s.
+//    Les marges ont été réglées avec --verify (voir 4.).
 // 4. --verify : un « joueur moyen » rejoue avec les temps du fichier. C'est un robot plus lent : il réagit
 //    1,6 fois moins souvent, vise moins finement, et fait un pas de côté quand une bulle va lui tomber dessus.
 //    Il met en moyenne 1,4 fois le temps du robot de mesure (de 0,9 à 2,6 fois selon les parties).
@@ -35,8 +36,9 @@ const VERIFY = !!opt('verify', false);
 // Répartition des 11 niveaux normaux d'un monde : [faciles, moyens, difficiles, très difficiles]
 const DIST = w => w === 0 ? [5, 4, 2, 0] : w === 1 ? [4, 4, 2, 1] : w < 4 ? [3, 4, 3, 1] : [2, 4, 3, 2];
 // Marge par niveau de difficulté : temps = robot × a + b
-const MARGIN = { 1: [2.3, 5], 2: [1.85, 4], 3: [1.5, 3], 4: [1.25, 2] };
-const BOSS_MARGIN = [1.6, 12];
+const MARGIN = { 1: [2.8, 8], 2: [1.6, 4], 3: [1.2, 3], 4: [1, 2] };
+// boss : il faut en plus esquiver ses tirs, et le robot invincible le bat souvent très vite ; entre 60 et 240 s
+const BOSS_MARGIN = [2.2, 15], BOSS_MIN = 60, BOSS_MAX = 240;
 
 const range = s => s.split(',').flatMap(p => { const [a, b] = p.split('-').map(Number); return b ? Array.from({ length: b - a + 1 }, (_, i) => a + i) : [a]; });
 
@@ -135,7 +137,7 @@ function retime(robot) {
       out[n] = [Math.max(25, Math.round(robot[n] * a + b)), k + 1, robot[n]];
     });
     const bn = (w + 1) * WORLD;
-    if (robot[bn] != null) out[bn] = [Math.round(robot[bn] * BOSS_MARGIN[0] + BOSS_MARGIN[1]), 0, robot[bn]];
+    if (robot[bn] != null) out[bn] = [Math.min(BOSS_MAX, Math.max(BOSS_MIN, Math.round(robot[bn] * BOSS_MARGIN[0] + BOSS_MARGIN[1]))), 0, robot[bn]];
   }
   return out;
 }
