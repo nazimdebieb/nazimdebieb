@@ -836,7 +836,12 @@ function levelDef(n) {
   if (pick === 9) b.forEach(d => { d[3] = 262; });
   return { b, k };
 }
-const timeFor = def => def.time ? def.time : def.boss ? Math.round(BOSSES[def.boss].time * (def.mega ? 1.35 : 1)) : Math.round(18 + (LEVELS_78.includes(def) ? 1.2 : LEVELS_56.includes(def) ? 1.15 : 1) * def.b.reduce((t, [s, , , , v]) => t + popsOf(s, v) * 1.7 * (HARD_V.includes(v) ? 1.2 : 1), 0)
+// Temps d'un niveau : 1,7 s par coup (+20 % pour les bulles dures à viser), 18 s de base, puis 20 % de moins
+// pour garder de la tension (TIME_SCALE ; l'atelier en tient compte dans ses seuils). Les 6 premiers niveaux,
+// ceux où l'on apprend, n'en perdent que 10 %.
+const TIME_SCALE = .8;
+const timeFor = def => { const i = LEVELS.indexOf(def); return Math.round((i >= 0 && i < 6 ? .9 : TIME_SCALE) * timeBase(def)); };
+const timeBase = def => def.time ? def.time : def.boss ? Math.round(BOSSES[def.boss].time * (def.mega ? 1.35 : 1)) : Math.round(18 + (LEVELS_78.includes(def) ? 1.2 : LEVELS_56.includes(def) ? 1.15 : 1) * def.b.reduce((t, [s, , , , v]) => t + popsOf(s, v) * 1.7 * (HARD_V.includes(v) ? 1.2 : 1), 0)
   + (def.k || []).reduce((t, k) => t + (k.t === 'g' ? 6 : k.t === 'b' ? .6 : 0), 0));
 
 const ITEMS = [
@@ -1299,6 +1304,7 @@ function noise(d, v, freq) {
   s.connect(f); f.connect(g); g.connect(master); s.start(t); s.stop(t + d + .02);
 }
 const sfx = {
+  coin: () => { tone(1320, .06, 'square', .04); tone(1980, .12, 'square', .04, 0, .06); },
   shoot: () => tone(1100, .09, 'square', .035, 480),
   pop: s => { const f = 260 + (3 - s) * 170; tone(f, .14, 'triangle', .2, f * 1.8); noise(.08, .09, 1600 + s * 300); },
   hit: () => { tone(330, .7, 'sawtooth', .11, 60); noise(.25, .1, 500); },
@@ -1530,6 +1536,7 @@ function loadLevel() {
   levelHit = false;
   const pops = def.b.reduce((t, [sz, , , , v]) => t + popsOf(sz, v), 0);
   dropBudget = def.boss ? 3 : clamp(Math.round(pops / 12), 1, 3); dropCd = 0; lifeDropped = false;
+  planCoins(def.boss ? COIN_MAX : clamp(Math.round(pops * .9 / 5) * 5, 10, COIN_MAX));
   unlockTxt = '';
   for (const [t, w] of Object.entries(ADV_UNLOCK)) if (level === (w - 1) * WORLD + 1) unlockTxt = 'New power-up: ' + ITEM_BY[t][3];
   if (level % WORLD === 1 && WORLD_TIPS[worldOf(level)]) unlockTxt = WORLD_TIPS[worldOf(level)];
@@ -1568,7 +1575,7 @@ function tutorialText() {
 function startRun(k, lv) {
   audio();
   kind = k; mode = 1; level = lv;
-  runCoins = 0; survPaid = 0; continued = false;
+  runCoins = 0; continued = false;
   players = [makePlayer(0)];
   releaseJoy();
   paused = false; show(null);
@@ -1738,6 +1745,7 @@ function update(dt) {
     const learning = tut && tut.step < 2;
     stepTutorial(dt, players[0]);
     if (kind === 'surv') updateSurvival(dt); else if (!learning) { if (!(kind === 'train' && train.box)) timeLeft -= dt; if (kind === 'train') trainT += dt; if (dropCd > 0) dropCd -= dt; }
+    if (coinCd > 0) coinCd -= dt;
     const frozen = freezeT > 0 || learning, slow = slowT > 0 ? .45 : 1;
     if (slowT > 0) slowT -= dt;
     if (frozen) freezeT -= dt; else moveBalls(dt * slow);
@@ -1938,8 +1946,7 @@ function popBall(j, p, noDrop) {
     p.mult = mult;
   }
   if (p.x2 > 0) mult *= 2;
-  if (b.v === 'gold') { mult *= 3; runCoins += 3; }
-  if (kind !== 'surv' && b.s === 0) runCoins += EARN.pop;
+  if (b.v === 'gold') mult *= 3;
   bump('pops'); if (b.v === 'gold' || b.v === 'steel' || b.v === 'bomb') bump(b.v);
   p.score += PTS[b.s] * mult;
   float(b.x, b.y - RAD[b.s], '+' + PTS[b.s] * mult, b.v === 'gold' ? '#ffc83d' : COL[p.id].main);
@@ -1955,8 +1962,40 @@ function popBall(j, p, noDrop) {
     }
   }
   if (b.v === 'bomb') explode(b, p);
+  dropCoin(b);
   const drop = b.v === 'gold' ? .5 : kind === 'surv' ? .18 : .15;
   if (!noDrop && Math.random() < drop) dropItem(b.x, b.y);
+}
+
+// Pièces : c'est le seul argent gagné en jouant. Elles tombent des bulles éclatées : une pièce (5),
+// deux collées (10) ou trois (15), au plus 40 par partie, et restent 5 s au sol comme les bonus.
+// Chaque niveau reçoit une réserve (10 à 40 selon sa taille, 40 pour un boss ou en Survie), découpée
+// au hasard en pièces de 5, 10 et 15 ; elles tombent au fil du niveau, et plus sûrement d'une bulle dorée.
+const ITEM_LIFE = 5, COIN_MAX = 40;
+let coinPlan = [], coinCd = 0;
+function planCoins(budget) {
+  budget = Math.min(COIN_MAX, budget);
+  coinPlan = []; coinCd = 0;
+  while (budget >= 5) {
+    const r = Math.random(), v = budget >= 15 && r < .18 ? 15 : budget >= 10 && r < .45 ? 10 : 5;
+    coinPlan.push(v); budget -= v;
+  }
+}
+function dropCoin(b) {
+  if (!coinPlan.length) return;
+  // en niveau : la chance suit les pièces qui restent sur les coups qui restent, pour les étaler sur tout le niveau
+  const left = weight() + 1, late = coinPlan.length * 1.6 >= left;
+  if (coinCd > 0 && !late) return;
+  const chance = b.v === 'gold' ? 1 : kind === 'surv' ? .07 : boss ? .3 : coinPlan.length * 1.6 / left;
+  if (Math.random() >= chance) return;
+  const v = coinPlan.splice(Math.floor(Math.random() * coinPlan.length), 1)[0];
+  coinCd = kind === 'surv' ? 7 : boss ? 5 : 1;
+  items.push({ type: 'coin', v, x: clamp(b.x + (Math.random() - .5) * 16, 12, W - 12), y: b.y, vy: -140, t: ITEM_LIFE });
+}
+function takeCoin(p, it) {
+  runCoins += it.v;
+  float(p.x, FLOOR - 44, '+' + it.v, '#ffc83d');
+  sfx.coin(); vibe(15);
 }
 
 // Bulle bombe : elle explose et touche toutes les bulles autour d'elle.
@@ -1994,7 +2033,7 @@ function dropItem(x, y) {
   let r = Math.random() * total, pick = pool[0];
   for (const it of pool) { if ((r -= it[1]) <= 0) { pick = it; break; } }
   if (pick[0] === 'life') lifeDropped = true;
-  items.push({ type: pick[0], x: clamp(x, 10, W - 10), y, vy: -80, t: 7 });
+  items.push({ type: pick[0], x: clamp(x, 10, W - 10), y, vy: -80, t: ITEM_LIFE });
 }
 
 function moveItems(dt) {
@@ -2005,7 +2044,7 @@ function moveItems(dt) {
     if (it.t <= 0) return false;
     for (const p of players) {
       if (p.out || p.dead) continue;
-      if (Math.abs(it.x - p.x) < 18 && it.y > FLOOR - 42) { applyItem(p, it.type); return false; }
+      if (Math.abs(it.x - p.x) < 18 && it.y > FLOOR - 42) { if (it.type === 'coin') takeCoin(p, it); else applyItem(p, it.type); return false; }
     }
     return true;
   });
@@ -2110,9 +2149,12 @@ function levelClear() {
     prevStars = starsOf(level);
     if (lastStars > prevStars) { adv[level] = lastStars; store.set('adv', adv); }
   }
-  runCoins += Math.round((EARN.clear + EARN.star * lastStars) * (kind === 'adv' && levelDef(level).hard ? 1.5 : 1));
   if (!levelHit) bump('flawless'); else checkAch();
   for (const p of players) p.harpoons = [];
+  // les pièces encore au sol à la fin du niveau sont ramassées d'office
+  for (const it of items) if (it.type === 'coin') { runCoins += it.v; float(it.x, it.y - 16, '+' + it.v, '#ffc83d'); }
+  if (items.some(it => it.type === 'coin')) sfx.coin();
+  items = items.filter(it => it.type !== 'coin');
   setState('clear', 1.4); vibe([30, 60, 30]);
   sfx.clear();
 }
@@ -2122,8 +2164,6 @@ const boardOf = () => store.get('surv1', []);
 const clock = t => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
 function gameOver() {
   const total = players.reduce((t, p) => t + p.score, 0);
-  const due = Math.floor(total / EARN.survPer);
-  runCoins += due - survPaid; survPaid = due;
   lastOver = 'surv'; ADS.survOvers++;
   lastEntryId = Date.now();
   const entry = { score: total, time: Math.floor(survT), id: lastEntryId, cont: continued };
@@ -2229,6 +2269,7 @@ function startSurvival() {
   useWidth();
   level = 1; survT = 0; waveT = 3; bossT = BOSS_EVERY; terrainT = TERRAIN_EVERY; terrainI = 0; bossKills = 0;
   drops = []; ann = null; slowT = 0; survSeen.clear();
+  planCoins(COIN_MAX);
   scene = SCENES[0];
   blocks = []; boss = null; shots = []; beams = []; shake = 0; geyserT = 3;
   wind = dark = null; windT = 4; darkT = 6;
@@ -2302,9 +2343,11 @@ const BOSSES = {
   storm: { name: 'Great Storm',   hp: 16, r: 30, time: 100, scene: 3 },
   squid: { name: 'Ink Octopus',   hp: 20, r: 34, time: 110, scene: 4 },
   eye:   { name: 'Void Eye',      hp: 20, r: 36, time: 120, scene: 7 },
-  yeti:  { name: 'Frost Yeti',    hp: 22, r: 40, time: 120, scene: 9 },
-  dragon:{ name: 'Lava Dragon',   hp: 24, r: 38, time: 130, scene: 11 },
-  pirate:{ name: 'Sky Pirate',    hp: 22, r: 38, time: 140, scene: 13 },
+  // Yéti, Dragon et Pirate : +15 % (on ne peut les toucher qu'en plein saut ou ils bougent beaucoup ; avec
+  // TIME_SCALE, ils ne perdent que 8 % de leur temps d'avant, sinon le robot n'en venait pas toujours à bout)
+  yeti:  { name: 'Frost Yeti',    hp: 22, r: 40, time: 140, scene: 9 },
+  dragon:{ name: 'Lava Dragon',   hp: 24, r: 38, time: 150, scene: 11 },
+  pirate:{ name: 'Sky Pirate',    hp: 18, r: 38, time: 170, scene: 13 },   // 18 PV et +20 % de temps : combat long, pièces à ramasser en plus
   phantom:{ name: 'Lantern Phantom', hp: 30, r: 36, time: 150, scene: 15 },
   // bosses des régions : ils se battent dans le décor de leur monde
   golem: { name: 'Stone Golem',   hp: 26, r: 40, time: 150 },
@@ -2581,6 +2624,7 @@ function harpoonHitsBoss(h, p) {
 function damageBoss(p) {
   const b = boss;
   b.hp--; b.flash = .15; b.killer = p;
+  dropCoin(b);   // un coup au boss compte comme une bulle pour les pièces
   p.score += 50;
   float(b.x, b.y - b.r - 8, '+50', COL[p.id].main);
   sfx.bossHit(); vibe(20);
@@ -2600,7 +2644,6 @@ function finishBoss() {
   for (const b of balls) { burst(b.x, b.y, b.c, RAD[b.s]); p.score += PTS[b.s]; }
   balls = []; drops = [];
   boss = null;
-  runCoins += EARN.boss;
   if (kind === 'surv') { bossKills++; waveT = 4; }
 }
 function bossTouch() {
@@ -3622,10 +3665,28 @@ function drawItemIcon(type, size) {
   ctx.scale(1 / k, 1 / k);
 }
 function drawItem(it) {
-  if (it.t < 2 && Math.floor(it.t * 8) % 2) return;
+  if (it.t < 1.5 && Math.floor(it.t * 8) % 2) return;
   ctx.save(); ctx.translate(it.x, it.y);
-  drawItemIcon(it.type, 22);
+  if (it.type === 'coin') drawCoins(it.v / 5); else drawItemIcon(it.type, 22);
   ctx.restore();
+}
+// 1, 2 ou 3 pièces collées côte à côte (5, 10 ou 15), qui scintillent
+function drawCoins(n) {
+  const r = 9, t = performance.now() / 1000;
+  for (let i = 0; i < n; i++) {
+    const x = (i - (n - 1) / 2) * r * 1.1, y = 2;
+    const g = ctx.createRadialGradient(x - r * .3, y - r * .4, 1, x, y, r);
+    g.addColorStop(0, '#fff4b8'); g.addColorStop(.48, '#ffc83d'); g.addColorStop(1, '#d08e14');
+    ctx.fillStyle = g; ctx.strokeStyle = '#9a6508'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.strokeStyle = 'rgba(154,101,8,.55)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.arc(x, y, r * .6, 0, Math.PI * 2); ctx.stroke();
+  }
+  const a = (Math.sin(t * 6) + 1) / 2;
+  ctx.fillStyle = `rgba(255,255,255,${.35 + a * .6})`;
+  const sx = (n - 1) * r * .55 + 3, sy = -5, k = 1.5 + a * 2;
+  ctx.beginPath(); ctx.moveTo(sx, sy - k * 2); ctx.lineTo(sx + k * .5, sy); ctx.lineTo(sx, sy + k * 2); ctx.lineTo(sx - k * .5, sy); ctx.closePath(); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(sx - k * 2, sy); ctx.lineTo(sx, sy + k * .5); ctx.lineTo(sx + k * 2, sy); ctx.lineTo(sx, sy - k * .5); ctx.closePath(); ctx.fill();
 }
 
 // face peut commencer par une graisse (« 800 "Baloo 2" … ») : elle doit précéder la taille.
@@ -4122,7 +4183,7 @@ function renderTools() {
       card({ art: '<img src="img/item-bonus.webp" alt="" style="filter:grayscale(1)">', name: 'Normal arrow', desc: 'Removes every power-up',
         acts: [['Take', () => { p.weapon = 'normal'; p.power = null; p.star = p.x2 = 0; p.shield = false; slowT = freezeT = 0; toolSay('✓'); }]] }),
       ...Object.keys(ITEM_BY).map(t => card({ art: `<img src="img/item-${t}.webp" alt="">`, name: ITEM_BY[t][3],
-        acts: [['Take', () => { applyItem(p, t); toolSay('✓'); }], ['Drop', () => { items.push({ type: t, x: clamp(p.x + (p.x < W / 2 ? 70 : -70), 10, W - 10), y: 40, vy: -80, t: 7 }); toolSay('✓'); }, 'ghost']] })),
+        acts: [['Take', () => { applyItem(p, t); toolSay('✓'); }], ['Drop', () => { items.push({ type: t, x: clamp(p.x + (p.x < W / 2 ? 70 : -70), 10, W - 10), y: 40, vy: -80, t: ITEM_LIFE }); toolSay('✓'); }, 'ghost']] })),
     ]));
   } else if (toolTab === 'bosses') {
     pane.replaceChildren(grid(Object.keys(BOSS_ART).map(t => card({ art: `<img src="${BOSS_ART[t][0]}" alt="">`, name: BOSSES[t].name,
@@ -4151,7 +4212,7 @@ if (logoImg.complete && !logoImg.naturalWidth) noLogo();
 /* ---------- Monétisation : pièces, boutique, pubs et achats ---------- */
 // Les pubs (showAd) et les achats (buyProduct) sont simulés ici : faux écran de pub, faux paiement.
 // Dans l'appli Android, seules ces deux fonctions changent (AdMob et Google Play Billing).
-const EARN = { pop: 1, clear: 20, star: 10, boss: 100, survPer: 100, cont: 150, daily: 50, dailyStep: 25, boost: 100, dailyWin: 150 };
+const EARN = { cont: 150, daily: 50, dailyStep: 25, boost: 100, dailyWin: 150 };
 const SKINS = [
   { id: 'classic', name: 'Red Hood', price: 0 },
   { id: 'robin', name: 'Robin', price: 800 },
@@ -4193,7 +4254,7 @@ const coinHTML = n => `<i class="coin" aria-hidden="true"></i> ${fmt(n)}`;
 const owns = id => MONEY.owned.includes(id);
 
 // Pièces de la partie en cours, versées au joueur sur l'écran de fin.
-let runCoins = 0, lastEarn = 0, survPaid = 0, continued = false, lastOver = '', lastEntryId = 0;
+let runCoins = 0, lastEarn = 0, continued = false, lastOver = '', lastEntryId = 0;
 function payRun() {
   if (kind === 'train') { runCoins = lastEarn = 0; return undefined; }
   lastEarn = runCoins; runCoins = 0;

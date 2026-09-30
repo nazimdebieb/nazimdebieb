@@ -10,7 +10,7 @@
 //    en dents de scie dans chaque monde, avec deux niveaux difficiles (5e et 10e), de plus en plus dur de monde
 //    en monde, et la mécanique de la région dans une bonne partie des niveaux.
 // 2. Un robot invincible joue chaque niveau dans le vrai jeu (Chromium sans fenêtre, en accéléré).
-// 3. Un niveau est gardé si le robot le finit en utilisant au plus 60 % du temps (75 % pour un boss) :
+// 3. Un niveau est gardé si le robot le finit en utilisant au plus 75 % du temps (94 % pour un boss) :
 //    il reste de la marge pour un joueur qui doit esquiver. Sinon on en tire un autre, un peu plus facile.
 // 4. Le résultat est figé dans levels/region-XX.js : un niveau publié ne change plus.
 //
@@ -207,7 +207,9 @@ async function play(levelsToCheck) {
       } catch (e) { errs.push(e.message.split('\n')[0]); }
       await ctx.close();
       const used = Math.round(st.timeMax - Math.max(0, st.timeLeft)), boss = n % WORLD === 0;
-      const ok = st.state === 'clear' && used <= st.timeMax * (boss ? .75 : .6) && !errs.length;
+      // seuils fixés quand le temps des niveaux était 25 % plus long : 60 % (75 % pour un boss) de l'ancien temps,
+      // soit 75 % (94 %) du temps actuel (TIME_SCALE = .8 dans le jeu)
+      const ok = st.state === 'clear' && used <= st.timeMax * (boss ? .94 : .75) && !errs.length;
       res[n] = { ok, used, max: Math.round(st.timeMax), state: st.state, errs };
       console.log(`  ${n}: ${ok ? 'ok ' : 'NON'} ${st.state} ${used}/${Math.round(st.timeMax)} s${errs.length ? ' ' + errs[0] : ''}`);
     }

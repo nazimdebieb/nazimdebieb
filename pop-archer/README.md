@@ -81,7 +81,7 @@ Sur téléphone, le jeu est toujours en paysage : si l'écran est tenu droit, le
   - Le panneau permet de choisir **n'importe quel niveau** (curseur, ±1 niveau, les doubles flèches pour passer d'un monde à l'autre, avec le nom du monde et du boss), **n'importe quelle règle du défi du jour**, et la façon de jouer :
     - **Partie normale** : le chrono et 3 cœurs, comme en Aventure ; on peut perdre.
     - **Infini** : on ne perd jamais, pour mesurer un niveau. Le chrono continue sous zéro et les cœurs se vident sans tuer. Le bandeau affiche le temps joué sur le temps du niveau (« 0:42 / 1:10 »).
-    - Dans les deux cas, l'écran de fin donne le temps joué, sa part du temps du niveau et le nombre de touches (« Temps : 0:42 / 1:10 (60 %) · Touches : 2 »), à comparer au seuil de l'atelier (60 %). En Infini, il dit aussi ce qui se serait passé en vrai : « Partie normale : réussi », ou perdu (temps écoulé, plus de cœurs, bulle noire), et les étoiles sont celles qu'on aurait eues.
+    - Dans les deux cas, l'écran de fin donne le temps joué, sa part du temps du niveau et le nombre de touches (« Temps : 0:42 / 1:10 (60 %) · Touches : 2 »), à comparer au seuil de l'atelier (75 %). En Infini, il dit aussi ce qui se serait passé en vrai : « Partie normale : réussi », ou perdu (temps écoulé, plus de cœurs, bulle noire), et les étoiles sont celles qu'on aurait eues.
   - « Play level » lance le niveau choisi ; « Sandbox » ouvre une arène vide dans le décor de ce niveau, sans chrono, qui ne se termine jamais.
   - En partie, une **clé** à côté de la pause ouvre la boîte à outils (le jeu est en pause pendant ce temps) : **Bulles** (lâcher des bulles de la mini au titan, normales ou spéciales : noire, dorée, acier, verte, fantôme, bombe, rebondissante), **Bonus** (prendre tout de suite ou faire tomber n'importe quel bonus ou arme, ou revenir à la flèche normale), **Boss** (faire venir n'importe quel boss, normal ou méga) et **Options** (partie normale ou infinie, n'importe quel décor avec ses pièges : vent, noir, geysers…, recommencer, tout vider).
   - Les écrans de fin proposent « Next level », « Play again » et « Training » (retour au panneau). Les réglages du panneau sont gardés, même après « Reset progress ».
@@ -102,14 +102,14 @@ Le jeu se joue à 1 joueur (le mode à 2 joueurs a été retiré : trop compliqu
   - il flotte en haut ; ouvert, son cœur vert brille et il lance des pierres en cloche ;
   - de temps en temps il se referme dans sa carapace : il devient gris, les flèches ricochent, et il fait tomber des rochers annoncés au plafond (le premier sur l'archer) ;
   - quand il enrage, il lance deux pierres à la fois et appelle des bulles.
-- **Niveaux difficiles** : le 5e et le 10e niveau de chaque monde. Sur la carte ce sont des ronds rouges avec une petite tête de mort ; ils rapportent 50 % de pièces en plus.
+- **Niveaux difficiles** : le 5e et le 10e niveau de chaque monde. Sur la carte ce sont des ronds rouges avec une petite tête de mort ; ils sont plus durs que leurs voisins.
 - **Décors chargés à la demande** : un décor, une plateforme ou une brique n'est chargé qu'au moment où il sert (dans un niveau ou sur la carte). Les régions ajoutées ne ralentissent donc pas le démarrage.
 
 **L'atelier** (`tools/atelier.mjs`) fabrique une région à partir de sa **recette** (`tools/regions/region-XX.mjs` : mondes, décors, textes, boss, difficulté de départ) :
 
 1. chaque niveau est tiré au hasard mais toujours pareil pour une même graine, selon une difficulté en dents de scie dans chaque monde (plus dure au 5e et au 10e niveau) qui monte de monde en monde ; la mécanique de la région est dans plus de la moitié des niveaux, et jamais deux fois de suite la même disposition ;
 2. un robot invincible joue chaque niveau dans le vrai jeu (Chromium sans fenêtre, en accéléré) ;
-3. un niveau est gardé si le robot le finit en utilisant au plus 60 % du temps (75 % pour un boss), pour laisser de la marge à un joueur qui doit esquiver ; sinon l'atelier en tire un autre, un peu plus facile ;
+3. un niveau est gardé si le robot le finit en utilisant au plus 75 % du temps (94 % pour un boss ; c'était 60 % et 75 % avant que le temps des niveaux baisse de 20 %, donc la même marge), pour laisser de la marge à un joueur qui doit esquiver ; sinon l'atelier en tire un autre, un peu plus facile ;
 4. le résultat est figé dans `levels/region-XX.js`, avec pour chaque niveau le temps mis par le robot ; un niveau publié ne change plus.
 
 Commandes : `node tools/atelier.mjs 1` (fabrique la région 1) et `node tools/atelier.mjs 1 --check` (rejoue les niveaux figés). Il faut Playwright (`npm i -g playwright`).
@@ -134,13 +134,14 @@ La carte est un long chemin qui monte, façon jeu « saga » : on la fait défil
 
 ## Règles
 
+- **Temps d'un niveau** : 18 s, plus 1,7 s par coup nécessaire (20 % de plus pour les bulles noires, fantômes et rebondissantes, 6 s par barrière), plus un peu sur les écrans larges, **puis 20 % de moins** pour garder de la tension. Les 6 premiers niveaux, où l'on apprend, ne perdent que 10 %. Les boss ont chacun leur temps (35 % de plus en méga) ; le Yéti, le Dragon et le Pirate ont reçu 15 à 20 % de plus avant la baisse (ils ne perdent donc que 3 à 8 %), et le Pirate est passé de 22 à 18 PV, car le robot ne les battait plus toujours à temps.
 - **Tailles de bulles** : de la mini à la grosse, plus deux nouvelles : l'**énorme** (dès le monde 1) et le **titan** (à partir du monde 4, et en Survie). Une grosse bulle se coupe en deux à chaque coup, jusqu'à la mini qui éclate.
 - **Bulles spéciales**, chacune avec sa couleur et son signe. Un message les présente la première fois qu'elles apparaissent :
 
   | Bulle | Signe | Effet |
   |---|---|---|
   | **Noire** | yeux rouges, halo rouge | Si elle te touche, tu perds **tous tes cœurs** d'un coup (toutes tes vies en Survie). Le bouclier ne protège pas, seule l'étoile d'invincibilité la fait éclater. |
-  | **Dorée** | étoile | Points x3, 3 pièces à chaque éclatement, un bonus tombe une fois sur deux |
+  | **Dorée** | étoile | Points x3, fait toujours tomber une pièce s'il en reste pour la partie, un bonus tombe une fois sur deux |
   | **Acier** | rivets | Il faut 2 coups : le premier la fissure, le second la coupe en deux bulles normales |
   | **Verte** | trois points | Se coupe en **trois** au lieu de deux |
   | **Fantôme** | violette transparente, deux yeux | Traverse les plateformes et les briques (pas les barrières) |
@@ -180,10 +181,13 @@ La carte est un long chemin qui monte, façon jeu « saga » : on la fait défil
 Règle d'or : **aucune pub pendant qu'on joue**. Les pubs et les achats sont **simulés** dans cette version : une fausse pub (écran « AD · TEST » de 3 à 5 s) et un faux paiement (une fenêtre de confirmation, sans argent réel). Dans l'appli Android, seules les deux fonctions `showAd` (AdMob) et `buyProduct` (Google Play Billing) seront remplacées.
 
 - **Pièces** 🪙, gardées sur l'appareil, visibles en haut à droite hors partie :
-  - 1 par petite bulle éclatée en Aventure ;
-  - 20 par niveau réussi, plus 10 par étoile ;
-  - 100 par boss vaincu ;
-  - 1 pour 100 points en Survie ;
+  - **en jouant, seulement en ramassant les pièces qui tombent des bulles éclatées** (Aventure, défi du jour, Survie) :
+    - une pièce vaut 5, deux pièces collées 10, trois 15 ; elles scintillent au sol et, comme les bonus, disparaissent au bout de **5 s** (elles clignotent la dernière seconde et demie) ;
+    - **au plus 40 pièces par partie** : chaque niveau reçoit une réserve de 10 à 40 selon son nombre de coups (40 pour un boss et pour une partie de Survie), découpée au hasard en pièces de 5, 10 et 15 ;
+    - en niveau, elles tombent au fil des bulles éclatées, étalées jusqu'à la fin (la chance suit les pièces qui restent sur les coups qui restent) ; une bulle dorée en fait toujours tomber une s'il en reste ; face à un boss, un coup au boss compte comme une bulle ; en Survie, une de temps en temps (au plus une toutes les 7 s) ;
+    - les pièces encore au sol quand le niveau est réussi sont ramassées d'office ;
+    - plus rien d'autre en partie : ni pièces par niveau réussi, par étoile, par boss ou pour le score de Survie ;
+  - la victoire du jour au défi du jour (voir plus haut) ;
   - cadeau du jour : 50, plus 25 par jour d'affilée (jusqu'à 200 au 7e jour), doublable avec une pub.
 - **Pubs récompensées** (le joueur choisit) :
   - **Continuer** après un échec ou un game over : +1 cœur, +15 s si le temps était écoulé, ou +1 vie en Survie. Une seule fois par partie. Un score de Survie « continué » est marqué ↻ dans le classement ;
