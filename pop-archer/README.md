@@ -74,7 +74,7 @@ Sur téléphone, le jeu est toujours en paysage : si l'écran est tenu droit, le
   - Monde 2, **Grand Orage** : un nuage qui fait pleuvoir des gouttes et des bulles, puis lance des éclairs (une ligne en pointillés prévient avant la frappe).
   - Monde 3, **Pieuvre Encre** : elle crache de l'encre en éventail et plonge sur toi après avoir tremblé.
   - Monde 4, **Œil du Néant** : protégé par 3 bulles en orbite qui arrêtent le harpon, il tire des lasers visés sur toi.
-- **Défi du jour** (bouton violet « Daily » du menu) : chaque jour, un niveau déjà débloqué (jusqu'à 2 niveaux après le plus loin atteint, jamais un boss), tiré au sort pour la journée, avec une règle spéciale : **Gold Rush** (toutes les bulles en or), **Giants** (la plus grosse bulle grandit d'une taille), **Ghost Night** (toutes fantômes), **Iron Rain** (toutes en acier), **Split Party** (toutes vertes, une taille plus petites), **Bounce House** (toutes rebondissantes) ou **Glass Heart** (un seul cœur). La première victoire du jour rapporte 150 pièces, +25 par jour d'affilée (jusqu'au 7e jour) ; on peut le rejouer pour le plaisir. Le bouton affiche ★ tant que le défi du jour n'est pas gagné, ✓ ensuite.
+- **Défi du jour** (bouton violet « Daily » du menu) : chaque jour, un niveau déjà débloqué (jusqu'à 2 niveaux après le plus loin atteint, jamais un boss), tiré au sort pour la journée, avec une règle spéciale : **Gold Rush** (toutes les bulles en or), **Giants** (la plus grosse bulle grandit d'une taille), **Ghost Night** (toutes fantômes), **Iron Rain** (toutes en acier), **Split Party** (toutes vertes, une taille plus petites), **Bounce House** (toutes rebondissantes) ou **Glass Heart** (un seul cœur). La première victoire du jour rapporte 20 pièces, +5 par jour d'affilée (jusqu'au 7e jour) ; on peut le rejouer pour le plaisir. Le bouton affiche ★ tant que le défi du jour n'est pas gagné, ✓ ensuite.
 - **Trophées** (bouton « Trophies » du menu, avec le nombre de récompenses à réclamer) : 12 trophées à 2 ou 3 paliers (30 en tout), chacun rapportant des pièces à réclamer : bulles éclatées, étoiles, boss vaincus, niveaux sans être touché, défis du jour gagnés et série, temps tenu en Survie, combo, bulles dorées, acier et bombes éclatées, tenues possédées. Un bandeau « Trophy unlocked » s'affiche en haut de l'écran dès qu'un palier est atteint. Au premier lancement, la progression déjà faite est comptée sans bandeau, et les récompenses correspondantes attendent dans l'écran des trophées. Les icônes sont faites sur Canva dans le style des bonus (`ach-*.webp`).
 - **Survie** : un seul écran, pas de niveaux, 3 vies. Des bulles tombent par vagues (une marque jaune prévient où), de plus en plus vite et de plus en plus grosses. Éclater des bulles à moins de 2 s d'intervalle fait monter un combo (x2 dès 3 bulles, puis x3, x4, x5). Toutes les 45 s le terrain et le décor changent, et toutes les 2 minutes un boss arrive (plus résistant à chaque fois) pendant que les vagues continuent. Les 5 meilleurs scores sont gardés, avec le temps tenu.
 - **Entraînement** (caché, pour le créateur du jeu) : **toucher 5 fois le logo** du menu fait apparaître un bouton vert « Training » (5 nouvelles touches le cachent). Rien n'y compte : ni étoiles, ni pièces, ni records, ni trophées, ni pubs.
@@ -213,32 +213,32 @@ Règle d'or : **aucune pub pendant qu'on joue**. Les pubs et les achats sont **s
 - **Pièces** 🪙, gardées sur l'appareil, visibles en haut à droite hors partie :
   - **en jouant, seulement en ramassant les pièces qui tombent des bulles éclatées** (Aventure, défi du jour, Survie) :
     - une pièce vaut 5, deux pièces collées 10, trois 15 ; elles scintillent au sol et, comme les bonus, disparaissent au bout de **5 s** (elles clignotent la dernière seconde et demie) ;
-    - **au plus 40 pièces par partie** : chaque niveau reçoit une réserve de 10 à 40 selon son nombre de coups (40 pour un boss et pour une partie de Survie), découpée au hasard en pièces de 5, 10 et 15 ;
+    - **environ 10 pièces par partie** : chaque niveau reçoit une réserve de 5 à 15 selon son nombre de coups (en moyenne 10 sur les 156 niveaux ; 20 pour un boss et pour une partie de Survie), découpée au hasard en pièces de 5, 10 et 15 ; en fin de niveau, une pub les double ;
     - en niveau, elles tombent au fil des bulles éclatées, étalées jusqu'à la fin (la chance suit les pièces qui restent sur les coups qui restent) ; une bulle dorée en fait toujours tomber une s'il en reste ; face à un boss, un coup au boss compte comme une bulle ; en Survie, une de temps en temps (au plus une toutes les 7 s) ;
     - les pièces encore au sol quand le niveau est réussi sont ramassées d'office ;
     - plus rien d'autre en partie : ni pièces par niveau réussi, par étoile, par boss ou pour le score de Survie ;
-  - **le week-end** (samedi et dimanche), deux fois plus de pièces tombent (au plus 80 par partie) ; le menu l'annonce ;
-  - **5 pièces par nouvelle étoile** en Aventure (seulement la 1re fois qu'on la gagne) et **100 pour un monde fini** (son boss battu la 1re fois) ;
-  - la victoire du jour au défi du jour : 60, plus 10 par jour d'affilée (jusqu'à 120) ;
-  - cadeau du jour : 20, plus 10 par jour d'affilée (jusqu'à 80 au 7e jour), doublable avec une pub ;
-  - coffre gratuit : 20 à 60 pièces ou un boost ; trophées : 20 à 500 par palier (la moitié d'avant).
-- **Vies de l'Aventure**, façon Candy Crush : **5 au plus**. Rater un niveau ou le quitter en cours en coûte une (l'écran d'échec dit combien il en reste) ; elles reviennent seules, **une toutes les 20 min**, même jeu fermé. Sur la carte, un compteur ♥ montre les vies et le temps avant la prochaine. Sans vie, on ne peut pas lancer de niveau : on attend, on regarde une pub (+1 vie) ou on paie 100 pièces pour les 5. Continuer après un échec rend la vie perdue. Le défi du jour, la Survie et l'Entraînement ne coûtent pas de vie.
+  - **le week-end** (samedi et dimanche), deux fois plus de pièces tombent (au plus 40 par partie) ; le menu l'annonce ;
+  - **2 pièces par nouvelle étoile** en Aventure (seulement la 1re fois qu'on la gagne) et **25 pour un monde fini** (son boss battu la 1re fois) ;
+  - la victoire du jour au défi du jour : 20, plus 5 par jour d'affilée (jusqu'à 50) ;
+  - cadeau du jour : 5, plus 5 par jour d'affilée (jusqu'à 35 au 7e jour), doublable avec une pub ;
+  - coffre gratuit : 5 à 20 pièces ou un boost ; trophées : 5 à 125 par palier.
+- **Vies de l'Aventure**, façon Candy Crush : **5 au plus**. Rater un niveau ou le quitter en cours en coûte une (l'écran d'échec dit combien il en reste) ; elles reviennent seules, **une toutes les 20 min**, même jeu fermé. Sur la carte, un compteur ♥ montre les vies et le temps avant la prochaine. Sans vie, on ne peut pas lancer de niveau : on attend, on regarde une pub (+1 vie) ou on paie 30 pièces pour les 5. Continuer après un échec rend la vie perdue. Le défi du jour, la Survie et l'Entraînement ne coûtent pas de vie.
 - **Pubs récompensées** (le joueur choisit) :
   - **Continuer** après un échec ou un game over : +1 cœur, +15 s si le temps était écoulé, ou +1 vie en Survie. Une seule fois par partie. Un score de Survie « continué » est marqué ↻ dans le classement ;
   - **Doubler les pièces** en fin de niveau ;
   - **Bouclier gratuit** avant une partie ;
   - **Coffre gratuit** au menu, 3 par jour : des pièces ou un boost au hasard.
-  - Chaque récompense existe aussi sans pub : continuer coûte 100 pièces, un boost 75 pièces, les 5 vies 100 pièces.
+  - Chaque récompense existe aussi sans pub : continuer coûte 30 pièces, un boost 25 pièces, les 5 vies 30 pièces.
 - **Pubs imposées**, seulement en quittant l'écran de fin :
   - un niveau réussi sur trois en Aventure, une partie sur deux en Survie ;
   - jamais après un échec, jamais juste avant un boss, jamais pendant les 10 premières minutes de jeu ni avant le niveau 6 ;
   - au plus une toutes les 3 minutes, pub récompensée comprise ;
   - pas de bannière.
-- **Écran avant la partie** : un seul boost au choix, pris dans le stock ou acheté 75 pièces (le bouclier aussi contre une pub) : **Bouclier**, **Double flèche**, **+15 s** au chrono (pas en Survie) ou **+1 cœur**. La difficulté du niveau est affichée juste au-dessus ; en difficile et très difficile, le jeu conseille un boost.
+- **Écran avant la partie** : un seul boost au choix, pris dans le stock ou acheté 25 pièces (le bouclier aussi contre une pub) : **Bouclier**, **Double flèche**, **+15 s** au chrono (pas en Survie) ou **+1 cœur**. La difficulté du niveau est affichée juste au-dessus ; en difficile et très difficile, le jeu conseille un boost.
 - **Boutique** (bouton *Shop* du menu) :
-  - **costumes** faits sur Canva, chacun en 3 poses : Red Hood (de base), Robin 800, Nomad 1 200, Sailor 1 500, Astronaut 2 000, Royal (pack de départ uniquement) ;
-  - **flèches** : Fire et Ice 300, Rainbow 600 (couleur de la corde et étincelles) ;
-  - **boosts** : 75 pièces l'unité (les 4 boosts) ;
-  - **achats** : Sans pub 2,99 €, Pack de départ 3,99 € (sans pub + 1 000 pièces + costume Royal), 500 pièces 0,99 €, 2 000 pièces 2,99 €, 6 000 pièces 6,99 €. L'achat « sans pub » retire les pubs imposées ; les pubs récompensées restent au choix.
+  - **costumes** faits sur Canva, chacun en 3 poses : Red Hood (de base), Robin 250, Nomad 400, Sailor 500, Astronaut 650, Royal (pack de départ uniquement) ;
+  - **flèches** : Fire et Ice 100, Rainbow 200 (couleur de la corde et étincelles) ;
+  - **boosts** : 25 pièces l'unité (les 4 boosts) ;
+  - **achats** : Sans pub 2,99 €, Pack de départ 3,99 € (sans pub + 300 pièces + costume Royal), 150 pièces 0,99 €, 600 pièces 2,99 €, 1 800 pièces 6,99 €. L'achat « sans pub » retire les pubs imposées ; les pubs récompensées restent au choix.
 
 Les réglages (gains, prix, rythme des pubs) sont regroupés en haut du bloc « Monétisation » dans `index.html` (`EARN`, `SKINS`, `TRAILS`, `PRODUCTS`, `interstitialDue`).
