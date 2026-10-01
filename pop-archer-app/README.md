@@ -47,7 +47,7 @@ Google exige un lien public vers la politique de confidentialité. Elle est dans
 2. Sur GitHub, ouvre **Settings → Pages**. Dans **Build and deployment**, choisis **Source : Deploy from a branch**, puis la branche par défaut et le dossier **/docs**, et clique **Save**.
 3. Après une ou deux minutes, la page est en ligne à **https://nazimdebieb.github.io/nazimdebieb/privacy.html**. C'est ce lien qu'on colle dans la Play Console (**Policy → App content → Privacy policy**).
 
-Avant d'envoyer l'appli, remplace « contact email to be added » par ton adresse de contact dans `docs/privacy.html` (repère `<!-- CONTACT -->`), et mets à jour la date (`<!-- DATE -->`) à chaque changement de la politique.
+L'adresse de contact (artronic.n@gmail.com) est dans `docs/privacy.html` (repère `<!-- CONTACT -->`). Mets à jour la date (`<!-- DATE -->`) à chaque changement de la politique.
 
 ## Construire sur un ordinateur (facultatif)
 

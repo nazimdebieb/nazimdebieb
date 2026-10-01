@@ -63,11 +63,11 @@ Achats qu'on peut refaire : les pièces, la tirelire et le pass (une fois par sa
 - icône : `store/icon-512.png` ; bannière : `store/feature-1024x500.png` ;
 - captures d'écran du téléphone : `store/screenshots/1.png` à `8.png`, dans l'ordre ;
 - catégorie : **Arcade** ; tags : arcade, casual, shooter ;
-- email de contact : ton **adresse dédiée** au jeu.
+- email de contact : **artronic.n@gmail.com**.
 
 ## 5. Contenu de l'appli (Politique → Contenu de l'appli)
 
-- **Règles de confidentialité** : `https://nazimdebieb.github.io/nazimdebieb/privacy.html`. Pour la mettre en ligne : sur GitHub, **Settings → Pages**, Source **Deploy from a branch**, branche `claude/inspiring-babbage-byvelx`, dossier **/docs**, **Save** (ou la branche par défaut une fois la PR fusionnée). Avant, j'ajoute ton adresse de contact dans la page.
+- **Règles de confidentialité** : `https://nazimdebieb.github.io/nazimdebieb/privacy.html`. Pour la mettre en ligne : sur GitHub, **Settings → Pages**, Source **Deploy from a branch**, branche `claude/inspiring-babbage-byvelx`, dossier **/docs**, **Save** (ou la branche par défaut une fois la PR fusionnée). L'adresse de contact y est déjà.
 - **Annonces** : **Oui, l'appli contient des annonces**.
 - **Accès à l'appli** : tout est accessible sans compte.
 - **Public cible** : **13 ans et plus** (13-15, 16-17, 18+). Pas les tranches de moins de 13 ans : elles imposent le programme Familles, et la politique de confidentialité dit 13 ans et plus.

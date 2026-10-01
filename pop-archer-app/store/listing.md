@@ -51,7 +51,7 @@ Translations of the short and full descriptions (French, Spanish, Brazilian Port
 **Developer name**: Artronic
 **Category**: Game › Arcade
 **Tags**: arcade, casual, shooter
-**Contact email**: (your email)
+**Contact email**: artronic.n@gmail.com
 **Privacy policy URL**: https://nazimdebieb.github.io/nazimdebieb/privacy.html (once GitHub Pages is enabled on `/docs`)
 
 ## Graphics checklist
