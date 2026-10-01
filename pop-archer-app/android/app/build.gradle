@@ -8,10 +8,10 @@ if (keystoreFile.exists()) keystoreFile.withInputStream { keystoreProps.load(it)
 def signing = { key, env -> keystoreProps.getProperty(key) ?: System.getenv(env) }
 
 android {
-    namespace = "com.vestolia.poparcher"
+    namespace = "com.artronic.poparcher"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.vestolia.poparcher"
+        applicationId "com.artronic.poparcher"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

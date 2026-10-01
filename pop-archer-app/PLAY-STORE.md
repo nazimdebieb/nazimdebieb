@@ -4,14 +4,14 @@ Ce guide suit l'ordre de la Play Console. Les textes à copier sont dans `store/
 
 ## Ce qui est déjà prêt
 
-- **L'appli** : `com.vestolia.poparcher`, version 1.0 (`versionCode 1`), Android 7 à 16, éditée par le studio **Vestolia**.
+- **L'appli** : `com.artronic.poparcher`, version 1.0 (`versionCode 1`), Android 7 à 16, éditée par le studio **Artronic**.
 - **La clé d'envoi** (`pop-archer-upload.jks`, alias `poparcher`) et **l'AAB signé** (`pop-archer-1.0.aab`), envoyés à part. Garde la clé et son mot de passe **en lieu sûr, avec une copie** : il les faudra pour chaque mise à jour.
 - **Les pubs** (AdMob) et **les achats** (Google Play Billing) sont branchés. Pour l'instant, les pubs utilisent les **identifiants de test de Google** : elles affichent « Test Ad » et ne rapportent rien. On les remplace par les tiens avant la sortie publique (étape 8).
 - **Le consentement RGPD** : au premier lancement en Europe, le formulaire de consentement de Google s'affiche ; « Réglages → Choix de confidentialité » permet de changer d'avis.
 
 ## 0. Le nom du studio
 
-Dans la Play Console, **Paramètres → Compte de développeur → Nom du développeur** : mets **Vestolia**. C'est le nom affiché sous le jeu sur le Play Store, et il servira pour tous tes jeux.
+Dans la Play Console, **Paramètres → Compte de développeur → Nom du développeur** : mets **Artronic**. C'est le nom affiché sous le jeu sur le Play Store, et il servira pour tous tes jeux.
 
 ## 1. Créer l'appli
 
