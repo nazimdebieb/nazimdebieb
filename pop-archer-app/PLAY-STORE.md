@@ -4,10 +4,14 @@ Ce guide suit l'ordre de la Play Console. Les textes à copier sont dans `store/
 
 ## Ce qui est déjà prêt
 
-- **L'appli** : `com.nazimdebieb.poparcher`, version 1.0 (`versionCode 2`), Android 7 à 16.
-- **La clé d'envoi** (`pop-archer-upload.jks`, alias `poparcher`) et **l'AAB signé** (`pop-archer-1.0-2.aab`), envoyés à part. Garde la clé et son mot de passe **en lieu sûr, avec une copie** : il les faudra pour chaque mise à jour.
+- **L'appli** : `com.vestolia.poparcher`, version 1.0 (`versionCode 1`), Android 7 à 16, éditée par le studio **Vestolia**.
+- **La clé d'envoi** (`pop-archer-upload.jks`, alias `poparcher`) et **l'AAB signé** (`pop-archer-1.0.aab`), envoyés à part. Garde la clé et son mot de passe **en lieu sûr, avec une copie** : il les faudra pour chaque mise à jour.
 - **Les pubs** (AdMob) et **les achats** (Google Play Billing) sont branchés. Pour l'instant, les pubs utilisent les **identifiants de test de Google** : elles affichent « Test Ad » et ne rapportent rien. On les remplace par les tiens avant la sortie publique (étape 8).
 - **Le consentement RGPD** : au premier lancement en Europe, le formulaire de consentement de Google s'affiche ; « Réglages → Choix de confidentialité » permet de changer d'avis.
+
+## 0. Le nom du studio
+
+Dans la Play Console, **Paramètres → Compte de développeur → Nom du développeur** : mets **Vestolia**. C'est le nom affiché sous le jeu sur le Play Store, et il servira pour tous tes jeux.
 
 ## 1. Créer l'appli
 
@@ -23,7 +27,7 @@ Play Console → **Créer une application** :
 **Tester → Test interne → Créer une release** :
 
 1. Accepte **Play App Signing** (Google garde la clé de l'appli ; ta clé d'envoi sert à prouver que les fichiers viennent de toi, et elle peut être remplacée si tu la perds).
-2. Envoie `pop-archer-1.0-2.aab`. Nom de la release : `1.0` ; notes : « First test version ».
+2. Envoie `pop-archer-1.0.aab`. Nom de la release : `1.0` ; notes : « First test version ».
 3. **Testeurs** : crée une liste avec ton adresse Gmail (celle de ton téléphone), enregistre, puis **Lancer le déploiement**.
 4. Ouvre le lien d'invitation sur ton téléphone, accepte, et installe depuis le Play Store.
 
@@ -94,6 +98,6 @@ Si ton compte développeur est un compte **personnel créé après novembre 2023
 
 ## 8. Avant la sortie publique
 
-Avec tes identifiants AdMob, je remplace ceux de test (`AD_UNITS` et `AD_TEST` dans `pop-archer/index.html`, l'ID d'appli dans `android/app/src/main/AndroidManifest.xml`), j'augmente `versionCode` à 3, et je refais l'AAB. Ne clique jamais sur tes propres vraies pubs : AdMob peut fermer le compte. Sur ton téléphone, ajoute-le comme **appareil de test** dans AdMob.
+Avec tes identifiants AdMob, je remplace ceux de test (`AD_UNITS` et `AD_TEST` dans `pop-archer/index.html`, l'ID d'appli dans `android/app/src/main/AndroidManifest.xml`), j'augmente `versionCode` à 2, et je refais l'AAB. Ne clique jamais sur tes propres vraies pubs : AdMob peut fermer le compte. Sur ton téléphone, ajoute-le comme **appareil de test** dans AdMob.
 
 Ensuite : **Production → Créer une release** avec cet AAB, pays (tous, ou commence par quelques-uns), et **Envoyer pour examen**.

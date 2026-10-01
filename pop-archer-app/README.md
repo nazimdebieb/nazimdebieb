@@ -2,7 +2,7 @@
 
 Ce dossier emballe le jeu de `../pop-archer/` dans une vraie application Android, avec [Capacitor](https://capacitorjs.com). Le jeu lui-même ne change pas : il est copié tel quel dans l'appli, avec ses images et ses polices (Baloo 2 et Bungee, licence libre), pour marcher **sans connexion**.
 
-- **Identifiant de l'appli** : `com.nazimdebieb.poparcher`. Il devient **définitif** dès le premier envoi sur la Play Console : à changer dans `capacitor.config.json` et `android/app/build.gradle` avant, si tu veux un autre nom.
+- **Identifiant de l'appli** : `com.vestolia.poparcher` (Vestolia est le nom du studio). Il devient **définitif** dès le premier envoi sur la Play Console. Les prochains jeux du studio prendront `com.vestolia.<nom du jeu>`.
 - **Android** : fonctionne à partir d'Android 7 (API 24) et vise Android 16 (API 36).
 - **Écran** : toujours en paysage, en plein écran. Les barres du système se cachent et reviennent en glissant depuis le bord.
 - **Icône et écran de démarrage** : l'icône vient de Canva (`art/icon-1024.png`), l'écran de démarrage montre le logo sur le fond violet du jeu.

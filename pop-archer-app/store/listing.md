@@ -48,6 +48,7 @@ Collect coins to unlock outfits for your archer — Robin, Nomad, Sailor, Astron
 
 Translations of the short and full descriptions (French, Spanish, Brazilian Portuguese, German): see `listing-translations.md`.
 
+**Developer name**: Vestolia
 **Category**: Game › Arcade
 **Tags**: arcade, casual, shooter
 **Contact email**: (your email)

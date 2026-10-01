@@ -8,13 +8,13 @@ if (keystoreFile.exists()) keystoreFile.withInputStream { keystoreProps.load(it)
 def signing = { key, env -> keystoreProps.getProperty(key) ?: System.getenv(env) }
 
 android {
-    namespace = "com.nazimdebieb.poparcher"
+    namespace = "com.vestolia.poparcher"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.nazimdebieb.poparcher"
+        applicationId "com.vestolia.poparcher"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
+        versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
