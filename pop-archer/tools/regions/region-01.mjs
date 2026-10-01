@@ -9,6 +9,8 @@ export default {
   name: 'Jungle Temple',
   first: 97,
   mechanic: 'moving',           // plateformes mobiles : va-et-vient, ascenseurs, briques qui glissent
+  // premier niveau de la région : on découvre la plateforme mobile, sans piège
+  intro: { b: [[3, .2, 1], [2, .82, -1]], k: [['s', 250, 190, 140, 14, 150, 0, 5, 0]] },
   art: {
     jungleDay: ['img/jungle-day.webp', .876],
     jungleDusk: ['img/jungle-dusk.webp', .9],

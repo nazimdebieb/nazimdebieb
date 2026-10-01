@@ -34,7 +34,7 @@ const OUT = join(GAME, 'levels', `region-${pad(regionId)}.js`);
 /* ---------- Règles du jeu utiles à l'atelier (copiées de index.html) ---------- */
 const WORLD = 12;
 function popsOf(s, v) {
-  const kids = v === 'green' ? 3 : 2, childV = v === 'steel' || v === 'bomb' ? null : v;
+  const kids = v === 'green' ? 3 : 2, childV = v === 'steel' || v === 'bomb' || v === 'sleep' ? null : v;
   return (v === 'steel' ? 2 : 1) + (s > 0 ? kids * popsOf(s - 1, childV) : 0);
 }
 const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
@@ -75,11 +75,68 @@ const STATIC = {
   ceiling: () => ({ k: [['s', 0, 200, 640, 14]], y: 262 }),
   pads: () => ({ k: [['g', 320], ['s', 70, 205, 120, 14], ['s', 450, 205, 120, 14]] }),
 };
+// Pièges du château (région 2). Une disposition peut aussi imposer ses bulles (b), ajouter des champs au niveau
+// (extra : spikes, press, spawn, every, weapon) ou n'utiliser qu'une partie de la difficulté.
+// Un monde peut ajouter des champs à tous ses niveaux (all : le plafond à pointes de la Salle des pointes).
+const pick = (R, xs) => xs[Math.floor(R() * xs.length)];
+const plain = R => pick(R, [[], [], [['s', 0, 170, 200, 14], ['s', 440, 170, 200, 14]], [['b', 160, 190, 8]], [['s', 220, 200, 200, 14]]]);
+const CASTLE = {
+  // plafond à pointes : les bulles qui le touchent éclatent d'un coup
+  spikes: R => ({ k: plain(R), extra: { spikes: 1 } }),
+  // une seule bulle géante sous les pointes : vite, la renvoyer vers le haut
+  giant: (R, d) => ({ k: [], extra: { spikes: 1 }, b: [[d > .55 ? 5 : 4, pick(R, [.2, .28, .72, .8]), R() < .5 ? 1 : -1]] }),
+  // des bulles endormies de chaque côté, une grosse qui bouge au milieu
+  sleepers: (R, d) => {
+    const n = d > .5 ? 3 : 2, s = d > .6 ? 2 : 1, b = [];
+    for (let i = 0; i < n; i++) b.push([s, r2(.08 + i * .1), 1, 110 + i * 30, 'sleep'], [s, r2(.92 - i * .1), -1, 110 + i * 30, 'sleep']);
+    b.push([d > .5 ? 4 : 3, .5, R() < .5 ? 1 : -1]);
+    return { k: [], b, extra: R() < .5 ? { spikes: 1 } : {} };
+  },
+  // la presse : le plafond à pointes descend avec le chrono
+  press: R => ({ k: pick(R, [[], [], [['g', 320]], [['b', 120, 230, 10]]]), extra: { press: 1 } }),
+  // pluie de mini-bulles en décalé, sous la presse
+  rain: (R, d) => {
+    const n = clamp(Math.round(6 + d * 6), 6, 11), b = [];
+    for (let i = 0; i < n; i++) b.push([d > .55 && i % 3 === 0 ? 1 : 0, r2(i < n / 2 ? .04 + .36 * (i + .5) / (n / 2) : .6 + .36 * (i - n / 2 + .5) / (n / 2)), i % 2 ? -1 : 1, 70 + ((i * 53) % 150)]);
+    return { k: [], b, extra: { press: 1 } };
+  },
+  // couloir bas : une plateforme sur toute la largeur, les bulles roulent en dessous
+  corridor: () => ({ k: [['s', 0, 200, 640, 14]], y: 262 }),
+  // le mur qui avance : la première chambre rétrécit, il faut la vider vite
+  slide: R => { const x = 430 + Math.round(R() * 60); return { k: [['g', x, x - 150 - Math.round(R() * 50), r2(6 + R() * 4)]] }; },
+  // deux portes : la première ne laisse qu'un passage en bas, la seconde s'ouvre en grand sur une grosse bulle
+  doors: (R, d) => ({ k: [['g', 213], ['g', 427, 0, 0, 1]], b: [[2, .16, 1], [2, .5, -1], [d > .55 ? 4 : 3, .8, -1]] }),
+  // six chambres étroites, une petite bulle (souvent rebondissante) dans chacune
+  chambers: (R, d) => ({ k: [107, 213, 320, 427, 533].map(x => ['g', x]),
+    b: [0, 1, 2, 3, 4, 5].map(i => [d > .5 && i > 2 ? 2 : 1, r2((i + .5) / 6), i % 2 ? -1 : 1, null, R() < .45 ? 'bouncy' : null]) }),
+  // toute une rangée de bulles identiques
+  row: (R, d) => { const n = d > .5 ? 7 : 6; return { k: plain(R), b: Array.from({ length: n }, (_, i) => [d > .6 ? 2 : 1, r2(.08 + .84 * i / (n - 1)), i % 2 ? -1 : 1, 120]) }; },
+  // en miroir : chaque bulle a sa jumelle de l'autre côté
+  mirror: (R, d) => {
+    const b = [], n = d > .5 ? 3 : 2;
+    for (let i = 0; i < n; i++) { const s = clamp(3 - i, 1, 3) + (d > .65 && !i ? 1 : 0), x = r2(.1 + i * .14), v = R() < .3 ? pick(R, ['gold', 'bouncy', 'steel']) : null; b.push([s, x, 1, null, v], [s, r2(1 - x), -1, null, v]); }
+    return { k: [['s', 260, 190, 120, 14]], b };
+  },
+  // les gargouilles : rien au départ, les bulles arrivent des murs une à une, de plus en plus vite
+  gargoyles: (R, d) => {
+    const n = clamp(Math.round(4 + d * 6), 4, 10), spawn = [];
+    for (let i = 0; i < n; i++) spawn.push([clamp(Math.floor(i * (1.2 + d * 2.2) / n + R() * .6), 0, 3)]);
+    return { k: plain(R), b: d > .5 ? [[2, .5, 1]] : [], extra: { spawn, every: r2(3.4 - d * 1.2) } };
+  },
+  // bulles de pierre : leurs morceaux roulent au sol ; on part avec la flèche collante
+  stone: (R, d) => {
+    const b = [[d > .55 ? 3 : 2, r2(.25 + R() * .1), 1, null, 'stone']];
+    if (d > .4) b.push([2, .78, -1, null, R() < .5 ? 'stone' : null]);
+    if (d > .65) b.push([1, .55, 1, 120]);
+    return { k: plain(R), b, extra: { weapon: 'sticky' } };
+  },
+};
+const FAMILIES = { ...MOVING, ...STATIC, ...CASTLE };
 // dispositions où il faut au moins une bulle de chaque côté d'une barrière
 const gatesOf = k => k.filter(o => o[0] === 'g').map(o => o[1] / 640);
 
 /* ---------- Fabrication d'un niveau ---------- */
-const POOL = ['gold', 'bouncy', 'steel', 'green', 'ghost', 'bomb', 'black'];
+const POOL = ['gold', 'bouncy', 'steel', 'green', 'ghost', 'bomb', 'black', ...(recipe.pool || [])];
 function difficulty(wi, i) {
   const hard = i === 4 || i === 9;
   const d = recipe.base + recipe.perWorld * wi + .22 * (i / 10) + (i === 3 || i === 7 ? -.08 : 0) + (hard ? .1 : 0);
@@ -89,16 +146,25 @@ function makeLevel(wi, i, attempt, avoid = []) {
   const { d: d0, hard } = difficulty(wi, i);
   if (i === 11) return { ...recipe.bosses[wi] };
   // premier niveau de la région : on découvre la plateforme mobile, sans piège
-  if (wi === 0 && i === 0) return { b: [[3, .2, 1], [2, .82, -1]], k: [['s', 250, 190, 140, 14, 150, 0, 5, 0]], _family: 'slider', _d: d0 };
+  if (wi === 0 && i === 0 && recipe.intro) return { ...recipe.intro, _family: 'intro', _d: d0 };
   const R = rng(hash(recipe.id, wi, i, attempt));
   const d = clamp(d0 - attempt * .04, .12, .95);
-  // famille d'obstacles : la mécanique de la région de plus en plus souvent, jamais deux fois de suite la même
-  const pMoving = .55 + .06 * wi;
-  const fams = R() < pMoving ? MOVING : STATIC, names = Object.keys(fams);
+  // famille d'obstacles : la mécanique de la région de plus en plus souvent, jamais deux fois de suite la même.
+  // Si le monde a ses pièges (mech), on les tire le plus souvent, les premiers de la liste deux fois plus ;
+  // le premier niveau d'un monde montre toujours son premier piège.
+  const mech = recipe.worlds[wi].mech;
+  let names;
+  if (mech) names = i === 0 ? [mech[0]] : R() < .72 + .04 * wi ? [...mech, ...mech.slice(0, recipe.worlds[wi].fresh || 1)] : Object.keys(STATIC);
+  else names = Object.keys(R() < .55 + .06 * wi ? MOVING : STATIC);
   let fi = Math.floor(R() * names.length);
-  while (avoid.includes(names[fi])) fi = (fi + 1) % names.length;
+  for (let t = 0; t < names.length && avoid.includes(names[fi]); t++) fi = (fi + 1) % names.length;
   const family = names[fi];
-  const lay = fams[family](R);
+  const lay = FAMILIES[family](R, i === 0 ? Math.min(d, .4) : d);
+  if (lay.b) {
+    const lvl = { b: lay.b.map(x => { x = x.slice(); while (x.length > 3 && x[x.length - 1] == null) x.pop(); return x; }), ...(lay.k.length ? { k: lay.k } : {}), ...(lay.extra || {}), ...(recipe.worlds[wi].all || {}) };
+    if (hard) lvl.hard = 1;
+    return { ...lvl, _family: family, _d: r2(d) };
+  }
   // bulles
   const count = clamp(Math.round(1.4 + d * 3.4 + R() * 1.4), 1, 6);
   const top = clamp(2 + Math.floor(d * 2.6 + R() * 1.3), 2, 5);
@@ -131,7 +197,7 @@ function makeLevel(wi, i, attempt, avoid = []) {
     x[1] = r2(clamp(f, .05, .95));
   });
   for (const g of gates) if (!b.some(x => x[1] > g) && b.length > 1) b[b.length - 1][1] = r2(Math.min(.95, g + .12));
-  const lvl = { b: b.map(x => { while (x.length > 3 && x[x.length - 1] == null) x.pop(); return x; }), k: lay.k };
+  const lvl = { b: b.map(x => { while (x.length > 3 && x[x.length - 1] == null) x.pop(); return x; }), k: lay.k, ...(lay.extra || {}), ...(recipe.worlds[wi].all || {}) };
   if (hard) lvl.hard = 1;
   return { ...lvl, _family: family, _d: r2(d) };
 }
@@ -156,7 +222,7 @@ function writeRegion(levels, stats) {
 ${Object.entries(i18n).map(([k, v]) => `    ${JSON.stringify(k)}: ${JSON.stringify(v)},`).join('\n')}
   },
   worlds: [
-${worlds.map(w => `    ${JSON.stringify(w)},`).join('\n')}
+${worlds.map(({ mech, fresh, all, ...w }) => `    ${JSON.stringify(w)},`).join('\n')}
   ],
   levels: [
 ${lines.join('\n')}

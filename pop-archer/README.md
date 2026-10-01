@@ -77,7 +77,7 @@ Sur téléphone, le jeu est toujours en paysage : si l'écran est tenu droit, le
   - Monde 3, **Pieuvre Encre** : elle crache de l'encre en éventail et plonge sur toi après avoir tremblé.
   - Monde 4, **Œil du Néant** : protégé par 3 bulles en orbite qui arrêtent le harpon, il tire des lasers visés sur toi.
 - **Défi du jour** (bouton violet « Daily » du menu) : chaque jour, un niveau déjà débloqué (jusqu'à 2 niveaux après le plus loin atteint, jamais un boss), tiré au sort pour la journée, avec une règle spéciale : **Gold Rush** (toutes les bulles en or), **Giants** (la plus grosse bulle grandit d'une taille), **Ghost Night** (toutes fantômes), **Iron Rain** (toutes en acier), **Split Party** (toutes vertes, une taille plus petites), **Bounce House** (toutes rebondissantes) ou **Glass Heart** (un seul cœur). La première victoire du jour rapporte 20 pièces, +5 par jour d'affilée (jusqu'au 7e jour) ; on peut le rejouer pour le plaisir. Le bouton affiche ★ tant que le défi du jour n'est pas gagné, ✓ ensuite.
-- **Trophées** (bouton « Trophies » du menu, avec le nombre de récompenses à réclamer) : 12 trophées à 2 ou 3 paliers (30 en tout), chacun rapportant des pièces à réclamer : bulles éclatées, étoiles, boss vaincus (les 9 sortes de boss, Stone Golem compris ; un méga-boss compte comme son boss d'origine), niveaux sans être touché, défis du jour gagnés et série, temps tenu en Survie, combo, bulles dorées, acier et bombes éclatées, tenues possédées. Un bandeau « Trophy unlocked » s'affiche en haut de l'écran dès qu'un palier est atteint. Au premier lancement, la progression déjà faite est comptée sans bandeau, et les récompenses correspondantes attendent dans l'écran des trophées. Les icônes sont faites sur Canva dans le style des bonus (`ach-*.webp`).
+- **Trophées** (bouton « Trophies » du menu, avec le nombre de récompenses à réclamer) : 12 trophées à 2 ou 3 paliers (30 en tout), chacun rapportant des pièces à réclamer : bulles éclatées, étoiles, boss vaincus (les 10 sortes de boss, Stone Golem et Castle Guardian compris ; un méga-boss compte comme son boss d'origine), niveaux sans être touché, défis du jour gagnés et série, temps tenu en Survie, combo, bulles dorées, acier et bombes éclatées, tenues possédées. Un bandeau « Trophy unlocked » s'affiche en haut de l'écran dès qu'un palier est atteint. Au premier lancement, la progression déjà faite est comptée sans bandeau, et les récompenses correspondantes attendent dans l'écran des trophées. Les icônes sont faites sur Canva dans le style des bonus (`ach-*.webp`).
 - **Survie** : un seul écran, pas de niveaux, 3 vies. Des bulles tombent par vagues (une marque jaune prévient où), de plus en plus vite et de plus en plus grosses. Éclater des bulles à moins de 2 s d'intervalle fait monter un combo (x2 dès 3 bulles, puis x3, x4, x5). Toutes les 45 s le terrain et le décor changent, et toutes les 2 minutes un boss arrive (plus résistant à chaque fois) pendant que les vagues continuent. Les 5 meilleurs scores sont gardés, avec le temps tenu.
 - **Entraînement** (caché, pour le créateur du jeu) : **toucher 5 fois le logo** du menu fait apparaître un bouton vert « Training » (5 nouvelles touches le cachent). Rien n'y compte : ni étoiles, ni pièces, ni records, ni trophées, ni pubs.
   - Le panneau permet de choisir **n'importe quel niveau** (curseur, ±1 niveau, les doubles flèches pour passer d'un monde à l'autre, avec le nom du monde et du boss), **n'importe quelle règle du défi du jour**, et la façon de jouer :
@@ -98,6 +98,18 @@ Le jeu se joue à 1 joueur (le mode à 2 joueurs a été retiré : trop compliqu
   - les mondes sont Jungle Gate, Monkey Canopy, Temple Steps, Hidden Falls et Golden Sanctum ;
   - 4 nouveaux décors Canva (jungle de jour, au couchant, intérieur du temple, cascade cachée), déclinés en 10 ambiances par un étalonnage des couleurs (`filter`) : cascade de nuit, sanctuaire doré… ;
   - une pierre moussue en plateforme et une brique du temple, et une musique à elle.
+- **Région 2, Château des pièges** (mondes 14 à 18, niveaux 157 à 216) : un piège par monde, qui revient ensuite mêlé aux autres. L'idée vient des niveaux à pièges des jeux de bulles classiques (voir [`IDEES-BUBBLE-TROUBLE.md`](IDEES-BUBBLE-TROUBLE.md)), adaptée librement à notre jeu :
+  - **Salle des pointes** (monde 14) : le **plafond à pointes**, où une bulle qui le touche éclate d'un coup, morceaux compris (tous ses points comptent). Sous les pointes, les morceaux d'une bulle touchée ne remontent qu'un peu : en tirant vite sur le morceau qui monte encore, on l'envoie s'y crever. Les **bulles endormies** apparaissent aussi, ainsi que la bulle géante seule, la rangée de bulles et les niveaux en miroir ;
+  - **Couloir de la presse** (monde 15) : le plafond à pointes **descend avec le chrono**, jusqu'à 62 px au-dessus du sol. À zéro, l'archer est « Écrasé ! ». S'y ajoutent la pluie de mini-bulles en décalé sous la presse et le couloir bas. La **flèche du vent** arrive dans les bonus ;
+  - **Murs mouvants** (monde 16) : un **mur qui avance** rétrécit la première chambre (il faut la vider vite), des **portes en deux temps** (la première ne laisse qu'un passage en bas, la seconde s'ouvre en grand sur une grosse bulle) et **six chambres étroites**. La **baliste** arrive dans les bonus ;
+  - **Galerie des gargouilles** (monde 17) : rien au départ ; deux **têtes de pierre** crachent les bulles depuis les murs, une à une et de plus en plus vite (leur gueule rougeoie juste avant). Le niveau n'est fini qu'après la dernière ;
+  - **Donjon de pierre** (monde 18) : les **bulles de pierre**, dont les morceaux roulent au sol sans rebondir (impossible de passer dessous : il faut les tirer). On part avec la **flèche collante**. Tous les pièges s'y mélangent ;
+  - 4 décors Canva (salle des pièges, cachot, armurerie, salle du trône), déclinés en 10 ambiances, une pierre de château en plateforme et une brique, et une musique à elle ;
+  - les 4 premiers boss sont les méga Frost Yeti, Lava Dragon, Sky Pirate et Lantern Phantom ; le dernier est nouveau : le **Gardien du château**.
+- **Castle Guardian**, le boss du monde 18 :
+  - une armure vivante qui flotte en haut et suit l'archer, **bouclier tourné vers le sol** : les flèches ricochent (un arc bleu le montre) ;
+  - elle **lève sa masse** (le bouclier s'écarte, un anneau doré s'allume : c'est le moment de tirer), l'abat sur l'archer (une colonne annoncée), puis reste un instant découverte ;
+  - elle réveille les **gargouilles**, qui crachent des bulles ; quand elle enrage, elle frappe deux fois et lance sa masse en cloche.
 - **Plateformes mobiles** : une plateforme ou une rangée de briques peut aller et venir (`ax`) ou monter et descendre (`ay`), en douceur (sinus, période `per`). Leur trajet s'étire avec la largeur de l'écran comme le reste du niveau.
 - **Méga-boss** : les boss des 4 premiers mondes d'une région sont des versions renforcées des boss connus. Ils ont d'autres couleurs, 40 % de vie en plus, vont 15 % plus vite et ont 35 % de temps en plus.
 - **Stone Golem**, le boss du monde 13 :
@@ -115,6 +127,8 @@ Le jeu se joue à 1 joueur (le mode à 2 joueurs a été retiré : trop compliqu
 4. le résultat est figé dans `levels/region-XX.js`, avec pour chaque niveau le temps mis par le robot ; un niveau publié ne change plus.
 
 5. enfin, le chronomètre (`tools/chrono.mjs`, ci-dessous) donne à chaque niveau de la région sa difficulté et son temps.
+
+Une recette peut donner à chaque monde ses pièges (`mech`) : l'atelier les tire alors dans environ trois niveaux sur quatre, montre toujours le premier au 1er niveau du monde, et peut imposer les bulles (bulle géante, pluie, chambres…) et les champs du niveau (`spikes`, `press`, `spawn` et `every` pour les gargouilles, `weapon`).
 
 Commandes : `node tools/atelier.mjs 1` (fabrique la région 1) et `node tools/atelier.mjs 1 --check` (rejoue les niveaux figés). Il faut Playwright (`npm i -g playwright`).
 
@@ -178,6 +192,8 @@ La carte est un long chemin qui monte, façon jeu « saga » : on la fait défil
   | **Fantôme** | violette transparente, deux yeux | Traverse les plateformes et les briques (pas les barrières) |
   | **Bombe** | mèche allumée | En éclatant, elle explose et touche toutes les bulles autour, puis se coupe en deux bulles normales |
   | **Rebondissante** | chevrons | Plus rapide et rebondit plus haut |
+  | **Endormie** | yeux fermés, « z » | Flotte sans bouger tant que la flèche ne l'a pas touchée ; ses morceaux sont des bulles normales (région 2) |
+  | **Pierre** | taches, fissure | Ses morceaux roulent au sol sans rebondir : on ne peut pas passer dessous, il faut les tirer (région 2) |
 
   Elles arrivent peu à peu : la dorée au niveau 5, la rebondissante au 7, l'acier au 9, la verte au 13, la noire au 16, la fantôme au 19, la bombe au 21. Ensuite, environ une bulle sur trois est spéciale. En Survie, elles se débloquent avec le temps (la dorée à 20 s, puis toutes les 20 s environ, et la noire à 2 min 30), avec jamais plus d'une noire à la fois. Les niveaux avec des bulles noires, fantômes ou rebondissantes donnent un peu plus de temps.
 
@@ -187,6 +203,11 @@ La carte est un long chemin qui monte, façon jeu « saga » : on la fait défil
   - chaque niveau donne **1 à 3 bonus au maximum** (selon le nombre de bulles, 3 pour un boss), avec au moins 5 s entre deux, et une seule vie en plus par niveau ;
   - trois bonus de la Survie arrivent monde par monde, en version plus courte : **Triple harpon** (monde 2, 6 s), **Ralenti** (monde 3, 5 s), **Mitraille** (monde 4, 5 s). Un message l'annonce au premier niveau du monde ;
   - Bombe, Étoile et Points x2 restent réservés à la Survie.
+- Nouveaux bonus de la région 2 (aussi en Survie, sauf le sablier) :
+  - **Aura** (10 s, monde 14) : rien ne touche l'archer, sauf la bulle noire ; un cercle violet clignote à la fin ;
+  - **Sablier** (monde 14) : +10 s au chrono ;
+  - **Flèche du vent** (monde 15) : une rafale rapide qui passe à travers les toutes petites bulles, mais projette les morceaux des grosses jusqu'au plafond (deux à la fois au plus) ;
+  - **Baliste** (monde 16) : posée au sol à la place du tir, elle tire toute seule pendant 8 s.
 - Bonus en plus en Survie (une pastille en haut de l'écran montre ceux qui sont actifs et leur temps restant) :
   - **Mitraille** (8 s) : des balles courtes et rapides, jusqu'à 6 à l'écran ;
   - **Triple harpon** (10 s) : trois harpons en éventail à chaque tir ;
@@ -249,6 +270,7 @@ Les valeurs viennent de l'étude de 12 jeux comparables (`reports/Économie des 
   - **costumes** faits sur Canva, chacun en 3 poses : Red Hood (de base), Robin 400, Nomad 800, Sailor 1 200, Astronaut 2 000, Royal (pack de départ uniquement), Golden Archer (pass uniquement : le Red Hood passé dans un filtre doré) ;
   - **flèches** : Fire et Ice 300, Rainbow 600, Gold (pass uniquement) (couleur de la corde et étincelles) ;
   - **boosts** : 40 pièces l'unité (les 4 boosts) ;
-  - **offres** : 200 pièces 0,99 €, 750 pièces 2,99 €, 2 000 pièces 6,99 €, 5 000 pièces 14,99 € (« meilleur prix »), Sans pub 3,99 € (retire les pubs imposées ; les pubs récompensées restent au choix), la tirelire, le pass saisonnier 4,99 €, et le **pack de départ** à 1,99 € (1 000 pièces, 3 boosts et le costume Royal, affiché « −70 % », sans le sans pub) : il est proposé une seule fois, quand on réussit le niveau 10, puis reste en boutique **72 h** avec un compte à rebours.
+  - **armes** (onglet *Weapons*) : flèche collante 600, flèche du vent 1 500, baliste 2 000, achetées une fois. L'arme choisie part gratuitement à chaque partie : une 5e carte sur l'écran avant la partie la change d'un tap (ou « aucune »). Un niveau qui impose son arme (la flèche collante face aux bulles de pierre) garde la sienne ;
+  - **offres** : 200 pièces 0,99 €, 750 pièces 2,99 €, 2 000 pièces 6,99 €, 5 000 pièces 14,99 € (« meilleur prix »), Sans pub 3,99 € (retire les pubs imposées ; les pubs récompensées restent au choix), la tirelire, le pass saisonnier 4,99 €, le **pack armurerie** 2,99 € (les 3 armes et 500 pièces), et le **pack de départ** à 1,99 € (1 000 pièces, 3 boosts et le costume Royal, affiché « −70 % », sans le sans pub) : il est proposé une seule fois, quand on réussit le niveau 10, puis reste en boutique **72 h** avec un compte à rebours.
 
 Les réglages (gains, prix, rythme des pubs) sont regroupés dans le bloc « Monétisation » de `index.html` : `EARN`, `SKINS`, `TRAILS`, `PRODUCTS`, `GIFTS`, `LADDER`, `PIGGY`, `SEASON`, `PASS_FREE`, `PASS_PAID`, `STREAK_GIFTS`, `interstitialDue`.

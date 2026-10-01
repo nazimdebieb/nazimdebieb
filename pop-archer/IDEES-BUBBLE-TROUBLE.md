@@ -43,7 +43,7 @@ Notes prises sur les captures envoyées (niveaux 1 à 22), puis les propositions
 - armes déblocables avec l'argent du jeu ou réel.
 - Consigne : s'inspirer de la logique et de la difficulté, adapter à l'archer, être créatif ; ne pas copier.
 
-## Propositions pour Pop Archer (à valider)
+## Propositions pour Pop Archer (validées, faites)
 
 ### Nouvelles mécaniques de niveau
 1. **Plafond à épines** : une bulle qui touche le plafond éclate d'un coup, sans se diviser. Récompense l'astuce « frapper tôt pour que les morceaux montent ». Propriété de niveau `spikes`.
@@ -68,3 +68,14 @@ Notes prises sur les captures envoyées (niveaux 1 à 22), puis les propositions
 Une **région 2, « Château des pièges »** (mondes 14 à 18, niveaux 157 à 216), un monde par mécanique, présentée une à la fois comme les bulles spéciales :
 14 Salle des épines (plafond à épines, bulle endormie), 15 La presse (plafond qui descend), 16 Remparts mouvants (murs qui avancent, portes à deux étapes), 17 Galerie des gargouilles (bulles crachées), 18 Fosse aux boulets (bulles de pierre, sol rebondissant), avec un nouveau boss : le Gardien du château.
 Décors à faire sur Canva (intérieurs de château). Les armes et bonus nouveaux servent aussi dans les régions suivantes et en Survie.
+
+## Ce qui a été fait
+
+Tout a été validé (« pas la peine qu'on garde leur chemin ») et adapté librement :
+- **Monde 14, Salle des pointes** : plafond à pointes (les morceaux ne remontent qu'un peu : il faut retoucher vite celui qui monte pour l'y crever), bulles endormies, bulle géante seule, rangée complète, niveaux en miroir. Bonus Aura et Sablier.
+- **Monde 15, Couloir de la presse** : le plafond descend avec le chrono (« Écrasé ! » à zéro), pluie de mini-bulles décalées, couloir bas. Flèche du vent.
+- **Monde 16, Murs mouvants** : mur qui avance, portes en deux temps, six chambres étroites. Baliste.
+- **Monde 17, Galerie des gargouilles** : les bulles arrivent des murs, une à une, de plus en plus vite.
+- **Monde 18, Donjon de pierre** : les bulles de pierre (déplacées ici, plus tard qu'au niveau 16 d'origine), avec la flèche collante au départ ; tous les pièges mélangés ; boss **Gardien du château**.
+- **Armurerie** (onglet *Weapons* de la boutique) : flèche collante 600, flèche du vent 1 500, baliste 2 000, ou le pack armurerie à 2,99 € ; l'arme choisie part gratuitement à chaque partie.
+- Le « sol rebondissant » n'a pas été gardé : les bulles rebondissantes existent déjà.
