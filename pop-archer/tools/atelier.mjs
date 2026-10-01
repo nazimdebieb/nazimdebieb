@@ -276,7 +276,7 @@ async function play(levelsToCheck) {
           if (st.state === 'clear' || st.state === 'over' || (st.state === 'play' && st.timeLeft <= 0)) break;
         }
       } catch (e) { errs.push(e.message.split('\n')[0]); }
-      await ctx.close();
+      await ctx.close().catch(() => {});
       const used = Math.round(st.timeMax - Math.max(0, st.timeLeft)), boss = n % WORLD === 0;
       // (temps par défaut du jeu, par la formule ; tools/chrono.mjs donne ensuite à chaque niveau son vrai temps)
       const ok = st.state === 'clear' && used <= st.timeMax * (boss ? .75 : .6) && !errs.length;

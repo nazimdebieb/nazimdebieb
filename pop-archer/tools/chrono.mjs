@@ -89,7 +89,7 @@ async function play(list, free, slow) {
           if (st.state === 'clear' || st.state === 'over' || (st.state === 'play' && st.timeLeft <= 0)) break;
         }
       } catch (e) { errs.push(e.message.split('\n')[0]); }
-      await ctx.close();
+      await ctx.close().catch(() => {});
       const used = Math.round(st.timeMax - Math.max(0, st.timeLeft));
       (out[n] = out[n] || []).push({ ok: st.state === 'clear' && !errs.length, used, max: Math.round(st.timeMax), err: errs[0] });
       console.log(`  ${n}: ${st.state} ${used}/${Math.round(st.timeMax)} s${errs.length ? ' ' + errs[0] : ''}`);
