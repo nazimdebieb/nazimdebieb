@@ -235,7 +235,7 @@ ${lines.join('\n')}
 /* ---------- Le robot : chaque niveau joué dans le vrai jeu ---------- */
 // Le robot décide tous les 5 pas de la boucle du jeu (environ 40 ms de jeu, un temps de réaction humain)
 // et pas sur une minuterie : ses résultats ne dépendent pas de la charge de la machine.
-const HOOK = `window.__t={adv:n=>startRun('adv',n),st:()=>({state,level,timeLeft,timeMax,balls:balls.length,boss:!!boss}),bot:on=>{window.__on=on;}};
+const HOOK = `window.__t={adv:n=>startRun('adv',n),st:()=>({state,level,timeLeft,timeMax,balls:balls.length,boss:!!boss,won:lastOver==='clear',left:window.__left}),bot:on=>{window.__on=on;}};
 window.__bot=()=>{if(!window.__on||(window.__k=(window.__k||0)+1)%5)return;const p=players[0];if(!p)return;p.inv=99;
   let t=balls.filter(b=>!blocks.some(k=>k.t==='g'&&k.x<p.x!==k.x<b.x)).sort((a,c)=>Math.abs(a.x-p.x)-Math.abs(c.x-p.x))[0]||balls[0];
   if(!t&&boss)t={x:boss.x,s:4};if(!t){kb.l=kb.r=false;return;}const dx=t.x-p.x;kb.l=dx<-6;kb.r=dx>6;if(Math.abs(dx)<RAD[t.s]+4)fireQueued=true;};
@@ -245,9 +245,12 @@ async function play(levelsToCheck) {
   const { chromium } = require(join(execSync('npm root -g').toString().trim(), 'playwright'));
   let html = readFileSync(join(GAME, 'index.html'), 'utf8');
   const a = 'const hot = window.claude && window.claude.hot;';
-  for (const x of [a, 'acc += Math.min(.1, (now - last) / 1000);', '  while (acc >= STEP) { update(STEP); acc -= STEP; }'])
+  const won = 'function levelClear() {';
+  for (const x of [a, won, 'acc += Math.min(.1, (now - last) / 1000);', '  while (acc >= STEP) { update(STEP); acc -= STEP; }'])
     if (!html.includes(x)) throw new Error('hook point not found in index.html: ' + x);
-  html = html.replace(a, HOOK + a).replace('acc += Math.min(.1, (now - last) / 1000);', `acc += Math.min(.1, (now - last) / 1000 * ${SPEED});`)
+  // le temps restant est noté au moment de la victoire : ensuite il est converti en bonus et le chrono tombe à 0,
+  // et l'écran de fin peut arriver avant la lecture suivante (machine chargée)
+  html = html.replace(a, HOOK + a).replace(won, won + ' window.__left = timeLeft;').replace('acc += Math.min(.1, (now - last) / 1000);', `acc += Math.min(.1, (now - last) / 1000 * ${SPEED});`)
     .replace('  while (acc >= STEP) { update(STEP); acc -= STEP; }', '  while (acc >= STEP) { window.__bot(); update(STEP); acc -= STEP; }');
   const test = join(GAME, '_atelier.html');
   writeFileSync(test, html);
@@ -269,6 +272,7 @@ async function play(levelsToCheck) {
         for (let t = 0; t < 400; t++) {
           await p.waitForTimeout(250);
           st = await p.evaluate(() => window.__t.st());
+          if (st.won && st.left != null) { st.state = 'clear'; st.timeLeft = st.left; }
           if (st.state === 'clear' || st.state === 'over' || (st.state === 'play' && st.timeLeft <= 0)) break;
         }
       } catch (e) { errs.push(e.message.split('\n')[0]); }
@@ -296,7 +300,7 @@ if (opt('check', false)) {
   // on rejoue les niveaux tels qu'ils sont figés dans le fichier (sans les retirer au sort)
   const window = {};
   new Function('window', readFileSync(OUT, 'utf8'))(window);
-  const frozen = window.POP_REGIONS[0].levels, lines = readFileSync(OUT, 'utf8').split('\n').filter(l => l.startsWith('    {'));
+  const frozen = window.POP_REGIONS[0].levels, lines = readFileSync(OUT, 'utf8').split('\n').filter(l => /^ {4}\{.*\/\/ \d+/.test(l));
   frozen.forEach((l, j) => {
     const m = / · (\w+) d=([\d.]+) /.exec(lines[j] || '');
     levels[j] = { ...l, ...(m ? { _family: m[1], _d: Number(m[2]) } : {}) };

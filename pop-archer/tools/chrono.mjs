@@ -44,7 +44,7 @@ const range = s => s.split(',').flatMap(p => { const [a, b] = p.split('-').map(N
 
 // Robot : il vise la bulle la plus proche (du bon côté des barrières), le boss s'il n'y a plus de bulles,
 // et fait un détour par une pièce tombée tout près. En --verify il est plus lent et recule devant les bulles.
-const HOOK = `window.__t={go:(n,free)=>{startRun('adv',n);if(free)timeMax=timeLeft=900;},st:()=>({state,level,timeLeft,timeMax,W})};
+const HOOK = `window.__t={go:(n,free)=>{startRun('adv',n);if(free)timeMax=timeLeft=900;},st:()=>({state,level,timeLeft,timeMax,W,won:lastOver==='clear',left:window.__left})};
 window.__bot=()=>{const slow=window.__slow;if((window.__k=(window.__k||0)+1)%(slow?8:5))return;const p=players[0];if(!p)return;p.inv=99;
   if(slow){window.__dg=(window.__dg||0)-1;if(window.__dt>0){window.__dt--;return;}
     const d=window.__dg<=0&&balls.find(b=>b.vy>0&&b.y>FLOOR-RAD[b.s]*2-70&&Math.abs(b.x-p.x)<RAD[b.s]+16);
@@ -61,7 +61,9 @@ async function play(list, free, slow) {
   let html = readFileSync(join(GAME, 'index.html'), 'utf8');
   const hooks = [['const hot = window.claude && window.claude.hot;', HOOK + (slow ? 'window.__slow=1;\n' : '') + 'const hot = window.claude && window.claude.hot;'],
     ['acc += Math.min(.1, (now - last) / 1000);', `acc += Math.min(.1, (now - last) / 1000 * ${SPEED});`],
-    ['  while (acc >= STEP) { update(STEP); acc -= STEP; }', '  while (acc >= STEP) { window.__bot(); update(STEP); acc -= STEP; }']];
+    ['  while (acc >= STEP) { update(STEP); acc -= STEP; }', '  while (acc >= STEP) { window.__bot(); update(STEP); acc -= STEP; }'],
+    // le temps restant est noté à la victoire (ensuite il devient un bonus et le chrono tombe à 0)
+    ['function levelClear() {', 'function levelClear() { window.__left = timeLeft;']];
   for (const [a, b] of hooks) { if (!html.includes(a)) throw new Error('hook point not found in index.html: ' + a); html = html.replace(a, b); }
   const test = join(GAME, '_chrono.html');
   writeFileSync(test, html);
@@ -83,6 +85,7 @@ async function play(list, free, slow) {
         for (let t = 0; t < 1400; t++) {
           await p.waitForTimeout(250);
           st = await p.evaluate(() => window.__t.st());
+          if (st.won && st.left != null) { st.state = 'clear'; st.timeLeft = st.left; }
           if (st.state === 'clear' || st.state === 'over' || (st.state === 'play' && st.timeLeft <= 0)) break;
         }
       } catch (e) { errs.push(e.message.split('\n')[0]); }
