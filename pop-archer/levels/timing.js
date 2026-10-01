@@ -158,4 +158,64 @@ window.POP_TIMING = {
   154: [59, 3, 47], // difficile, robot 47 s
   155: [53, 4, 51], // très difficile, robot 51 s
   156: [154, 0, 63], // boss, robot 63 s
+  157: [30, 2, 16], // moyen, robot 16 s
+  158: [38, 3, 29], // difficile, robot 29 s
+  159: [50, 1, 15], // facile, robot 15 s
+  160: [44, 2, 25], // moyen, robot 25 s
+  161: [49, 4, 47], // très difficile, robot 47 s
+  162: [34, 3, 26], // difficile, robot 26 s
+  163: [34, 3, 26], // difficile, robot 26 s
+  164: [36, 2, 20], // moyen, robot 20 s
+  165: [38, 2, 21], // moyen, robot 21 s
+  166: [50, 1, 15], // facile, robot 15 s
+  167: [32, 4, 30], // très difficile, robot 30 s
+  168: [220, 0, 93], // boss, robot 93 s
+  169: [37, 3, 28], // difficile, robot 28 s
+  170: [33, 1, 9], // facile, robot 9 s
+  171: [51, 3, 40], // difficile, robot 40 s
+  172: [39, 2, 22], // moyen, robot 22 s
+  173: [43, 4, 41], // très difficile, robot 41 s
+  174: [41, 2, 23], // moyen, robot 23 s
+  175: [28, 2, 15], // moyen, robot 15 s
+  176: [51, 3, 40], // difficile, robot 40 s
+  177: [47, 4, 45], // très difficile, robot 45 s
+  178: [25, 2, 13], // moyen, robot 13 s
+  179: [25, 1, 2], // facile, robot 2 s
+  180: [240, 0, 142], // boss, robot 142 s
+  181: [58, 2, 34], // moyen, robot 34 s
+  182: [46, 2, 26], // moyen, robot 26 s
+  183: [25, 1, 1], // facile, robot 1 s
+  184: [55, 4, 53], // très difficile, robot 53 s
+  185: [55, 2, 32], // moyen, robot 32 s
+  186: [58, 1, 18], // facile, robot 18 s
+  187: [52, 2, 30], // moyen, robot 30 s
+  188: [51, 4, 49], // très difficile, robot 49 s
+  189: [59, 3, 47], // difficile, robot 47 s
+  190: [56, 3, 44], // difficile, robot 44 s
+  191: [57, 3, 45], // difficile, robot 45 s
+  192: [240, 0, 144], // boss, robot 144 s
+  193: [44, 3, 34], // difficile, robot 34 s
+  194: [44, 2, 25], // moyen, robot 25 s
+  195: [49, 4, 47], // très difficile, robot 47 s
+  196: [70, 1, 22], // facile, robot 22 s
+  197: [56, 1, 17], // facile, robot 17 s
+  198: [44, 3, 34], // difficile, robot 34 s
+  199: [47, 2, 27], // moyen, robot 27 s
+  200: [47, 2, 27], // moyen, robot 27 s
+  201: [46, 4, 44], // très difficile, robot 44 s
+  202: [54, 2, 31], // moyen, robot 31 s
+  203: [50, 3, 39], // difficile, robot 39 s
+  204: [240, 0, 186], // boss, robot 186 s
+  205: [39, 1, 11], // facile, robot 11 s
+  206: [31, 2, 17], // moyen, robot 17 s
+  207: [58, 4, 56], // très difficile, robot 56 s
+  208: [47, 3, 37], // difficile, robot 37 s
+  209: [38, 2, 21], // moyen, robot 21 s
+  210: [52, 3, 41], // difficile, robot 41 s
+  211: [25, 1, 1], // facile, robot 1 s
+  212: [49, 2, 28], // moyen, robot 28 s
+  213: [47, 3, 37], // difficile, robot 37 s
+  214: [52, 2, 30], // moyen, robot 30 s
+  215: [49, 4, 47], // très difficile, robot 47 s
+  216: [178, 0, 74], // boss, robot 74 s
 };

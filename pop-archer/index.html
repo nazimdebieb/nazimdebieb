@@ -2172,8 +2172,10 @@ function fire(p) {
     return;
   }
   // flèche de vent : très rapide, deux à la fois ; elle traverse les plus petites bulles. Quand il ne reste
-  // que des mini-bulles, l'arc tire une flèche normale (sinon le niveau ne pourrait plus finir)
-  if (p.weapon === 'wind' && (boss || balls.some(b => b.s > 0))) {
+  // que des mini-bulles à portée (de ce côté des portes encore fermées), l'arc tire une flèche normale :
+  // sinon le niveau ne pourrait plus finir
+  const reach = b => !blocks.some(k => k.t === 'g' && !k.opening && (k.x < p.x) !== (k.x < b.x));
+  if (p.weapon === 'wind' && (boss || balls.some(b => b.s > 0 && reach(b)))) {
     if (p.harpoons.filter(h => h.wind).length >= 2) return;
     p.harpoons.push({ x: p.x, top: FLOOR - 30, stuck: 0, bullet: true, wind: true });
     sfx.zap();
