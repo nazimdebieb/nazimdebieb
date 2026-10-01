@@ -5,7 +5,7 @@ Add each one in Play Console › Store presence › Main store listing › Manag
 ## Français (fr-FR)
 
 **Short description**:
-Vise, tire, coupe ! Éclate les bulles dans plus de 150 niveaux et en Survie.
+Vise, tire, coupe ! Éclate les bulles dans plus de 200 niveaux et en Survie.
 
 **Full description**:
 
@@ -14,11 +14,12 @@ Pop Archer est un jeu d'arcade coloré, inspiré des grands classiques où l'on 
 Vise avec ton arc et tire vers le haut : chaque bulle touchée se coupe en deux, puis encore en deux, jusqu'à ce que les plus petites éclatent. Vide l'écran avant la fin du temps, et ne laisse jamais une bulle te toucher !
 
 🏹 AVENTURE
-• Plus de 150 niveaux sur une carte qui serpente à travers des mondes à thème : forêt enchantée, ruines du désert, fonds marins, espace, pics gelés, volcan, royaume des nuages, château hanté, temple de la jungle… et de nouveaux mondes arrivent
+• Plus de 200 niveaux sur une carte qui serpente à travers des mondes à thème : forêt enchantée, ruines du désert, fonds marins, espace, pics gelés, volcan, royaume des nuages, château hanté, temple de la jungle, château piégé… et de nouveaux mondes arrivent
 • Glisse sur la glace, évite les geysers de lave, lutte contre le vent et garde ton sang-froid quand la lumière s'éteint
+• Les pièges du château : plafond à pointes, presse qui descend, murs qui avancent et gargouilles qui crachent des bulles
 • Jusqu'à 3 étoiles par niveau
 • Plateformes, briques à casser et barrières qui s'ouvrent zone par zone
-• Un boss à la fin de chaque monde : le Roi des Bulles, la Grande Tempête, la Pieuvre d'encre, l'Œil du Néant, le Yéti des glaces, le Dragon de lave, le Pirate du ciel et le Fantôme à la lanterne
+• Un boss à la fin de chaque monde : le Roi des Bulles, la Grande Tempête, la Pieuvre d'encre, l'Œil du Néant, le Yéti des glaces, le Dragon de lave, le Pirate du ciel, le Fantôme à la lanterne, le Golem de pierre et le Gardien du château
 
 🎈 BULLES SPÉCIALES
 • Bulles dorées : points et pièces en plus
@@ -26,6 +27,7 @@ Vise avec ton arc et tire vers le haut : chaque bulle touchée se coupe en deux,
 • Bulles vertes : elles se coupent en trois
 • Bulles fantômes : elles traversent les plateformes
 • Bulles bombes : elles font tout exploser autour d'elles
+• Bulles endormies qui attendent ta flèche, et bulles de pierre qui roulent au sol
 • Et la bulle noire : un seul contact et c'est perdu !
 
 📅 DÉFI DU JOUR ET TROPHÉES
@@ -36,20 +38,20 @@ Vise avec ton arc et tire vers le haut : chaque bulle touchée se coupe en deux,
 Des vagues sans fin, des combos jusqu'à x5, un terrain qui change et un boss toutes les deux minutes. Combien de temps tiendras-tu ?
 
 ⚡ BONUS
-Double flèche, flèche collante, bouclier, triple flèche, mitraille, ralenti, bombes et plus encore.
+Double flèche, flèche collante, bouclier, aura, triple flèche, mitraille, ralenti, bombes et plus encore. Débloque la flèche du vent et la baliste à l'armurerie et emporte ton arme préférée à chaque partie.
 
 🎨 À TON STYLE
 Gagne des pièces pour habiller ton archer (Robin, Nomade, Marin, Astronaute) et pour des flèches de feu, de glace ou arc-en-ciel.
 
 • Commandes tactiles simples : glisse pour bouger, touche pour tirer
 • Jouable hors ligne
-• Aucune pub pendant les parties
+• Aucune pub pendant les parties ; vidéos récompensées au choix
 • En français, anglais, espagnol, portugais et allemand
 
 ## Español (es-ES)
 
 **Short description**:
-¡Apunta, dispara y divide! Más de 150 niveles y un modo Supervivencia sin fin.
+¡Apunta, dispara y divide! Más de 200 niveles y un modo Supervivencia sin fin.
 
 **Full description**:
 
@@ -58,11 +60,12 @@ Pop Archer es un colorido juego de arcade inspirado en los clásicos de dividir 
 Apunta con tu arco y dispara hacia arriba: cada burbuja que alcanzas se divide en dos, y otra vez en dos, hasta que revientan las más pequeñas. ¡Limpia la pantalla antes de que se acabe el tiempo y que no te toque ninguna burbuja!
 
 🏹 AVENTURA
-• Más de 150 niveles en un mapa que serpentea por mundos temáticos: un bosque encantado, ruinas del desierto, el mar profundo, el espacio exterior, picos helados, un volcán en erupción, el Reino del Cielo, un castillo embrujado, un templo en la selva… y nuevos mundos en camino
+• Más de 200 niveles en un mapa que serpentea por mundos temáticos: un bosque encantado, ruinas del desierto, el mar profundo, el espacio exterior, picos helados, un volcán en erupción, el Reino del Cielo, un castillo embrujado, un templo en la selva, un castillo lleno de trampas… y nuevos mundos en camino
 • Resbala sobre el hielo, esquiva géiseres de lava, lucha contra el viento y mantén la puntería cuando se apagan las luces
+• Trampas del castillo: techo de pinchos, una prensa que baja, muros que avanzan y gárgolas que escupen burbujas
 • Hasta 3 estrellas por nivel
 • Plataformas, ladrillos que se rompen y barreras que se abren zona a zona
-• Un jefe al final de cada mundo: el Rey Burbuja, la Gran Tormenta, el Pulpo de Tinta, el Ojo del Vacío, el Yeti de Hielo, el Dragón de Lava, el Pirata del Cielo y el Fantasma del Farol
+• Un jefe al final de cada mundo: el Rey Burbuja, la Gran Tormenta, el Pulpo de Tinta, el Ojo del Vacío, el Yeti de Hielo, el Dragón de Lava, el Pirata del Cielo, el Fantasma del Farol, el Gólem de Piedra y el Guardián del Castillo
 
 🎈 BURBUJAS ESPECIALES
 • Burbujas doradas con puntos y monedas extra
@@ -80,20 +83,20 @@ Apunta con tu arco y dispara hacia arriba: cada burbuja que alcanzas se divide e
 Oleadas sin fin, combos de hasta x5, un escenario que cambia y un jefe cada dos minutos. ¿Cuánto aguantarás?
 
 ⚡ PODERES
-Flecha doble, flecha pegajosa, escudo, flecha triple, ráfaga, cámara lenta, bombas y mucho más.
+Flecha doble, flecha pegajosa, escudo, aura, flecha triple, ráfaga, cámara lenta, bombas y mucho más. Desbloquea la flecha de viento y la balista en la armería y lleva tu arma favorita a cada partida.
 
 🎨 A TU ESTILO
 Consigue monedas para vestir a tu arquera (Robin, Nómada, Marinero, Astronauta) y para flechas de fuego, hielo o arcoíris.
 
 • Controles táctiles sencillos: desliza para moverte, toca para disparar
 • Se puede jugar sin conexión
-• Sin anuncios durante las partidas
+• Sin anuncios durante las partidas; vídeos con recompensa opcionales
 • En español, inglés, francés, portugués y alemán
 
 ## Português do Brasil (pt-BR)
 
 **Short description**:
-Mire, atire e divida! Estoure bolhas em mais de 150 níveis e na Sobrevivência.
+Mire, atire e divida! Estoure bolhas em mais de 200 níveis e na Sobrevivência.
 
 **Full description**:
 
@@ -102,11 +105,12 @@ Pop Archer é um jogo de arcade colorido, inspirado nos clássicos de dividir bo
 Mire com seu arco e atire para cima: cada bolha atingida se divide em duas, e de novo em duas, até as menores estourarem. Limpe a tela antes que o tempo acabe e não deixe nenhuma bolha encostar em você!
 
 🏹 AVENTURA
-• Mais de 150 níveis em um mapa sinuoso por mundos temáticos: floresta encantada, ruínas do deserto, mar profundo, espaço sideral, picos gelados, um vulcão em erupção, o Reino do Céu, um castelo assombrado, um templo na selva… e novos mundos a caminho
+• Mais de 200 níveis em um mapa sinuoso por mundos temáticos: floresta encantada, ruínas do deserto, mar profundo, espaço sideral, picos gelados, um vulcão em erupção, o Reino do Céu, um castelo assombrado, um templo na selva, um castelo cheio de armadilhas… e novos mundos a caminho
 • Deslize no gelo, desvie dos gêiseres de lava, enfrente o vento e mantenha a mira quando as luzes se apagam
+• Armadilhas do castelo: teto de espinhos, uma prensa que desce, paredes que avançam e gárgulas que cospem bolhas
 • Até 3 estrelas por nível
 • Plataformas, tijolos quebráveis e barreiras que se abrem a cada zona
-• Um chefe no fim de cada mundo: o Rei Bolha, a Grande Tempestade, o Polvo de Tinta, o Olho do Vazio, o Yeti do Gelo, o Dragão de Lava, o Pirata do Céu e o Fantasma da Lanterna
+• Um chefe no fim de cada mundo: o Rei Bolha, a Grande Tempestade, o Polvo de Tinta, o Olho do Vazio, o Yeti do Gelo, o Dragão de Lava, o Pirata do Céu, o Fantasma da Lanterna, o Golem de Pedra e o Guardião do Castelo
 
 🎈 BOLHAS ESPECIAIS
 • Bolhas douradas com pontos e moedas extras
@@ -124,20 +128,20 @@ Mire com seu arco e atire para cima: cada bolha atingida se divide em duas, e de
 Ondas sem fim, combos de até x5, um cenário que muda e um chefe a cada dois minutos. Quanto tempo você aguenta?
 
 ⚡ PODERES
-Flecha dupla, flecha grudenta, escudo, flecha tripla, rajada, câmera lenta, bombas e muito mais.
+Flecha dupla, flecha grudenta, escudo, aura, flecha tripla, rajada, câmera lenta, bombas e muito mais. Desbloqueie a flecha de vento e a balista no arsenal e leve sua arma favorita para cada partida.
 
 🎨 DO SEU JEITO
 Ganhe moedas para vestir sua arqueira (Robin, Nômade, Marinheiro, Astronauta) e para flechas de fogo, gelo ou arco-íris.
 
 • Controles de toque simples: deslize para andar, toque para atirar
 • Funciona sem internet
-• Sem anúncios durante as partidas
+• Sem anúncios durante as partidas; vídeos com recompensa opcionais
 • Em português, inglês, francês, espanhol e alemão
 
 ## Deutsch (de-DE)
 
 **Short description**:
-Zielen, schießen, teilen! Lass Blasen platzen – in über 150 Levels und mehr!
+Zielen, schießen, teilen! Lass Blasen platzen – in über 200 Levels und mehr!
 
 **Full description**:
 
@@ -146,11 +150,12 @@ Pop Archer ist ein farbenfrohes Arcade-Spiel nach dem Vorbild der klassischen Bl
 Ziel mit deinem Bogen und schieß nach oben: Jede getroffene Blase teilt sich in zwei, dann wieder in zwei, bis die kleinsten platzen. Räum den Bildschirm ab, bevor die Zeit abläuft, und lass dich von keiner Blase berühren!
 
 🏹 ABENTEUER
-• Über 150 Levels auf einer verschlungenen Karte durch Themenwelten: Zauberwald, Wüstenruinen, Tiefsee, Weltall, Frostgipfel, ein feuriger Vulkan, das Himmelsreich, ein Spukschloss, ein Dschungeltempel… und neue Welten sind unterwegs
+• Über 200 Levels auf einer verschlungenen Karte durch Themenwelten: Zauberwald, Wüstenruinen, Tiefsee, Weltall, Frostgipfel, ein feuriger Vulkan, das Himmelsreich, ein Spukschloss, ein Dschungeltempel, eine Burg voller Fallen… und neue Welten sind unterwegs
 • Rutsch über Glatteis, weich Lavageysiren aus, kämpf gegen den Wind und ziel weiter, wenn das Licht ausgeht
+• Burgfallen: eine Stacheldecke, eine sinkende Presse, wandernde Wände und Wasserspeier, die Blasen spucken
 • Bis zu 3 Sterne pro Level
 • Plattformen, zerbrechliche Steine und Schranken, die sich Zone für Zone öffnen
-• Ein Boss am Ende jeder Welt: Blasenkönig, Großer Sturm, Tintenkrake, Auge der Leere, Frost-Yeti, Lavadrache, Himmelspirat und Laternengeist
+• Ein Boss am Ende jeder Welt: Blasenkönig, Großer Sturm, Tintenkrake, Auge der Leere, Frost-Yeti, Lavadrache, Himmelspirat, Laternengeist, Steingolem und Burgwächter
 
 🎈 SPEZIALBLASEN
 • Goldblasen für Extrapunkte und Münzen
@@ -168,12 +173,12 @@ Ziel mit deinem Bogen und schieß nach oben: Jede getroffene Blase teilt sich in
 Endlose Wellen, Combos bis x5, ein wechselndes Spielfeld und alle zwei Minuten ein Boss. Wie lange hältst du durch?
 
 ⚡ EXTRAS
-Doppelpfeil, Klebepfeil, Schild, Dreifachpfeil, Schnellfeuer, Zeitlupe, Bomben und mehr.
+Doppelpfeil, Klebepfeil, Schild, Aura, Dreifachpfeil, Schnellfeuer, Zeitlupe, Bomben und mehr. Schalte in der Waffenkammer den Windpfeil und die Balliste frei und nimm deine Lieblingswaffe in jede Runde mit.
 
 🎨 DEIN STIL
 Sammle Münzen für neue Outfits deiner Bogenschützin (Robin, Nomade, Matrose, Astronaut) und für Feuer-, Eis- oder Regenbogenpfeile.
 
 • Einfache Touch-Steuerung: wischen zum Laufen, tippen zum Schießen
 • Offline spielbar
-• Keine Werbung während des Spiels
+• Keine Werbung während des Spiels; Belohnungsvideos freiwillig
 • Auf Deutsch, Englisch, Französisch, Spanisch und Portugiesisch

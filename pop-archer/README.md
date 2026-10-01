@@ -234,7 +234,12 @@ La carte est un long chemin qui monte, façon jeu « saga » : on la fait défil
 
 ## Monétisation (version de test)
 
-Règle d'or : **aucune pub pendant qu'on joue**. Les pubs et les achats sont **simulés** dans cette version : une fausse pub (écran « AD · TEST » de 3 à 5 s) et un faux paiement (une fenêtre de confirmation, sans argent réel). Dans l'appli Android, seules les deux fonctions `showAd` (AdMob) et `buyProduct` (Google Play Billing) seront remplacées.
+Règle d'or : **aucune pub pendant qu'on joue**. Dans un navigateur, les pubs et les achats sont **simulés** : une fausse pub (écran « AD · TEST » de 3 à 5 s) et un faux paiement (une fenêtre de confirmation, sans argent réel). Dans l'appli Android, `showAd` et `buyProduct` passent par les plugins Capacitor :
+
+- **pubs Google AdMob** (`@capacitor-community/admob`) : vidéos avec récompense et interstitiels. Le formulaire de consentement de Google (RGPD) s'affiche d'abord en Europe, et « Réglages → Choix de confidentialité » permet de changer d'avis. La récompense n'est donnée que si la vidéo a été vue jusqu'au bout ; le son du jeu se coupe pendant la pub. Pour l'instant ce sont les **identifiants de test de Google** (`AD_UNITS`, `AD_TEST`) ;
+- **achats Google Play Billing** (`@capgo/native-purchases`) : les produits portent les identifiants de `PRODUCTS`, et le jeu affiche le prix de Google dans la devise du joueur. Pièces, tirelire et pass sont consommés (on peut les racheter) ; sans pub, l'armurerie et la tenue du pack de départ sont rendus après une réinstallation (sans les pièces).
+
+La mise en ligne est décrite pas à pas dans [`../pop-archer-app/PLAY-STORE.md`](../pop-archer-app/PLAY-STORE.md).
 
 Les valeurs viennent de l'étude de 12 jeux comparables (`reports/Économie des jeux comparables.md`) : on gagne à peu près autant que dans ces jeux, mais les objets coûtent 2 à 3 fois plus qu'avant, et une partie des cadeaux se donne en objets (boosts, vies illimitées, coffres) plutôt qu'en pièces.
 

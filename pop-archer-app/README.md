@@ -7,6 +7,9 @@ Ce dossier emballe le jeu de `../pop-archer/` dans une vraie application Android
 - **Écran** : toujours en paysage, en plein écran. Les barres du système se cachent et reviennent en glissant depuis le bord.
 - **Icône et écran de démarrage** : l'icône vient de Canva (`art/icon-1024.png`), l'écran de démarrage montre le logo sur le fond violet du jeu.
 
+- **Pubs et achats** : Google AdMob (`@capacitor-community/admob`) et Google Play Billing (`@capgo/native-purchases`). L'identifiant d'appli AdMob est dans `android/app/src/main/AndroidManifest.xml` (pour l'instant celui de test de Google).
+- **Mise en ligne** : le guide pas à pas est dans [`PLAY-STORE.md`](PLAY-STORE.md).
+
 ## Tester sur ton téléphone
 
 À chaque changement du jeu poussé sur GitHub, l'action **Pop Archer Android** construit un APK de test :

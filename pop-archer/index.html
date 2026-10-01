@@ -556,6 +556,7 @@ body[data-state="ready"] .coinpill,body[data-state="play"] .coinpill,body[data-s
           <div class="row">
             <button class="btn" id="bSetDone" type="button">Done</button>
             <button class="btn ghost sm" id="bReset" type="button">Reset progress</button>
+            <button class="btn ghost sm" id="bPrivacy" type="button" hidden>Privacy choices</button>
           </div>
         </div>
 
@@ -1251,6 +1252,13 @@ const T = {
   'Skip (no reward)': ['Passer (sans récompense)', 'Saltar (sin recompensa)', 'Pular (sem recompensa)', 'Überspringen (ohne Belohnung)'],
   'Get reward': ['Récupérer', 'Recoger', 'Pegar recompensa', 'Belohnung holen'],
   'Test purchase': ['Achat test', 'Compra de prueba', 'Compra de teste', 'Testkauf'],
+  'Privacy choices': ['Choix de confidentialité', 'Opciones de privacidad', 'Opções de privacidade', 'Datenschutzoptionen'],
+  'No ad right now': ['Pas de pub pour l’instant', 'No hay anuncio ahora', 'Nenhum anúncio agora', 'Gerade keine Werbung'],
+  'Please try again in a moment.': ['Réessaie dans un instant.', 'Inténtalo de nuevo en un momento.', 'Tente de novo daqui a pouco.', 'Versuch es gleich noch einmal.'],
+  'Payment pending': ['Paiement en attente', 'Pago pendiente', 'Pagamento pendente', 'Zahlung ausstehend'],
+  'Your purchase will arrive once the payment goes through.': ['Ton achat arrivera dès que le paiement sera validé.', 'Tu compra llegará cuando se confirme el pago.', 'Sua compra chegará assim que o pagamento for confirmado.', 'Dein Kauf kommt, sobald die Zahlung durch ist.'],
+  'Purchase failed': ['Achat impossible', 'Compra fallida', 'Falha na compra', 'Kauf fehlgeschlagen'],
+  'The store could not complete the purchase. Please try again later.': ['La boutique n’a pas pu finir l’achat. Réessaie plus tard.', 'La tienda no pudo completar la compra. Inténtalo más tarde.', 'A loja não conseguiu concluir a compra. Tente mais tarde.', 'Der Store konnte den Kauf nicht abschließen. Versuch es später noch einmal.'],
   'Buy': ['Acheter', 'Comprar', 'Comprar', 'Kaufen'],
   'Cancel': ['Annuler', 'Cancelar', 'Cancelar', 'Abbrechen'],
   'Not enough coins': ['Pas assez de pièces', 'No tienes monedas suficientes', 'Moedas insuficientes', 'Nicht genug Münzen'],
@@ -2163,8 +2171,9 @@ function fire(p) {
     p.weapon = 'normal'; sfx.thud();
     return;
   }
-  // flèche de vent : très rapide, deux à la fois ; elle traverse les plus petites bulles
-  if (p.weapon === 'wind') {
+  // flèche de vent : très rapide, deux à la fois ; elle traverse les plus petites bulles. Quand il ne reste
+  // que des mini-bulles, l'arc tire une flèche normale (sinon le niveau ne pourrait plus finir)
+  if (p.weapon === 'wind' && (boss || balls.some(b => b.s > 0))) {
     if (p.harpoons.filter(h => h.wind).length >= 2) return;
     p.harpoons.push({ x: p.x, top: FLOOR - 30, stuck: 0, bullet: true, wind: true });
     sfx.zap();
@@ -4852,7 +4861,9 @@ function leaveResults(go) {
 }
 
 // Fausse pub : 5 s pour une pub récompensée (la fermer avant = pas de récompense), 3 s sinon.
+// Dans l'appli Android, c'est une vraie pub AdMob (voir plus bas).
 function showAd(rewarded) {
+  if (ADMOB) return nativeAd(rewarded).then(ok => { ADS.last = nowS(); return ok; });
   return new Promise(done => {
     const o = $('adO'), btn = $('bAdClose');
     let t = rewarded ? 5 : 3;
@@ -4872,12 +4883,101 @@ function showAd(rewarded) {
   });
 }
 
-// Faux paiement : une fenêtre de confirmation, sans argent réel.
+// Faux paiement : une fenêtre de confirmation, sans argent réel. Dans l'appli Android, Google Play Billing.
 function buyProduct(prod) {
+  if (IAP) return nativeBuy(prod);
   return new Promise(done => message('Test purchase',
-    `${prod.name} · ${price(prod.price)}. This is a simulation: no real payment.`,
+    `${prod.name} · ${prodPrice(prod)}. This is a simulation: no real payment.`,
     [['Buy', () => done(true)], ['Cancel', () => done(false), 'ghost']]));
 }
+
+/* ---------- Appli Android : vraies pubs (AdMob) et vrais achats (Google Play Billing) ---------- */
+// Les plugins Capacitor n'existent que dans l'appli ; dans un navigateur, la simulation ci-dessus reste.
+// Pubs : les identifiants de TEST de Google, à remplacer par ceux du compte AdMob avant la sortie publique
+// (et AD_TEST à false). Achats : les produits de la Play Console portent les identifiants de PRODUCTS.
+const NATIVE = (() => { const C = window.Capacitor; return C && C.isNativePlatform && C.isNativePlatform() ? C.Plugins : null; })();
+const ADMOB = NATIVE && NATIVE.AdMob, IAP = NATIVE && NATIVE.NativePurchases;
+const AD_TEST = true;
+const AD_UNITS = { rewarded: 'ca-app-pub-3940256099942544/5224354917', interstitial: 'ca-app-pub-3940256099942544/1033173712' };
+// achetables plusieurs fois (consommés) ; les autres sont durables et reviennent après une réinstallation
+const CONSUMABLE = ['c200', 'c750', 'c2000', 'c5000', 'piggy', 'pass'];
+const STORE_PRICES = {};
+const prodPrice = prod => STORE_PRICES[prod.id] || price(prod.price);
+let adsReady = false;
+async function nativeInit() {
+  if (ADMOB) try {
+    // consentement (RGPD) d'abord, puis les pubs
+    const info = await ADMOB.requestConsentInfo();
+    if (info.isConsentFormAvailable && info.status === 'REQUIRED') await ADMOB.showConsentForm();
+    $('bPrivacy').hidden = info.privacyOptionsRequirementStatus !== 'REQUIRED';
+    await ADMOB.initialize({ initializeForTesting: AD_TEST });
+    adsReady = true;
+  } catch (e) { console.warn('AdMob', e); }
+  if (IAP) try {
+    const { products } = await IAP.getProducts({ productIdentifiers: PRODUCTS.map(p => p.id), productType: 'inapp' });
+    for (const p of products) STORE_PRICES[p.identifier] = p.priceString;
+    // achats durables déjà faits (réinstallation, autre téléphone) : on rend ce qu'ils débloquent, sans les pièces
+    const { purchases } = await IAP.getPurchases({ productType: 'inapp' });
+    let changed = false;
+    for (const t of purchases) {
+      if (t.purchaseState != null && t.purchaseState !== '1') continue;
+      const id = t.productIdentifier;
+      if (id === 'noads' && !MONEY.noAds) { MONEY.noAds = true; changed = true; }
+      if (id === 'armory') for (const w of ARMORY) if (!MONEY.weapons.includes(w.id)) { MONEY.weapons.push(w.id); changed = true; }
+      if (id === 'starter' && !owns('royal')) { MONEY.starter = true; MONEY.owned.push('royal'); changed = true; }
+    }
+    if (changed) saveMoney();
+  } catch (e) { console.warn('Billing', e); }
+}
+// Pub AdMob : la récompense n'est donnée que si la pub a été regardée jusqu'au bout. Le son du jeu se coupe pendant.
+function nativeAd(rewarded) {
+  return new Promise(done => {
+    if (!adsReady) {
+      if (rewarded) message('No ad right now', 'Please try again in a moment.', [['OK', () => done(false)]]);
+      else done(true);
+      return;
+    }
+    let got = false, over = false;
+    const subs = [];
+    // closed : la pub a été vue puis fermée (sans récompense si elle a été coupée avant la fin)
+    const finish = (ok, closed) => {
+      if (over) return; over = true;
+      for (const h of subs) Promise.resolve(h).then(x => x && x.remove());
+      if (AC && AC.state === 'suspended') AC.resume();
+      if (!ok && rewarded && !closed) message('No ad right now', 'Please try again in a moment.', [['OK', () => done(false)]]);
+      else done(ok);
+    };
+    if (AC && AC.state === 'running') AC.suspend();
+    if (rewarded) {
+      subs.push(ADMOB.addListener('onRewardedVideoAdReward', () => { got = true; }));
+      // la récompense peut arriver juste après la fermeture : on laisse un instant
+      subs.push(ADMOB.addListener('onRewardedVideoAdDismissed', () => setTimeout(() => finish(got, true), 300)));
+      subs.push(ADMOB.addListener('onRewardedVideoAdFailedToShow', () => finish(false)));
+    } else {
+      subs.push(ADMOB.addListener('interstitialAdDismissed', () => finish(true)));
+      subs.push(ADMOB.addListener('interstitialAdFailedToShow', () => finish(true)));
+    }
+    const opts = { adId: rewarded ? AD_UNITS.rewarded : AD_UNITS.interstitial, isTesting: AD_TEST, immersiveMode: true };
+    (rewarded ? ADMOB.prepareRewardVideoAd(opts).then(() => ADMOB.showRewardVideoAd()).then(r => { if (r) got = true; })
+      : ADMOB.prepareInterstitial(opts).then(() => ADMOB.showInterstitial()))
+      .catch(() => finish(!rewarded));
+  });
+}
+// Achat Google Play : vrai seulement quand le paiement est passé ; annuler ne montre rien.
+function nativeBuy(prod) {
+  return IAP.purchaseProduct({ productIdentifier: prod.id, productType: 'inapp', isConsumable: CONSUMABLE.includes(prod.id) })
+    .then(t => {
+      if (!t || t.purchaseState == null || t.purchaseState === '1') return true;
+      message('Payment pending', 'Your purchase will arrive once the payment goes through.', [['OK', () => {}]]);
+      return false;
+    })
+    .catch(e => {
+      if (!/cancel/i.test(String(e && (e.code || e.message)))) message('Purchase failed', 'The store could not complete the purchase. Please try again later.', [['OK', () => {}]]);
+      return false;
+    });
+}
+$('bPrivacy').addEventListener('click', () => { if (ADMOB) ADMOB.showPrivacyOptionsForm().catch(() => {}); });
+if (NATIVE) nativeInit();
 function grant(prod) {
   if (prod.id === 'noads') MONEY.noAds = true;
   if (prod.id === 'armory') { MONEY.coins += 500; for (const w of ARMORY) if (!MONEY.weapons.includes(w.id)) MONEY.weapons.push(w.id); MONEY.weapon = MONEY.weapon || 'wind'; }
@@ -5085,7 +5185,7 @@ function starterOffer(then) {
       '1000 monedas, 3 potenciadores y el traje exclusivo Realeza. ¡Solo una vez y solo durante 72 horas!',
       '1.000 moedas, 3 reforços e a roupa exclusiva Realeza. Só uma vez, e só por 72 horas!',
       '1.000 Münzen, 3 Boosts und das exklusive Outfit Königlich. Nur einmal und nur 72 Stunden lang!'),
-    [[price(prod.price), () => purchase(prod, then).then(ok => { if (!ok && then) then(); }), 'alt'], ['Later', then, 'ghost']],
+    [[prodPrice(prod), () => purchase(prod, then).then(ok => { if (!ok && then) then(); }), 'alt'], ['Later', then, 'ghost']],
     `<img src="${skinSrc('royal', 'idle')}" alt="">`);
 }
 
@@ -5143,7 +5243,7 @@ function renderPass() {
   $('passFill').style.width = (t >= PASS_FREE.length ? 100 : (p.pts % SEASON.step) / SEASON.step * 100) + '%';
   $('passPts').textContent = t >= PASS_FREE.length ? '✓' : `${p.pts % SEASON.step}/${SEASON.step}`;
   const buy = $('bPassBuy'), prod = PRODUCTS.find(x => x.id === 'pass');
-  buy.innerHTML = p.paid ? '✓ ' + tr('Pass active') : tr('Get the pass') + ' · ' + price(prod.price);
+  buy.innerHTML = p.paid ? '✓ ' + tr('Pass active') : tr('Get the pass') + ' · ' + prodPrice(prod);
   buy.disabled = p.paid;
   buy.onclick = () => purchase(prod, renderPass);
   $('passCards').replaceChildren(...PASS_FREE.map((fr, i) => {
@@ -5457,8 +5557,8 @@ function renderShop() {
       : prod.id === 'pass' && pass.paid ? tr('Pass active') : prod.desc;
     cards.push(card({
       art, name: prod.name, desc,
-      acts: [prod.id === 'pass' ? [pass.paid ? tr('Open') : price(prod.price), openPass, 'alt']
-        : [done ? 'Owned' : price(prod.price), async () => { if (await purchase(prod)) renderShop(); }, 'alt', done || (prod.id === 'piggy' && pig < PIGGY.open)]],
+      acts: [prod.id === 'pass' ? [pass.paid ? tr('Open') : prodPrice(prod), openPass, 'alt']
+        : [done ? 'Owned' : prodPrice(prod), async () => { if (await purchase(prod)) renderShop(); }, 'alt', done || (prod.id === 'piggy' && pig < PIGGY.open)]],
     }));
   }
   $('shopCards').replaceChildren(...cards);

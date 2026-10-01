@@ -9,8 +9,10 @@
     "build:release": "npm run sync && cd android && ./gradlew bundleRelease"
   },
   "dependencies": {
+    "@capacitor-community/admob": "^8.1.0",
     "@capacitor/android": "^8.5.2",
-    "@capacitor/core": "^8.5.2"
+    "@capacitor/core": "^8.5.2",
+    "@capgo/native-purchases": "^8.8.1"
   },
   "devDependencies": {
     "@capacitor/cli": "^8.5.2"
