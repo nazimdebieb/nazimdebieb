@@ -1,16 +1,24 @@
-# Pince-moule gâteaux pêches (7abbet el khoukh)
+# Pinces-moules gâteaux pêches (7abbet el khoukh)
 
-Inspirée du reel @zakiemballage. Modèle paramétrique (`generer_pince.py`).
+Reproduction des pinces du reel @zakiemballage (modèle paramétrique : `generer_pince.py`).
 
-| Fichier | Rôle | Orientation |
+| Modèle | Gâteau obtenu | Fichiers à imprimer |
 |---|---|---|
-| `bras_coupelle.stl` | coupelle Ø35 mm (forme du gâteau) + manche | telle quelle, ouverture vers le haut |
-| `bras_presse.stl` | disque qui ferme la coupelle + manche | telle quelle, face plate au plateau |
-| `axe_optionnel.stl` | goupille si pas de vis | debout, tête en bas |
-| `apercu_assemblage.stl` | pince fermée, pour visualiser (ne pas imprimer) | — |
+| **Goutte** (pince turquoise) | pêche entière 46 × 36 × 46 mm, 2 lobes + sillon + pointe | `goutte_bras_A.stl`, `goutte_bras_B.stl` |
+| **Ronde** (pince bleue) | boule Ø40 × 31 mm avec creux en X sur le dessus | `ronde_bras_A.stl`, `ronde_bras_B.stl` |
 
-Aucun support nécessaire. Assemblage : vis **M3 × 25** + écrou frein (ou la goupille imprimée).
++ `axe_optionnel.stl` si vous n'avez pas de vis M3 × 25 + écrou frein.
+Les fichiers `*_apercu_ferme.stl` et `*_gateau_obtenu.stl` servent seulement à visualiser.
 
-Réglages conseillés : PETG (alimentaire de préférence), 0,2 mm, 4 périmètres, 30 % de remplissage.
+## Impression sur Bambu Lab A1 (Bambu Studio)
 
-Changer la taille : modifier `DIAMETRE_GATEAU` puis `pip install manifold3d trimesh numpy && python3 generer_pince.py`.
+- Importer les 2 bras d'un modèle : ils tiennent ensemble sur le plateau 256 × 256.
+- Ne pas tourner les pièces : coupelle vers le haut, fond plat sur le plateau. **Supports : désactivés.**
+- Filament : PETG (Bambu PETG HF ou PETG alimentaire), profil « 0.20mm Standard @BBL A1 ».
+- Parois : 4 · Remplissage : 25 % gyroïde · Couches supérieures/inférieures : 5.
+- Pour une coupelle plus lisse (meilleur démoulage) : hauteur de couche 0,12 mm.
+- Durée ≈ 2 h 30 par pince.
+
+Nettoyer à l'eau tiède savonneuse (pas de lave-vaisselle) et fariner/huiler légèrement avant usage.
+
+Changer la taille : modifier `G_R_LOBE` / `R_DIAM`, puis `pip install manifold3d trimesh numpy && python3 generer_pince.py`.
