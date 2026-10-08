@@ -32,8 +32,9 @@ G_R_LOBE = 18.0           # rayon de chaque lobe
 G_DECALAGE = 5.0          # écart lobe / plan de joint -> profondeur du sillon
 G_POINTE_X = 26.0         # distance centre -> pointe (longueur totale ~ 44 mm)
 G_R_POINTE = 1.5
-NERVURE_H = 2.0           # relief de la nervure qui marque le sillon courbe
-NERVURE_L = 2.6           # rayon d'arrondi de la nervure
+NERVURE_H = 2.2           # hauteur de la nervure (profil triangulaire)
+NERVURE_BASE = 4.4        # largeur de la nervure à sa base
+NERVURE_POINTE = 0.3      # rayon d'arrondi de l'arête (pointue)
 NERVURE_COURBE = 8.0      # écart max de la nervure par rapport à l'axe
 
 # ---- Pêche « ronde » ----
@@ -88,7 +89,7 @@ def etoile():
 
 
 def nervure():
-    """Nervure arrondie dans la coupelle goutte : part de la pointe et file en
+    """Nervure à profil triangulaire dans la coupelle goutte : part de la pointe et file en
     arc vers le dos arrondi, posée sur la surface de la cavité. Elle imprime
     le sillon courbe de la pêche."""
     cav = to_trimesh(demi_goutte(0.0), poser=False)
@@ -99,13 +100,16 @@ def nervure():
     loc, i_ray, i_tri = cav.ray.intersects_location(
         origines, np.tile([0, 0, 1.0], (len(t), 1)), multiple_hits=False)
     ordre = np.argsort(i_ray)
-    r = NERVURE_L
-    # Centre légèrement enfoncé dans la paroi : relief visible = NERVURE_H.
-    centres = loc[ordre] + cav.face_normals[i_tri[ordre]] * (r - NERVURE_H)
-    boules = [sphere(c, r) for c in centres]
+    pts = loc[ordre]
+    normales = -cav.face_normals[i_tri[ordre]]   # vers l'intérieur de la cavité
+    # Section triangulaire : une large base noyée dans la paroi (largeur
+    # NERVURE_BASE au niveau de la surface) et une arête fine à NERVURE_H.
+    rb = NERVURE_BASE / 2 / 0.8
+    sections = [(sphere(p - n * 0.6 * rb, rb), sphere(p + n * (NERVURE_H - NERVURE_POINTE), NERVURE_POINTE))
+                for p, n in zip(pts, normales)]
     chaine = Manifold()
-    for b0, b1 in zip(boules, boules[1:]):
-        chaine += Manifold.batch_hull([b0, b1])
+    for s0, s1 in zip(sections, sections[1:]):
+        chaine += Manifold.batch_hull([*s0, *s1])
     return chaine ^ SOUS_JOINT
 
 
