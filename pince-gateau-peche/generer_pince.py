@@ -42,6 +42,8 @@ R_DIAM = 40.0
 R_HAUT = 32.0             # hauteur totale (boule aplatie)
 ETOILE_BRANCHE = 11.0      # rayon de l'étoile
 ETOILE_RELIEF = 6.0       # hauteur au centre
+ETOILE_PLATEAU = 3.0      # côté du petit plateau plat au sommet
+ETOILE_BASE = 6.0         # côté du carré de base (largeur des branches au centre)
 
 
 def box(x0, x1, y0, y1, z0, z1):
@@ -76,15 +78,18 @@ def demi_ronde(e=0.0):
 
 
 def etoile():
-    """Relief en étoile au fond de la coupelle (pôle en z = -R_HAUT/2)."""
+    """Étoile pyramidale au fond de la coupelle ronde (pôle en z = -R_HAUT/2) :
+    petit plateau carré au sommet, 4 branches à arête qui filent vers le bord."""
     rx, rz = R_DIAM / 2, R_HAUT / 2
-    centre = sphere((0, 0, -rz + ETOILE_RELIEF), 2.5)
-    base = sphere((0, 0, -rz - 1), 6.0)
+    plateau = (Manifold.cube([ETOILE_PLATEAU, ETOILE_PLATEAU, 0.4], center=True)
+               .rotate([0, 0, 45]).translate([0, 0, -rz + ETOILE_RELIEF - 0.2]))
+    base = (Manifold.cube([ETOILE_BASE, ETOILE_BASE, 0.4], center=True)
+            .rotate([0, 0, 45]).translate([0, 0, -rz - 1.0]))
     z_bout = -rz * np.sqrt(1 - (ETOILE_BRANCHE / rx) ** 2)
     branches = Manifold()
     for a in np.radians([0, 90, 180, 270]):
-        bout = sphere((ETOILE_BRANCHE * np.cos(a), ETOILE_BRANCHE * np.sin(a), z_bout), 1.0)
-        branches += Manifold.batch_hull([centre, base, bout])
+        bout = sphere((ETOILE_BRANCHE * np.cos(a), ETOILE_BRANCHE * np.sin(a), z_bout - 0.3), 0.5)
+        branches += Manifold.batch_hull([plateau, base, bout])
     return branches
 
 
