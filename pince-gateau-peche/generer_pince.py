@@ -2,7 +2,8 @@
 
 Deux modèles, chacun en deux bras identiques reliés par une charnière (vis M3) :
   - goutte : pince turquoise. Les deux coupelles forment une pêche entière,
-             corps à deux lobes (sillon au plan de joint) et pointe.
+             corps à deux lobes et pointe ; une nervure courbe dans une
+             coupelle imprime le sillon de la pêche.
   - ronde  : pince bleue. Boule légèrement aplatie ; une coupelle porte une
              étoile à 4 branches qui marque le creux en X sur le dessus.
 
@@ -31,6 +32,9 @@ G_R_LOBE = 18.0           # rayon de chaque lobe
 G_DECALAGE = 5.0          # écart lobe / plan de joint -> profondeur du sillon
 G_POINTE_X = 26.0         # distance centre -> pointe (longueur totale ~ 44 mm)
 G_R_POINTE = 1.5
+NERVURE_H = 2.0           # relief de la nervure qui marque le sillon courbe
+NERVURE_L = 2.6           # rayon d'arrondi de la nervure
+NERVURE_COURBE = 8.0      # écart max de la nervure par rapport à l'axe
 
 # ---- Pêche « ronde » ----
 R_DIAM = 40.0
@@ -60,7 +64,7 @@ SOUS_JOINT = box(-200, 200, -200, 200, -200, 0)
 def demi_goutte(e=0.0):
     lobe = sphere((0, 0, -G_DECALAGE), G_R_LOBE + e)
     epaule = sphere((G_POINTE_X * 0.55, 0, -G_DECALAGE * 0.6), G_R_LOBE * 0.62 + e)
-    pointe = sphere((G_POINTE_X, 0, 0), G_R_POINTE + e)
+    pointe = sphere((G_POINTE_X, 0, 0), max(G_R_POINTE + e, 0.2))
     return Manifold.batch_hull([lobe, epaule, pointe]) ^ SOUS_JOINT
 
 
@@ -83,7 +87,29 @@ def etoile():
     return branches
 
 
-def bras(demi, x_avant, x_arriere, charnons_ext, etoile_fond=False):
+def nervure():
+    """Nervure arrondie dans la coupelle goutte : part de la pointe et file en
+    arc vers le dos arrondi, posée sur la surface de la cavité. Elle imprime
+    le sillon courbe de la pêche."""
+    cav = to_trimesh(demi_goutte(0.0), poser=False)
+    x0, x1 = G_POINTE_X - 3.0, -(G_R_LOBE - 1.0)
+    t = np.linspace(0, 1, 40)
+    xy = np.c_[x0 + (x1 - x0) * t, NERVURE_COURBE * np.sin(np.pi * t)]
+    origines = np.c_[xy, np.full(len(t), -100.0)]
+    loc, i_ray, i_tri = cav.ray.intersects_location(
+        origines, np.tile([0, 0, 1.0], (len(t), 1)), multiple_hits=False)
+    ordre = np.argsort(i_ray)
+    r = NERVURE_L
+    # Centre légèrement enfoncé dans la paroi : relief visible = NERVURE_H.
+    centres = loc[ordre] + cav.face_normals[i_tri[ordre]] * (r - NERVURE_H)
+    boules = [sphere(c, r) for c in centres]
+    chaine = Manifold()
+    for b0, b1 in zip(boules, boules[1:]):
+        chaine += Manifold.batch_hull([b0, b1])
+    return chaine ^ SOUS_JOINT
+
+
+def bras(demi, x_avant, x_arriere, charnons_ext, relief=None):
     """Un bras : coupelle à fond plat + manche + charnons, rim au plan z=0."""
     cavite = demi(0.0)
     env = demi(PAROI)
@@ -101,17 +127,19 @@ def bras(demi, x_avant, x_arriere, charnons_ext, etoile_fond=False):
     for y0, y1 in tranches:
         charnons += cyl_y(hx, 0, R_CHARNIERE, y0, y1)
         charnons += box(hx - R_CHARNIERE, x_arriere + 3, y0, y1, fond, 0)
-    if etoile_fond:
-        cavite = cavite - etoile()
+    if relief is not None:
+        cavite = cavite - relief
     trou = cyl_y(hx, 0, D_TROU_AXE / 2, -50, 50)
-    return corps + manche + charnons - cavite - trou
+    piece = corps + manche + charnons - cavite - trou
+    # Les booléens peuvent laisser des éclats de volume nul : on les retire.
+    return max(piece.decompose(), key=lambda c: c.volume())
 
 
-def modele(nom, demi, etoile_bras_b=False):
+def modele(nom, demi, relief_a=None, relief_b=None):
     env = demi(PAROI).bounding_box()
     x_arriere, x_avant = env[0], env[3]
-    a = bras(demi, x_avant, x_arriere, charnons_ext=True)
-    b = bras(demi, x_avant, x_arriere, charnons_ext=False, etoile_fond=etoile_bras_b)
+    a = bras(demi, x_avant, x_arriere, charnons_ext=True, relief=relief_a)
+    b = bras(demi, x_avant, x_arriere, charnons_ext=False, relief=relief_b)
     return {f"{nom}_bras_A.stl": a, f"{nom}_bras_B.stl": b,
             f"{nom}_apercu_ferme.stl": a + b.rotate([180, 0, 0])}
 
@@ -121,11 +149,12 @@ def axe_imprime():
     return Manifold.cylinder(1.5, 3.2) + Manifold.cylinder(long + 1.5, 1.5)
 
 
-def to_trimesh(m):
+def to_trimesh(m, poser=True):
     mesh = m.to_mesh()
     t = trimesh.Trimesh(np.asarray(mesh.vert_properties)[:, :3],
-                        np.asarray(mesh.tri_verts), process=True)
-    t.apply_translation([0, 0, -t.bounds[0][2]])
+                        np.asarray(mesh.tri_verts), process=False)
+    if poser:
+        t.apply_translation([0, 0, -t.bounds[0][2]])
     return t
 
 
@@ -136,10 +165,10 @@ def gateau(demi):
 
 if __name__ == "__main__":
     pieces = {}
-    pieces.update(modele("goutte", demi_goutte))
-    pieces.update(modele("ronde", demi_ronde, etoile_bras_b=True))
+    pieces.update(modele("goutte", demi_goutte, relief_a=nervure()))
+    pieces.update(modele("ronde", demi_ronde, relief_b=etoile()))
     pieces["axe_optionnel.stl"] = axe_imprime()
-    pieces["goutte_gateau_obtenu.stl"] = gateau(demi_goutte)
+    pieces["goutte_gateau_obtenu.stl"] = gateau(demi_goutte) - nervure()
     pieces["ronde_gateau_obtenu.stl"] = gateau(demi_ronde) - etoile().rotate([180, 0, 0])
     for nom, m in pieces.items():
         t = to_trimesh(m)
