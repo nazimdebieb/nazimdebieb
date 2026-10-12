@@ -150,7 +150,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: BloomGarden.Presentation::BloomGarden.Presentation.GameController
   catalog: {fileID: 11400000, guid: 98bb0f2fd6e48ff4488b5184926c6600, type: 2}
   palette: {fileID: 11400000, guid: 94de7fbc9e0f170418442f9dc7a811a7, type: 2}
-  startLevelIndex: 0
   viewCamera: {fileID: 2124390195}
 --- !u!4 &232608808
 Transform:

@@ -71,22 +71,35 @@ Critère de sortie P3 (GDD) : « niveau 1 → sélections → floraisons → vic
 | P4-02 | Gouttes et jet | **Validé** | Jet de 5 gouttes en arc depuis le bec ; test `Logic_IsResolved_BeforeAnimationsPlay` (état final avant les effets) |
 | P4-03 | Éclosion 4 couleurs | **Validé** | Bouton tulipe → coupe de 6 pétales qui s'ouvre + étamines + étincelles ; capture `P4_level20_win.png` (4 couleurs) |
 | P4-04 | Déplacement arrosoir | **Validé** | Arc + inclinaison + tassement à l'arrivée ; la file avance en même temps ; capture `P4_level1_watering.png` |
-| P4-05 | Sons | **Partiel** | 8 sons synthétisés (choix, eau, éclosion en gamme, vidé, victoire, blocage, annuler, refus) ; son coupé/activé dans Options ; **non écoutés** par l'agent |
+| P4-05 | Sons | **Validé** | 8 sons synthétisés ; son muet en 0.4.0 (AudioListener manquant) corrigé en 0.4.1 ; **confirmé à l'écoute par l'utilisateur sur téléphone** ; test `Sounds_AreAudible_AndFollowTheSetting` |
 | P4-06 | Animation de victoire | **Validé** | Vague sur le jardin + pétales qui tombent, panneau en bas qui laisse le jardin visible ; `P4_level20_win.png` |
 | P4-07 | Mode 2× / animations réduites | **Validé** | Test `SameFinalState_InEveryAnimationMode` : même hash dans les 3 modes ; BG-020 joué en 13,9 s / 7,2 s / 4,5 s |
 | P4-08 | Pooling / perf | **Validé (éditeur)** | `VisualPool` : rejouer BG-013 crée 0 objet ; p50 4,7 ms, p95 6,4 ms, max 14,3 ms dans l'éditeur (`P4_perf.txt`) ; mesure téléphone en P7-03 |
 
-Tests : PlayMode **8/8**, EditMode **62/62**.
+Tests : PlayMode **9/9**, EditMode **62/62**. APK 0.4.1 testé par l'utilisateur sur son téléphone : jeu fonctionnel, son OK.
 
-## P5 — UX, progression, sauvegarde (suivante)
+## P5 — UX, progression, sauvegarde
+
+| ID | Tâche | Statut | Preuve |
+|---|---|---|---|
+| P5-01 | Menu principal et niveau suivant | **Validé** | Accueil avec diorama vivant, « Jouer » / « Continuer : niveau N » ; « Niveau suivant » après victoire ; `P5_home_fr.png` |
+| P5-02 | Sélection des niveaux | **Validé** | Grille 20 niveaux (réussis en vert, suivant en jaune, verrouillés grisés) ; test `Levels_AreLocked_UntilThePreviousOneIsWon` |
+| P5-03 | Tutoriel intégré | **Partiel** | Bulles niveaux 1–4 + chevron sur l'arrosoir à toucher ; tests `FreshStart_ShowsHome_ThenLevel1WithTutorial`, `Tutorial_OneIdeaPerFirstLevel_AndSilentOnceCompleted` ; « test sans explication » = test humain (P6) |
+| P5-04 | Paramètres | **Validé** | Son, vitesse ×2, animations réduites, langue ; sauvegardés dans le fichier de sauvegarde |
+| P5-05 | Localisation FR/EN | **Validé** | `Loc` (38 clés FR+EN) ; test `BothLanguages_AllScreens_NoTextOverflow` (accueil, niveaux, jeu + bulle, options, blocage, victoire) |
+| P5-06 | Sauvegarde versionnée | **Validé** | `SaveService` v1 ; 6 tests (aller-retour, écriture interrompue, fichier corrompu → secours, illisible → départ propre, migration PlayerPrefs, version future) ; reprise exacte après rechargement avec annulation |
+| P5-07 | Pause / arrière-plan | **Validé** | `OnApplicationPause` : animation figée sur l'état réel + sauvegarde ; test `Pause_DuringAnimation_SnapsAndSaves` |
+| P5-08 | QA sur appareil Android | **À faire** | APK 0.5.0 envoyé à l'utilisateur ; liste de vérification dans `Docs/QA/P5.md` |
+
+Tests : PlayMode **14/14**, EditMode **70/70**.
+
+## P6 — Alpha et retours joueurs (suivante)
 
 | ID | Tâche | Critère d'acceptation |
 |---|---|---|
-| P5-01 / P5-02 | Menu principal, sélection des niveaux | Progression verrouillée, niveau suivant mis en avant |
-| P5-03 | Tutoriel intégré (niveaux 1 à 3) | Compréhensible sans explication |
-| P5-04 | Écran Paramètres complet | Préférences sauvegardées |
-| P5-05 | FR / EN | Tous les textes traduisibles, sans débordement |
-| P5-06 / P5-07 | Sauvegarde versionnée, pause / arrière-plan | Reprise sans perte ni animation fantôme |
+| P6-01 | Instrumentation locale anonymisée | Événements visibles localement, aucun SDK publicitaire ni envoi réseau |
+| P6-02 | Protocole d'observation | Formulaire reproductible (Kit/benchmark/PROTOCOLE_TEST_HUMAIN.md) |
+| P6-03 à P6-05 | Tests avec 5 puis 20–30 joueurs | Frictions et abandons notés ; **nécessite l'utilisateur et des testeurs** |
 
 ## Interventions humaines nécessaires
 

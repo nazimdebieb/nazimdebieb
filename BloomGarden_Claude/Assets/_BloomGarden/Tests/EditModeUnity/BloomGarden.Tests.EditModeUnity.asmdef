@@ -4,6 +4,7 @@
     "references": [
         "BloomGarden.Core",
         "BloomGarden.Levels",
+        "BloomGarden.Presentation",
         "BloomGarden.Editor",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner"

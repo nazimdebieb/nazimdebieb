@@ -4,19 +4,24 @@ using UnityEngine;
 namespace BloomGarden.Presentation
 {
     /// <summary>
-    /// Player preferences that only affect presentation (GDD chapter 04: speed normal/fast, reduced motion; sound).
-    /// None of them can change a game result: the logic is resolved before any animation or sound.
-    /// Stored in PlayerPrefs for now; the versioned save of P5 will take over.
+    /// Player preferences that only affect presentation (GDD chapter 04: speed normal/fast, reduced motion; sound;
+    /// language). None of them can change a game result: the logic is resolved before any animation or sound.
+    /// Backed by the versioned save (<see cref="SettingsData"/>); <see cref="Changed"/> tells the owner to save.
     /// </summary>
     public sealed class GameSettings
     {
-        private const string SoundKey = "bg.sound.volume";
-        private const string FastKey = "bg.anim.fast";
-        private const string ReducedKey = "bg.anim.reduced";
+        private readonly SettingsData _data;
 
-        public float SoundVolume { get; private set; } = 0.8f;
-        public bool FastAnimations { get; private set; }
-        public bool ReducedMotion { get; private set; }
+        public GameSettings(SettingsData data)
+        {
+            _data = data ?? new SettingsData();
+            Loc.SetLanguage(Language);
+        }
+
+        public float SoundVolume => _data.volume;
+        public bool FastAnimations => _data.fast;
+        public bool ReducedMotion => _data.reduced;
+        public Language Language => Loc.FromCode(_data.language, Loc.DefaultForDevice());
 
         public bool SoundOn => SoundVolume > 0.001f;
 
@@ -25,26 +30,14 @@ namespace BloomGarden.Presentation
 
         public event Action Changed;
 
-        public static GameSettings Load()
-        {
-            return new GameSettings
-            {
-                SoundVolume = Mathf.Clamp01(PlayerPrefs.GetFloat(SoundKey, 0.8f)),
-                FastAnimations = PlayerPrefs.GetInt(FastKey, 0) == 1,
-                ReducedMotion = PlayerPrefs.GetInt(ReducedKey, 0) == 1,
-            };
-        }
+        public void SetSoundVolume(float volume) { _data.volume = Mathf.Clamp01(volume); Changed?.Invoke(); }
+        public void SetFastAnimations(bool fast) { _data.fast = fast; Changed?.Invoke(); }
+        public void SetReducedMotion(bool reduced) { _data.reduced = reduced; Changed?.Invoke(); }
 
-        public void SetSoundVolume(float volume) { SoundVolume = Mathf.Clamp01(volume); Save(); }
-        public void SetFastAnimations(bool fast) { FastAnimations = fast; Save(); }
-        public void SetReducedMotion(bool reduced) { ReducedMotion = reduced; Save(); }
-
-        private void Save()
+        public void SetLanguage(Language language)
         {
-            PlayerPrefs.SetFloat(SoundKey, SoundVolume);
-            PlayerPrefs.SetInt(FastKey, FastAnimations ? 1 : 0);
-            PlayerPrefs.SetInt(ReducedKey, ReducedMotion ? 1 : 0);
-            PlayerPrefs.Save();
+            _data.language = Loc.Code(language);
+            Loc.SetLanguage(language);
             Changed?.Invoke();
         }
     }

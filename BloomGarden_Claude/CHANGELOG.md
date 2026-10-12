@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-10-12 — P5 : accueil, niveaux, tutoriel, FR/EN, sauvegarde (0.5.0)
+- Écran d'accueil (diorama vivant derrière, « Jouer » / « Continuer : niveau N »), sélection des 20 niveaux avec progression verrouillée, bouton Menu en jeu.
+- Tutoriel en bulles sur les niveaux 1 à 4 avec chevron vers l'arrosoir à toucher ; jamais bloquant, ne masque aucune cible.
+- Français / anglais (langue de l'appareil par défaut, réglable dans Options), sans débordement de texte.
+- Sauvegarde JSON versionnée, robuste (fichier temporaire + secours), migration des anciens réglages ; reprise exacte d'une partie interrompue, annulation comprise.
+- Pause / arrière-plan : animation figée sur l'état réel et sauvegarde.
+- Tests PlayMode 14/14, EditMode 70/70.
+
 ## 2026-10-12 — 0.4.1 : correctif du son
 - Son muet sur téléphone (signalé sur 0.4.0) : `AudioListener` manquant sur la caméra. Ajouté dans la scène + filet de sécurité au démarrage + test PlayMode dédié (9/9).
 

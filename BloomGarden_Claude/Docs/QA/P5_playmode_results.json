@@ -1,0 +1,111 @@
+{
+ "status": "completed",
+ "duration": 158.47,
+ "summary": {
+  "total": 14,
+  "passed": 14,
+  "failed": 0,
+  "skipped": 0,
+  "inconclusive": 0
+ },
+ "results": [
+  {
+   "FullName": "BloomGarden.Tests.FlowAndSaveTests.BothLanguages_AllScreens_NoTextOverflow",
+   "Status": "Passed",
+   "Duration": 16.2450357,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.FlowAndSaveTests.FreshStart_ShowsHome_ThenLevel1WithTutorial",
+   "Status": "Passed",
+   "Duration": 1.9632677,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.FlowAndSaveTests.GameInProgress_ResumesExactly_AfterReload_WithUndo",
+   "Status": "Passed",
+   "Duration": 2.7219376,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.FlowAndSaveTests.Levels_AreLocked_UntilThePreviousOneIsWon",
+   "Status": "Passed",
+   "Duration": 5.1264926,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.FlowAndSaveTests.Pause_DuringAnimation_SnapsAndSaves",
+   "Status": "Passed",
+   "Duration": 0.1729408,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.GameScenePlayTests.AllTwentyLevels_PlayToWin_ViewInSync",
+   "Status": "Passed",
+   "Duration": 57.8378499,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.GameScenePlayTests.Bg018_Deadlock_ShowsPanel_AndUndoRecovers",
+   "Status": "Passed",
+   "Duration": 4.8682653,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.GameScenePlayTests.Level1_WinByTaps_ThenLevel2",
+   "Status": "Passed",
+   "Duration": 10.8554494,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.GameScenePlayTests.TapDuringAnimation_IsExactlyOneMoreMove",
+   "Status": "Passed",
+   "Duration": 1.578425,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.GameScenePlayTests.UndoAndRestart_RestoreExactStates",
+   "Status": "Passed",
+   "Duration": 2.6035556,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.PresentationModeTests.Logic_IsResolved_BeforeAnimationsPlay",
+   "Status": "Passed",
+   "Duration": 1.1840537,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.PresentationModeTests.ReplayingALevel_ReusesPooledVisuals_AndReportsFrameTimes",
+   "Status": "Passed",
+   "Duration": 23.5629496,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.PresentationModeTests.SameFinalState_InEveryAnimationMode",
+   "Status": "Passed",
+   "Duration": 25.9930065,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.PresentationModeTests.Sounds_AreAudible_AndFollowTheSetting",
+   "Status": "Passed",
+   "Duration": 3.6800144,
+   "Message": null,
+   "StackTrace": null
+  }
+ ]
+}

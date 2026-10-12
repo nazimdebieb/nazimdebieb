@@ -21,10 +21,13 @@ namespace BloomGarden.Tests
         [UnitySetUp]
         public IEnumerator LoadScene()
         {
+            TestSave.UseFreshTemporarySave();
             SceneManager.LoadScene("Game");
             yield return null;
             yield return null;
             _game = Object.FindAnyObjectByType<GameController>();
+            _game.LoadLevel(0);
+            yield return null;
             Assert.IsNotNull(_game, "GameController missing from the Game scene");
             Assert.IsNotNull(_game.Session, "No level loaded");
         }

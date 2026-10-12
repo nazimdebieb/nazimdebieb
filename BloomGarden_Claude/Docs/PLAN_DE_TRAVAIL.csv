@@ -37,18 +37,18 @@ P4-01,P4,Palette / matériaux cohérents,Rendu homogène sur 2 téléphones,En c
 P4-02,P4,Animation gouttes et jet,La logique n’attend pas les particules,Validé,PlayMode Logic_IsResolved_BeforeAnimationsPlay,Claude Code
 P4-03,P4,Éclosion 4 couleurs,États bien différenciés,Validé,Docs/QA/captures/P4_level20_win.png,Claude Code
 P4-04,P4,Déplacement arrosoir vers slot,Trajectoire sans ambiguïté,Validé,Docs/QA/captures/P4_level1_watering.png,Claude Code
-P4-05,P4,Sons interactions / éclosion,Options de volume respectées,En cours,GardenAudio (8 sons synthétisés) + réglage son; non écouté par l agent,Claude Code
+P4-05,P4,Sons interactions / éclosion,Options de volume respectées,Validé,Confirmé à l écoute par l utilisateur sur téléphone (APK 0.4.1); test PlayMode Sounds_AreAudible_AndFollowTheSetting,Claude Code
 P4-06,P4,Animation de victoire jardin complet,"Écran net, aucune surcharge",Validé,Docs/QA/captures/P4_level20_win.png,Claude Code
 P4-07,P4,Mode 2× / animations réduites,Même replay quel que soit mode,Validé,PlayMode SameFinalState_InEveryAnimationMode,Claude Code
 P4-08,P4,Optimisation pooling/VFX,Aucun spike bloquant en cascade,Validé,Docs/QA/P4_perf.txt (éditeur); mesure appareil en P7-03,Claude Code
-P5-01,P5,Menu principal et niveau suivant,Navigation compréhensible,À faire,,
-P5-02,P5,Sélection des niveaux,Progression correctement verrouillée,À faire,,
-P5-03,P5,Tutoriel intégré 3 premiers niveaux,Test sans explication possible,À faire,,
-P5-04,P5,Settings audio/animations,Sauvegarde des préférences,À faire,,
-P5-05,P5,Localisation FR/EN,Tous les écrans traduisibles,À faire,,
-P5-06,P5,Sauvegarde versionnée,Arrêt/reprise sans perte,À faire,,
-P5-07,P5,Gérer pause/arrière-plan,Pas d’état d’animation fantôme,À faire,,
-P5-08,P5,QA sur appareil Android,"Rapport non-crash, logs, captures",À faire,,
+P5-01,P5,Menu principal et niveau suivant,Navigation compréhensible,Validé,Docs/QA/captures/P5_home_fr.png; NextLevel après victoire,Claude Code
+P5-02,P5,Sélection des niveaux,Progression correctement verrouillée,Validé,PlayMode Levels_AreLocked_UntilThePreviousOneIsWon,Claude Code
+P5-03,P5,Tutoriel intégré 3 premiers niveaux,Test sans explication possible,En cours,Bulles niveaux 1-4 + tests; validation humaine en P6,Claude Code
+P5-04,P5,Settings audio/animations,Sauvegarde des préférences,Validé,Options son/vitesse/animations/langue sauvegardées,Claude Code
+P5-05,P5,Localisation FR/EN,Tous les écrans traduisibles,Validé,PlayMode BothLanguages_AllScreens_NoTextOverflow,Claude Code
+P5-06,P5,Sauvegarde versionnée,Arrêt/reprise sans perte,Validé,EditMode SaveAndLocalizationTests (6) + PlayMode GameInProgress_ResumesExactly_AfterReload_WithUndo,Claude Code
+P5-07,P5,Gérer pause/arrière-plan,Pas d’état d’animation fantôme,Validé,PlayMode Pause_DuringAnimation_SnapsAndSaves,Claude Code
+P5-08,P5,QA sur appareil Android,"Rapport non-crash, logs, captures",À faire,APK 0.5.0 envoyé; retour utilisateur attendu,Claude Code
 P6-01,P6,Instrumentation locale anonymisée,Événements visibles sans SDK publicitaire,À faire,,
 P6-02,P6,Formulaire observation utilisateurs,Protocole reproductible,À faire,,
 P6-03,P6,Test 5 joueurs nouveaux,Frictions enregistrées sans interprétation exagérée,À faire,,
