@@ -3,6 +3,8 @@
     "rootNamespace": "BloomGarden.EditorTools",
     "references": [
         "BloomGarden.Core",
+        "BloomGarden.Levels",
+        "BloomGarden.Solvers",
         "Unity.RenderPipelines.Core.Runtime",
         "Unity.RenderPipelines.Universal.Runtime"
     ],

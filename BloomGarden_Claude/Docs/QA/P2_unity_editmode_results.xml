@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="62" result="Passed" total="62" passed="62" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-12 14:23:22Z" end-time="2026-10-12 14:23:23Z" duration="0,5116316">
+  <test-suite type="TestSuite" id="1000" name="Bloom Garden (Claude)" fullname="Bloom Garden (Claude)" runstate="Runnable" testcasecount="62" result="Passed" start-time="2026-10-12 14:23:22Z" end-time="2026-10-12 14:23:23Z" duration="0.511632" total="62" passed="62" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1071" name="BloomGarden.Tests.EditMode.dll" fullname="C:/Users/nazim/Projets/BloomGarden/BloomGarden_Claude/Library/ScriptAssemblies/BloomGarden.Tests.EditMode.dll" runstate="Runnable" testcasecount="60" result="Passed" start-time="2026-10-12 14:23:22Z" end-time="2026-10-12 14:23:23Z" duration="0.491763" total="60" passed="60" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="49380" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1072" name="BloomGarden" fullname="BloomGarden" runstate="Runnable" testcasecount="60" result="Passed" start-time="2026-10-12 14:23:22Z" end-time="2026-10-12 14:23:23Z" duration="0.489941" total="60" passed="60" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1073" name="Tests" fullname="BloomGarden.Tests" runstate="Runnable" testcasecount="60" result="Passed" start-time="2026-10-12 14:23:22Z" end-time="2026-10-12 14:23:23Z" duration="0.488856" total="60" passed="60" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1001" name="LevelLoadingTests" fullname="BloomGarden.Tests.LevelLoadingTests" classname="BloomGarden.Tests.LevelLoadingTests" runstate="Runnable" testcasecount="18" result="Passed" start-time="2026-10-12 14:23:22Z" end-time="2026-10-12 14:23:22Z" duration="0.125880" total="18" passed="18" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1002" name="AllTwentyReferenceLevels_LoadAndValidate" fullname="BloomGarden.Tests.LevelLoadingTests.AllTwentyReferenceLevels_LoadAndValidate" methodname="AllTwentyReferenceLevels_LoadAndValidate" classname="BloomGarden.Tests.LevelLoadingTests" runstate="Runnable" seed="224485275" result="Passed" start-time="2026-10-12 14:23:22Z" end-time="2026-10-12 14:23:22Z" duration="0.057966" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1014" name="EmptyLevel_IsRejected" fullname="BloomGarden.Tests.LevelLoadingTests.EmptyLevel_IsRejected" methodname="EmptyLevel_IsRejected" classname="BloomGarden.Tests.LevelLoadingTests" runstate="Runnable" seed="1840947613" result="Passed" start-time="2026-10-12 14:23:22Z" end-time="2026-10-12 14:23:22Z" duration="0.004415" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1013" name="InvalidLevels_AreRejected" fullname="BloomGarden.Tests.LevelLoadingTests.InvalidLevels_AreRejected" classname="BloomGarden.Tests.LevelLoadingTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-10-12 14:23:22Z" end-time="2026-10-12 14:23:22Z" duration="0.022890" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1004" name="Rejects unsupported rules version" fullname="BloomGarden.Tests.LevelLoadingTests.Rejects unsupported rules version" methodname="InvalidLevels_AreRejected" classname="BloomGarden.Tests.LevelLoadingTests" runstate="Runnable" seed="1495755836" result="Passed" start-time="2026-10-12 14:23:22Z" end-time="2026-10-12 14:23:22Z" duration="0.007162" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1005" name="Rejects slot count other than 3" fullname="BloomGarden.Tests.LevelLoadingTests.Rejects slot count other than 3" methodname="InvalidLevels_AreRejected" classname="BloomGarden.Tests.LevelLoadingTests" runstate="Runnable" seed="1891512973" result="Passed" start-time="2026-10-12 14:23:22Z" end-time="2026-10-12 14:23:22Z" duration="0.000230" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1006" name="Rejects wrong cell count" fullname="BloomGarden.Tests.LevelLoadingTests.Rejects wrong cell count" methodname="InvalidLevels_AreRejected" classname="BloomGarden.Tests.LevelLoadingTests" runstate="Runnable" seed="1798728334" result="Passed" start-time="2026-10-12 14:23:22Z" end-time="2026-10-12 14:23:22Z" duration="0.000523" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1007" name="Rejects more than 3 layers" fullname="BloomGarden.Tests.LevelLoadingTests.Rejects more than 3 layers" methodname="InvalidLevels_AreRejected" classname="BloomGarden.Tests.LevelLoadingTests" runstate="Runnable" seed="1215309160" result="Passed" start-time="2026-10-12 14:23:22Z" end-time="2026-10-12 14:23:22Z" duration="0.000578" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1008" name="Rejects duplicate can id" fullname="BloomGarden.Tests.LevelLoadingTests.Rejects duplicate can id" methodname="InvalidLevels_AreRejected" classname="BloomGarden.Tests.LevelLoadingTests" runstate="Runnable" seed="1866697667" result="Passed" start-time="2026-10-12 14:23:22Z" end-time="2026-10-12 14:23:22Z" duration="0.000171" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1009" name="Rejects unknown can color" fullname="BloomGarden.Tests.LevelLoadingTests.Rejects unknown can color" methodname="InvalidLevels_AreRejected" classname="BloomGarden.Tests.LevelLoadingTests" runstate="Runnable" seed="1191160836" result="Passed" start-time="2026-10-12 14:23:22Z" end-time="2026-10-12 14:23:22Z" duration="0.000141" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1010" name="Rejects unequal charge and buds" fullname="BloomGarden.Tests.LevelLoadingTests.Rejects unequal charge and buds" methodname="InvalidLevels_AreRejected" classname="BloomGarden.Tests.LevelLoadingTests" runstate="Runnable" seed="111680878" result="Passed" start-time="2026-10-12 14:23:22Z" end-time="2026-10-12 14:23:22Z" duration="0.000316" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1011" name="Rejects two lanes" fullname="BloomGarden.Tests.LevelLoadingTests.Rejects two lanes" methodname="InvalidLevels_AreRejected" classname="BloomGarden.Tests.LevelLoadingTests" runstate="Runnable" seed="1105656239" result="Passed" start-time="2026-10-12 14:23:22Z" end-time="2026-10-12 14:23:22Z" duration="0.000128" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1012" name="Rejects invalid solution lane" fullname="BloomGarden.Tests.LevelLoadingTests.Rejects invalid solution lane" methodname="InvalidLevels_AreRejected" classname="BloomGarden.Tests.LevelLoadingTests" runstate="Runnable" seed="1421815298" result="Passed" start-time="2026-10-12 14:23:22Z" end-time="2026-10-12 14:23:22Z" duration="0.001561" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1015" name="MiniJson_ParsesScalarsAndNesting" fullname="BloomGarden.Tests.LevelLoadingTests.MiniJson_ParsesScalarsAndNesting" methodname="MiniJson_ParsesScalarsAndNesting" classname="BloomGarden.Tests.LevelLoadingTests" runstate="Runnable" seed="225852668" result="Passed" start-time="2026-10-12 14:23:22Z" end-time="2026-10-12 14:23:22Z" duration="0.006669" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1021" name="MiniJson_RejectsInvalidDocuments" fullname="BloomGarden.Tests.LevelLoadingTests.MiniJson_RejectsInvalidDocuments" classname="BloomGarden.Tests.LevelLoadingTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-12 14:23:22Z" end-time="2026-10-12 14:23:22Z" duration="0.005054" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1016" name="MiniJson_RejectsInvalidDocuments(&quot;{\&quot;a\&quot;:1,\&quot;a\&quot;:2}&quot;)" fullname="BloomGarden.Tests.LevelLoadingTests.MiniJson_RejectsInvalidDocuments(&quot;{\&quot;a\&quot;:1,\&quot;a\&quot;:2}&quot;)" methodname="MiniJson_RejectsInvalidDocuments" classname="BloomGarden.Tests.LevelLoadingTests" runstate="Runnable" seed="1550038556" result="Passed" start-time="2026-10-12 14:23:22Z" end-time="2026-10-12 14:23:22Z" duration="0.003036" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1017" name="MiniJson_RejectsInvalidDocuments(&quot;[01]&quot;)" fullname="BloomGarden.Tests.LevelLoadingTests.MiniJson_RejectsInvalidDocuments(&quot;[01]&quot;)" methodname="MiniJson_RejectsInvalidDocuments" classname="BloomGarden.Tests.LevelLoadingTests" runstate="Runnable" seed="408262617" result="Passed" start-time="2026-10-12 14:23:22Z" end-time="2026-10-12 14:23:22Z" duration="0.000116" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1018" name="MiniJson_RejectsInvalidDocuments(&quot;[1,]&quot;)" fullname="BloomGarden.Tests.LevelLoadingTests.MiniJson_RejectsInvalidDocuments(&quot;[1,]&quot;)" methodname="MiniJson_RejectsInvalidDocuments" classname="BloomGarden.Tests.LevelLoadingTests" runstate="Runnable" seed="1856261086" result="Passed" start-time="2026-10-12 14:23:22Z" end-time="2026-10-12 14:23:22Z" duration="0.000311" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1019" name="MiniJson_RejectsInvalidDocuments(&quot;\&quot;unterminated&quot;)" fullname="BloomGarden.Tests.LevelLoadingTests.MiniJson_RejectsInvalidDocuments(&quot;\&quot;unterminated&quot;)" methodname="MiniJson_RejectsInvalidDocuments" classname="BloomGarden.Tests.LevelLoadingTests" runstate="Runnable" seed="2107237307" result="Passed" start-time="2026-10-12 14:23:22Z" end-time="2026-10-12 14:23:22Z" duration="0.000210" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1020" name="MiniJson_RejectsInvalidDocuments(&quot;{} {}&quot;)" fullname="BloomGarden.Tests.LevelLoadingTests.MiniJson_RejectsInvalidDocuments(&quot;{} {}&quot;)" methodname="MiniJson_RejectsInvalidDocuments" classname="BloomGarden.Tests.LevelLoadingTests" runstate="Runnable" seed="1935121010" result="Passed" start-time="2026-10-12 14:23:22Z" end-time="2026-10-12 14:23:22Z" duration="0.000157" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1003" name="ValidJson_IsParsedInReadingOrder_VisibleLayerFirst" fullname="BloomGarden.Tests.LevelLoadingTests.ValidJson_IsParsedInReadingOrder_VisibleLayerFirst" methodname="ValidJson_IsParsedInReadingOrder_VisibleLayerFirst" classname="BloomGarden.Tests.LevelLoadingTests" runstate="Runnable" seed="1854863979" result="Passed" start-time="2026-10-12 14:23:22Z" end-time="2026-10-12 14:23:22Z" duration="0.001132" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1022" name="PythonOracleTests" fullname="BloomGarden.Tests.PythonOracleTests" classname="BloomGarden.Tests.PythonOracleTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-12 14:23:22Z" end-time="2026-10-12 14:23:23Z" duration="0.117128" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1023" name="CSharpResolver_MatchesPythonReference_StepByStep" fullname="BloomGarden.Tests.PythonOracleTests.CSharpResolver_MatchesPythonReference_StepByStep" methodname="CSharpResolver_MatchesPythonReference_StepByStep" classname="BloomGarden.Tests.PythonOracleTests" runstate="Runnable" seed="57421138" result="Passed" start-time="2026-10-12 14:23:22Z" end-time="2026-10-12 14:23:23Z" duration="0.112692" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[180 traces, 1242 moves compared with the Python reference
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1024" name="RuleInvariantTests" fullname="BloomGarden.Tests.RuleInvariantTests" classname="BloomGarden.Tests.RuleInvariantTests" runstate="Runnable" testcasecount="24" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.084990" total="24" passed="24" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1025" name="I01_SelectingEmptyLane_IsRejected_AndStateUnchanged" fullname="BloomGarden.Tests.RuleInvariantTests.I01_SelectingEmptyLane_IsRejected_AndStateUnchanged" methodname="I01_SelectingEmptyLane_IsRejected_AndStateUnchanged" classname="BloomGarden.Tests.RuleInvariantTests" runstate="Runnable" seed="1374108660" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.002519" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1030" name="I02_NonPositiveOrNonIntegerCapacity_IsRejectedAtLoad" fullname="BloomGarden.Tests.RuleInvariantTests.I02_NonPositiveOrNonIntegerCapacity_IsRejectedAtLoad" classname="BloomGarden.Tests.RuleInvariantTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.002415" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1026" name="I02_NonPositiveOrNonIntegerCapacity_IsRejectedAtLoad(&quot;0&quot;)" fullname="BloomGarden.Tests.RuleInvariantTests.I02_NonPositiveOrNonIntegerCapacity_IsRejectedAtLoad(&quot;0&quot;)" methodname="I02_NonPositiveOrNonIntegerCapacity_IsRejectedAtLoad" classname="BloomGarden.Tests.RuleInvariantTests" runstate="Runnable" seed="1726241838" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.000975" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1027" name="I02_NonPositiveOrNonIntegerCapacity_IsRejectedAtLoad(&quot;-2&quot;)" fullname="BloomGarden.Tests.RuleInvariantTests.I02_NonPositiveOrNonIntegerCapacity_IsRejectedAtLoad(&quot;-2&quot;)" methodname="I02_NonPositiveOrNonIntegerCapacity_IsRejectedAtLoad" classname="BloomGarden.Tests.RuleInvariantTests" runstate="Runnable" seed="1048365820" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.000138" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1028" name="I02_NonPositiveOrNonIntegerCapacity_IsRejectedAtLoad(&quot;2.5&quot;)" fullname="BloomGarden.Tests.RuleInvariantTests.I02_NonPositiveOrNonIntegerCapacity_IsRejectedAtLoad(&quot;2.5&quot;)" methodname="I02_NonPositiveOrNonIntegerCapacity_IsRejectedAtLoad" classname="BloomGarden.Tests.RuleInvariantTests" runstate="Runnable" seed="1677978519" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.000399" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1029" name="I02_NonPositiveOrNonIntegerCapacity_IsRejectedAtLoad(&quot;\&quot;3\&quot;&quot;)" fullname="BloomGarden.Tests.RuleInvariantTests.I02_NonPositiveOrNonIntegerCapacity_IsRejectedAtLoad(&quot;\&quot;3\&quot;&quot;)" methodname="I02_NonPositiveOrNonIntegerCapacity_IsRejectedAtLoad" classname="BloomGarden.Tests.RuleInvariantTests" runstate="Runnable" seed="1065970240" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.000086" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1031" name="I03_CanNeverWatersAnotherColor" fullname="BloomGarden.Tests.RuleInvariantTests.I03_CanNeverWatersAnotherColor" methodname="I03_CanNeverWatersAnotherColor" classname="BloomGarden.Tests.RuleInvariantTests" runstate="Runnable" seed="1158289771" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.017143" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1032" name="I04_HiddenBud_IsNotTargetedBeforeReveal" fullname="BloomGarden.Tests.RuleInvariantTests.I04_HiddenBud_IsNotTargetedBeforeReveal" methodname="I04_HiddenBud_IsNotTargetedBeforeReveal" classname="BloomGarden.Tests.RuleInvariantTests" runstate="Runnable" seed="1078271429" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.001132" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1033" name="I05_Resolution_IsDeterministic_ForSameInput" fullname="BloomGarden.Tests.RuleInvariantTests.I05_Resolution_IsDeterministic_ForSameInput" methodname="I05_Resolution_IsDeterministic_ForSameInput" classname="BloomGarden.Tests.RuleInvariantTests" runstate="Runnable" seed="1540798530" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.014329" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1034" name="I06_Can_LeavesItsPlace_WhenEmpty" fullname="BloomGarden.Tests.RuleInvariantTests.I06_Can_LeavesItsPlace_WhenEmpty" methodname="I06_Can_LeavesItsPlace_WhenEmpty" classname="BloomGarden.Tests.RuleInvariantTests" runstate="Runnable" seed="1253253276" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.001286" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1035" name="I07_CanWithoutTarget_WaitsAndKeepsItsPlace" fullname="BloomGarden.Tests.RuleInvariantTests.I07_CanWithoutTarget_WaitsAndKeepsItsPlace" methodname="I07_CanWithoutTarget_WaitsAndKeepsItsPlace" classname="BloomGarden.Tests.RuleInvariantTests" runstate="Runnable" seed="1367879210" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.000729" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1036" name="I08_ThreeOccupiedPlaces_BlockAFourthDeparture" fullname="BloomGarden.Tests.RuleInvariantTests.I08_ThreeOccupiedPlaces_BlockAFourthDeparture" methodname="I08_ThreeOccupiedPlaces_BlockAFourthDeparture" classname="BloomGarden.Tests.RuleInvariantTests" runstate="Runnable" seed="1690523376" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.001104" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1037" name="I09_WaitingCans_AreReevaluated_AfterReveal" fullname="BloomGarden.Tests.RuleInvariantTests.I09_WaitingCans_AreReevaluated_AfterReveal" methodname="I09_WaitingCans_AreReevaluated_AfterReveal" classname="BloomGarden.Tests.RuleInvariantTests" runstate="Runnable" seed="779273461" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.001456" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1038" name="I10_Undo_RestoresExactPreviousState" fullname="BloomGarden.Tests.RuleInvariantTests.I10_Undo_RestoresExactPreviousState" methodname="I10_Undo_RestoresExactPreviousState" classname="BloomGarden.Tests.RuleInvariantTests" runstate="Runnable" seed="925222354" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.011236" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1039" name="I11_Victory_OnlyWhenEveryBudHasBloomed" fullname="BloomGarden.Tests.RuleInvariantTests.I11_Victory_OnlyWhenEveryBudHasBloomed" methodname="I11_Victory_OnlyWhenEveryBudHasBloomed" classname="BloomGarden.Tests.RuleInvariantTests" runstate="Runnable" seed="719477974" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.010406" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1040" name="I12_Deadlock_OnlyAfterStabilization" fullname="BloomGarden.Tests.RuleInvariantTests.I12_Deadlock_OnlyAfterStabilization" methodname="I12_Deadlock_OnlyAfterStabilization" classname="BloomGarden.Tests.RuleInvariantTests" runstate="Runnable" seed="1326397892" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.000899" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1048" name="I13_MalformedJson_FailsCleanly" fullname="BloomGarden.Tests.RuleInvariantTests.I13_MalformedJson_FailsCleanly" classname="BloomGarden.Tests.RuleInvariantTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.002584" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1041" name="I13_MalformedJson_FailsCleanly(&quot;&quot;)" fullname="BloomGarden.Tests.RuleInvariantTests.I13_MalformedJson_FailsCleanly(&quot;&quot;)" methodname="I13_MalformedJson_FailsCleanly" classname="BloomGarden.Tests.RuleInvariantTests" runstate="Runnable" seed="581573726" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.001199" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1042" name="I13_MalformedJson_FailsCleanly(&quot;{&quot;)" fullname="BloomGarden.Tests.RuleInvariantTests.I13_MalformedJson_FailsCleanly(&quot;{&quot;)" methodname="I13_MalformedJson_FailsCleanly" classname="BloomGarden.Tests.RuleInvariantTests" runstate="Runnable" seed="645601770" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.000101" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1043" name="I13_MalformedJson_FailsCleanly(&quot;not json&quot;)" fullname="BloomGarden.Tests.RuleInvariantTests.I13_MalformedJson_FailsCleanly(&quot;not json&quot;)" methodname="I13_MalformedJson_FailsCleanly" classname="BloomGarden.Tests.RuleInvariantTests" runstate="Runnable" seed="76218154" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.000066" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1044" name="I13_MalformedJson_FailsCleanly(&quot;[1,2,3]&quot;)" fullname="BloomGarden.Tests.RuleInvariantTests.I13_MalformedJson_FailsCleanly(&quot;[1,2,3]&quot;)" methodname="I13_MalformedJson_FailsCleanly" classname="BloomGarden.Tests.RuleInvariantTests" runstate="Runnable" seed="328694396" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.000044" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1045" name="I13_MalformedJson_FailsCleanly(&quot;{\&quot;id\&quot;:\&quot;X\&quot;,}&quot;)" fullname="BloomGarden.Tests.RuleInvariantTests.I13_MalformedJson_FailsCleanly(&quot;{\&quot;id\&quot;:\&quot;X\&quot;,}&quot;)" methodname="I13_MalformedJson_FailsCleanly" classname="BloomGarden.Tests.RuleInvariantTests" runstate="Runnable" seed="816699438" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.000048" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1046" name="I13_MalformedJson_FailsCleanly(&quot;{\&quot;id\&quot;:\&quot;X\&quot;,\&quot;rulesVersion\&quot;:\&quot;0.1.0\&quot;}&quot;)" fullname="BloomGarden.Tests.RuleInvariantTests.I13_MalformedJson_FailsCleanly(&quot;{\&quot;id\&quot;:\&quot;X\&quot;,\&quot;rulesVersion\&quot;:\&quot;0.1.0\&quot;}&quot;)" methodname="I13_MalformedJson_FailsCleanly" classname="BloomGarden.Tests.RuleInvariantTests" runstate="Runnable" seed="1857346920" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.000041" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1047" name="I13_MalformedJson_FailsCleanly(&quot;{\&quot;id\&quot;:\&quot;X\&quot;,\&quot;rulesVersion\&quot;:\&quot;0.1.0\&quot;,\&quot;slotCount\&quot;:3,\&quot;grid\&quot;:{\&quot;width\&quot;:1,\&quot;height\&quot;:1,\&quot;cells\&quot;:[[\&quot;neon\&quot;]]},\&quot;lanes\&quot;:[[],[],[]]}&quot;)" fullname="BloomGarden.Tests.RuleInvariantTests.I13_MalformedJson_FailsCleanly(&quot;{\&quot;id\&quot;:\&quot;X\&quot;,\&quot;rulesVersion\&quot;:\&quot;0.1.0\&quot;,\&quot;slotCount\&quot;:3,\&quot;grid\&quot;:{\&quot;width\&quot;:1,\&quot;height\&quot;:1,\&quot;cells\&quot;:[[\&quot;neon\&quot;]]},\&quot;lanes\&quot;:[[],[],[]]}&quot;)" methodname="I13_MalformedJson_FailsCleanly" classname="BloomGarden.Tests.RuleInvariantTests" runstate="Runnable" seed="1680450930" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.000057" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1049" name="I14_EveryReferenceLevel_HasAVerifiedSolution" fullname="BloomGarden.Tests.RuleInvariantTests.I14_EveryReferenceLevel_HasAVerifiedSolution" methodname="I14_EveryReferenceLevel_HasAVerifiedSolution" classname="BloomGarden.Tests.RuleInvariantTests" runstate="Runnable" seed="716763034" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.005371" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1050" name="I15_ReplayingTheReferenceSolution_CompletesTheLevel" fullname="BloomGarden.Tests.RuleInvariantTests.I15_ReplayingTheReferenceSolution_CompletesTheLevel" methodname="I15_ReplayingTheReferenceSolution_CompletesTheLevel" classname="BloomGarden.Tests.RuleInvariantTests" runstate="Runnable" seed="141976343" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.008561" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1051" name="SlotAndStateTests" fullname="BloomGarden.Tests.SlotAndStateTests" classname="BloomGarden.Tests.SlotAndStateTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.011731" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1052" name="Can_TakesLeftmostFreePlace_ButOlderPlaceWatersFirst" fullname="BloomGarden.Tests.SlotAndStateTests.Can_TakesLeftmostFreePlace_ButOlderPlaceWatersFirst" methodname="Can_TakesLeftmostFreePlace_ButOlderPlaceWatersFirst" classname="BloomGarden.Tests.SlotAndStateTests" runstate="Runnable" seed="420587019" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.003141" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1056" name="Hash_IsStableAcrossRuns_GoldenValue" fullname="BloomGarden.Tests.SlotAndStateTests.Hash_IsStableAcrossRuns_GoldenValue" methodname="Hash_IsStableAcrossRuns_GoldenValue" classname="BloomGarden.Tests.SlotAndStateTests" runstate="Runnable" seed="927295103" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.000524" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1055" name="PositionKey_IgnoresMoveCountAndAbsoluteOrder" fullname="BloomGarden.Tests.SlotAndStateTests.PositionKey_IgnoresMoveCountAndAbsoluteOrder" methodname="PositionKey_IgnoresMoveCountAndAbsoluteOrder" classname="BloomGarden.Tests.SlotAndStateTests" runstate="Runnable" seed="870907794" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.002202" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1057" name="Restart_ClearsHistory_AndReturnsToInitialState" fullname="BloomGarden.Tests.SlotAndStateTests.Restart_ClearsHistory_AndReturnsToInitialState" methodname="Restart_ClearsHistory_AndReturnsToInitialState" classname="BloomGarden.Tests.SlotAndStateTests" runstate="Runnable" seed="2053377313" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.001134" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1054" name="SelectLane_DoesNotMutateInputState" fullname="BloomGarden.Tests.SlotAndStateTests.SelectLane_DoesNotMutateInputState" methodname="SelectLane_DoesNotMutateInputState" classname="BloomGarden.Tests.SlotAndStateTests" runstate="Runnable" seed="913546491" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.000480" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1053" name="Target_IsSmallestRowThenColumn" fullname="BloomGarden.Tests.SlotAndStateTests.Target_IsSmallestRowThenColumn" methodname="Target_IsSmallestRowThenColumn" classname="BloomGarden.Tests.SlotAndStateTests" runstate="Runnable" seed="1485225159" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.001927" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1058" name="SolverTests" fullname="BloomGarden.Tests.SolverTests" classname="BloomGarden.Tests.SolverTests" runstate="Runnable" testcasecount="11" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.142920" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1065" name="Analyzer_FindsTheTrapsOfBg018" fullname="BloomGarden.Tests.SolverTests.Analyzer_FindsTheTrapsOfBg018" methodname="Analyzer_FindsTheTrapsOfBg018" classname="BloomGarden.Tests.SolverTests" runstate="Runnable" seed="1304171435" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.006164" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1060" name="Analyzer_MatchesPythonReference_OnAllLevels" fullname="BloomGarden.Tests.SolverTests.Analyzer_MatchesPythonReference_OnAllLevels" methodname="Analyzer_MatchesPythonReference_OnAllLevels" classname="BloomGarden.Tests.SolverTests" runstate="Runnable" seed="368202650" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.025819" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1070" name="ParseNumber_ReadsTrailingDigits" fullname="BloomGarden.Tests.SolverTests.ParseNumber_ReadsTrailingDigits" classname="BloomGarden.Tests.SolverTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.001464" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1067" name="ParseNumber_ReadsTrailingDigits(&quot;BG-007&quot;,7)" fullname="BloomGarden.Tests.SolverTests.ParseNumber_ReadsTrailingDigits(&quot;BG-007&quot;,7)" methodname="ParseNumber_ReadsTrailingDigits" classname="BloomGarden.Tests.SolverTests" runstate="Runnable" seed="1284283186" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.000492" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1068" name="ParseNumber_ReadsTrailingDigits(&quot;BG-020&quot;,20)" fullname="BloomGarden.Tests.SolverTests.ParseNumber_ReadsTrailingDigits(&quot;BG-020&quot;,20)" methodname="ParseNumber_ReadsTrailingDigits" classname="BloomGarden.Tests.SolverTests" runstate="Runnable" seed="234634309" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.000059" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1069" name="ParseNumber_ReadsTrailingDigits(&quot;TEST&quot;,0)" fullname="BloomGarden.Tests.SolverTests.ParseNumber_ReadsTrailingDigits(&quot;TEST&quot;,0)" methodname="ParseNumber_ReadsTrailingDigits" classname="BloomGarden.Tests.SolverTests" runstate="Runnable" seed="1736031655" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.000033" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1061" name="ReferenceAndSolverSolutions_ReplayToWin" fullname="BloomGarden.Tests.SolverTests.ReferenceAndSolverSolutions_ReplayToWin" methodname="ReferenceAndSolverSolutions_ReplayToWin" classname="BloomGarden.Tests.SolverTests" runstate="Runnable" seed="1085441626" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.028333" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1066" name="Report_AllLevelsPublishable_AndInTheirTeachingBand" fullname="BloomGarden.Tests.SolverTests.Report_AllLevelsPublishable_AndInTheirTeachingBand" methodname="Report_AllLevelsPublishable_AndInTheirTeachingBand" classname="BloomGarden.Tests.SolverTests" runstate="Runnable" seed="175164494" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.047638" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1063" name="Solver_ForcedDeadlock_IsUnsolvable_NotUnknown" fullname="BloomGarden.Tests.SolverTests.Solver_ForcedDeadlock_IsUnsolvable_NotUnknown" methodname="Solver_ForcedDeadlock_IsUnsolvable_NotUnknown" classname="BloomGarden.Tests.SolverTests" runstate="Runnable" seed="1136513491" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.000709" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1059" name="Solver_MatchesPythonReference_OnAllLevels" fullname="BloomGarden.Tests.SolverTests.Solver_MatchesPythonReference_OnAllLevels" methodname="Solver_MatchesPythonReference_OnAllLevels" classname="BloomGarden.Tests.SolverTests" runstate="Runnable" seed="1170287741" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.027973" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1062" name="Solver_SmallLevel_IsSolvable" fullname="BloomGarden.Tests.SolverTests.Solver_SmallLevel_IsSolvable" methodname="Solver_SmallLevel_IsSolvable" classname="BloomGarden.Tests.SolverTests" runstate="Runnable" seed="1699686800" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.000440" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1064" name="Solver_StateLimit_ReturnsUnknown_NeverSolvable" fullname="BloomGarden.Tests.SolverTests.Solver_StateLimit_ReturnsUnknown_NeverSolvable" methodname="Solver_StateLimit_ReturnsUnknown_NeverSolvable" classname="BloomGarden.Tests.SolverTests" runstate="Runnable" seed="1982573305" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.001851" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="1077" name="BloomGarden.Tests.EditModeUnity.dll" fullname="C:/Users/nazim/Projets/BloomGarden/BloomGarden_Claude/Library/ScriptAssemblies/BloomGarden.Tests.EditModeUnity.dll" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.006492" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="49380" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1078" name="BloomGarden" fullname="BloomGarden" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.006077" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1079" name="Tests" fullname="BloomGarden.Tests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.005873" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1074" name="LevelCatalogTests" fullname="BloomGarden.Tests.LevelCatalogTests" classname="BloomGarden.Tests.LevelCatalogTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.005722" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1075" name="Catalog_LoadsTwentyValidLevels_InOrder" fullname="BloomGarden.Tests.LevelCatalogTests.Catalog_LoadsTwentyValidLevels_InOrder" methodname="Catalog_LoadsTwentyValidLevels_InOrder" classname="BloomGarden.Tests.LevelCatalogTests" runstate="Runnable" seed="289266290" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.004808" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1076" name="Catalog_OutOfRange_ReportsAnError" fullname="BloomGarden.Tests.LevelCatalogTests.Catalog_OutOfRange_ReportsAnError" methodname="Catalog_OutOfRange_ReportsAnError" classname="BloomGarden.Tests.LevelCatalogTests" runstate="Runnable" seed="243294357" result="Passed" start-time="2026-10-12 14:23:23Z" end-time="2026-10-12 14:23:23Z" duration="0.000256" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/nazim/AppData/LocalLow/NazimDebieb/Bloom Garden (Claude)\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -16,13 +16,13 @@ P1-07,P1,Coder arrosoir en attente / départ,Charge et place correctes,Validé,U
 P1-08,P1,Coder victoire et blocage,Aucun faux blocage en cours de traitement,Validé,Unity Test Runner EditMode 49/49 (Docs/QA/P1_unity_editmode_results.xml) + dotnet 49/49,Claude Code
 P1-09,P1,Coder UndoHistory,Undo restaure l’état intégral,Validé,Unity Test Runner EditMode 49/49 (Docs/QA/P1_unity_editmode_results.xml) + dotnet 49/49,Claude Code
 P1-10,P1,Tests C# des règles et cas limites,"Tests EditMode verts, log attaché",Validé,Unity Test Runner EditMode 49/49 (Docs/QA/P1_unity_editmode_results.xml) + dotnet 49/49,Claude Code
-P2-01,P2,Importer les 20 JSON de référence,Tous valides dans le projet,En cours,20 JSON copiés et validés par tests; chargement Unity à faire,Claude Code
-P2-02,P2,Coder validateur de données,IDs/couleurs/capacités contrôlés,À faire,,
-P2-03,P2,Coder solveur BFS C#,Petit niveau solvable détecté,À faire,,
-P2-04,P2,Rejouer les 20 referenceSolution,20 replays aboutissent à la victoire,À faire,,
-P2-05,P2,Tester états insolubles et limites,Retour unknown non confondu avec solvable,À faire,,
-P2-06,P2,Éditer niveaux tutoriels 1–10,Notions progressives documentées,À faire,,
-P2-07,P2,Exporter rapport difficulty/solutions,"CSV états explorés, profondeur, résultat",À faire,,
+P2-01,P2,Importer les 20 JSON de référence,Tous valides dans le projet,Validé,LevelCatalog.asset 20 TextAsset; test Unity Catalog_LoadsTwentyValidLevels_InOrder,Claude Code
+P2-02,P2,Coder validateur de données,IDs/couleurs/capacités contrôlés,Validé,LevelValidator + colonne valid du rapport P2 (Docs/QA/P2_solver_log.txt),Claude Code
+P2-03,P2,Coder solveur BFS C#,Petit niveau solvable détecté,Validé,LevelSolver.cs; solutions et statesExplored identiques au Python (SolverTests),Claude Code
+P2-04,P2,Rejouer les 20 referenceSolution,20 replays aboutissent à la victoire,Validé,40 replays gagnants (20 referenceSolution + 20 solveur),Claude Code
+P2-05,P2,Tester états insolubles et limites,Retour unknown non confondu avec solvable,Validé,Tests Unsolvable (blocage forcé) et Unknown (limite d états),Claude Code
+P2-06,P2,Éditer niveaux tutoriels 1–10,Notions progressives documentées,Validé,Docs/LEVELS.md; niveaux non modifiés (D-107); tranches GDD ch.08 vérifiées par test,Claude Code
+P2-07,P2,Exporter rapport difficulty/solutions,"CSV états explorés, profondeur, résultat",Validé,Docs/QA/P2_difficulty_report.csv,Claude Code
 P3-01,P3,Créer scène Game orthographique,Jeu portrait visible sous Unity,À faire,,
 P3-02,P3,Créer vue de grille et piles,Dessus de chaque pile correctement affiché,À faire,,
 P3-03,P3,Créer prefab Fleur bouton/éclose,Transition liée aux événements logiques,À faire,,

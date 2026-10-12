@@ -3,6 +3,7 @@
     "rootNamespace": "BloomGarden.Tests",
     "references": [
         "BloomGarden.Core",
+        "BloomGarden.Solvers",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner"
     ],

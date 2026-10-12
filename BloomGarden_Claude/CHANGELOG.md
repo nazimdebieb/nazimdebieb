@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-10-12 — P2 validé (solveur, catalogue, rapport)
+- `BloomGarden.Solvers` (C# pur) : `LevelSolver` (BFS, statuts Solvable / Unsolvable / Unknown), `LevelAnalyzer` (graphe complet : blocages, choix, coups perdants), `DifficultyReport` (CSV) et tranches pédagogiques du GDD ch. 08.
+- `BloomGarden.Levels` : `LevelCatalog` (ScriptableObject, 20 TextAsset) ; outils éditeur `Bloom Garden ▸ P2 - …` utilisables en batchmode.
+- Oracle Python `Tools/python/generate_solver_fixture.py` → `Fixtures/python_solver_reference.json` : le solveur C# retrouve les mêmes solutions, états explorés et analyses sur les 20 niveaux.
+- Décision D-107 tranchée : niveaux du kit conservés pour le MVP1, pièges au MVP2.
+- Tests Unity EditMode : 62/62.
+
 ## 2026-10-12 — P0 validé + P1 validé dans Unity (session locale)
 - Projet ouvert et compilé sous Unity 6000.6.5f1 ; `ProjectSettings/` et `.meta` générés et versionnés.
 - `Packages/manifest.json` : URP 17.6.0, Test Framework 1.8.0, uGUI 2.6.0 ; IAP et Analytics retirés (hors MVP).

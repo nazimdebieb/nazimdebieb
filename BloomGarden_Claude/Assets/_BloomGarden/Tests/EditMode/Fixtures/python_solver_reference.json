@@ -1,0 +1,403 @@
+{
+ "rulesVersion": "0.1.0",
+ "levels": [
+  {
+   "level": "BG-001",
+   "status": "solvable",
+   "solutionLanes": [
+    0,
+    1
+   ],
+   "statesExplored": 4,
+   "shortestMoves": 2,
+   "reachableStates": 4,
+   "winStates": 1,
+   "deadlockStates": 0,
+   "decisionStates": 1,
+   "losingMoves": 0
+  },
+  {
+   "level": "BG-002",
+   "status": "solvable",
+   "solutionLanes": [
+    0,
+    0,
+    1
+   ],
+   "statesExplored": 6,
+   "shortestMoves": 3,
+   "reachableStates": 6,
+   "winStates": 1,
+   "deadlockStates": 0,
+   "decisionStates": 2,
+   "losingMoves": 0
+  },
+  {
+   "level": "BG-003",
+   "status": "solvable",
+   "solutionLanes": [
+    0,
+    0,
+    1,
+    1
+   ],
+   "statesExplored": 9,
+   "shortestMoves": 4,
+   "reachableStates": 9,
+   "winStates": 1,
+   "deadlockStates": 0,
+   "decisionStates": 4,
+   "losingMoves": 0
+  },
+  {
+   "level": "BG-004",
+   "status": "solvable",
+   "solutionLanes": [
+    1,
+    1,
+    1,
+    2,
+    2,
+    2,
+    2
+   ],
+   "statesExplored": 25,
+   "shortestMoves": 7,
+   "reachableStates": 25,
+   "winStates": 1,
+   "deadlockStates": 0,
+   "decisionStates": 14,
+   "losingMoves": 0
+  },
+  {
+   "level": "BG-005",
+   "status": "solvable",
+   "solutionLanes": [
+    0,
+    1,
+    1,
+    2,
+    2
+   ],
+   "statesExplored": 18,
+   "shortestMoves": 5,
+   "reachableStates": 18,
+   "winStates": 1,
+   "deadlockStates": 0,
+   "decisionStates": 12,
+   "losingMoves": 0
+  },
+  {
+   "level": "BG-006",
+   "status": "solvable",
+   "solutionLanes": [
+    0,
+    1,
+    2,
+    2,
+    2,
+    2,
+    2
+   ],
+   "statesExplored": 25,
+   "shortestMoves": 7,
+   "reachableStates": 25,
+   "winStates": 1,
+   "deadlockStates": 0,
+   "decisionStates": 16,
+   "losingMoves": 0
+  },
+  {
+   "level": "BG-007",
+   "status": "solvable",
+   "solutionLanes": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    2
+   ],
+   "statesExplored": 32,
+   "shortestMoves": 7,
+   "reachableStates": 32,
+   "winStates": 1,
+   "deadlockStates": 0,
+   "decisionStates": 20,
+   "losingMoves": 0
+  },
+  {
+   "level": "BG-008",
+   "status": "solvable",
+   "solutionLanes": [
+    0,
+    0,
+    1,
+    1,
+    2,
+    2,
+    2
+   ],
+   "statesExplored": 42,
+   "shortestMoves": 7,
+   "reachableStates": 42,
+   "winStates": 1,
+   "deadlockStates": 0,
+   "decisionStates": 31,
+   "losingMoves": 0
+  },
+  {
+   "level": "BG-009",
+   "status": "solvable",
+   "solutionLanes": [
+    0,
+    0,
+    0,
+    1,
+    2,
+    2
+   ],
+   "statesExplored": 28,
+   "shortestMoves": 6,
+   "reachableStates": 28,
+   "winStates": 1,
+   "deadlockStates": 0,
+   "decisionStates": 17,
+   "losingMoves": 0
+  },
+  {
+   "level": "BG-010",
+   "status": "solvable",
+   "solutionLanes": [
+    0,
+    0,
+    0,
+    1,
+    2,
+    2,
+    2
+   ],
+   "statesExplored": 37,
+   "shortestMoves": 7,
+   "reachableStates": 37,
+   "winStates": 1,
+   "deadlockStates": 0,
+   "decisionStates": 26,
+   "losingMoves": 0
+  },
+  {
+   "level": "BG-011",
+   "status": "solvable",
+   "solutionLanes": [
+    0,
+    0,
+    0,
+    0,
+    1,
+    1,
+    1,
+    2
+   ],
+   "statesExplored": 56,
+   "shortestMoves": 8,
+   "reachableStates": 56,
+   "winStates": 1,
+   "deadlockStates": 0,
+   "decisionStates": 44,
+   "losingMoves": 0
+  },
+  {
+   "level": "BG-012",
+   "status": "solvable",
+   "solutionLanes": [
+    0,
+    0,
+    0,
+    0,
+    1,
+    2,
+    2
+   ],
+   "statesExplored": 57,
+   "shortestMoves": 7,
+   "reachableStates": 57,
+   "winStates": 1,
+   "deadlockStates": 0,
+   "decisionStates": 35,
+   "losingMoves": 0
+  },
+  {
+   "level": "BG-013",
+   "status": "solvable",
+   "solutionLanes": [
+    0,
+    0,
+    0,
+    0,
+    1,
+    1,
+    1,
+    1,
+    2
+   ],
+   "statesExplored": 124,
+   "shortestMoves": 9,
+   "reachableStates": 124,
+   "winStates": 1,
+   "deadlockStates": 0,
+   "decisionStates": 88,
+   "losingMoves": 0
+  },
+  {
+   "level": "BG-014",
+   "status": "solvable",
+   "solutionLanes": [
+    0,
+    1,
+    2,
+    2,
+    2,
+    2,
+    2
+   ],
+   "statesExplored": 31,
+   "shortestMoves": 7,
+   "reachableStates": 31,
+   "winStates": 1,
+   "deadlockStates": 0,
+   "decisionStates": 18,
+   "losingMoves": 0
+  },
+  {
+   "level": "BG-015",
+   "status": "solvable",
+   "solutionLanes": [
+    0,
+    0,
+    0,
+    1,
+    2,
+    2,
+    2,
+    2
+   ],
+   "statesExplored": 58,
+   "shortestMoves": 8,
+   "reachableStates": 58,
+   "winStates": 1,
+   "deadlockStates": 0,
+   "decisionStates": 44,
+   "losingMoves": 0
+  },
+  {
+   "level": "BG-016",
+   "status": "solvable",
+   "solutionLanes": [
+    0,
+    0,
+    1,
+    1,
+    1,
+    2,
+    2,
+    2,
+    2
+   ],
+   "statesExplored": 86,
+   "shortestMoves": 9,
+   "reachableStates": 86,
+   "winStates": 1,
+   "deadlockStates": 0,
+   "decisionStates": 66,
+   "losingMoves": 0
+  },
+  {
+   "level": "BG-017",
+   "status": "solvable",
+   "solutionLanes": [
+    0,
+    0,
+    0,
+    0,
+    1,
+    1,
+    1,
+    2
+   ],
+   "statesExplored": 62,
+   "shortestMoves": 8,
+   "reachableStates": 62,
+   "winStates": 1,
+   "deadlockStates": 0,
+   "decisionStates": 48,
+   "losingMoves": 0
+  },
+  {
+   "level": "BG-018",
+   "status": "solvable",
+   "solutionLanes": [
+    0,
+    1,
+    1,
+    1,
+    2,
+    2,
+    2,
+    2
+   ],
+   "statesExplored": 74,
+   "shortestMoves": 8,
+   "reachableStates": 74,
+   "winStates": 1,
+   "deadlockStates": 5,
+   "decisionStates": 50,
+   "losingMoves": 5
+  },
+  {
+   "level": "BG-019",
+   "status": "solvable",
+   "solutionLanes": [
+    0,
+    0,
+    0,
+    1,
+    2,
+    2,
+    2,
+    2,
+    2
+   ],
+   "statesExplored": 55,
+   "shortestMoves": 9,
+   "reachableStates": 55,
+   "winStates": 1,
+   "deadlockStates": 0,
+   "decisionStates": 41,
+   "losingMoves": 0
+  },
+  {
+   "level": "BG-020",
+   "status": "solvable",
+   "solutionLanes": [
+    0,
+    0,
+    0,
+    1,
+    1,
+    1,
+    1,
+    2,
+    2,
+    2
+   ],
+   "statesExplored": 106,
+   "shortestMoves": 10,
+   "reachableStates": 106,
+   "winStates": 1,
+   "deadlockStates": 0,
+   "decisionStates": 89,
+   "losingMoves": 0
+  }
+ ]
+}

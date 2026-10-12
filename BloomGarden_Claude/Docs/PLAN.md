@@ -32,29 +32,41 @@ Critère de sortie P0 (GDD) : « ouvre, compile, documentation exacte » → **a
 | P1-09 | `UndoHistory` | **Validé** | I10 (hash identique à chaque coup, sur les 20 niveaux) |
 | P1-10 | Tests EditMode | **Validé** | **Unity Test Runner EditMode : 49/49** (`Docs/QA/P1_unity_editmode_results.xml`) ; dotnet 49/49 (`Docs/QA/P1_dotnet_test.log`) |
 
-## P2 — Solveur / contenu (suivante)
+## P2 — Solveur / contenu
+
+| ID | Tâche | Statut | Preuve |
+|---|---|---|---|
+| P2-01 | 20 JSON dans le projet | **Validé** | `ScriptableObjects/LevelCatalog.asset` (20 TextAsset, inclus dans le build) ; test Unity `Catalog_LoadsTwentyValidLevels_InOrder` |
+| P2-02 | Validateur de données | **Validé** | `LevelValidator` + colonne `valid` par fichier dans le rapport ; fichiers invalides listés dans `Docs/QA/P2_solver_log.txt` |
+| P2-03 | Solveur BFS C# | **Validé** | `Scripts/Solvers/LevelSolver.cs` ; mêmes solutions et mêmes `statesExplored` que le Python sur les 20 niveaux |
+| P2-04 | Replays | **Validé** | 20 `referenceSolution` + 20 solutions du solveur rejouées jusqu'à la victoire via `GameSession` |
+| P2-05 | Limites | **Validé** | `Unsolvable` sur un niveau à blocage forcé ; `Unknown` (jamais `Solvable`) quand la limite d'états est atteinte |
+| P2-06 | Niveaux tutoriels 1–10 | **Validé** | Niveaux non modifiés (D-107) ; progression documentée dans `Docs/LEVELS.md` et vérifiée par test (tranches du GDD ch. 08) |
+| P2-07 | Rapport difficulté | **Validé** | `Docs/QA/P2_difficulty_report.csv` (24 colonnes : coups, états explorés/atteignables, blocages, choix, pièges, replays, avertissements) |
+
+Critère de sortie P2 (GDD) : « 20 fichiers JSON versionnés, solveur/replay confirme leur solvabilité, niveaux classés par notion, analyses de difficulté » → **atteint**. Tests Unity EditMode : **62/62** (`Docs/QA/P2_unity_editmode_results.xml`).
+
+## P3 — Premier vertical slice jouable (suivante)
 
 | ID | Tâche | Critère d'acceptation |
 |---|---|---|
-| P2-01 | 20 JSON dans le projet | Déjà copiés dans `Assets/_BloomGarden/Levels/` et validés par les tests ; reste le chargement Unity (TextAsset) |
-| P2-02 | Validateur de données | Déjà fait (`LevelValidator`) ; ajouter un rapport par fichier |
-| P2-03 | Solveur BFS C# | Utiliser `GameState.ComputePositionKey` ; mêmes `solutionLanes` que le Python sur les 20 niveaux |
-| P2-04 | Replays | Déjà vert (I15) ; ajouter le replay des solutions du solveur C# |
-| P2-05 | Limites | Statut `Unknown` quand le plafond d'états est atteint, jamais `Solvable` |
-| P2-06 | Niveaux tutoriels 1–10 | Dépend de la décision D-107 (niveaux sans piège) |
-| P2-07 | Rapport difficulté | CSV : états explorés, profondeur, nombre d'états de blocage |
+| P3-01 | Scène Game orthographique | Jeu portrait visible sous Unity, capture 1080×1920 |
+| P3-02 | Vue grille et piles | Dessus de chaque pile correctement affiché |
+| P3-03 / P3-04 | Prefabs fleur et arrosoir (primitives douces) | Couleur, état bouton/éclos et capacité lisibles |
+| P3-05 / P3-06 | Files, têtes, places | Seules les têtes cliquables ; occupation et charge lisibles |
+| P3-07 à P3-09 | Tap → `TurnResolver`, Undo/Restart, victoire/blocage | Niveau 1 → victoire → niveau 2 sans erreur console |
+| P3-10 | APK debug | Installé sur téléphone ou limitation documentée |
 
 ## Interventions humaines nécessaires
 
 | # | Quoi | Pourquoi | Bloque |
 |---|---|---|---|
-| H4 | Décider pour D-107 : garder les 20 niveaux tels quels ou les régénérer avec des pièges réels | Changement de contenu, pas de règle | P2-06 |
 | H6 | Pour la démonstration MCP : fermer le projet Codex dans Unity (ou l'autre instance) et ouvrir `BloomGarden_Claude` dans Unity Hub, puis démarrer une nouvelle session Claude (le plugin se charge au démarrage) | Le MCP pilote l'éditeur ouvert ; on ne touche pas au projet Codex | P0-03, P3 (vérification visuelle) |
 
 H1, H2, H3 et H5 sont **résolus** (session locale sur le PC, 2026-10-12 ; aucune erreur de compilation liée à `UxmlCloneTreeGenerator.dll`).
 
 ## Risques (par sévérité)
 
-1. **Niveaux de référence sans défi** (D-107) : impossible de perdre sur 19 niveaux sur 20 ; le jeu risque d'être jugé trop facile.
+1. **Niveaux de référence sans défi** (D-107, accepté pour le MVP1) : impossible de perdre sur 19 niveaux sur 20 ; pièges prévus au MVP2.
 2. **Plugin Unity en bêta (0.1.8-beta)** : si le MCP est instable, repli sur Unity CLI en batchmode (déjà fonctionnel pour la configuration et les tests).
 3. **Deux projets Unity en parallèle** (Codex / Claude) : une seule instance d'éditeur par projet ; ne jamais ouvrir le projet Codex depuis cette session.

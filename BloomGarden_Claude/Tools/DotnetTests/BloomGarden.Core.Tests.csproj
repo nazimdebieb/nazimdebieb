@@ -12,6 +12,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="../../Assets/_BloomGarden/Scripts/Core/**/*.cs" />
+    <Compile Include="../../Assets/_BloomGarden/Scripts/Solvers/**/*.cs" />
     <Compile Include="../../Assets/_BloomGarden/Tests/EditMode/**/*.cs" />
   </ItemGroup>
   <ItemGroup>
