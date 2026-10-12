@@ -12,11 +12,12 @@ Depuis le 2026-10-12, Claude Code tourne **en local sur le PC Windows 11 de l'ut
 | Packages | URP 17.6.0, Test Framework 1.8.0, uGUI 2.6.0 (versions fournies avec l'éditeur) ; IAP et Analytics retirés (hors MVP) | `Packages/manifest.json` |
 | Unity CLI (batchmode) | **Opérationnel** : configuration P0 et tests EditMode exécutés sans ouvrir de fenêtre | `Logs/p0_setup.log` (non versionné), `Docs/QA/P1_unity_editmode_results.xml` |
 | Plugin Claude Code | `unity@unity-agent-plugin` **0.1.8-beta**, scope utilisateur, activé | `claude plugin list` |
-| MCP Unity | Pas encore démontré : le plugin se charge au démarrage d'une nouvelle session, et l'éditeur ouvert était celui du projet Codex | voir H6 dans `Docs/PLAN.md` |
+| Pilotage en direct | **Opérationnel** : Unity CLI 1.0.0-beta.13 + package `com.unity.pipeline` 0.8.0-exp.1 ; l'éditeur ouvert sur `BloomGarden_Claude` est piloté (scènes, eval C#, Play, captures, tests, build) | `unity status` (port 7800) |
+| Cible de build active | **Android** (IL2CPP, ARM64) | `EditorUserBuildSettings.activeBuildTarget` |
 | Git / GitHub CLI | Git 2.54.0, gh 2.101.0 (connecté au compte `nazimdebieb`) | `git --version`, `gh auth status` |
 | Python | 3.11.15 (solveur de référence) | `python --version` |
 | .NET SDK | Absent sur le PC ; inutile : les tests passent maintenant dans Unity Test Runner | — |
-| Téléphone Android | Non vérifié (pas encore nécessaire avant P3-10) | — |
+| Téléphone Android | **Aucun appareil** détecté par adb 1.0.41 (2026-10-12) | `adb devices -l` |
 | iOS | Build natif impossible sans macOS/Xcode (ou service de build) | GDD ch. 17 |
 
 ## Commandes de référence (PowerShell)
@@ -30,7 +31,16 @@ $proj = "C:\Users\nazim\Projets\BloomGarden\BloomGarden_Claude"
 & $u -batchmode -projectPath $proj -runTests -testPlatform EditMode -testResults "$proj\Docs\QA\P1_unity_editmode_results.xml" -logFile "$proj\Logs\tests.log"
 ```
 
-Le batchmode échoue si le même projet est déjà ouvert dans l'éditeur : dans ce cas, passer par le MCP.
+Le batchmode échoue si le même projet est déjà ouvert dans l'éditeur : dans ce cas, piloter l'éditeur ouvert :
+
+```bash
+unity status --project-path <chemin>                 # état "ready"
+unity command eval_file -- --file script.cs           # exécuter du C# dans l'éditeur
+unity command run_tests -- --mode playmode --async_tests true   # puis : unity command test_status
+unity command editor_play / editor_stop
+```
+
+`capture_game_view` n'écrit que sous `Assets/` ; les captures de `Docs/QA/captures` sont faites avec `ScreenCapture.CaptureScreenshot` (chemin absolu) en mode Play.
 
 ## Point d'attention
 

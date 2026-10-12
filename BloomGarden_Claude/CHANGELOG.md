@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-10-12 — P3 : premier niveau jouable (vertical slice)
+- Scène `Game` portrait : jardin 2,5D en primitives (palette du GDD), 3 places, 3 files, HUD (titre, compteur, Annuler, Recommencer), écrans de victoire et de blocage.
+- Tap écran → rayon caméra → tête de file → un seul coup du `TurnResolver` ; animations (déplacement, gouttes, éclosion) sans influence sur la logique ; un tap pendant une animation recale l'affichage puis joue le coup.
+- Accessibilité : forme différente bouton / fleur éclose, symbole par couleur, gouttes = eau restante.
+- Tests PlayMode 5/5 (dont les 20 niveaux gagnés avec vérification vue = état), EditMode 62/62.
+- APK de test 0.3.0 (IL2CPP ARM64, 27 Mo) ; installation sur téléphone en attente d'un appareil.
+- Pilotage en direct de l'éditeur (Unity CLI + package Pipeline) ; P0-03 validé.
+
 ## 2026-10-12 — P2 validé (solveur, catalogue, rapport)
 - `BloomGarden.Solvers` (C# pur) : `LevelSolver` (BFS, statuts Solvable / Unsolvable / Unknown), `LevelAnalyzer` (graphe complet : blocages, choix, coups perdants), `DifficultyReport` (CSV) et tranches pédagogiques du GDD ch. 08.
 - `BloomGarden.Levels` : `LevelCatalog` (ScriptableObject, 20 TextAsset) ; outils éditeur `Bloom Garden ▸ P2 - …` utilisables en batchmode.

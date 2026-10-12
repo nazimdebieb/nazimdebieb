@@ -9,13 +9,13 @@ Une seule phase à la fois. Le suivi des 71 tâches est dans `Docs/PLAN_DE_TRAVA
 |---|---|---|---|---|---|---|
 | P0-01 | Vérifier Unity Hub / Editor 6+ | Haute | — | **Validé** | Version exacte notée | Unity **6000.6.5f1** (3ff58d469c8a), `ProjectSettings/ProjectVersion.txt` |
 | P0-02 | Modules Android | Haute | P0-01 | **Validé** | SDK/NDK/OpenJDK détectés | `PlaybackEngines/AndroidPlayer/{SDK,NDK,OpenJDK}` présents |
-| P0-03 | CLI / plugin Unity MCP | Haute | P0-01 | **Partiel** | Lecture réelle d'une scène | Plugin `unity@unity-agent-plugin` 0.1.8-beta installé ; Unity CLI (batchmode) opérationnel ; lecture de scène via MCP à démontrer dans la session suivante (Unity ouvert sur ce projet) |
+| P0-03 | CLI / plugin Unity MCP | Haute | P0-01 | **Validé** | Lecture réelle d'une scène | Unity CLI 1.0.0-beta.13 + package Pipeline : `get_scene_hierarchy` sur l'éditeur ouvert a renvoyé Main Camera / Directional Light de `Game.unity` |
 | P0-04 | Git / .gitignore Unity | Haute | — | **Validé** | Commit propre sans caches ni secrets | `.gitignore`, `Library/` `Logs/` exclus |
 | P0-05 | Structure des dossiers | Haute | — | **Validé** | Scenes/Scripts/Tests/Docs présents | `Assets/_BloomGarden/` (GDD ch. 10) |
 | P0-06 | Portrait / URP | Haute | P0-01 | **Validé** | Player Settings et scène enregistrés | `ProjectSetup.ConfigureAll` en batchmode : portrait (`defaultScreenOrientation: 0`), `Settings/URP_Mobile.asset` assigné (Graphics + Quality), `Scenes/Game.unity` ; voir `Docs/QA/P0.md` |
 | P0-07 | Docs/PLAN et ENVIRONMENT | Moyenne | — | **Validé** | Versions, risques, prochaine phase | ce fichier, `Docs/ENVIRONMENT.md`, `Docs/QA/P0.md` |
 
-Critère de sortie P0 (GDD) : « ouvre, compile, documentation exacte » → **atteint** (ouverture + compilation sans erreur sous Unity 6000.6.5f1). Seule la démonstration MCP (P0-03) reste à faire.
+Critère de sortie P0 (GDD) : « ouvre, compile, documentation exacte » → **atteint** (ouverture + compilation sans erreur sous Unity 6000.6.5f1, pilotage en direct démontré).
 
 ## P1 — Cœur logique (C# pur)
 
@@ -46,27 +46,43 @@ Critère de sortie P0 (GDD) : « ouvre, compile, documentation exacte » → **a
 
 Critère de sortie P2 (GDD) : « 20 fichiers JSON versionnés, solveur/replay confirme leur solvabilité, niveaux classés par notion, analyses de difficulté » → **atteint**. Tests Unity EditMode : **62/62** (`Docs/QA/P2_unity_editmode_results.xml`).
 
-## P3 — Premier vertical slice jouable (suivante)
+## P3 — Premier vertical slice jouable
+
+| ID | Tâche | Statut | Preuve |
+|---|---|---|---|
+| P3-01 | Scène Game orthographique | **Validé** | Caméra orthographique inclinée 55°, portrait 1080×1920 ; `Docs/QA/captures/P3_level1_start.png` |
+| P3-02 | Vue grille et piles | **Validé** | Seul le bouton du dessus est visible, une pastille grise par couche cachée ; taille des cases adaptée à la grille (3×3 à 4×4) |
+| P3-03 | Fleur bouton / éclose | **Validé** | Bouton = ovale fermé, éclose = 6 pétales (forme différente) ; transition liée à l'événement `FlowerBloomed` |
+| P3-04 | Arrosoir 4 couleurs | **Validé** | Couleur + symbole + une goutte blanche par unité d'eau restante |
+| P3-05 | Files et têtes | **Validé** | Anneau vert sous les têtes sélectionnables ; seules les têtes ont un collider ; arrosoirs suivants plus pâles |
+| P3-06 | Places et attente | **Validé** | Arrosoir en attente reste sur sa place avec sa charge |
+| P3-07 | Tap → TurnResolver | **Validé** | Test PlayMode `TapDuringAnimation_IsExactlyOneMoreMove` (tap écran → rayon → file → 1 coup) |
+| P3-08 | Undo / Restart | **Validé** | Test `UndoAndRestart_RestoreExactStates` (hash identique + vue synchronisée) |
+| P3-09 | Victoire / blocage | **Validé** | Tests `Level1_WinByTaps_ThenLevel2`, `Bg018_Deadlock_ShowsPanel_AndUndoRecovers`, `AllTwentyLevels_PlayToWin_ViewInSync` |
+| P3-10 | APK debug | **Partiel** | APK construit : `Builds/BloomGarden_Claude_0.3.0.apk` (27 Mo, IL2CPP ARM64, 0 erreur, `Docs/QA/P3_android_build.txt`) ; **installation sur téléphone non faite** : aucun appareil détecté par adb (H7) |
+
+Critère de sortie P3 (GDD) : « niveau 1 → sélections → floraisons → victoire → niveau 2, aucun crash ni dépendance externe » → **atteint dans l'éditeur** (PlayMode 5/5, EditMode 62/62). Reste la vérification sur téléphone.
+
+## P4 — Visuels et animations (suivante)
 
 | ID | Tâche | Critère d'acceptation |
 |---|---|---|
-| P3-01 | Scène Game orthographique | Jeu portrait visible sous Unity, capture 1080×1920 |
-| P3-02 | Vue grille et piles | Dessus de chaque pile correctement affiché |
-| P3-03 / P3-04 | Prefabs fleur et arrosoir (primitives douces) | Couleur, état bouton/éclos et capacité lisibles |
-| P3-05 / P3-06 | Files, têtes, places | Seules les têtes cliquables ; occupation et charge lisibles |
-| P3-07 à P3-09 | Tap → `TurnResolver`, Undo/Restart, victoire/blocage | Niveau 1 → victoire → niveau 2 sans erreur console |
-| P3-10 | APK debug | Installé sur téléphone ou limitation documentée |
+| P4-01 | Palette / matériaux cohérents | Rendu homogène, contraste vérifié, captures avant/après |
+| P4-02 | Gouttes et jet | La logique n'attend jamais les particules (tests PlayMode inchangés) |
+| P4-03 / P4-04 | Éclosion et trajectoire de l'arrosoir | États différenciés, trajectoire lisible |
+| P4-05 | Sons | Volume réglable |
+| P4-06 à P4-08 | Victoire, mode 2× / animations réduites, pooling | Même replay quel que soit le mode, pas de pic de CPU |
 
 ## Interventions humaines nécessaires
 
 | # | Quoi | Pourquoi | Bloque |
 |---|---|---|---|
-| H6 | Pour la démonstration MCP : fermer le projet Codex dans Unity (ou l'autre instance) et ouvrir `BloomGarden_Claude` dans Unity Hub, puis démarrer une nouvelle session Claude (le plugin se charge au démarrage) | Le MCP pilote l'éditeur ouvert ; on ne touche pas au projet Codex | P0-03, P3 (vérification visuelle) |
+| H7 | Brancher un téléphone Android en USB avec le **débogage USB** activé (Paramètres > À propos > appuyer 7 fois sur « Numéro de build », puis Options pour les développeurs > Débogage USB) et accepter l'empreinte de l'ordinateur | adb ne voit aucun appareil ; l'installation et le test réel en dépendent | P3-10, P5-08 |
 
-H1, H2, H3 et H5 sont **résolus** (session locale sur le PC, 2026-10-12 ; aucune erreur de compilation liée à `UxmlCloneTreeGenerator.dll`).
+H1, H2, H3, H5 et H6 sont **résolus** (session locale sur le PC, 2026-10-12 ; aucune erreur de compilation liée à `UxmlCloneTreeGenerator.dll`).
 
 ## Risques (par sévérité)
 
 1. **Niveaux de référence sans défi** (D-107, accepté pour le MVP1) : impossible de perdre sur 19 niveaux sur 20 ; pièges prévus au MVP2.
-2. **Plugin Unity en bêta (0.1.8-beta)** : si le MCP est instable, repli sur Unity CLI en batchmode (déjà fonctionnel pour la configuration et les tests).
-3. **Deux projets Unity en parallèle** (Codex / Claude) : une seule instance d'éditeur par projet ; ne jamais ouvrir le projet Codex depuis cette session.
+2. **Outils Unity en bêta / expérimental** (plugin 0.1.8-beta, CLI 1.0.0-beta.13, Pipeline 0.8.0-exp.1) : la commande `build` asynchrone n'a rien produit, contournée par `BuildPipeline` direct ; repli possible sur le batchmode.
+3. **Aucun test sur appareil réel** pour l'instant : performance, lisibilité des tailles et taps tactiles restent à confirmer (H7).

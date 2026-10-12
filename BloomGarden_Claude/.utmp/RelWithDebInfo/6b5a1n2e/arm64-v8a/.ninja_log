@@ -1,0 +1,12 @@
+# ninja log v5
+366	1127	8135201548273186	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	2788e76b204fb77f
+113	2709	8135201564702377	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	cf97fccf5af5f593
+132	2740	8135201565464618	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	331ebeb2f06abdd1
+81	2742	8135201565489769	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	f7a267e7466805ff
+1181	2749	8135201564111250	C:/Users/nazim/Projets/BloomGarden/BloomGarden_Claude/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/6b5a1n2e/obj/arm64-v8a/libswappywrapper.so	5eaffe218c9ac7d6
+10	2858	8135201566659671	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	1dab383cd026d615
+331	3015	8135201568252814	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	756185314fd88ff
+180	3094	8135201569048498	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	f3bc03a47f379033
+97	3119	8135201569285833	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	163a9bf25e27bdd9
+1	3229	8135201570330589	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	888a8a01db185f9a
+3230	3371	8135201571781891	C:/Users/nazim/Projets/BloomGarden/BloomGarden_Claude/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/6b5a1n2e/obj/arm64-v8a/libgame.so	1ba6b66b6b90df6c

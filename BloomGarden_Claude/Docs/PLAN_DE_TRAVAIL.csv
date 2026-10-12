@@ -1,7 +1,7 @@
 ID,Phase,Tâche,Critère de validation,Statut,Preuve,Responsable
 P0-01,P0,Vérifier Unity Hub / Editor 6+,Capture/version exacte Unity ouverte,Validé,"Unity 6000.6.5f1 (3ff58d469c8a), ProjectSettings/ProjectVersion.txt",Claude Code
 P0-02,P0,Installer les modules Android,SDK/NDK/OpenJDK détectés dans Unity,Validé,"PlaybackEngines/AndroidPlayer/SDK, NDK, OpenJDK présents (Docs/ENVIRONMENT.md)",Claude Code
-P0-03,P0,Vérifier CLI et plugin Unity/MCP,Lecture réelle de la scène test démontrée,En cours,Plugin unity@unity-agent-plugin 0.1.8-beta installé; Unity CLI batchmode OK; lecture de scène via MCP à faire en session suivante,Claude Code
+P0-03,P0,Vérifier CLI et plugin Unity/MCP,Lecture réelle de la scène test démontrée,Validé,Unity CLI + Pipeline: get_scene_hierarchy sur l éditeur ouvert,Claude Code
 P0-04,P0,Initialiser Git / .gitignore Unity,Commit initial propre sans caches ni secrets,Validé,.gitignore + commit BloomGarden_Claude,Claude Code
 P0-05,P0,Créer la structure des dossiers,Scenes/Scripts/Tests/Docs présents,Validé,Assets/_BloomGarden/*,Claude Code
 P0-06,P0,Fixer orientation portrait / qualité URP,Scene/Player Settings sauvegardés,Validé,"Batchmode ConfigureAll: portrait (defaultScreenOrientation 0), URP_Mobile assigné, Scenes/Game.unity (Logs/p0_setup.log)",Claude Code
@@ -23,16 +23,16 @@ P2-04,P2,Rejouer les 20 referenceSolution,20 replays aboutissent à la victoire,
 P2-05,P2,Tester états insolubles et limites,Retour unknown non confondu avec solvable,Validé,Tests Unsolvable (blocage forcé) et Unknown (limite d états),Claude Code
 P2-06,P2,Éditer niveaux tutoriels 1–10,Notions progressives documentées,Validé,Docs/LEVELS.md; niveaux non modifiés (D-107); tranches GDD ch.08 vérifiées par test,Claude Code
 P2-07,P2,Exporter rapport difficulty/solutions,"CSV états explorés, profondeur, résultat",Validé,Docs/QA/P2_difficulty_report.csv,Claude Code
-P3-01,P3,Créer scène Game orthographique,Jeu portrait visible sous Unity,À faire,,
-P3-02,P3,Créer vue de grille et piles,Dessus de chaque pile correctement affiché,À faire,,
-P3-03,P3,Créer prefab Fleur bouton/éclose,Transition liée aux événements logiques,À faire,,
-P3-04,P3,Créer prefab Arrosoir 4 couleurs,Capacité et couleur lisibles,À faire,,
-P3-05,P3,Afficher trois files et têtes,Seules têtes cliquables,À faire,,
-P3-06,P3,Afficher places et attente,Occupation et charge lisibles,À faire,,
-P3-07,P3,Relier tap au TurnResolver,Un seul coup logique par tap,À faire,,
-P3-08,P3,Boutons Undo / Restart,Restaurent les états sans désync,À faire,,
-P3-09,P3,Victoire / blocage et transition,Partie peut être terminée normalement,À faire,,
-P3-10,P3,Premier build APK debug,Installé/ou limitation documentée,À faire,,
+P3-01,P3,Créer scène Game orthographique,Jeu portrait visible sous Unity,Validé,Docs/QA/captures/P3_level1_start.png,Claude Code
+P3-02,P3,Créer vue de grille et piles,Dessus de chaque pile correctement affiché,Validé,GardenView; captures 3x3 et 4x4,Claude Code
+P3-03,P3,Créer prefab Fleur bouton/éclose,Transition liée aux événements logiques,Validé,FlowerFactory Bud/Bloom; capture P3_level1_tap1_done.png,Claude Code
+P3-04,P3,Créer prefab Arrosoir 4 couleurs,Capacité et couleur lisibles,Validé,CanView: couleur + symbole + gouttes = eau restante,Claude Code
+P3-05,P3,Afficher trois files et têtes,Seules têtes cliquables,Validé,Colliders uniquement sur les têtes; anneau vert si sélectionnable,Claude Code
+P3-06,P3,Afficher places et attente,Occupation et charge lisibles,Validé,Captures P3_level1_tap1_*.png,Claude Code
+P3-07,P3,Relier tap au TurnResolver,Un seul coup logique par tap,Validé,PlayMode TapDuringAnimation_IsExactlyOneMoreMove,Claude Code
+P3-08,P3,Boutons Undo / Restart,Restaurent les états sans désync,Validé,PlayMode UndoAndRestart_RestoreExactStates,Claude Code
+P3-09,P3,Victoire / blocage et transition,Partie peut être terminée normalement,Validé,PlayMode 5/5 (Docs/QA/P3_playmode_results.json),Claude Code
+P3-10,P3,Premier build APK debug,Installé/ou limitation documentée,En cours,APK 0.3.0 construit (Docs/QA/P3_android_build.txt); pas de téléphone détecté (H7),Claude Code
 P4-01,P4,Palette / matériaux cohérents,Rendu homogène sur 2 téléphones,À faire,,
 P4-02,P4,Animation gouttes et jet,La logique n’attend pas les particules,À faire,,
 P4-03,P4,Éclosion 4 couleurs,États bien différenciés,À faire,,

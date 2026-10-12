@@ -43,6 +43,22 @@ namespace BloomGarden.EditorTools
             Debug.Log("[BloomGarden] Player settings: portrait, ids set.");
         }
 
+        /// <summary>
+        /// Android player settings for test builds (P3-10): IL2CPP + ARM64 (required by Google Play),
+        /// portrait only. Signing stays on Unity's debug keystore: no release key is created or stored in Git.
+        /// </summary>
+        [MenuItem("Bloom Garden/P3 - Reglages Android")]
+        public static void ConfigureAndroid()
+        {
+            PlayerSettings.SetScriptingBackend(NamedBuildTarget.Android, ScriptingImplementation.IL2CPP);
+            PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
+            PlayerSettings.bundleVersion = "0.3.0";
+            PlayerSettings.Android.bundleVersionCode = 3;
+            PlayerSettings.Android.useCustomKeystore = false;
+            ConfigurePlayerSettings();
+            Debug.Log("[BloomGarden] Android settings: IL2CPP, ARM64, version 0.3.0 (3), debug signing.");
+        }
+
         [MenuItem("Bloom Garden/P0 - Creer la scene Game")]
         public static void CreateGameScene()
         {
