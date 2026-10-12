@@ -9,3 +9,4 @@
 | 2026-10-12 | Claude Code (local) | P3 | Demande d'ouvrir le projet dans Unity pour suivre en direct | 1 message | Projet ouvert dans une 2e fenêtre Unity, projet Codex non touché |
 | 2026-10-12 | Claude Code (local) | P4 | Test de l'APK 0.4.0 sur téléphone : tout fonctionne sauf le son | 1 message | Bug AudioListener corrigé en 0.4.1 |
 | 2026-10-12 | Claude Code (local) | P4 | Confirmation : le son fonctionne sur téléphone (0.4.1) | 1 message | P4-05 validé |
+| 2026-10-13 | Claude Code (local) | P5 | Test de l'APK 0.5.0 sur téléphone : « c'est fait et ça marche » | 1 message | P5-08 validé |

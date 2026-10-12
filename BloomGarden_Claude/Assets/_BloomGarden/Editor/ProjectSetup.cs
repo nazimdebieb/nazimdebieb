@@ -70,11 +70,11 @@ namespace BloomGarden.EditorTools
         {
             PlayerSettings.SetScriptingBackend(NamedBuildTarget.Android, ScriptingImplementation.IL2CPP);
             PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
-            PlayerSettings.bundleVersion = "0.5.0";
-            PlayerSettings.Android.bundleVersionCode = 6;
+            PlayerSettings.bundleVersion = "0.6.0";
+            PlayerSettings.Android.bundleVersionCode = 7;
             PlayerSettings.Android.useCustomKeystore = false;
             ConfigurePlayerSettings();
-            Debug.Log("[BloomGarden] Android settings: IL2CPP, ARM64, version 0.5.0 (6), debug signing.");
+            Debug.Log("[BloomGarden] Android settings: IL2CPP, ARM64, version 0.6.0 (7), debug signing.");
         }
 
         [MenuItem("Bloom Garden/P0 - Creer la scene Game")]

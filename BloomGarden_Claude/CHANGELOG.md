@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-13 — P6 : instrumentation de test et protocole (0.6.0)
+- Journal de test local et anonyme (`PlaytestLog`) : début/fin de niveau, arrosoir choisi, annulation, recommencer, blocage, abandon, bulles du tutoriel, réglages ; aucun réseau, aucune donnée personnelle.
+- Options → Données de test : résumé par niveau sur le téléphone, bouton Copier pour envoyer ses données, Effacer.
+- Protocole d'observation, fiche par testeur, message prêt à envoyer, script de rapport `playtest_report.py`.
+- Tests PlayMode 16/16, EditMode 70/70. P5 validé sur téléphone par l'utilisateur.
+
 ## 2026-10-12 — P5 : accueil, niveaux, tutoriel, FR/EN, sauvegarde (0.5.0)
 - Écran d'accueil (diorama vivant derrière, « Jouer » / « Continuer : niveau N »), sélection des 20 niveaux avec progression verrouillée, bouton Menu en jeu.
 - Tutoriel en bulles sur les niveaux 1 à 4 avec chevron vers l'arrosoir à toucher ; jamais bloquant, ne masque aucune cible.

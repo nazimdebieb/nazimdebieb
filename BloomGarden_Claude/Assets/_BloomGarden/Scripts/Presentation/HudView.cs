@@ -34,7 +34,10 @@ namespace BloomGarden.Presentation
         private Text _undoLabel, _restartLabel, _menuLabel, _optionsLabel, _primaryLabel, _secondaryLabel;
         private Text _soundLabel, _speedLabel, _motionLabel, _languageLabel, _settingsTitle, _closeLabel;
         private Button _undo, _panelSecondary;
-        private GameObject _panel, _settingsPanel, _hint;
+        private GameObject _panel, _settingsPanel, _hint, _playtestPanel;
+        private Text _playtestLabel, _playtestTitle, _playtestPrivacy, _playtestHeader, _playtestBody, _copyLabel, _clearLabel, _playtestCloseLabel;
+        private PlaytestLog _playtest;
+        private bool _copied;
         private GameSettings _settings;
 
         private int _levelNumber, _bloomed, _total;
@@ -45,16 +48,19 @@ namespace BloomGarden.Presentation
         public UiKit Ui => _ui;
         public RectTransform Safe => _safe;
         public bool PanelVisible => _panel.activeSelf;
-        public bool SettingsVisible => _settingsPanel != null && _settingsPanel.activeSelf;
+        public bool SettingsVisible => _settingsPanel != null && (_settingsPanel.activeSelf || _playtestPanel.activeSelf);
+        public bool PlaytestVisible => _playtestPanel != null && _playtestPanel.activeSelf;
+        public string PlaytestText => _playtestBody != null ? _playtestBody.text : null;
         public bool HintVisible => _hint.activeSelf;
         public string HintKey => _hint.activeSelf ? _hintContent.Key : null;
         public bool ArrowVisible => _arrow.gameObject.activeSelf;
 
         public event Action UndoClicked, RestartClicked, MenuClicked, PanelPrimaryClicked, PanelSecondaryClicked;
 
-        public void Build(GameSettings settings, Func<int, Vector2> laneScreenPosition)
+        public void Build(GameSettings settings, Func<int, Vector2> laneScreenPosition, PlaytestLog playtest)
         {
             _settings = settings;
+            _playtest = playtest;
             _laneScreenPosition = laneScreenPosition;
             _ui = new UiKit();
 
@@ -154,7 +160,7 @@ namespace BloomGarden.Presentation
 
             var panel = UiKit.Panel(_safe, "Settings panel", new Color(UiKit.Ivory.r, UiKit.Ivory.g, UiKit.Ivory.b, 0.98f));
             _settingsPanel = panel.gameObject;
-            UiKit.At(panel.rectTransform, 0.5f, 0.5f, new Vector2(0f, 60f), new Vector2(900f, 900f));
+            UiKit.At(panel.rectTransform, 0.5f, 0.5f, new Vector2(0f, 60f), new Vector2(900f, 1040f));
             _settingsTitle = _ui.Label(panel.transform, "Title", 64, FontStyle.Bold, TextAnchor.MiddleCenter);
             UiKit.Place(_settingsTitle.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, -90f), new Vector2(-60f, 100f));
 
@@ -171,11 +177,65 @@ namespace BloomGarden.Presentation
             Row("Speed", out _speedLabel, () => _settings.SetFastAnimations(!_settings.FastAnimations));
             Row("Motion", out _motionLabel, () => _settings.SetReducedMotion(!_settings.ReducedMotion));
             Row("Language", out _languageLabel, () => _settings.SetLanguage(_settings.Language == Language.French ? Language.English : Language.French));
+            Row("Playtest", out _playtestLabel, ShowPlaytest);
 
             var close = _ui.Button(panel.transform, "Close", UiKit.Leaf, 46, out _closeLabel);
             UiKit.At((RectTransform)close.transform, 0.5f, 0f, new Vector2(0f, 90f), new Vector2(480f, 110f));
             close.onClick.AddListener(() => _settingsPanel.SetActive(false));
             _settingsPanel.SetActive(false);
+            BuildPlaytestPanel();
+        }
+
+        /// <summary>P6-01: what the playtest log contains, readable on the phone, and a Copy button to send it.</summary>
+        private void BuildPlaytestPanel()
+        {
+            var panel = UiKit.Panel(_safe, "Playtest panel", new Color(UiKit.Ivory.r, UiKit.Ivory.g, UiKit.Ivory.b, 0.99f));
+            _playtestPanel = panel.gameObject;
+            UiKit.At(panel.rectTransform, 0.5f, 0.5f, new Vector2(0f, 0f), new Vector2(960f, 1700f));
+            _playtestTitle = _ui.Label(panel.transform, "Title", 60, FontStyle.Bold, TextAnchor.MiddleCenter);
+            UiKit.Place(_playtestTitle.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, -80f), new Vector2(-60f, 90f));
+            _playtestPrivacy = _ui.Label(panel.transform, "Privacy", 32, FontStyle.Italic, TextAnchor.MiddleCenter);
+            UiKit.Place(_playtestPrivacy.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, -180f), new Vector2(-80f, 100f));
+            _playtestHeader = _ui.Label(panel.transform, "Header", 30, FontStyle.Bold, TextAnchor.MiddleLeft);
+            UiKit.Place(_playtestHeader.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, -280f), new Vector2(-80f, 90f));
+            _playtestBody = _ui.Label(panel.transform, "Body", 30, FontStyle.Normal, TextAnchor.UpperLeft);
+            UiKit.Place(_playtestBody.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, -800f), new Vector2(-80f, 920f));
+
+            var copy = _ui.Button(panel.transform, "Copy", UiKit.Leaf, 42, out _copyLabel);
+            UiKit.At((RectTransform)copy.transform, 0.5f, 0f, new Vector2(0f, 330f), new Vector2(720f, 110f));
+            copy.onClick.AddListener(() =>
+            {
+                GUIUtility.systemCopyBuffer = _playtest.ReadAll();
+                _copied = true;
+                ApplyTexts();
+            });
+            var clear = _ui.Button(panel.transform, "Clear", UiKit.Paper, 40, out _clearLabel);
+            UiKit.At((RectTransform)clear.transform, 0.5f, 0f, new Vector2(0f, 200f), new Vector2(720f, 100f));
+            clear.onClick.AddListener(() =>
+            {
+                _playtest.Clear();
+                _copied = false;
+                ApplyTexts();
+            });
+            var close = _ui.Button(panel.transform, "Close", UiKit.Paper, 40, out _playtestCloseLabel);
+            UiKit.At((RectTransform)close.transform, 0.5f, 0f, new Vector2(0f, 80f), new Vector2(720f, 100f));
+            close.onClick.AddListener(() => _playtestPanel.SetActive(false));
+            _playtestPanel.SetActive(false);
+        }
+
+        public void HideOverlays()
+        {
+            _settingsPanel.SetActive(false);
+            _playtestPanel.SetActive(false);
+        }
+
+        public void ShowPlaytest()
+        {
+            _settingsPanel.SetActive(false);
+            _copied = false;
+            _playtestPanel.SetActive(true);
+            _playtestPanel.transform.SetAsLastSibling();
+            ApplyTexts();
         }
 
         public void ToggleSettings()
@@ -259,6 +319,18 @@ namespace BloomGarden.Presentation
             _motionLabel.text = Loc.T(_settings.ReducedMotion ? "motion_on" : "motion_off");
             _languageLabel.text = Loc.T("language");
             _closeLabel.text = Loc.T("close");
+            _playtestLabel.text = Loc.T("playtest_button");
+            _playtestTitle.text = Loc.T("playtest_button");
+            _playtestPrivacy.text = Loc.T("playtest_privacy");
+            _playtestHeader.text = Loc.T("playtest_header");
+            _copyLabel.text = Loc.T(_copied ? "playtest_copied" : "playtest_copy");
+            _clearLabel.text = Loc.T("playtest_clear");
+            _playtestCloseLabel.text = Loc.T("close");
+            if (_playtestPanel.activeSelf)
+            {
+                var rows = PlaytestLog.Summarize(_playtest.ReadAll(), id => Loc.T("level", id.Length > 3 && int.TryParse(id.Substring(3), out int n) ? n : 0));
+                _playtestBody.text = rows.Count == 0 ? Loc.T("playtest_empty") : string.Join("\n", rows);
+            }
         }
     }
 

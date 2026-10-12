@@ -48,12 +48,12 @@ P5-04,P5,Settings audio/animations,Sauvegarde des préférences,Validé,Options 
 P5-05,P5,Localisation FR/EN,Tous les écrans traduisibles,Validé,PlayMode BothLanguages_AllScreens_NoTextOverflow,Claude Code
 P5-06,P5,Sauvegarde versionnée,Arrêt/reprise sans perte,Validé,EditMode SaveAndLocalizationTests (6) + PlayMode GameInProgress_ResumesExactly_AfterReload_WithUndo,Claude Code
 P5-07,P5,Gérer pause/arrière-plan,Pas d’état d’animation fantôme,Validé,PlayMode Pause_DuringAnimation_SnapsAndSaves,Claude Code
-P5-08,P5,QA sur appareil Android,"Rapport non-crash, logs, captures",À faire,APK 0.5.0 envoyé; retour utilisateur attendu,Claude Code
-P6-01,P6,Instrumentation locale anonymisée,Événements visibles sans SDK publicitaire,À faire,,
-P6-02,P6,Formulaire observation utilisateurs,Protocole reproductible,À faire,,
-P6-03,P6,Test 5 joueurs nouveaux,Frictions enregistrées sans interprétation exagérée,À faire,,
+P5-08,P5,QA sur appareil Android,"Rapport non-crash, logs, captures",Validé,APK 0.5.0 testé par l utilisateur sur téléphone,Claude Code
+P6-01,P6,Instrumentation locale anonymisée,Événements visibles sans SDK publicitaire,Validé,PlaytestLog + PlayMode PlaytestLogTests (2),Claude Code
+P6-02,P6,Formulaire observation utilisateurs,Protocole reproductible,Validé,Docs/P6/PROTOCOLE_OBSERVATION.md + fiche_observation.csv + playtest_report.py,Claude Code
+P6-03,P6,Test 5 joueurs nouveaux,Frictions enregistrées sans interprétation exagérée,Bloqué,Nécessite 5 testeurs humains (H8); APK 0.6.0 prêt,Utilisateur + Claude Code
 P6-04,P6,Itérer sur tutoriel et UX,Avant/après basé sur retours,À faire,,
-P6-05,P6,Test 20–30 joueurs,Tableau erreurs/abandons,À faire,,
+P6-05,P6,Test 20–30 joueurs,Tableau erreurs/abandons,Bloqué,Nécessite 20-30 testeurs humains (H8),Utilisateur + Claude Code
 P7-01,P7,Sélectionner de nouveaux puzzles,100 % résolubles et revus,À faire,,
 P7-02,P7,Déployer thème jardin alternatif,"Même gameplay, variété esthétique",À faire,,
 P7-03,P7,Mesurer FPS / RAM / chauffe,Profiler sur téléphones réels,À faire,,

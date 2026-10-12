@@ -183,7 +183,10 @@ namespace BloomGarden.Tests
                 _game.Hud.ToggleSettings();
                 yield return null;
                 problems.AddRange(Tag("options", _game.Hud.Ui.FindOverflows()));
-                _game.Hud.ToggleSettings();
+                _game.Hud.ShowPlaytest();
+                yield return null;
+                problems.AddRange(Tag("playtest data", _game.Hud.Ui.FindOverflows()));
+                _game.Hud.HideOverlays();
 
                 _game.LoadLevel(17); // deadlock panel
                 yield return null;

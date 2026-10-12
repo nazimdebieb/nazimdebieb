@@ -89,22 +89,27 @@ Tests : PlayMode **9/9**, EditMode **62/62**. APK 0.4.1 testé par l'utilisateur
 | P5-05 | Localisation FR/EN | **Validé** | `Loc` (38 clés FR+EN) ; test `BothLanguages_AllScreens_NoTextOverflow` (accueil, niveaux, jeu + bulle, options, blocage, victoire) |
 | P5-06 | Sauvegarde versionnée | **Validé** | `SaveService` v1 ; 6 tests (aller-retour, écriture interrompue, fichier corrompu → secours, illisible → départ propre, migration PlayerPrefs, version future) ; reprise exacte après rechargement avec annulation |
 | P5-07 | Pause / arrière-plan | **Validé** | `OnApplicationPause` : animation figée sur l'état réel + sauvegarde ; test `Pause_DuringAnimation_SnapsAndSaves` |
-| P5-08 | QA sur appareil Android | **À faire** | APK 0.5.0 envoyé à l'utilisateur ; liste de vérification dans `Docs/QA/P5.md` |
+| P5-08 | QA sur appareil Android | **Validé** | APK 0.5.0 testé par l'utilisateur sur son téléphone (liste de `Docs/QA/P5.md`) : « ça marche » |
 
 Tests : PlayMode **14/14**, EditMode **70/70**.
 
-## P6 — Alpha et retours joueurs (suivante)
+## P6 — Tests avec des joueurs
 
-| ID | Tâche | Critère d'acceptation |
-|---|---|---|
-| P6-01 | Instrumentation locale anonymisée | Événements visibles localement, aucun SDK publicitaire ni envoi réseau |
-| P6-02 | Protocole d'observation | Formulaire reproductible (Kit/benchmark/PROTOCOLE_TEST_HUMAIN.md) |
-| P6-03 à P6-05 | Tests avec 5 puis 20–30 joueurs | Frictions et abandons notés ; **nécessite l'utilisateur et des testeurs** |
+| ID | Tâche | Statut | Preuve |
+|---|---|---|---|
+| P6-01 | Instrumentation locale anonymisée | **Validé** | `PlaytestLog` : 10 événements (dont les 5 du prompt P6) ; écran Options → Données de test (résumé, Copier, Effacer) ; tests `Events_FollowTheSchema_AndTellWhatHappened`, `Summary_IsShownOnThePhone_AndCanBeCleared` |
+| P6-02 | Protocole d'observation | **Validé** | `Docs/P6/PROTOCOLE_OBSERVATION.md`, `fiche_observation.csv`, `MESSAGE_TESTEURS.md` ; rapport `Tools/python/playtest_report.py` (testé sur un exemple fictif, pas des joueurs) |
+| P6-03 | Test 5 joueurs nouveaux | **Bloqué** | Nécessite l'utilisateur et 5 testeurs (H8) ; APK 0.6.0 prêt |
+| P6-04 | Itérer tutoriel / UX | **À faire** | Après P6-03, à partir des fiches et du rapport |
+| P6-05 | Test 20–30 joueurs | **Bloqué** | Nécessite l'utilisateur (H8) |
+
+Tests : PlayMode **16/16**, EditMode **70/70**, script de rapport 2/2. **Aucune donnée de joueur n'a été simulée.**
 
 ## Interventions humaines nécessaires
 
 | # | Quoi | Pourquoi | Bloque |
 |---|---|---|---|
+| H8 | Faire tester l'APK 0.6.0 à 5 personnes qui ne connaissent pas le jeu (`Docs/P6/PROTOCOLE_OBSERVATION.md`), remplir la fiche, récupérer leurs données (bouton Copier) dans `Docs/P6/donnees/` | Le prompt P6 interdit de simuler des testeurs ; seul un humain peut juger si le tutoriel suffit | P6-03 à P6-05 |
 | H7 | Brancher un téléphone Android en USB avec le **débogage USB** activé (Paramètres > À propos > appuyer 7 fois sur « Numéro de build », puis Options pour les développeurs > Débogage USB) et accepter l'empreinte de l'ordinateur | adb ne voit aucun appareil ; l'installation et le test réel en dépendent | P3-10, P5-08 |
 
 H1, H2, H3, H5 et H6 sont **résolus** (session locale sur le PC, 2026-10-12 ; aucune erreur de compilation liée à `UxmlCloneTreeGenerator.dll`).

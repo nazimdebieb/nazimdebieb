@@ -45,6 +45,11 @@ namespace BloomGarden.Presentation
         private Coroutine _animation;
         private bool _endShown;
         private int _displayedBloomed;
+        private PlaytestLog _log;
+        private float _attemptStart;
+        private int _attemptUndos, _attemptRestarts, _attemptDeadlocks, _attempts;
+        private bool _attemptOpen;
+        private string _lastHint;
 
         public GameSettings Settings { get; private set; }
         public GardenAudio Audio => _audio;
@@ -59,6 +64,7 @@ namespace BloomGarden.Presentation
         public SaveService Saves => _saves;
         public GameScreen CurrentScreen { get; private set; }
         public int LevelCount => catalog.Count;
+        public PlaytestLog Playtest => _log;
 
         private void Awake()
         {
@@ -70,6 +76,9 @@ namespace BloomGarden.Presentation
 
             Settings = new GameSettings(_save.settings);
             Settings.Changed += Persist;
+            _log = new PlaytestLog(SaveDirectoryOverride ?? Application.persistentDataPath);
+            _log.Write("session_started", ("app", Application.version), ("platform", Application.platform.ToString()), ("lang", Loc.Code(Settings.Language)));
+            Settings.SettingChanged += (name, value) => _log.Write("settings_changed", ("setting_name", name), ("value", value));
 
             _audio = new GameObject("Audio").AddComponent<GardenAudio>();
             _audio.transform.SetParent(transform, false);
@@ -82,7 +91,7 @@ namespace BloomGarden.Presentation
 
             _hud = new GameObject("UI").AddComponent<HudView>();
             _hud.transform.SetParent(transform, false);
-            _hud.Build(Settings, LaneHeadScreenPosition);
+            _hud.Build(Settings, LaneHeadScreenPosition, _log);
             _hud.UndoClicked += Undo;
             _hud.RestartClicked += Restart;
             _hud.MenuClicked += ShowHome;
@@ -137,6 +146,7 @@ namespace BloomGarden.Presentation
         public void ShowHome()
         {
             SnapAndPersist();
+            LogAbandon("menu");
             CurrentScreen = GameScreen.Home;
             int next = ContinueLevelIndex();
             bool allDone = _save.records.Count >= catalog.Count;
@@ -162,16 +172,19 @@ namespace BloomGarden.Presentation
             CurrentScreen = GameScreen.Playing;
             _menu.Hide();
             _hud.SetGameLayerVisible(true);
+            BeginAttempt(resumed: _session.State.MovesMade > 0);
             Refresh();
         }
 
         /// <summary>Loads a level fresh and goes straight to the game screen (ignores any saved game of that level).</summary>
         public void LoadLevel(int index)
         {
+            LogAbandon("level_change");
             LoadLevelInternal(index, resume: false);
             CurrentScreen = GameScreen.Playing;
             _menu.Hide();
             _hud.SetGameLayerVisible(true);
+            BeginAttempt(resumed: false);
             Refresh();
             PersistProgress();
         }
@@ -220,7 +233,21 @@ namespace BloomGarden.Presentation
                 return false;
             }
             _lanes.Add(lane);
-            if (_session.State.IsWon) RecordWin();
+            CanDefinition can = FindCan(result);
+            _log.Write("can_selected", ("level_id", _session.Level.Id), ("lane", lane), ("color", can?.Color.ToId()), ("cap", can?.Capacity ?? 0),
+                ("turn_index", _session.State.MovesMade), ("ms", ElapsedMs()));
+            if (_session.State.IsDeadlocked)
+            {
+                _attemptDeadlocks++;
+                _log.Write("deadlock_detected", ("level_id", _session.Level.Id), ("used_slots", _session.State.OccupiedSlotCount), ("turn_index", _session.State.MovesMade));
+            }
+            if (_session.State.IsWon)
+            {
+                _log.Write("level_completed", ("level_id", _session.Level.Id), ("steps", _session.State.MovesMade), ("duration_ms", ElapsedMs()),
+                    ("undos", _attemptUndos), ("restarts", _attemptRestarts), ("deadlocks", _attemptDeadlocks));
+                _attemptOpen = false;
+                RecordWin();
+            }
             else PersistProgress();
             _displayedBloomed = _session.Level.TotalBuds - before.RemainingBuds(_session.Level);
             _hud.ShowHint(Tutorial.For(_levelIndex, _session.Level, _session.State, LevelCompletedBefore()));
@@ -232,6 +259,8 @@ namespace BloomGarden.Presentation
         {
             if (_session == null || !_session.Undo()) return;
             StopAnimation();
+            _attemptUndos++;
+            _log.Write("undo_used", ("level_id", _session.Level.Id), ("turn_index", _session.State.MovesMade));
             if (_lanes.Count > 0) _lanes.RemoveAt(_lanes.Count - 1);
             PersistProgress();
             _audio.Play(GardenSound.Undo);
@@ -242,6 +271,9 @@ namespace BloomGarden.Presentation
         {
             if (_session == null) return;
             if (StopAnimation()) _garden.ShowState(_session.State);
+            _log.Write("restart_used", ("level_id", _session.Level.Id), ("turn_index", _session.State.MovesMade));
+            _attemptRestarts++;
+            if (!_attemptOpen) BeginAttempt(resumed: false);
             _session.Restart();
             _lanes.Clear();
             PersistProgress();
@@ -298,7 +330,51 @@ namespace BloomGarden.Presentation
             if (paused) SnapAndPersist();
         }
 
-        private void OnApplicationQuit() => SnapAndPersist();
+        private void OnApplicationQuit()
+        {
+            SnapAndPersist();
+            LogAbandon("quit");
+        }
+
+        // ------------------------------------------------------------------ playtest events
+
+        private void BeginAttempt(bool resumed)
+        {
+            _attemptStart = Time.realtimeSinceStartup;
+            _attemptUndos = _attemptRestarts = _attemptDeadlocks = 0;
+            _attemptOpen = true;
+            _lastHint = null;
+            _log.Write("level_started", ("level_id", _session.Level.Id), ("attempt", ++_attempts), ("resumed", resumed));
+        }
+
+        /// <summary>A level left while unfinished (menu, other level, app closed). Wins and untouched attempts are not abandons.</summary>
+        private void LogAbandon(string reason)
+        {
+            if (!_attemptOpen || _session == null) return;
+            _attemptOpen = false;
+            if (_session.State.IsWon || _session.State.MovesMade == 0) return;
+            _log.Write("level_abandoned", ("level_id", _session.Level.Id), ("steps", _session.State.MovesMade), ("duration_ms", ElapsedMs()),
+                ("last_state_hash", _session.State.ComputeHash().ToString("x16")), ("reason", reason));
+        }
+
+        private long ElapsedMs() => (long)((Time.realtimeSinceStartup - _attemptStart) * 1000f);
+
+        private CanDefinition FindCan(MoveResult result)
+        {
+            foreach (GameEvent e in result.Events)
+            {
+                if (e.Type != GameEventType.CanSelected) continue;
+                foreach (CanDefinition can in _session.Level.Lanes[e.Lane]) if (can.Id == e.CanId) return can;
+            }
+            return null;
+        }
+
+        private void LogHint(TutorialHint hint)
+        {
+            if (hint.IsNone || hint.Key == _lastHint) return;
+            _lastHint = hint.Key;
+            _log.Write("tutorial_hint_shown", ("level_id", _session.Level.Id), ("hint", hint.Key), ("turn_index", _session.State.MovesMade));
+        }
 
         public void SnapAndPersist()
         {
@@ -340,7 +416,9 @@ namespace BloomGarden.Presentation
             _hud.SetCounter(_displayedBloomed, level.TotalBuds);
             _hud.SetUndoInteractable(_session.CanUndo);
             bool playing = CurrentScreen == GameScreen.Playing;
-            _hud.ShowHint(playing ? Tutorial.For(_levelIndex, level, state, LevelCompletedBefore()) : TutorialHint.None);
+            TutorialHint hint = playing ? Tutorial.For(_levelIndex, level, state, LevelCompletedBefore()) : TutorialHint.None;
+            _hud.ShowHint(hint);
+            if (playing) LogHint(hint);
 
             _endShown = false;
             if (!playing)
