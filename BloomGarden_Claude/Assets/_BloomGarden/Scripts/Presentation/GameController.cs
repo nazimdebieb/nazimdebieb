@@ -32,6 +32,7 @@ namespace BloomGarden.Presentation
         private GardenAudio _audio;
 
         public GameSettings Settings { get; private set; }
+        public GardenAudio Audio => _audio;
 
         public GameSession Session => _session;
         public int LevelIndex => _levelIndex;

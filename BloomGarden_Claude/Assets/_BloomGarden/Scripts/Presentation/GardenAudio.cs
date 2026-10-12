@@ -31,9 +31,23 @@ namespace BloomGarden.Presentation
         private int _next;
         private GameSettings _settings;
 
+        /// <summary>True when sounds can actually be heard (an enabled AudioListener exists).</summary>
+        public bool HasListener => FindAnyObjectByType<AudioListener>() != null;
+
+        /// <summary>Number of sounds started since Init (tests).</summary>
+        public int PlayedCount { get; private set; }
+
         public void Init(GameSettings settings)
         {
             _settings = settings;
+            // Safety net: a scene without AudioListener plays every sound silently (bug found on device, 0.4.0).
+            if (!HasListener)
+            {
+                Camera target = Camera.main;
+                if (target != null) target.gameObject.AddComponent<AudioListener>();
+                else gameObject.AddComponent<AudioListener>();
+                Debug.LogWarning("[BloomGarden] No AudioListener in the scene: one was added at runtime.");
+            }
             _sources = new AudioSource[6];
             for (int i = 0; i < _sources.Length; i++)
             {
@@ -74,6 +88,7 @@ namespace BloomGarden.Presentation
             source.pitch = pitch;
             source.volume = _settings.SoundVolume;
             source.PlayOneShot(clip);
+            PlayedCount++;
         }
 
         // ------------------------------------------------------------------ synthesis

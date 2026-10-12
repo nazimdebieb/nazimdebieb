@@ -40,6 +40,8 @@ namespace BloomGarden.EditorTools
             camera.transform.rotation = Quaternion.Euler(55f, 0f, 0f);
             Vector3 target = new Vector3(0f, 0f, -0.3f);
             camera.transform.position = target - camera.transform.forward * 30f;
+            // The camera is created by code, so it has no AudioListener unless we add one: without it nothing is heard.
+            if (camera.GetComponent<AudioListener>() == null) camera.gameObject.AddComponent<AudioListener>();
 
             Light light = Object.FindAnyObjectByType<Light>();
             if (light == null) light = new GameObject("Directional Light").AddComponent<Light>();

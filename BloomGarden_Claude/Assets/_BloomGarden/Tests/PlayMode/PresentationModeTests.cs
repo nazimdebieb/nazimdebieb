@@ -92,6 +92,32 @@ namespace BloomGarden.Tests
         }
 
         [UnityTest]
+        public IEnumerator Sounds_AreAudible_AndFollowTheSetting()
+        {
+            // Exactly one listener, carried by the scene camera itself (not the runtime safety net).
+            Assert.AreEqual(1, Object.FindObjectsByType<AudioListener>(FindObjectsSortMode.None).Length, "one AudioListener expected");
+            Assert.IsNotNull(Camera.main.GetComponent<AudioListener>(), "the scene camera must carry the AudioListener");
+            Assert.Greater(AudioListener.volume, 0f);
+
+            _game.Settings.SetSoundVolume(0.8f);
+            int before = _game.Audio.PlayedCount;
+            Assert.IsTrue(_game.TapAt(_game.LaneHeadScreenPosition(_game.Session.Level.ReferenceSolution[0])));
+            yield return null;
+            Assert.Greater(_game.Audio.PlayedCount, before, "selecting a can should play a sound");
+            bool playing = false;
+            foreach (var source in _game.Audio.GetComponents<AudioSource>()) playing |= source.isPlaying && source.volume > 0f;
+            Assert.IsTrue(playing, "an AudioSource should be playing with a non-zero volume");
+            while (_game.IsAnimating) yield return null;
+
+            _game.Settings.SetSoundVolume(0f);
+            _game.Restart();
+            before = _game.Audio.PlayedCount;
+            Assert.IsTrue(_game.TapAt(_game.LaneHeadScreenPosition(_game.Session.Level.ReferenceSolution[0])));
+            while (_game.IsAnimating) yield return null;
+            Assert.AreEqual(before, _game.Audio.PlayedCount, "no sound when sound is off");
+        }
+
+        [UnityTest]
         public IEnumerator Logic_IsResolved_BeforeAnimationsPlay()
         {
             SetMode(false, false);

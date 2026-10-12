@@ -1,5 +1,8 @@
 # Changelog
 
+## 2026-10-12 — 0.4.1 : correctif du son
+- Son muet sur téléphone (signalé sur 0.4.0) : `AudioListener` manquant sur la caméra. Ajouté dans la scène + filet de sécurité au démarrage + test PlayMode dédié (9/9).
+
 ## 2026-10-12 — P4 : visuels, animations, sons
 - Diorama : île de gazon avec pierres, arbres ronds et buissons, estrade en bois pour les places et les files, ombres douces (1 cascade, MSAA 2×), palette retravaillée.
 - Fleurs : bouton tulipe à sépales, fleur en coupe qui s'ouvre (6 pétales, cœur, étamines), étincelles ; arrosoirs avec anse, bec et pomme.

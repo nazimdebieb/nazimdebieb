@@ -1,5 +1,5 @@
 Bloom Garden - P4 performance sample (Unity editor, Play mode, not a device measurement)
 Unity 6000.6.5f1, level BG-013 reference solution, normal speed, second run after Restart
-frames=2373 p50=4,7ms p95=6,4ms max=14,3ms
+frames=2196 p50=5,1ms p95=7,8ms max=14,3ms
 pooled objects created: first run=95, after replay=95 (0 new)
-gen0 GC collections during replay=6
+gen0 GC collections during replay=5
