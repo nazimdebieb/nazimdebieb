@@ -1,0 +1,94 @@
+{
+  "id": "BG-004",
+  "rulesVersion": "0.1.0",
+  "slotCount": 3,
+  "title": "Jardin 04",
+  "grid": {
+    "width": 3,
+    "height": 3,
+    "cells": [
+      [
+        "coral"
+      ],
+      [],
+      [
+        "blue"
+      ],
+      [
+        "yellow",
+        "blue"
+      ],
+      [
+        "blue"
+      ],
+      [
+        "coral"
+      ],
+      [],
+      [
+        "yellow",
+        "blue"
+      ],
+      [
+        "blue"
+      ]
+    ]
+  },
+  "lanes": [
+    [],
+    [
+      {
+        "id": "c06",
+        "color": "coral",
+        "capacity": 1
+      },
+      {
+        "id": "b02",
+        "color": "blue",
+        "capacity": 2
+      },
+      {
+        "id": "y01",
+        "color": "yellow",
+        "capacity": 1
+      }
+    ],
+    [
+      {
+        "id": "y00",
+        "color": "yellow",
+        "capacity": 1
+      },
+      {
+        "id": "c05",
+        "color": "coral",
+        "capacity": 1
+      },
+      {
+        "id": "b04",
+        "color": "blue",
+        "capacity": 1
+      },
+      {
+        "id": "b03",
+        "color": "blue",
+        "capacity": 2
+      }
+    ]
+  ],
+  "theme": "meadow",
+  "referenceSolution": [
+    1,
+    1,
+    1,
+    2,
+    2,
+    2,
+    2
+  ],
+  "analysis": {
+    "status": "solvable",
+    "statesExplored": 25,
+    "shortestMoves": 7
+  }
+}

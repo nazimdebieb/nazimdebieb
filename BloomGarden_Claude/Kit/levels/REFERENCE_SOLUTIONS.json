@@ -1,0 +1,300 @@
+[
+  {
+    "id": "BG-001",
+    "status": "solvable",
+    "solutionLanes": [
+      0,
+      1
+    ],
+    "statesExplored": 4,
+    "shortestMoves": 2
+  },
+  {
+    "id": "BG-002",
+    "status": "solvable",
+    "solutionLanes": [
+      0,
+      0,
+      1
+    ],
+    "statesExplored": 6,
+    "shortestMoves": 3
+  },
+  {
+    "id": "BG-003",
+    "status": "solvable",
+    "solutionLanes": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "statesExplored": 9,
+    "shortestMoves": 4
+  },
+  {
+    "id": "BG-004",
+    "status": "solvable",
+    "solutionLanes": [
+      1,
+      1,
+      1,
+      2,
+      2,
+      2,
+      2
+    ],
+    "statesExplored": 25,
+    "shortestMoves": 7
+  },
+  {
+    "id": "BG-005",
+    "status": "solvable",
+    "solutionLanes": [
+      0,
+      1,
+      1,
+      2,
+      2
+    ],
+    "statesExplored": 18,
+    "shortestMoves": 5
+  },
+  {
+    "id": "BG-006",
+    "status": "solvable",
+    "solutionLanes": [
+      0,
+      1,
+      2,
+      2,
+      2,
+      2,
+      2
+    ],
+    "statesExplored": 25,
+    "shortestMoves": 7
+  },
+  {
+    "id": "BG-007",
+    "status": "solvable",
+    "solutionLanes": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      2
+    ],
+    "statesExplored": 32,
+    "shortestMoves": 7
+  },
+  {
+    "id": "BG-008",
+    "status": "solvable",
+    "solutionLanes": [
+      0,
+      0,
+      1,
+      1,
+      2,
+      2,
+      2
+    ],
+    "statesExplored": 42,
+    "shortestMoves": 7
+  },
+  {
+    "id": "BG-009",
+    "status": "solvable",
+    "solutionLanes": [
+      0,
+      0,
+      0,
+      1,
+      2,
+      2
+    ],
+    "statesExplored": 28,
+    "shortestMoves": 6
+  },
+  {
+    "id": "BG-010",
+    "status": "solvable",
+    "solutionLanes": [
+      0,
+      0,
+      0,
+      1,
+      2,
+      2,
+      2
+    ],
+    "statesExplored": 37,
+    "shortestMoves": 7
+  },
+  {
+    "id": "BG-011",
+    "status": "solvable",
+    "solutionLanes": [
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      2
+    ],
+    "statesExplored": 56,
+    "shortestMoves": 8
+  },
+  {
+    "id": "BG-012",
+    "status": "solvable",
+    "solutionLanes": [
+      0,
+      0,
+      0,
+      0,
+      1,
+      2,
+      2
+    ],
+    "statesExplored": 57,
+    "shortestMoves": 7
+  },
+  {
+    "id": "BG-013",
+    "status": "solvable",
+    "solutionLanes": [
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1,
+      2
+    ],
+    "statesExplored": 124,
+    "shortestMoves": 9
+  },
+  {
+    "id": "BG-014",
+    "status": "solvable",
+    "solutionLanes": [
+      0,
+      1,
+      2,
+      2,
+      2,
+      2,
+      2
+    ],
+    "statesExplored": 31,
+    "shortestMoves": 7
+  },
+  {
+    "id": "BG-015",
+    "status": "solvable",
+    "solutionLanes": [
+      0,
+      0,
+      0,
+      1,
+      2,
+      2,
+      2,
+      2
+    ],
+    "statesExplored": 58,
+    "shortestMoves": 8
+  },
+  {
+    "id": "BG-016",
+    "status": "solvable",
+    "solutionLanes": [
+      0,
+      0,
+      1,
+      1,
+      1,
+      2,
+      2,
+      2,
+      2
+    ],
+    "statesExplored": 86,
+    "shortestMoves": 9
+  },
+  {
+    "id": "BG-017",
+    "status": "solvable",
+    "solutionLanes": [
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      2
+    ],
+    "statesExplored": 62,
+    "shortestMoves": 8
+  },
+  {
+    "id": "BG-018",
+    "status": "solvable",
+    "solutionLanes": [
+      0,
+      1,
+      1,
+      1,
+      2,
+      2,
+      2,
+      2
+    ],
+    "statesExplored": 74,
+    "shortestMoves": 8
+  },
+  {
+    "id": "BG-019",
+    "status": "solvable",
+    "solutionLanes": [
+      0,
+      0,
+      0,
+      1,
+      2,
+      2,
+      2,
+      2,
+      2
+    ],
+    "statesExplored": 55,
+    "shortestMoves": 9
+  },
+  {
+    "id": "BG-020",
+    "status": "solvable",
+    "solutionLanes": [
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1,
+      2,
+      2,
+      2
+    ],
+    "statesExplored": 106,
+    "shortestMoves": 10
+  }
+]

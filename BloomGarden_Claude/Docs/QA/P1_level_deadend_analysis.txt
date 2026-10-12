@@ -1,0 +1,21 @@
+# python Tools/python/count_deadends.py Kit/tools Assets/_BloomGarden/Levels
+BG-001 states 4 deadlocks 0 wins 1
+BG-002 states 6 deadlocks 0 wins 1
+BG-003 states 9 deadlocks 0 wins 1
+BG-004 states 25 deadlocks 0 wins 1
+BG-005 states 18 deadlocks 0 wins 1
+BG-006 states 25 deadlocks 0 wins 1
+BG-007 states 32 deadlocks 0 wins 1
+BG-008 states 42 deadlocks 0 wins 1
+BG-009 states 28 deadlocks 0 wins 1
+BG-010 states 37 deadlocks 0 wins 1
+BG-011 states 56 deadlocks 0 wins 1
+BG-012 states 57 deadlocks 0 wins 1
+BG-013 states 124 deadlocks 0 wins 1
+BG-014 states 31 deadlocks 0 wins 1
+BG-015 states 58 deadlocks 0 wins 1
+BG-016 states 86 deadlocks 0 wins 1
+BG-017 states 62 deadlocks 0 wins 1
+BG-018 states 74 deadlocks 5 wins 1
+BG-019 states 55 deadlocks 0 wins 1
+BG-020 states 106 deadlocks 0 wins 1

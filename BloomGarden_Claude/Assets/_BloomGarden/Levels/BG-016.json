@@ -1,0 +1,123 @@
+{
+  "id": "BG-016",
+  "rulesVersion": "0.1.0",
+  "slotCount": 3,
+  "title": "Jardin 16",
+  "grid": {
+    "width": 4,
+    "height": 4,
+    "cells": [
+      [
+        "blue"
+      ],
+      [
+        "yellow"
+      ],
+      [
+        "coral",
+        "purple",
+        "purple"
+      ],
+      [
+        "coral"
+      ],
+      [],
+      [
+        "coral"
+      ],
+      [
+        "blue"
+      ],
+      [
+        "coral",
+        "purple",
+        "blue"
+      ],
+      [
+        "purple"
+      ],
+      [
+        "blue",
+        "coral"
+      ],
+      [],
+      [],
+      [],
+      [],
+      [
+        "yellow"
+      ],
+      []
+    ]
+  },
+  "lanes": [
+    [
+      {
+        "id": "y04",
+        "color": "yellow",
+        "capacity": 1
+      },
+      {
+        "id": "b07",
+        "color": "blue",
+        "capacity": 3
+      }
+    ],
+    [
+      {
+        "id": "p06",
+        "color": "purple",
+        "capacity": 1
+      },
+      {
+        "id": "c00",
+        "color": "coral",
+        "capacity": 3
+      },
+      {
+        "id": "b08",
+        "color": "blue",
+        "capacity": 1
+      }
+    ],
+    [
+      {
+        "id": "y03",
+        "color": "yellow",
+        "capacity": 1
+      },
+      {
+        "id": "c01",
+        "color": "coral",
+        "capacity": 1
+      },
+      {
+        "id": "p05",
+        "color": "purple",
+        "capacity": 3
+      },
+      {
+        "id": "c02",
+        "color": "coral",
+        "capacity": 1
+      }
+    ]
+  ],
+  "theme": "zen",
+  "referenceSolution": [
+    0,
+    0,
+    1,
+    1,
+    1,
+    2,
+    2,
+    2,
+    2
+  ],
+  "analysis": {
+    "status": "solvable",
+    "statesExplored": 86,
+    "shortestMoves": 9
+  }
+}

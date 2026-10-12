@@ -1,0 +1,109 @@
+{
+  "id": "BG-011",
+  "rulesVersion": "0.1.0",
+  "slotCount": 3,
+  "title": "Jardin 11",
+  "grid": {
+    "width": 4,
+    "height": 3,
+    "cells": [
+      [
+        "purple"
+      ],
+      [
+        "yellow"
+      ],
+      [
+        "coral"
+      ],
+      [
+        "blue",
+        "yellow"
+      ],
+      [],
+      [],
+      [
+        "blue"
+      ],
+      [
+        "coral"
+      ],
+      [
+        "purple"
+      ],
+      [],
+      [
+        "coral",
+        "coral"
+      ],
+      [
+        "blue",
+        "coral"
+      ]
+    ]
+  },
+  "lanes": [
+    [
+      {
+        "id": "c03",
+        "color": "coral",
+        "capacity": 3
+      },
+      {
+        "id": "p06",
+        "color": "purple",
+        "capacity": 1
+      },
+      {
+        "id": "b00",
+        "color": "blue",
+        "capacity": 2
+      },
+      {
+        "id": "p07",
+        "color": "purple",
+        "capacity": 1
+      }
+    ],
+    [
+      {
+        "id": "c02",
+        "color": "coral",
+        "capacity": 2
+      },
+      {
+        "id": "b01",
+        "color": "blue",
+        "capacity": 1
+      },
+      {
+        "id": "y04",
+        "color": "yellow",
+        "capacity": 1
+      }
+    ],
+    [
+      {
+        "id": "y05",
+        "color": "yellow",
+        "capacity": 1
+      }
+    ]
+  ],
+  "theme": "pond",
+  "referenceSolution": [
+    0,
+    0,
+    0,
+    0,
+    1,
+    1,
+    1,
+    2
+  ],
+  "analysis": {
+    "status": "solvable",
+    "statesExplored": 56,
+    "shortestMoves": 8
+  }
+}

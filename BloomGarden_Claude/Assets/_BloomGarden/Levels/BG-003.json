@@ -1,0 +1,76 @@
+{
+  "id": "BG-003",
+  "rulesVersion": "0.1.0",
+  "slotCount": 3,
+  "title": "Choisir la bonne file",
+  "grid": {
+    "width": 3,
+    "height": 3,
+    "cells": [
+      [
+        "coral"
+      ],
+      [
+        "blue"
+      ],
+      [
+        "blue"
+      ],
+      [
+        "coral"
+      ],
+      [
+        "coral"
+      ],
+      [
+        "blue"
+      ],
+      [
+        "coral"
+      ],
+      [
+        "blue"
+      ],
+      []
+    ]
+  },
+  "lanes": [
+    [
+      {
+        "id": "C01",
+        "color": "coral",
+        "capacity": 2
+      },
+      {
+        "id": "C02",
+        "color": "coral",
+        "capacity": 2
+      }
+    ],
+    [
+      {
+        "id": "B01",
+        "color": "blue",
+        "capacity": 2
+      },
+      {
+        "id": "B02",
+        "color": "blue",
+        "capacity": 2
+      }
+    ],
+    []
+  ],
+  "theme": "meadow",
+  "referenceSolution": [
+    0,
+    0,
+    1,
+    1
+  ],
+  "analysis": {
+    "status": "solvable",
+    "statesExplored": 9,
+    "shortestMoves": 4
+  }
+}

@@ -1,0 +1,72 @@
+ID,Phase,Tâche,Critère de validation,Statut,Preuve,Responsable
+P0-01,P0,Vérifier Unity Hub / Editor 6+,Capture/version exacte Unity ouverte,Bloqué,Version Unity à fournir par l’utilisateur (H1),Claude Code
+P0-02,P0,Installer les modules Android,SDK/NDK/OpenJDK détectés dans Unity,Bloqué,Capture modules Android à fournir (H1),Claude Code
+P0-03,P0,Vérifier CLI et plugin Unity/MCP,Lecture réelle de la scène test démontrée,Bloqué,MCP local non joignable depuis le cloud (H2),Claude Code
+P0-04,P0,Initialiser Git / .gitignore Unity,Commit initial propre sans caches ni secrets,Validé,.gitignore + commit BloomGarden_Claude,Claude Code
+P0-05,P0,Créer la structure des dossiers,Scenes/Scripts/Tests/Docs présents,Validé,Assets/_BloomGarden/*,Claude Code
+P0-06,P0,Fixer orientation portrait / qualité URP,Scene/Player Settings sauvegardés,En cours,Editor/ProjectSetup.cs non exécuté dans Unity,Claude Code
+P0-07,P0,Créer Docs/PLAN et Docs/ENVIRONMENT,"Versions, risques, prochaine phase documentés",Validé,"Docs/PLAN.md, Docs/ENVIRONMENT.md, Docs/QA/P0.md",Claude Code
+P1-01,P1,Définir LevelDefinition versionné,Schéma valide et invalides rejetés,En cours,dotnet test 49/49 (Docs/QA/P1_dotnet_test.log); Unity Test Runner à faire,Claude Code
+P1-02,P1,Coder GameState immutable/copiable,État clonable et hash déterministe,En cours,dotnet test 49/49 (Docs/QA/P1_dotnet_test.log); Unity Test Runner à faire,Claude Code
+P1-03,P1,Coder files et sélection de tête,Pas de sélection hors file,En cours,dotnet test 49/49 (Docs/QA/P1_dotnet_test.log); Unity Test Runner à faire,Claude Code
+P1-04,P1,Coder les trois places,Aucune quatrième entrée si slots pleins,En cours,dotnet test 49/49 (Docs/QA/P1_dotnet_test.log); Unity Test Runner à faire,Claude Code
+P1-05,P1,Coder cibles visibles par pile,Fleur cachée non arrosable,En cours,dotnet test 49/49 (Docs/QA/P1_dotnet_test.log); Unity Test Runner à faire,Claude Code
+P1-06,P1,Coder TurnResolver stable,Même entrée donne même sortie,En cours,dotnet test 49/49 (Docs/QA/P1_dotnet_test.log); Unity Test Runner à faire,Claude Code
+P1-07,P1,Coder arrosoir en attente / départ,Charge et place correctes,En cours,dotnet test 49/49 (Docs/QA/P1_dotnet_test.log); Unity Test Runner à faire,Claude Code
+P1-08,P1,Coder victoire et blocage,Aucun faux blocage en cours de traitement,En cours,dotnet test 49/49 (Docs/QA/P1_dotnet_test.log); Unity Test Runner à faire,Claude Code
+P1-09,P1,Coder UndoHistory,Undo restaure l’état intégral,En cours,dotnet test 49/49 (Docs/QA/P1_dotnet_test.log); Unity Test Runner à faire,Claude Code
+P1-10,P1,Tests C# des règles et cas limites,"Tests EditMode verts, log attaché",En cours,dotnet test 49/49 (Docs/QA/P1_dotnet_test.log); Unity Test Runner à faire,Claude Code
+P2-01,P2,Importer les 20 JSON de référence,Tous valides dans le projet,En cours,20 JSON copiés et validés par tests; chargement Unity à faire,Claude Code
+P2-02,P2,Coder validateur de données,IDs/couleurs/capacités contrôlés,À faire,,
+P2-03,P2,Coder solveur BFS C#,Petit niveau solvable détecté,À faire,,
+P2-04,P2,Rejouer les 20 referenceSolution,20 replays aboutissent à la victoire,À faire,,
+P2-05,P2,Tester états insolubles et limites,Retour unknown non confondu avec solvable,À faire,,
+P2-06,P2,Éditer niveaux tutoriels 1–10,Notions progressives documentées,À faire,,
+P2-07,P2,Exporter rapport difficulty/solutions,"CSV états explorés, profondeur, résultat",À faire,,
+P3-01,P3,Créer scène Game orthographique,Jeu portrait visible sous Unity,À faire,,
+P3-02,P3,Créer vue de grille et piles,Dessus de chaque pile correctement affiché,À faire,,
+P3-03,P3,Créer prefab Fleur bouton/éclose,Transition liée aux événements logiques,À faire,,
+P3-04,P3,Créer prefab Arrosoir 4 couleurs,Capacité et couleur lisibles,À faire,,
+P3-05,P3,Afficher trois files et têtes,Seules têtes cliquables,À faire,,
+P3-06,P3,Afficher places et attente,Occupation et charge lisibles,À faire,,
+P3-07,P3,Relier tap au TurnResolver,Un seul coup logique par tap,À faire,,
+P3-08,P3,Boutons Undo / Restart,Restaurent les états sans désync,À faire,,
+P3-09,P3,Victoire / blocage et transition,Partie peut être terminée normalement,À faire,,
+P3-10,P3,Premier build APK debug,Installé/ou limitation documentée,À faire,,
+P4-01,P4,Palette / matériaux cohérents,Rendu homogène sur 2 téléphones,À faire,,
+P4-02,P4,Animation gouttes et jet,La logique n’attend pas les particules,À faire,,
+P4-03,P4,Éclosion 4 couleurs,États bien différenciés,À faire,,
+P4-04,P4,Déplacement arrosoir vers slot,Trajectoire sans ambiguïté,À faire,,
+P4-05,P4,Sons interactions / éclosion,Options de volume respectées,À faire,,
+P4-06,P4,Animation de victoire jardin complet,"Écran net, aucune surcharge",À faire,,
+P4-07,P4,Mode 2× / animations réduites,Même replay quel que soit mode,À faire,,
+P4-08,P4,Optimisation pooling/VFX,Aucun spike bloquant en cascade,À faire,,
+P5-01,P5,Menu principal et niveau suivant,Navigation compréhensible,À faire,,
+P5-02,P5,Sélection des niveaux,Progression correctement verrouillée,À faire,,
+P5-03,P5,Tutoriel intégré 3 premiers niveaux,Test sans explication possible,À faire,,
+P5-04,P5,Settings audio/animations,Sauvegarde des préférences,À faire,,
+P5-05,P5,Localisation FR/EN,Tous les écrans traduisibles,À faire,,
+P5-06,P5,Sauvegarde versionnée,Arrêt/reprise sans perte,À faire,,
+P5-07,P5,Gérer pause/arrière-plan,Pas d’état d’animation fantôme,À faire,,
+P5-08,P5,QA sur appareil Android,"Rapport non-crash, logs, captures",À faire,,
+P6-01,P6,Instrumentation locale anonymisée,Événements visibles sans SDK publicitaire,À faire,,
+P6-02,P6,Formulaire observation utilisateurs,Protocole reproductible,À faire,,
+P6-03,P6,Test 5 joueurs nouveaux,Frictions enregistrées sans interprétation exagérée,À faire,,
+P6-04,P6,Itérer sur tutoriel et UX,Avant/après basé sur retours,À faire,,
+P6-05,P6,Test 20–30 joueurs,Tableau erreurs/abandons,À faire,,
+P7-01,P7,Sélectionner de nouveaux puzzles,100 % résolubles et revus,À faire,,
+P7-02,P7,Déployer thème jardin alternatif,"Même gameplay, variété esthétique",À faire,,
+P7-03,P7,Mesurer FPS / RAM / chauffe,Profiler sur téléphones réels,À faire,,
+P7-04,P7,Réduire effets sur entrée de gamme,Mode dégradé stable,À faire,,
+P7-05,P7,Préparer compatibilité iOS,Blocage Mac/Xcode explicite,À faire,,
+P8-01,P8,Vérifier nom/marque et licences,Journal d’assets/licences existant,À faire,,
+P8-02,P8,Contrôler conformité des données,Inventaire SDK et disclosure,À faire,,
+P8-03,P8,Proposer monétisation respectueuse,Aucune intégration sans consentement,À faire,,
+P8-04,P8,Préparer fiche store et créas,Screenshots issus du jeu réel,À faire,,
+P8-05,P8,Organiser soft launch plafonné,Budget approuvé explicitement,À faire,,
+P8-06,P8,"Analyser J1/J7, taux de crashs",Décision Go/No-Go motivée,À faire,,
+P9-01,P9,Documenter release notes et version,Build et version traçables,À faire,,
+P9-02,P9,Surveiller retours utilisateurs,Backlog trié selon sévérité,À faire,,
+P9-03,P9,Corriger régressions avec tests,Suite automatisée toujours verte,À faire,,
+P9-04,P9,Calculer coût acquisition vs valeur,"Données réelles, sources indiquées",À faire,,
+P9-05,P9,Décider suite du portefeuille,Maintenir/itérer/arrêter selon preuves,À faire,,

@@ -1,0 +1,124 @@
+{
+  "id": "BG-019",
+  "rulesVersion": "0.1.0",
+  "slotCount": 3,
+  "title": "Jardin 19",
+  "grid": {
+    "width": 4,
+    "height": 4,
+    "cells": [
+      [
+        "yellow"
+      ],
+      [
+        "yellow",
+        "yellow"
+      ],
+      [
+        "purple"
+      ],
+      [
+        "coral",
+        "purple",
+        "purple"
+      ],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [
+        "coral",
+        "yellow",
+        "yellow"
+      ],
+      [
+        "coral"
+      ],
+      [
+        "purple",
+        "coral"
+      ],
+      [],
+      [
+        "blue"
+      ],
+      [
+        "blue"
+      ],
+      [
+        "yellow"
+      ]
+    ]
+  },
+  "lanes": [
+    [
+      {
+        "id": "y02",
+        "color": "yellow",
+        "capacity": 1
+      },
+      {
+        "id": "c04",
+        "color": "coral",
+        "capacity": 1
+      },
+      {
+        "id": "y01",
+        "color": "yellow",
+        "capacity": 2
+      }
+    ],
+    [
+      {
+        "id": "y03",
+        "color": "yellow",
+        "capacity": 1
+      }
+    ],
+    [
+      {
+        "id": "p07",
+        "color": "purple",
+        "capacity": 1
+      },
+      {
+        "id": "c05",
+        "color": "coral",
+        "capacity": 3
+      },
+      {
+        "id": "p08",
+        "color": "purple",
+        "capacity": 3
+      },
+      {
+        "id": "b06",
+        "color": "blue",
+        "capacity": 2
+      },
+      {
+        "id": "y00",
+        "color": "yellow",
+        "capacity": 2
+      }
+    ]
+  ],
+  "theme": "zen",
+  "referenceSolution": [
+    0,
+    0,
+    0,
+    1,
+    2,
+    2,
+    2,
+    2,
+    2
+  ],
+  "analysis": {
+    "status": "solvable",
+    "statesExplored": 55,
+    "shortestMoves": 9
+  }
+}

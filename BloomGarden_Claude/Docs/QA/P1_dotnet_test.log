@@ -1,0 +1,65 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  BloomGarden.Core.Tests -> BloomGarden_Claude/Tools/DotnetTests/bin/Debug/net8.0/BloomGarden.Core.Tests.dll
+Test run for BloomGarden_Claude/Tools/DotnetTests/bin/Debug/net8.0/BloomGarden.Core.Tests.dll (.NETCoreApp,Version=v8.0)
+VSTest version 17.11.1 (x64)
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+NUnit Adapter 4.6.0.0: Test execution started
+Running all tests in BloomGarden_Claude/Tools/DotnetTests/bin/Debug/net8.0/BloomGarden.Core.Tests.dll
+   NUnit3TestExecutor discovered 49 of 49 NUnit test cases using Current Discovery mode, Non-Explicit run
+  Passed AllTwentyReferenceLevels_LoadAndValidate [41 ms]
+  Passed EmptyLevel_IsRejected [9 ms]
+  Passed Rejects unsupported rules version [7 ms]
+  Passed Rejects slot count other than 3 [< 1 ms]
+  Passed Rejects wrong cell count [< 1 ms]
+  Passed Rejects more than 3 layers [< 1 ms]
+  Passed Rejects duplicate can id [< 1 ms]
+  Passed Rejects unknown can color [< 1 ms]
+  Passed Rejects unequal charge and buds [< 1 ms]
+  Passed Rejects two lanes [< 1 ms]
+  Passed Rejects invalid solution lane [1 ms]
+  Passed MiniJson_ParsesScalarsAndNesting [8 ms]
+  Passed MiniJson_RejectsInvalidDocuments("{\"a\":1,\"a\":2}") [10 ms]
+  Passed MiniJson_RejectsInvalidDocuments("[01]") [< 1 ms]
+  Passed MiniJson_RejectsInvalidDocuments("[1,]") [< 1 ms]
+  Passed MiniJson_RejectsInvalidDocuments("\"unterminated") [< 1 ms]
+  Passed MiniJson_RejectsInvalidDocuments("{} {}") [< 1 ms]
+  Passed ValidJson_IsParsedInReadingOrder_VisibleLayerFirst [4 ms]
+180 traces, 1242 moves compared with the Python reference
+  Passed CSharpResolver_MatchesPythonReference_StepByStep [191 ms]
+  Passed I01_SelectingEmptyLane_IsRejected_AndStateUnchanged [2 ms]
+  Passed I02_NonPositiveOrNonIntegerCapacity_IsRejectedAtLoad("0") [< 1 ms]
+  Passed I02_NonPositiveOrNonIntegerCapacity_IsRejectedAtLoad("-2") [1 ms]
+  Passed I02_NonPositiveOrNonIntegerCapacity_IsRejectedAtLoad("2.5") [< 1 ms]
+  Passed I02_NonPositiveOrNonIntegerCapacity_IsRejectedAtLoad("\"3\"") [< 1 ms]
+  Passed I03_CanNeverWatersAnotherColor [11 ms]
+  Passed I04_HiddenBud_IsNotTargetedBeforeReveal [2 ms]
+  Passed I05_Resolution_IsDeterministic_ForSameInput [5 ms]
+  Passed I06_Can_LeavesItsPlace_WhenEmpty [1 ms]
+  Passed I07_CanWithoutTarget_WaitsAndKeepsItsPlace [< 1 ms]
+  Passed I08_ThreeOccupiedPlaces_BlockAFourthDeparture [< 1 ms]
+  Passed I09_WaitingCans_AreReevaluated_AfterReveal [7 ms]
+  Passed I10_Undo_RestoresExactPreviousState [5 ms]
+  Passed I11_Victory_OnlyWhenEveryBudHasBloomed [7 ms]
+  Passed I12_Deadlock_OnlyAfterStabilization [1 ms]
+  Passed I13_MalformedJson_FailsCleanly("") [1 ms]
+  Passed I13_MalformedJson_FailsCleanly("{") [< 1 ms]
+  Passed I13_MalformedJson_FailsCleanly("not json") [< 1 ms]
+  Passed I13_MalformedJson_FailsCleanly("[1,2,3]") [< 1 ms]
+  Passed I13_MalformedJson_FailsCleanly("{\"id\":\"X\",}") [< 1 ms]
+  Passed I13_MalformedJson_FailsCleanly("{\"id\":\"X\",\"rulesVersion\":\"0.1.0\"}") [< 1 ms]
+  Passed I13_MalformedJson_FailsCleanly("{\"id\":\"X\",\"rulesVersion\":\"0.1.0\",\"slotCount\":3,\"grid\":{\"width\":1,\"height\":1,\"cells\":[[\"neon\"]]},\"lanes\":[[],[],[]]}") [< 1 ms]
+  Passed I14_EveryReferenceLevel_HasAVerifiedSolution [2 ms]
+  Passed I15_ReplayingTheReferenceSolution_CompletesTheLevel [2 ms]
+  Passed Can_TakesLeftmostFreePlace_ButOlderPlaceWatersFirst [2 ms]
+  Passed Hash_IsStableAcrossRuns_GoldenValue [< 1 ms]
+NUnit Adapter 4.6.0.0: Test execution complete
+  Passed PositionKey_IgnoresMoveCountAndAbsoluteOrder [2 ms]
+  Passed Restart_ClearsHistory_AndReturnsToInitialState [2 ms]
+  Passed SelectLane_DoesNotMutateInputState [< 1 ms]
+  Passed Target_IsSmallestRowThenColumn [2 ms]
+Test Run Successful.
+Total tests: 49
+     Passed: 49
+ Total time: 1.4098 Seconds

@@ -1,0 +1,60 @@
+{
+  "id": "BG-001",
+  "rulesVersion": "0.1.0",
+  "slotCount": 3,
+  "title": "Premières fleurs",
+  "grid": {
+    "width": 3,
+    "height": 3,
+    "cells": [
+      [
+        "coral"
+      ],
+      [],
+      [
+        "blue"
+      ],
+      [],
+      [
+        "coral"
+      ],
+      [
+        "blue"
+      ],
+      [
+        "coral"
+      ],
+      [
+        "blue"
+      ],
+      []
+    ]
+  },
+  "lanes": [
+    [
+      {
+        "id": "C01",
+        "color": "coral",
+        "capacity": 3
+      }
+    ],
+    [
+      {
+        "id": "B01",
+        "color": "blue",
+        "capacity": 3
+      }
+    ],
+    []
+  ],
+  "theme": "meadow",
+  "referenceSolution": [
+    0,
+    1
+  ],
+  "analysis": {
+    "status": "solvable",
+    "statesExplored": 4,
+    "shortestMoves": 2
+  }
+}
