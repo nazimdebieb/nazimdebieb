@@ -4,6 +4,7 @@
     "references": [
         "BloomGarden.Core",
         "BloomGarden.Levels",
+        "BloomGarden.Presentation",
         "BloomGarden.Solvers",
         "Unity.RenderPipelines.Core.Runtime",
         "Unity.RenderPipelines.Universal.Runtime"

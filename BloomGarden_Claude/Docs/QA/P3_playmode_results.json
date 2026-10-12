@@ -1,0 +1,48 @@
+{
+ "status": "completed",
+ "duration": 26.47,
+ "summary": {
+  "total": 5,
+  "passed": 5,
+  "failed": 0,
+  "skipped": 0,
+  "inconclusive": 0
+ },
+ "results": [
+  {
+   "FullName": "BloomGarden.Tests.GameScenePlayTests.AllTwentyLevels_PlayToWin_ViewInSync",
+   "Status": "Passed",
+   "Duration": 17.2268526,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.GameScenePlayTests.Bg018_Deadlock_ShowsPanel_AndUndoRecovers",
+   "Status": "Passed",
+   "Duration": 2.6928038,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.GameScenePlayTests.Level1_WinByTaps_ThenLevel2",
+   "Status": "Passed",
+   "Duration": 4.2973018,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.GameScenePlayTests.TapDuringAnimation_IsExactlyOneMoreMove",
+   "Status": "Passed",
+   "Duration": 0.8014083,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.GameScenePlayTests.UndoAndRestart_RestoreExactStates",
+   "Status": "Passed",
+   "Duration": 1.4059691,
+   "Message": null,
+   "StackTrace": null
+  }
+ ]
+}
