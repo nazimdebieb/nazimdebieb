@@ -40,3 +40,5 @@ crashlytics-build.properties
 /Tools/DotnetTests/TestResults/
 # Python
 __pycache__/
+# Unity Android build temp (IL2CPP/CMake)
+/.utmp/
