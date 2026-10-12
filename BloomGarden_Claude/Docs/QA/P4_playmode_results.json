@@ -1,0 +1,69 @@
+{
+ "status": "completed",
+ "duration": 128.89,
+ "summary": {
+  "total": 8,
+  "passed": 8,
+  "failed": 0,
+  "skipped": 0,
+  "inconclusive": 0
+ },
+ "results": [
+  {
+   "FullName": "BloomGarden.Tests.GameScenePlayTests.AllTwentyLevels_PlayToWin_ViewInSync",
+   "Status": "Passed",
+   "Duration": 58.492307,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.GameScenePlayTests.Bg018_Deadlock_ShowsPanel_AndUndoRecovers",
+   "Status": "Passed",
+   "Duration": 4.8715799,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.GameScenePlayTests.Level1_WinByTaps_ThenLevel2",
+   "Status": "Passed",
+   "Duration": 10.8538896,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.GameScenePlayTests.TapDuringAnimation_IsExactlyOneMoreMove",
+   "Status": "Passed",
+   "Duration": 1.5249523,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.GameScenePlayTests.UndoAndRestart_RestoreExactStates",
+   "Status": "Passed",
+   "Duration": 2.5030676,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.PresentationModeTests.Logic_IsResolved_BeforeAnimationsPlay",
+   "Status": "Passed",
+   "Duration": 1.1208401,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.PresentationModeTests.ReplayingALevel_ReusesPooledVisuals_AndReportsFrameTimes",
+   "Status": "Passed",
+   "Duration": 23.532654,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.PresentationModeTests.SameFinalState_InEveryAnimationMode",
+   "Status": "Passed",
+   "Duration": 25.9040339,
+   "Message": null,
+   "StackTrace": null
+  }
+ ]
+}

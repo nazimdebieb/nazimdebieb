@@ -44,6 +44,24 @@ namespace BloomGarden.EditorTools
         }
 
         /// <summary>
+        /// P4 diorama look on a mobile budget: one soft main-light shadow cascade at 1024 px over the visible garden,
+        /// 2x MSAA for the round primitives. The low-end mode of P7 can turn both down.
+        /// </summary>
+        public static void ConfigureShadowsAndAa(UniversalRenderPipelineAsset asset)
+        {
+            var so = new SerializedObject(asset);
+            so.FindProperty("m_MainLightShadowsSupported").boolValue = true;
+            so.FindProperty("m_MainLightShadowmapResolution").intValue = 1024;
+            so.FindProperty("m_ShadowDistance").floatValue = 45f;
+            so.FindProperty("m_ShadowCascadeCount").intValue = 1;
+            so.FindProperty("m_SoftShadowsSupported").boolValue = true;
+            so.FindProperty("m_MSAA").intValue = 2;
+            so.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(asset);
+            AssetDatabase.SaveAssets();
+        }
+
+        /// <summary>
         /// Android player settings for test builds (P3-10): IL2CPP + ARM64 (required by Google Play),
         /// portrait only. Signing stays on Unity's debug keystore: no release key is created or stored in Git.
         /// </summary>
@@ -102,12 +120,10 @@ namespace BloomGarden.EditorTools
                 var renderer = ScriptableObject.CreateInstance<UniversalRendererData>();
                 AssetDatabase.CreateAsset(renderer, UrpRendererPath);
                 asset = UniversalRenderPipelineAsset.Create(renderer);
-                // Mobile budget: no HDR, no MSAA, no shadows needed for a flat 2.5D puzzle board.
                 asset.supportsHDR = false;
-                asset.msaaSampleCount = 1;
-                asset.shadowDistance = 0f;
                 AssetDatabase.CreateAsset(asset, UrpAssetPath);
             }
+            ConfigureShadowsAndAa(asset);
             GraphicsSettings.defaultRenderPipeline = asset;
             int current = QualitySettings.GetQualityLevel();
             for (int i = 0; i < QualitySettings.names.Length; i++)

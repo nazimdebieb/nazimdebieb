@@ -29,6 +29,9 @@ namespace BloomGarden.Presentation
         private Coroutine _animation;
         private bool _endShown;
         private int _displayedBloomed;
+        private GardenAudio _audio;
+
+        public GameSettings Settings { get; private set; }
 
         public GameSession Session => _session;
         public int LevelIndex => _levelIndex;
@@ -39,14 +42,19 @@ namespace BloomGarden.Presentation
         private void Awake()
         {
             if (viewCamera == null) viewCamera = Camera.main;
+            Settings = GameSettings.Load();
+            _audio = new GameObject("Audio").AddComponent<GardenAudio>();
+            _audio.transform.SetParent(transform, false);
+            _audio.Init(Settings);
             _garden = new GameObject("Garden").AddComponent<GardenView>();
             _garden.transform.SetParent(transform, false);
             _garden.Palette = palette;
+            _garden.Init(Settings, _audio);
             _garden.BloomShown += () => _hud.SetCounter(++_displayedBloomed, _session.Level.TotalBuds);
 
             _hud = new GameObject("UI").AddComponent<HudView>();
             _hud.transform.SetParent(transform, false);
-            _hud.Build();
+            _hud.Build(Settings);
             _hud.UndoClicked += Undo;
             _hud.RestartClicked += Restart;
             _hud.PanelPrimaryClicked += OnPanelPrimary;
@@ -67,7 +75,7 @@ namespace BloomGarden.Presentation
         /// <summary>Screen tap on the garden: only a lane head (its collider) maps to a move. Returns the move result.</summary>
         public bool TapAt(Vector2 screenPosition)
         {
-            if (_hud.PanelVisible) return false;
+            if (_hud.PanelVisible || _hud.SettingsVisible) return false;
             Ray ray = viewCamera.ScreenPointToRay(screenPosition);
             return Physics.Raycast(ray, out RaycastHit hit, 200f) && hit.collider.TryGetComponent(out LaneTapTarget target)
                 && SelectLane(target.lane);
@@ -82,6 +90,7 @@ namespace BloomGarden.Presentation
         public void LoadLevel(int index)
         {
             StopAnimation();
+            _garden.CancelAnimations();
             if (catalog == null || catalog.Count == 0)
             {
                 Debug.LogError("[BloomGarden] No level catalog assigned to GameController");
@@ -109,6 +118,7 @@ namespace BloomGarden.Presentation
             MoveResult result = _session.SelectLane(lane);
             if (!result.Accepted)
             {
+                _audio.Play(GardenSound.Refused);
                 Debug.Log($"[BloomGarden] Lane {lane + 1} refused: {result.Rejection}");
                 return false;
             }
@@ -121,13 +131,14 @@ namespace BloomGarden.Presentation
         {
             if (_session == null || !_session.Undo()) return;
             StopAnimation();
+            _audio.Play(GardenSound.Undo);
             Refresh();
         }
 
         public void Restart()
         {
             if (_session == null) return;
-            StopAnimation();
+            if (StopAnimation()) _garden.ShowState(_session.State);
             _session.Restart();
             Refresh();
         }
@@ -148,6 +159,8 @@ namespace BloomGarden.Presentation
         {
             _hud.HidePanel();
             yield return _garden.PlayEvents(before, events);
+            if (_session.State.IsWon) yield return _garden.Celebrate();
+            else if (_session.State.IsDeadlocked) _audio.Play(GardenSound.Deadlock);
             _animation = null;
             Refresh();
         }
@@ -157,11 +170,8 @@ namespace BloomGarden.Presentation
         {
             if (_animation == null) return false;
             StopCoroutine(_animation);
-            _garden.StopAllCoroutines();
+            _garden.CancelAnimations();
             _animation = null;
-            // Leftover transient objects (water drops) belong to the stopped animation.
-            foreach (Transform child in _garden.transform)
-                if (child.name == "Drop") Destroy(child.gameObject);
             return true;
         }
 

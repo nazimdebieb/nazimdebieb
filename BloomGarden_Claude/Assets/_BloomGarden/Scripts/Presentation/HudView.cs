@@ -22,11 +22,15 @@ namespace BloomGarden.Presentation
         private Button _undo, _restart, _panelPrimary, _panelSecondary;
         private Text _panelPrimaryLabel, _panelSecondaryLabel;
         private GameObject _panel;
+        private GameObject _settingsPanel;
+        private Text _soundLabel, _speedLabel, _motionLabel;
+        private GameSettings _settings;
 
         public event Action UndoClicked, RestartClicked, PanelPrimaryClicked, PanelSecondaryClicked;
 
-        public void Build()
+        public void Build(GameSettings settings)
         {
+            _settings = settings;
             _font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
 
             if (FindAnyObjectByType<EventSystem>() == null)
@@ -63,7 +67,7 @@ namespace BloomGarden.Presentation
             _panel = new GameObject("End panel", typeof(RectTransform), typeof(Image));
             var panelRt = (RectTransform)_panel.transform;
             panelRt.SetParent(safe, false);
-            Place(panelRt, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 120f), new Vector2(880f, 640f));
+            Place(panelRt, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, -420f), new Vector2(880f, 640f));
             _panel.GetComponent<Image>().color = new Color(Ivory.r, Ivory.g, Ivory.b, 0.96f);
             _panelTitle = Label(panelRt, "Title", 72, FontStyle.Bold, TextAnchor.MiddleCenter);
             Place(_panelTitle.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, -110f), new Vector2(-60f, 120f));
@@ -76,7 +80,53 @@ namespace BloomGarden.Presentation
             Place((RectTransform)_panelSecondary.transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 85f), new Vector2(600f, 110f));
             _panelSecondary.onClick.AddListener(() => PanelSecondaryClicked?.Invoke());
             _panel.SetActive(false);
+
+            BuildSettings(safe);
         }
+
+        /// <summary>Options button (top right) and its panel: sound, fast animations, reduced motion.</summary>
+        private void BuildSettings(RectTransform safe)
+        {
+            var open = MakeButton(safe, "Options", Paper, out Text openLabel);
+            openLabel.fontSize = 36;
+            Place((RectTransform)open.transform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-130f, -50f), new Vector2(220f, 80f));
+
+            _settingsPanel = new GameObject("Settings panel", typeof(RectTransform), typeof(Image));
+            var rt = (RectTransform)_settingsPanel.transform;
+            rt.SetParent(safe, false);
+            Place(rt, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 80f), new Vector2(880f, 760f));
+            _settingsPanel.GetComponent<Image>().color = new Color(Ivory.r, Ivory.g, Ivory.b, 0.98f);
+            var title = Label(rt, "Title", 64, FontStyle.Bold, TextAnchor.MiddleCenter);
+            title.text = "Options";
+            Place(title.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, -90f), new Vector2(-60f, 100f));
+
+            var sound = MakeButton(rt, "", Paper, out _soundLabel);
+            Place((RectTransform)sound.transform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -220f), new Vector2(720f, 110f));
+            sound.onClick.AddListener(() => _settings.SetSoundVolume(_settings.SoundOn ? 0f : 0.8f));
+            var speed = MakeButton(rt, "", Paper, out _speedLabel);
+            Place((RectTransform)speed.transform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -350f), new Vector2(720f, 110f));
+            speed.onClick.AddListener(() => _settings.SetFastAnimations(!_settings.FastAnimations));
+            var motion = MakeButton(rt, "", Paper, out _motionLabel);
+            Place((RectTransform)motion.transform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -480f), new Vector2(720f, 110f));
+            motion.onClick.AddListener(() => _settings.SetReducedMotion(!_settings.ReducedMotion));
+            var close = MakeButton(rt, "Fermer", Leaf, out _);
+            Place((RectTransform)close.transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 90f), new Vector2(480f, 110f));
+            close.onClick.AddListener(() => _settingsPanel.SetActive(false));
+
+            open.onClick.AddListener(() => _settingsPanel.SetActive(!_settingsPanel.activeSelf));
+            _settings.Changed += RefreshSettings;
+            RefreshSettings();
+            _settingsPanel.SetActive(false);
+        }
+
+        private void RefreshSettings()
+        {
+            _soundLabel.text = _settings.SoundOn ? "Son : activé" : "Son : coupé";
+            _speedLabel.text = _settings.FastAnimations ? "Vitesse : rapide (×2)" : "Vitesse : normale";
+            _motionLabel.text = _settings.ReducedMotion ? "Animations réduites : oui" : "Animations réduites : non";
+        }
+
+        public bool SettingsVisible => _settingsPanel != null && _settingsPanel.activeSelf;
 
         public void SetTitle(string title) => _title.text = title;
 

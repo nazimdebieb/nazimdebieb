@@ -24,6 +24,15 @@ namespace BloomGarden.Presentation
         public Material highlight;
         public Material flowerHeart;
 
+        [Header("Diorama (P4)")]
+        public Material water;
+        public Material wood;
+        public Material woodDark;
+        public Material stone;
+        public Material earth;
+        public Material sand;
+        public Material blossom;
+
         public Material Flower(ColorId color) => flowers[(int)color];
     }
 }

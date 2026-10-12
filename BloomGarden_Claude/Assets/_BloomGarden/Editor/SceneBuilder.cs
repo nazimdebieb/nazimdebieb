@@ -45,12 +45,13 @@ namespace BloomGarden.EditorTools
             if (light == null) light = new GameObject("Directional Light").AddComponent<Light>();
             light.type = LightType.Directional;
             light.color = new Color32(0xFF, 0xF4, 0xE0, 0xFF);
-            light.intensity = 0.85f;
-            light.shadows = LightShadows.None;
+            light.intensity = 0.8f;
+            light.shadows = LightShadows.Soft;
+            light.shadowStrength = 0.45f;
             light.transform.rotation = Quaternion.Euler(50f, -30f, 0f);
 
             RenderSettings.ambientMode = AmbientMode.Flat;
-            RenderSettings.ambientLight = new Color(0.5f, 0.5f, 0.48f);
+            RenderSettings.ambientLight = new Color(0.46f, 0.45f, 0.43f);
 
             var controller = Object.FindAnyObjectByType<GameController>();
             if (controller == null) controller = new GameObject("Game").AddComponent<GameController>();
@@ -84,15 +85,22 @@ namespace BloomGarden.EditorTools
                 Mat("Yellow", "#F5C55F"),
                 Mat("Purple", "#AD91DF"),
             };
-            palette.soil = Mat("Soil", "#C99A6E");
-            palette.grass = Mat("Grass", "#8FD0A4");
-            palette.leaf = Mat("Leaf", "#6DBF93");
+            palette.soil = Mat("Soil", "#9C6B47");
+            palette.grass = Mat("Grass", "#7DB866");
+            palette.leaf = Mat("Leaf", "#5FAE82");
             palette.slot = Mat("Place", "#E2CFAF");
-            palette.lane = Mat("Lane", "#EFE4D2");
+            palette.lane = Mat("Lane", "#D9B98F");
             palette.marker = Mat("Marker", "#FFFFFF");
             palette.dormant = Mat("Dormant", "#B9B2A6");
             palette.highlight = Mat("Highlight", "#5DB585");
-            palette.flowerHeart = Mat("FlowerHeart", "#FFE9A8");
+            palette.flowerHeart = Mat("FlowerHeart", "#FFD45E");
+            palette.water = Mat("Water", "#8FD3F4");
+            palette.wood = Mat("Wood", "#B07C52");
+            palette.woodDark = Mat("WoodDark", "#7E5636");
+            palette.stone = Mat("Stone", "#C9C3B6");
+            palette.earth = Mat("Earth", "#A87A55");
+            palette.sand = Mat("Sand", "#E6D8BF");
+            palette.blossom = Mat("Blossom", "#F6B8C8");
             EditorUtility.SetDirty(palette);
             AssetDatabase.SaveAssets();
             return palette;

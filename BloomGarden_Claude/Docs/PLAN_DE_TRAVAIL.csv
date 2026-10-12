@@ -33,14 +33,14 @@ P3-07,P3,Relier tap au TurnResolver,Un seul coup logique par tap,Validé,PlayMod
 P3-08,P3,Boutons Undo / Restart,Restaurent les états sans désync,Validé,PlayMode UndoAndRestart_RestoreExactStates,Claude Code
 P3-09,P3,Victoire / blocage et transition,Partie peut être terminée normalement,Validé,PlayMode 5/5 (Docs/QA/P3_playmode_results.json),Claude Code
 P3-10,P3,Premier build APK debug,Installé/ou limitation documentée,En cours,APK 0.3.0 construit (Docs/QA/P3_android_build.txt); pas de téléphone détecté (H7),Claude Code
-P4-01,P4,Palette / matériaux cohérents,Rendu homogène sur 2 téléphones,À faire,,
-P4-02,P4,Animation gouttes et jet,La logique n’attend pas les particules,À faire,,
-P4-03,P4,Éclosion 4 couleurs,États bien différenciés,À faire,,
-P4-04,P4,Déplacement arrosoir vers slot,Trajectoire sans ambiguïté,À faire,,
-P4-05,P4,Sons interactions / éclosion,Options de volume respectées,À faire,,
-P4-06,P4,Animation de victoire jardin complet,"Écran net, aucune surcharge",À faire,,
-P4-07,P4,Mode 2× / animations réduites,Même replay quel que soit mode,À faire,,
-P4-08,P4,Optimisation pooling/VFX,Aucun spike bloquant en cascade,À faire,,
+P4-01,P4,Palette / matériaux cohérents,Rendu homogène sur 2 téléphones,En cours,Captures P4_*.png (éditeur); vérification sur 2 téléphones en attente (H7),Claude Code
+P4-02,P4,Animation gouttes et jet,La logique n’attend pas les particules,Validé,PlayMode Logic_IsResolved_BeforeAnimationsPlay,Claude Code
+P4-03,P4,Éclosion 4 couleurs,États bien différenciés,Validé,Docs/QA/captures/P4_level20_win.png,Claude Code
+P4-04,P4,Déplacement arrosoir vers slot,Trajectoire sans ambiguïté,Validé,Docs/QA/captures/P4_level1_watering.png,Claude Code
+P4-05,P4,Sons interactions / éclosion,Options de volume respectées,En cours,GardenAudio (8 sons synthétisés) + réglage son; non écouté par l agent,Claude Code
+P4-06,P4,Animation de victoire jardin complet,"Écran net, aucune surcharge",Validé,Docs/QA/captures/P4_level20_win.png,Claude Code
+P4-07,P4,Mode 2× / animations réduites,Même replay quel que soit mode,Validé,PlayMode SameFinalState_InEveryAnimationMode,Claude Code
+P4-08,P4,Optimisation pooling/VFX,Aucun spike bloquant en cascade,Validé,Docs/QA/P4_perf.txt (éditeur); mesure appareil en P7-03,Claude Code
 P5-01,P5,Menu principal et niveau suivant,Navigation compréhensible,À faire,,
 P5-02,P5,Sélection des niveaux,Progression correctement verrouillée,À faire,,
 P5-03,P5,Tutoriel intégré 3 premiers niveaux,Test sans explication possible,À faire,,

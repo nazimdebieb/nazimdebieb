@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-10-12 — P4 : visuels, animations, sons
+- Diorama : île de gazon avec pierres, arbres ronds et buissons, estrade en bois pour les places et les files, ombres douces (1 cascade, MSAA 2×), palette retravaillée.
+- Fleurs : bouton tulipe à sépales, fleur en coupe qui s'ouvre (6 pétales, cœur, étamines), étincelles ; arrosoirs avec anse, bec et pomme.
+- Animations : trajectoire en arc vers la place, jet de gouttes depuis le bec, inclinaison d'arrosage, départ de l'arrosoir vide, têtes sélectionnables qui respirent, vague et pluie de pétales à la victoire.
+- Sons synthétisés par code (aucune licence) ; bouton Options : son, vitesse ×2, animations réduites (préférences sauvegardées).
+- Pooling des visuels : rejouer un niveau ne crée aucun objet.
+- Tests PlayMode 8/8 (dont : même résultat dans les 3 modes d'animation), EditMode 62/62.
+
 ## 2026-10-12 — P3 : premier niveau jouable (vertical slice)
 - Scène `Game` portrait : jardin 2,5D en primitives (palette du GDD), 3 places, 3 files, HUD (titre, compteur, Annuler, Recommencer), écrans de victoire et de blocage.
 - Tap écran → rayon caméra → tête de file → un seul coup du `TurnResolver` ; animations (déplacement, gouttes, éclosion) sans influence sur la logique ; un tap pendant une animation recale l'affichage puis joue le coup.

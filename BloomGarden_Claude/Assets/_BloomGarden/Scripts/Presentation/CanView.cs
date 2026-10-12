@@ -5,8 +5,9 @@ using UnityEngine;
 namespace BloomGarden.Presentation
 {
     /// <summary>
-    /// A watering can built from primitives: colored body, spout, handle, color symbol, and one white drop per
-    /// unit of water left, so a waiting can always shows its remaining capacity (GDD chapter 03).
+    /// A watering can built from primitives: rounded body, top handle, spout with a rose, color symbol, and one
+    /// white drop per unit of water left, so a waiting can always shows its remaining capacity (GDD chapter 03).
+    /// The drops are created once (up to the capacity) and only shown or hidden afterwards.
     /// </summary>
     public sealed class CanView : MonoBehaviour
     {
@@ -14,8 +15,14 @@ namespace BloomGarden.Presentation
         public ColorId Color { get; private set; }
         public int ShownRemaining => _shownRemaining;
 
+        /// <summary>Spout tip in the can's local space: where the water jet starts.</summary>
+        public static readonly Vector3 SpoutTip = new Vector3(0.78f, 0.82f, 0f);
+
+        /// <summary>Animated part (bob, tilt, squash) so the root position stays exact for layout checks.</summary>
+        public Transform Body { get; private set; }
+
         private GardenPalette _palette;
-        private Transform _drops;
+        private readonly List<GameObject> _drops = new List<GameObject>();
         private readonly List<Renderer> _bodyRenderers = new List<Renderer>();
         private Material _dimmed;
         private int _shownRemaining = -1;
@@ -28,44 +35,60 @@ namespace BloomGarden.Presentation
             view.CanId = can.Id;
             view.Color = can.Color;
             view._palette = palette;
-            view.BuildBody();
+            view.Build(can.Capacity);
             view.SetRemaining(can.Capacity);
             go.SetActive(false);
             return view;
         }
 
-        private void BuildBody()
+        private void Build(int capacity)
         {
+            Body = new GameObject("Body").transform;
+            Body.SetParent(transform, false);
             Material color = _palette.Flower(Color);
-            var body = GardenView.Prim(PrimitiveType.Cylinder, transform, color, new Vector3(0f, 0.42f, 0f), new Vector3(0.78f, 0.4f, 0.78f));
-            var spout = GardenView.Prim(PrimitiveType.Cylinder, transform, color, new Vector3(0.5f, 0.6f, 0f), new Vector3(0.12f, 0.3f, 0.12f));
-            spout.transform.localRotation = Quaternion.Euler(0f, 0f, -55f);
-            var rose = GardenView.Prim(PrimitiveType.Sphere, transform, color, new Vector3(0.72f, 0.78f, 0f), new Vector3(0.2f, 0.2f, 0.2f));
-            var handle = GardenView.Prim(PrimitiveType.Cylinder, transform, color, new Vector3(-0.4f, 0.62f, 0f), new Vector3(0.1f, 0.22f, 0.1f));
-            handle.transform.localRotation = Quaternion.Euler(0f, 0f, 30f);
-            _bodyRenderers.Add(body.GetComponent<Renderer>());
-            _bodyRenderers.Add(spout.GetComponent<Renderer>());
-            _bodyRenderers.Add(rose.GetComponent<Renderer>());
-            _bodyRenderers.Add(handle.GetComponent<Renderer>());
-            FlowerFactory.AddSymbol(Color, _palette, transform, new Vector3(0f, 0.45f, -0.4f), 0.16f);
 
-            _drops = new GameObject("Water").transform;
-            _drops.SetParent(transform, false);
-            _drops.localPosition = new Vector3(0f, 0.86f, 0f);
+            Keep(GardenView.Prim(PrimitiveType.Cylinder, Body, color, new Vector3(0f, 0.4f, 0f), new Vector3(0.74f, 0.38f, 0.74f), true));
+            Keep(GardenView.Prim(PrimitiveType.Sphere, Body, color, new Vector3(0f, 0.78f, 0f), new Vector3(0.74f, 0.16f, 0.74f), true));
+            var spout = Keep(GardenView.Prim(PrimitiveType.Cylinder, Body, color, new Vector3(0.5f, 0.55f, 0f), new Vector3(0.11f, 0.3f, 0.11f), true));
+            spout.transform.localRotation = Quaternion.Euler(0f, 0f, -52f);
+            var rose = Keep(GardenView.Prim(PrimitiveType.Cylinder, Body, color, SpoutTip - new Vector3(0.04f, 0.03f, 0f), new Vector3(0.22f, 0.04f, 0.22f), true));
+            rose.transform.localRotation = Quaternion.Euler(0f, 0f, -52f);
+            // Top handle: two posts and a bar.
+            Keep(GardenView.Prim(PrimitiveType.Cylinder, Body, color, new Vector3(-0.2f, 0.95f, 0f), new Vector3(0.08f, 0.13f, 0.08f), true));
+            Keep(GardenView.Prim(PrimitiveType.Cylinder, Body, color, new Vector3(0.2f, 0.95f, 0f), new Vector3(0.08f, 0.13f, 0.08f), true));
+            var bar = Keep(GardenView.Prim(PrimitiveType.Cylinder, Body, color, new Vector3(0f, 1.08f, 0f), new Vector3(0.08f, 0.22f, 0.08f), true));
+            bar.transform.localRotation = Quaternion.Euler(0f, 0f, 90f);
+
+            FlowerFactory.AddSymbol(Color, _palette, Body, new Vector3(0f, 0.42f, -0.38f), 0.16f);
+
+            var dropsRoot = new GameObject("Water").transform;
+            dropsRoot.SetParent(Body, false);
+            dropsRoot.localPosition = new Vector3(0f, 0.9f, -0.12f);
+            for (int i = 0; i < capacity; i++)
+            {
+                var drop = GardenView.Prim(PrimitiveType.Sphere, dropsRoot, _palette.marker, Vector3.zero, new Vector3(0.14f, 0.17f, 0.14f));
+                drop.name = "Drop " + (i + 1);
+                _drops.Add(drop);
+            }
         }
 
-        /// <summary>One drop per unit of water left, in a row on top of the can.</summary>
+        private GameObject Keep(GameObject part)
+        {
+            _bodyRenderers.Add(part.GetComponent<Renderer>());
+            return part;
+        }
+
+        /// <summary>One drop per unit of water left, centred in a row on top of the can.</summary>
         public void SetRemaining(int remaining)
         {
             if (remaining == _shownRemaining) return;
             _shownRemaining = remaining;
-            foreach (Transform child in _drops) Destroy(child.gameObject);
-            float spacing = 0.2f;
-            for (int i = 0; i < remaining; i++)
+            const float spacing = 0.19f;
+            for (int i = 0; i < _drops.Count; i++)
             {
-                var drop = GardenView.Prim(PrimitiveType.Sphere, _drops, _palette.marker,
-                    new Vector3((i - (remaining - 1) / 2f) * spacing, 0f, 0f), new Vector3(0.15f, 0.18f, 0.15f));
-                drop.name = "Drop " + (i + 1);
+                bool on = i < remaining;
+                _drops[i].SetActive(on);
+                if (on) _drops[i].transform.localPosition = new Vector3((i - (remaining - 1) / 2f) * spacing, 0f, 0f);
             }
         }
 
@@ -80,6 +103,13 @@ namespace BloomGarden.Presentation
                     _dimmed.SetColor("_BaseColor", UnityEngine.Color.Lerp(color.GetColor("_BaseColor"), UnityEngine.Color.white, 0.45f));
             }
             foreach (var r in _bodyRenderers) r.sharedMaterial = dimmed ? _dimmed : color;
+        }
+
+        public void ResetPose()
+        {
+            Body.localPosition = Vector3.zero;
+            Body.localRotation = Quaternion.identity;
+            Body.localScale = Vector3.one;
         }
 
         private void OnDestroy()

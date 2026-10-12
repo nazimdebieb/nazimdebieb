@@ -26,3 +26,10 @@ MonoBehaviour:
   dormant: {fileID: 2100000, guid: ba5f21e79a288a04ea4f77c1e6d2ba36, type: 2}
   highlight: {fileID: 2100000, guid: a67e6f3fed3680a4586375781b7e28c8, type: 2}
   flowerHeart: {fileID: 2100000, guid: e9960f2384a29e645bef4f418030c2f6, type: 2}
+  water: {fileID: 2100000, guid: e11e07066918e7647ace49fd1b332cde, type: 2}
+  wood: {fileID: 2100000, guid: 54f7640a1d12ec44c9339f916095e7dc, type: 2}
+  woodDark: {fileID: 2100000, guid: 0f957dca27781dd42bc46ba9d4098ab1, type: 2}
+  stone: {fileID: 2100000, guid: 4c23136e30ccc8d47af4ffc3301abeb8, type: 2}
+  earth: {fileID: 2100000, guid: 785f53b43321b754e841273483838343, type: 2}
+  sand: {fileID: 2100000, guid: 5221a7ac0d843f343a43665aa87b12f2, type: 2}
+  blossom: {fileID: 2100000, guid: f2779f93fbfcd23459874351dca88834, type: 2}

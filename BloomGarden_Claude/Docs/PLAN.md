@@ -63,15 +63,30 @@ Critère de sortie P2 (GDD) : « 20 fichiers JSON versionnés, solveur/replay co
 
 Critère de sortie P3 (GDD) : « niveau 1 → sélections → floraisons → victoire → niveau 2, aucun crash ni dépendance externe » → **atteint dans l'éditeur** (PlayMode 5/5, EditMode 62/62). Reste la vérification sur téléphone.
 
-## P4 — Visuels et animations (suivante)
+## P4 — Visuels et animations
+
+| ID | Tâche | Statut | Preuve |
+|---|---|---|---|
+| P4-01 | Palette / matériaux | **Partiel** | Palette GDD + diorama (île, pierres, arbres, estrade bois), ombres douces ; captures `P4_*.png` ; « homogène sur 2 téléphones » non vérifiable sans appareil (H7) |
+| P4-02 | Gouttes et jet | **Validé** | Jet de 5 gouttes en arc depuis le bec ; test `Logic_IsResolved_BeforeAnimationsPlay` (état final avant les effets) |
+| P4-03 | Éclosion 4 couleurs | **Validé** | Bouton tulipe → coupe de 6 pétales qui s'ouvre + étamines + étincelles ; capture `P4_level20_win.png` (4 couleurs) |
+| P4-04 | Déplacement arrosoir | **Validé** | Arc + inclinaison + tassement à l'arrivée ; la file avance en même temps ; capture `P4_level1_watering.png` |
+| P4-05 | Sons | **Partiel** | 8 sons synthétisés (choix, eau, éclosion en gamme, vidé, victoire, blocage, annuler, refus) ; son coupé/activé dans Options ; **non écoutés** par l'agent |
+| P4-06 | Animation de victoire | **Validé** | Vague sur le jardin + pétales qui tombent, panneau en bas qui laisse le jardin visible ; `P4_level20_win.png` |
+| P4-07 | Mode 2× / animations réduites | **Validé** | Test `SameFinalState_InEveryAnimationMode` : même hash dans les 3 modes ; BG-020 joué en 13,9 s / 7,2 s / 4,5 s |
+| P4-08 | Pooling / perf | **Validé (éditeur)** | `VisualPool` : rejouer BG-013 crée 0 objet ; p50 4,7 ms, p95 6,4 ms, max 14,3 ms dans l'éditeur (`P4_perf.txt`) ; mesure téléphone en P7-03 |
+
+Tests : PlayMode **8/8**, EditMode **62/62**.
+
+## P5 — UX, progression, sauvegarde (suivante)
 
 | ID | Tâche | Critère d'acceptation |
 |---|---|---|
-| P4-01 | Palette / matériaux cohérents | Rendu homogène, contraste vérifié, captures avant/après |
-| P4-02 | Gouttes et jet | La logique n'attend jamais les particules (tests PlayMode inchangés) |
-| P4-03 / P4-04 | Éclosion et trajectoire de l'arrosoir | États différenciés, trajectoire lisible |
-| P4-05 | Sons | Volume réglable |
-| P4-06 à P4-08 | Victoire, mode 2× / animations réduites, pooling | Même replay quel que soit le mode, pas de pic de CPU |
+| P5-01 / P5-02 | Menu principal, sélection des niveaux | Progression verrouillée, niveau suivant mis en avant |
+| P5-03 | Tutoriel intégré (niveaux 1 à 3) | Compréhensible sans explication |
+| P5-04 | Écran Paramètres complet | Préférences sauvegardées |
+| P5-05 | FR / EN | Tous les textes traduisibles, sans débordement |
+| P5-06 / P5-07 | Sauvegarde versionnée, pause / arrière-plan | Reprise sans perte ni animation fantôme |
 
 ## Interventions humaines nécessaires
 
