@@ -1,21 +1,21 @@
 ID,Phase,Tâche,Critère de validation,Statut,Preuve,Responsable
-P0-01,P0,Vérifier Unity Hub / Editor 6+,Capture/version exacte Unity ouverte,Bloqué,Version Unity à fournir par l’utilisateur (H1),Claude Code
-P0-02,P0,Installer les modules Android,SDK/NDK/OpenJDK détectés dans Unity,Bloqué,Capture modules Android à fournir (H1),Claude Code
-P0-03,P0,Vérifier CLI et plugin Unity/MCP,Lecture réelle de la scène test démontrée,Bloqué,MCP local non joignable depuis le cloud (H2),Claude Code
+P0-01,P0,Vérifier Unity Hub / Editor 6+,Capture/version exacte Unity ouverte,Validé,"Unity 6000.6.5f1 (3ff58d469c8a), ProjectSettings/ProjectVersion.txt",Claude Code
+P0-02,P0,Installer les modules Android,SDK/NDK/OpenJDK détectés dans Unity,Validé,"PlaybackEngines/AndroidPlayer/SDK, NDK, OpenJDK présents (Docs/ENVIRONMENT.md)",Claude Code
+P0-03,P0,Vérifier CLI et plugin Unity/MCP,Lecture réelle de la scène test démontrée,En cours,Plugin unity@unity-agent-plugin 0.1.8-beta installé; Unity CLI batchmode OK; lecture de scène via MCP à faire en session suivante,Claude Code
 P0-04,P0,Initialiser Git / .gitignore Unity,Commit initial propre sans caches ni secrets,Validé,.gitignore + commit BloomGarden_Claude,Claude Code
 P0-05,P0,Créer la structure des dossiers,Scenes/Scripts/Tests/Docs présents,Validé,Assets/_BloomGarden/*,Claude Code
-P0-06,P0,Fixer orientation portrait / qualité URP,Scene/Player Settings sauvegardés,En cours,Editor/ProjectSetup.cs non exécuté dans Unity,Claude Code
+P0-06,P0,Fixer orientation portrait / qualité URP,Scene/Player Settings sauvegardés,Validé,"Batchmode ConfigureAll: portrait (defaultScreenOrientation 0), URP_Mobile assigné, Scenes/Game.unity (Logs/p0_setup.log)",Claude Code
 P0-07,P0,Créer Docs/PLAN et Docs/ENVIRONMENT,"Versions, risques, prochaine phase documentés",Validé,"Docs/PLAN.md, Docs/ENVIRONMENT.md, Docs/QA/P0.md",Claude Code
-P1-01,P1,Définir LevelDefinition versionné,Schéma valide et invalides rejetés,En cours,dotnet test 49/49 (Docs/QA/P1_dotnet_test.log); Unity Test Runner à faire,Claude Code
-P1-02,P1,Coder GameState immutable/copiable,État clonable et hash déterministe,En cours,dotnet test 49/49 (Docs/QA/P1_dotnet_test.log); Unity Test Runner à faire,Claude Code
-P1-03,P1,Coder files et sélection de tête,Pas de sélection hors file,En cours,dotnet test 49/49 (Docs/QA/P1_dotnet_test.log); Unity Test Runner à faire,Claude Code
-P1-04,P1,Coder les trois places,Aucune quatrième entrée si slots pleins,En cours,dotnet test 49/49 (Docs/QA/P1_dotnet_test.log); Unity Test Runner à faire,Claude Code
-P1-05,P1,Coder cibles visibles par pile,Fleur cachée non arrosable,En cours,dotnet test 49/49 (Docs/QA/P1_dotnet_test.log); Unity Test Runner à faire,Claude Code
-P1-06,P1,Coder TurnResolver stable,Même entrée donne même sortie,En cours,dotnet test 49/49 (Docs/QA/P1_dotnet_test.log); Unity Test Runner à faire,Claude Code
-P1-07,P1,Coder arrosoir en attente / départ,Charge et place correctes,En cours,dotnet test 49/49 (Docs/QA/P1_dotnet_test.log); Unity Test Runner à faire,Claude Code
-P1-08,P1,Coder victoire et blocage,Aucun faux blocage en cours de traitement,En cours,dotnet test 49/49 (Docs/QA/P1_dotnet_test.log); Unity Test Runner à faire,Claude Code
-P1-09,P1,Coder UndoHistory,Undo restaure l’état intégral,En cours,dotnet test 49/49 (Docs/QA/P1_dotnet_test.log); Unity Test Runner à faire,Claude Code
-P1-10,P1,Tests C# des règles et cas limites,"Tests EditMode verts, log attaché",En cours,dotnet test 49/49 (Docs/QA/P1_dotnet_test.log); Unity Test Runner à faire,Claude Code
+P1-01,P1,Définir LevelDefinition versionné,Schéma valide et invalides rejetés,Validé,Unity Test Runner EditMode 49/49 (Docs/QA/P1_unity_editmode_results.xml) + dotnet 49/49,Claude Code
+P1-02,P1,Coder GameState immutable/copiable,État clonable et hash déterministe,Validé,Unity Test Runner EditMode 49/49 (Docs/QA/P1_unity_editmode_results.xml) + dotnet 49/49,Claude Code
+P1-03,P1,Coder files et sélection de tête,Pas de sélection hors file,Validé,Unity Test Runner EditMode 49/49 (Docs/QA/P1_unity_editmode_results.xml) + dotnet 49/49,Claude Code
+P1-04,P1,Coder les trois places,Aucune quatrième entrée si slots pleins,Validé,Unity Test Runner EditMode 49/49 (Docs/QA/P1_unity_editmode_results.xml) + dotnet 49/49,Claude Code
+P1-05,P1,Coder cibles visibles par pile,Fleur cachée non arrosable,Validé,Unity Test Runner EditMode 49/49 (Docs/QA/P1_unity_editmode_results.xml) + dotnet 49/49,Claude Code
+P1-06,P1,Coder TurnResolver stable,Même entrée donne même sortie,Validé,Unity Test Runner EditMode 49/49 (Docs/QA/P1_unity_editmode_results.xml) + dotnet 49/49,Claude Code
+P1-07,P1,Coder arrosoir en attente / départ,Charge et place correctes,Validé,Unity Test Runner EditMode 49/49 (Docs/QA/P1_unity_editmode_results.xml) + dotnet 49/49,Claude Code
+P1-08,P1,Coder victoire et blocage,Aucun faux blocage en cours de traitement,Validé,Unity Test Runner EditMode 49/49 (Docs/QA/P1_unity_editmode_results.xml) + dotnet 49/49,Claude Code
+P1-09,P1,Coder UndoHistory,Undo restaure l’état intégral,Validé,Unity Test Runner EditMode 49/49 (Docs/QA/P1_unity_editmode_results.xml) + dotnet 49/49,Claude Code
+P1-10,P1,Tests C# des règles et cas limites,"Tests EditMode verts, log attaché",Validé,Unity Test Runner EditMode 49/49 (Docs/QA/P1_unity_editmode_results.xml) + dotnet 49/49,Claude Code
 P2-01,P2,Importer les 20 JSON de référence,Tous valides dans le projet,En cours,20 JSON copiés et validés par tests; chargement Unity à faire,Claude Code
 P2-02,P2,Coder validateur de données,IDs/couleurs/capacités contrôlés,À faire,,
 P2-03,P2,Coder solveur BFS C#,Petit niveau solvable détecté,À faire,,

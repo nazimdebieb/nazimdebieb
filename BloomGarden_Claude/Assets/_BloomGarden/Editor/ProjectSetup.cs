@@ -1,11 +1,10 @@
 using System.IO;
 using UnityEditor;
 using UnityEditor.Build;
-using UnityEditor.PackageManager;
-using UnityEditor.PackageManager.Requests;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
 
 namespace BloomGarden.EditorTools
@@ -18,15 +17,15 @@ namespace BloomGarden.EditorTools
     public static class ProjectSetup
     {
         private const string ScenePath = "Assets/_BloomGarden/Scenes/Game.unity";
-        private const string UrpPackage = "com.unity.render-pipelines.universal";
-        private static AddRequest _urpRequest;
+        private const string UrpAssetPath = "Assets/_BloomGarden/Settings/URP_Mobile.asset";
+        private const string UrpRendererPath = "Assets/_BloomGarden/Settings/URP_Mobile_Renderer.asset";
 
         [MenuItem("Bloom Garden/P0 - Configurer le projet")]
         public static void ConfigureAll()
         {
             ConfigurePlayerSettings();
+            ConfigureUrp();
             CreateGameScene();
-            InstallUrp();
         }
 
         [MenuItem("Bloom Garden/P0 - Reglages portrait uniquement")]
@@ -74,29 +73,35 @@ namespace BloomGarden.EditorTools
             EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(ScenePath, true) };
         }
 
-        [MenuItem("Bloom Garden/P0 - Installer URP")]
-        public static void InstallUrp()
+        /// <summary>
+        /// URP is declared in Packages/manifest.json; this creates the mobile pipeline asset and assigns it
+        /// to Graphics and every Quality level. Synchronous, so it also runs in batch mode.
+        /// </summary>
+        [MenuItem("Bloom Garden/P0 - Configurer URP")]
+        public static void ConfigureUrp()
         {
-            if (GraphicsSettings.defaultRenderPipeline != null)
+            var asset = AssetDatabase.LoadAssetAtPath<UniversalRenderPipelineAsset>(UrpAssetPath);
+            if (asset == null)
             {
-                Debug.Log("[BloomGarden] A render pipeline is already assigned: " + GraphicsSettings.defaultRenderPipeline.name);
-                return;
+                var renderer = ScriptableObject.CreateInstance<UniversalRendererData>();
+                AssetDatabase.CreateAsset(renderer, UrpRendererPath);
+                asset = UniversalRenderPipelineAsset.Create(renderer);
+                // Mobile budget: no HDR, no MSAA, no shadows needed for a flat 2.5D puzzle board.
+                asset.supportsHDR = false;
+                asset.msaaSampleCount = 1;
+                asset.shadowDistance = 0f;
+                AssetDatabase.CreateAsset(asset, UrpAssetPath);
             }
-            // No version: the Package Manager picks the one matching this editor.
-            _urpRequest = Client.Add(UrpPackage);
-            EditorApplication.update += WaitForUrp;
-        }
-
-        private static void WaitForUrp()
-        {
-            if (_urpRequest == null || !_urpRequest.IsCompleted) return;
-            EditorApplication.update -= WaitForUrp;
-            if (_urpRequest.Status == StatusCode.Success)
-                Debug.Log("[BloomGarden] URP installed: " + _urpRequest.Result.version +
-                          ". Next: Assets > Create > Rendering > URP Asset (with Universal Renderer), then assign it in Project Settings > Graphics and Quality.");
-            else
-                Debug.LogError("[BloomGarden] URP install failed: " + _urpRequest.Error?.message);
-            _urpRequest = null;
+            GraphicsSettings.defaultRenderPipeline = asset;
+            int current = QualitySettings.GetQualityLevel();
+            for (int i = 0; i < QualitySettings.names.Length; i++)
+            {
+                QualitySettings.SetQualityLevel(i, false);
+                QualitySettings.renderPipeline = asset;
+            }
+            QualitySettings.SetQualityLevel(current, false);
+            AssetDatabase.SaveAssets();
+            Debug.Log("[BloomGarden] URP assigned: " + UrpAssetPath);
         }
     }
 }

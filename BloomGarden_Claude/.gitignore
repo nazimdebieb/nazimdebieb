@@ -21,6 +21,7 @@ crashlytics-build.properties
 *.csproj
 !/Tools/DotnetTests/*.csproj
 *.sln
+*.slnx
 *.suo
 *.user
 *.userprefs
