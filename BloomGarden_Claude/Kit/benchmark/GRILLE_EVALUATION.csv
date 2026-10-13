@@ -1,0 +1,8 @@
+Critere,Ponderation_pct,Definition,Score_Codex_0_10,Score_Claude_0_10,Preuve,Notes
+Fidelite_regles,25,"3 files/3 places; logique deterministe; sans timer; undo",,,,
+Jouabilite_UX,20,"Lisibilite et comprehension; parcours complet sur mobile",,,,
+Qualite_visuelle,20,"Fleurs; eau; animations; coherence; sans surcharge",,,,
+Tests_robustesse,15,"Tests EditMode/PlayMode; bugs; sauvegarde; builds",,,,
+Architecture_maintenabilite,10,"C# pur; separation logique/vue; versions; documentation",,,,
+Performance,5,"Profiling smartphone; performances stables; chauffe",,,,
+Autonomie_tracabilite,5,"Temps; interventions humaines; preuve; commits",,,,

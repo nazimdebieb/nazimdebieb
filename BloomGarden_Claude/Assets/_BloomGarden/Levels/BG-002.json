@@ -1,0 +1,68 @@
+{
+  "id": "BG-002",
+  "rulesVersion": "0.1.0",
+  "slotCount": 3,
+  "title": "Un arrosoir après l’autre",
+  "grid": {
+    "width": 3,
+    "height": 3,
+    "cells": [
+      [
+        "blue"
+      ],
+      [
+        "coral"
+      ],
+      [
+        "coral"
+      ],
+      [
+        "blue"
+      ],
+      [
+        "coral"
+      ],
+      [
+        "blue"
+      ],
+      [
+        "coral"
+      ],
+      [],
+      []
+    ]
+  },
+  "lanes": [
+    [
+      {
+        "id": "C01",
+        "color": "coral",
+        "capacity": 2
+      },
+      {
+        "id": "C02",
+        "color": "coral",
+        "capacity": 2
+      }
+    ],
+    [
+      {
+        "id": "B01",
+        "color": "blue",
+        "capacity": 3
+      }
+    ],
+    []
+  ],
+  "theme": "meadow",
+  "referenceSolution": [
+    0,
+    0,
+    1
+  ],
+  "analysis": {
+    "status": "solvable",
+    "statesExplored": 6,
+    "shortestMoves": 3
+  }
+}

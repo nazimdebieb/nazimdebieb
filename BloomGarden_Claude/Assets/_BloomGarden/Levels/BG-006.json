@@ -1,0 +1,95 @@
+{
+  "id": "BG-006",
+  "rulesVersion": "0.1.0",
+  "slotCount": 3,
+  "title": "Jardin 06",
+  "grid": {
+    "width": 3,
+    "height": 3,
+    "cells": [
+      [
+        "yellow",
+        "yellow"
+      ],
+      [],
+      [],
+      [
+        "coral"
+      ],
+      [],
+      [
+        "blue",
+        "blue"
+      ],
+      [
+        "yellow",
+        "coral"
+      ],
+      [
+        "coral",
+        "blue"
+      ],
+      [
+        "coral"
+      ]
+    ]
+  },
+  "lanes": [
+    [
+      {
+        "id": "y05",
+        "color": "yellow",
+        "capacity": 1
+      }
+    ],
+    [
+      {
+        "id": "y06",
+        "color": "yellow",
+        "capacity": 2
+      }
+    ],
+    [
+      {
+        "id": "b02",
+        "color": "blue",
+        "capacity": 1
+      },
+      {
+        "id": "c01",
+        "color": "coral",
+        "capacity": 2
+      },
+      {
+        "id": "c00",
+        "color": "coral",
+        "capacity": 2
+      },
+      {
+        "id": "b04",
+        "color": "blue",
+        "capacity": 1
+      },
+      {
+        "id": "b03",
+        "color": "blue",
+        "capacity": 1
+      }
+    ]
+  ],
+  "theme": "meadow",
+  "referenceSolution": [
+    0,
+    1,
+    2,
+    2,
+    2,
+    2,
+    2
+  ],
+  "analysis": {
+    "status": "solvable",
+    "statesExplored": 25,
+    "shortestMoves": 7
+  }
+}

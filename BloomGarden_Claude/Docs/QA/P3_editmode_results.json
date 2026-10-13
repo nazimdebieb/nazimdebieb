@@ -1,0 +1,451 @@
+{
+ "Summary": {
+  "Total": 62,
+  "Passed": 62,
+  "Failed": 0,
+  "Skipped": 0,
+  "Inconclusive": 0
+ },
+ "Results": [
+  {
+   "FullName": "BloomGarden.Tests.LevelLoadingTests.AllTwentyReferenceLevels_LoadAndValidate",
+   "Status": "Passed",
+   "Duration": 0.0121297,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.LevelLoadingTests.EmptyLevel_IsRejected",
+   "Status": "Passed",
+   "Duration": 0.0026506,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.LevelLoadingTests.Rejects unsupported rules version",
+   "Status": "Passed",
+   "Duration": 0.0011886,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.LevelLoadingTests.Rejects slot count other than 3",
+   "Status": "Passed",
+   "Duration": 0.0001343,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.LevelLoadingTests.Rejects wrong cell count",
+   "Status": "Passed",
+   "Duration": 0.0001151,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.LevelLoadingTests.Rejects more than 3 layers",
+   "Status": "Passed",
+   "Duration": 0.0001025,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.LevelLoadingTests.Rejects duplicate can id",
+   "Status": "Passed",
+   "Duration": 9.14e-05,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.LevelLoadingTests.Rejects unknown can color",
+   "Status": "Passed",
+   "Duration": 7.85e-05,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.LevelLoadingTests.Rejects unequal charge and buds",
+   "Status": "Passed",
+   "Duration": 9.18e-05,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.LevelLoadingTests.Rejects two lanes",
+   "Status": "Passed",
+   "Duration": 8.62e-05,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.LevelLoadingTests.Rejects invalid solution lane",
+   "Status": "Passed",
+   "Duration": 8.61e-05,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.LevelLoadingTests.MiniJson_ParsesScalarsAndNesting",
+   "Status": "Passed",
+   "Duration": 0.0022346,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.LevelLoadingTests.MiniJson_RejectsInvalidDocuments(\"{\\\"a\\\":1,\\\"a\\\":2}\")",
+   "Status": "Passed",
+   "Duration": 0.0014481,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.LevelLoadingTests.MiniJson_RejectsInvalidDocuments(\"[01]\")",
+   "Status": "Passed",
+   "Duration": 0.0002109,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.LevelLoadingTests.MiniJson_RejectsInvalidDocuments(\"[1,]\")",
+   "Status": "Passed",
+   "Duration": 0.0001987,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.LevelLoadingTests.MiniJson_RejectsInvalidDocuments(\"\\\"unterminated\")",
+   "Status": "Passed",
+   "Duration": 0.000178,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.LevelLoadingTests.MiniJson_RejectsInvalidDocuments(\"{} {}\")",
+   "Status": "Passed",
+   "Duration": 0.0002131,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.LevelLoadingTests.ValidJson_IsParsedInReadingOrder_VisibleLayerFirst",
+   "Status": "Passed",
+   "Duration": 0.0013668,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.PythonOracleTests.CSharpResolver_MatchesPythonReference_StepByStep",
+   "Status": "Passed",
+   "Duration": 0.1103675,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.RuleInvariantTests.I01_SelectingEmptyLane_IsRejected_AndStateUnchanged",
+   "Status": "Passed",
+   "Duration": 0.0012145,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.RuleInvariantTests.I02_NonPositiveOrNonIntegerCapacity_IsRejectedAtLoad(\"0\")",
+   "Status": "Passed",
+   "Duration": 0.0002822,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.RuleInvariantTests.I02_NonPositiveOrNonIntegerCapacity_IsRejectedAtLoad(\"-2\")",
+   "Status": "Passed",
+   "Duration": 0.0004488,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.RuleInvariantTests.I02_NonPositiveOrNonIntegerCapacity_IsRejectedAtLoad(\"2.5\")",
+   "Status": "Passed",
+   "Duration": 9.9e-05,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.RuleInvariantTests.I02_NonPositiveOrNonIntegerCapacity_IsRejectedAtLoad(\"\\\"3\\\"\")",
+   "Status": "Passed",
+   "Duration": 6.41e-05,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.RuleInvariantTests.I03_CanNeverWatersAnotherColor",
+   "Status": "Passed",
+   "Duration": 0.008929,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.RuleInvariantTests.I04_HiddenBud_IsNotTargetedBeforeReveal",
+   "Status": "Passed",
+   "Duration": 0.0012164,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.RuleInvariantTests.I05_Resolution_IsDeterministic_ForSameInput",
+   "Status": "Passed",
+   "Duration": 0.007705,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.RuleInvariantTests.I06_Can_LeavesItsPlace_WhenEmpty",
+   "Status": "Passed",
+   "Duration": 0.0014738,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.RuleInvariantTests.I07_CanWithoutTarget_WaitsAndKeepsItsPlace",
+   "Status": "Passed",
+   "Duration": 0.0003248,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.RuleInvariantTests.I08_ThreeOccupiedPlaces_BlockAFourthDeparture",
+   "Status": "Passed",
+   "Duration": 0.0003886,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.RuleInvariantTests.I09_WaitingCans_AreReevaluated_AfterReveal",
+   "Status": "Passed",
+   "Duration": 0.000809,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.RuleInvariantTests.I10_Undo_RestoresExactPreviousState",
+   "Status": "Passed",
+   "Duration": 0.0067021,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.RuleInvariantTests.I11_Victory_OnlyWhenEveryBudHasBloomed",
+   "Status": "Passed",
+   "Duration": 0.0127051,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.RuleInvariantTests.I12_Deadlock_OnlyAfterStabilization",
+   "Status": "Passed",
+   "Duration": 0.0008817,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.RuleInvariantTests.I13_MalformedJson_FailsCleanly(\"\")",
+   "Status": "Passed",
+   "Duration": 0.0012477,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.RuleInvariantTests.I13_MalformedJson_FailsCleanly(\"{\")",
+   "Status": "Passed",
+   "Duration": 0.0002971,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.RuleInvariantTests.I13_MalformedJson_FailsCleanly(\"not json\")",
+   "Status": "Passed",
+   "Duration": 0.0002113,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.RuleInvariantTests.I13_MalformedJson_FailsCleanly(\"[1,2,3]\")",
+   "Status": "Passed",
+   "Duration": 9.56e-05,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.RuleInvariantTests.I13_MalformedJson_FailsCleanly(\"{\\\"id\\\":\\\"X\\\",}\")",
+   "Status": "Passed",
+   "Duration": 8.5e-05,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.RuleInvariantTests.I13_MalformedJson_FailsCleanly(\"{\\\"id\\\":\\\"X\\\",\\\"rulesVersion\\\":\\\"0.1.0\\\"}\")",
+   "Status": "Passed",
+   "Duration": 7.08e-05,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.RuleInvariantTests.I13_MalformedJson_FailsCleanly(\"{\\\"id\\\":\\\"X\\\",\\\"rulesVersion\\\":\\\"0.1.0\\\",\\\"slotCount\\\":3,\\\"grid\\\":{\\\"width\\\":1,\\\"height\\\":1,\\\"cells\\\":[[\\\"neon\\\"]]},\\\"lanes\\\":[[],[],[]]}\")",
+   "Status": "Passed",
+   "Duration": 8.53e-05,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.RuleInvariantTests.I14_EveryReferenceLevel_HasAVerifiedSolution",
+   "Status": "Passed",
+   "Duration": 0.0050445,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.RuleInvariantTests.I15_ReplayingTheReferenceSolution_CompletesTheLevel",
+   "Status": "Passed",
+   "Duration": 0.0045441,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.SlotAndStateTests.Can_TakesLeftmostFreePlace_ButOlderPlaceWatersFirst",
+   "Status": "Passed",
+   "Duration": 0.0017008,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.SlotAndStateTests.Hash_IsStableAcrossRuns_GoldenValue",
+   "Status": "Passed",
+   "Duration": 0.0004465,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.SlotAndStateTests.PositionKey_IgnoresMoveCountAndAbsoluteOrder",
+   "Status": "Passed",
+   "Duration": 0.0002554,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.SlotAndStateTests.Restart_ClearsHistory_AndReturnsToInitialState",
+   "Status": "Passed",
+   "Duration": 0.0009797,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.SlotAndStateTests.SelectLane_DoesNotMutateInputState",
+   "Status": "Passed",
+   "Duration": 0.00044,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.SlotAndStateTests.Target_IsSmallestRowThenColumn",
+   "Status": "Passed",
+   "Duration": 0.0026669,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.SolverTests.Analyzer_FindsTheTrapsOfBg018",
+   "Status": "Passed",
+   "Duration": 0.0033715,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.SolverTests.Analyzer_MatchesPythonReference_OnAllLevels",
+   "Status": "Passed",
+   "Duration": 0.0152804,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.SolverTests.ParseNumber_ReadsTrailingDigits(\"BG-007\",7)",
+   "Status": "Passed",
+   "Duration": 0.0005669,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.SolverTests.ParseNumber_ReadsTrailingDigits(\"BG-020\",20)",
+   "Status": "Passed",
+   "Duration": 7.23e-05,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.SolverTests.ParseNumber_ReadsTrailingDigits(\"TEST\",0)",
+   "Status": "Passed",
+   "Duration": 5.09e-05,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.SolverTests.ReferenceAndSolverSolutions_ReplayToWin",
+   "Status": "Passed",
+   "Duration": 0.0282216,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.SolverTests.Report_AllLevelsPublishable_AndInTheirTeachingBand",
+   "Status": "Passed",
+   "Duration": 0.0394388,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.SolverTests.Solver_ForcedDeadlock_IsUnsolvable_NotUnknown",
+   "Status": "Passed",
+   "Duration": 0.0008718,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.SolverTests.Solver_MatchesPythonReference_OnAllLevels",
+   "Status": "Passed",
+   "Duration": 0.0146454,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.SolverTests.Solver_SmallLevel_IsSolvable",
+   "Status": "Passed",
+   "Duration": 0.0004561,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.SolverTests.Solver_StateLimit_ReturnsUnknown_NeverSolvable",
+   "Status": "Passed",
+   "Duration": 0.0020624,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.LevelCatalogTests.Catalog_LoadsTwentyValidLevels_InOrder",
+   "Status": "Passed",
+   "Duration": 0.0014895,
+   "Message": null,
+   "StackTrace": null
+  },
+  {
+   "FullName": "BloomGarden.Tests.LevelCatalogTests.Catalog_OutOfRange_ReportsAnError",
+   "Status": "Passed",
+   "Duration": 0.0002904,
+   "Message": null,
+   "StackTrace": null
+  }
+ ],
+ "Duration": 0.84,
+ "StatusPath": null,
+ "Mode": "EditMode",
+ "FilterApplied": null,
+ "success": true,
+ "result": null
+}

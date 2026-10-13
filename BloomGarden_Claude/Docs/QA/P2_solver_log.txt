@@ -1,0 +1,22 @@
+Bloom Garden - P2 solver log (rules 0.1.0, Unity 6000.6.5f1)
+BG-001: validation=valid status=Solvable moves=2 explored=4 reachable=4 deadlocks=0 losingMoves=0 referenceReplay=True solverReplay=True publishable=True warnings=[trivial] time=17ms
+BG-002: validation=valid status=Solvable moves=3 explored=6 reachable=6 deadlocks=0 losingMoves=0 referenceReplay=True solverReplay=True publishable=True warnings=[trivial] time=0ms
+BG-003: validation=valid status=Solvable moves=4 explored=9 reachable=9 deadlocks=0 losingMoves=0 referenceReplay=True solverReplay=True publishable=True warnings=[trivial] time=0ms
+BG-004: validation=valid status=Solvable moves=7 explored=25 reachable=25 deadlocks=0 losingMoves=0 referenceReplay=True solverReplay=True publishable=True warnings=[trivial] time=4ms
+BG-005: validation=valid status=Solvable moves=5 explored=18 reachable=18 deadlocks=0 losingMoves=0 referenceReplay=True solverReplay=True publishable=True warnings=[trivial] time=0ms
+BG-006: validation=valid status=Solvable moves=7 explored=25 reachable=25 deadlocks=0 losingMoves=0 referenceReplay=True solverReplay=True publishable=True warnings=[trivial] time=0ms
+BG-007: validation=valid status=Solvable moves=7 explored=32 reachable=32 deadlocks=0 losingMoves=0 referenceReplay=True solverReplay=True publishable=True warnings=[trivial] time=0ms
+BG-008: validation=valid status=Solvable moves=7 explored=42 reachable=42 deadlocks=0 losingMoves=0 referenceReplay=True solverReplay=True publishable=True warnings=[trivial] time=0ms
+BG-009: validation=valid status=Solvable moves=6 explored=28 reachable=28 deadlocks=0 losingMoves=0 referenceReplay=True solverReplay=True publishable=True warnings=[trivial] time=0ms
+BG-010: validation=valid status=Solvable moves=7 explored=37 reachable=37 deadlocks=0 losingMoves=0 referenceReplay=True solverReplay=True publishable=True warnings=[trivial] time=0ms
+BG-011: validation=valid status=Solvable moves=8 explored=56 reachable=56 deadlocks=0 losingMoves=0 referenceReplay=True solverReplay=True publishable=True warnings=[trivial] time=1ms
+BG-012: validation=valid status=Solvable moves=7 explored=57 reachable=57 deadlocks=0 losingMoves=0 referenceReplay=True solverReplay=True publishable=True warnings=[trivial] time=3ms
+BG-013: validation=valid status=Solvable moves=9 explored=124 reachable=124 deadlocks=0 losingMoves=0 referenceReplay=True solverReplay=True publishable=True warnings=[trivial] time=2ms
+BG-014: validation=valid status=Solvable moves=7 explored=31 reachable=31 deadlocks=0 losingMoves=0 referenceReplay=True solverReplay=True publishable=True warnings=[trivial] time=0ms
+BG-015: validation=valid status=Solvable moves=8 explored=58 reachable=58 deadlocks=0 losingMoves=0 referenceReplay=True solverReplay=True publishable=True warnings=[trivial] time=1ms
+BG-016: validation=valid status=Solvable moves=9 explored=86 reachable=86 deadlocks=0 losingMoves=0 referenceReplay=True solverReplay=True publishable=True warnings=[trivial] time=5ms
+BG-017: validation=valid status=Solvable moves=8 explored=62 reachable=62 deadlocks=0 losingMoves=0 referenceReplay=True solverReplay=True publishable=True warnings=[trivial] time=4ms
+BG-018: validation=valid status=Solvable moves=8 explored=74 reachable=74 deadlocks=5 losingMoves=5 referenceReplay=True solverReplay=True publishable=True warnings=[] time=2ms
+BG-019: validation=valid status=Solvable moves=9 explored=55 reachable=55 deadlocks=0 losingMoves=0 referenceReplay=True solverReplay=True publishable=True warnings=[trivial] time=1ms
+BG-020: validation=valid status=Solvable moves=10 explored=106 reachable=106 deadlocks=0 losingMoves=0 referenceReplay=True solverReplay=True publishable=True warnings=[trivial] time=5ms
+RESULT: all levels publishable

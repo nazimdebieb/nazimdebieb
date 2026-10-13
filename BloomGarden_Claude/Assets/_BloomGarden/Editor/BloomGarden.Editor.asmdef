@@ -1,0 +1,23 @@
+{
+    "name": "BloomGarden.Editor",
+    "rootNamespace": "BloomGarden.EditorTools",
+    "references": [
+        "BloomGarden.Core",
+        "BloomGarden.Levels",
+        "BloomGarden.Presentation",
+        "BloomGarden.Solvers",
+        "Unity.RenderPipelines.Core.Runtime",
+        "Unity.RenderPipelines.Universal.Runtime"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

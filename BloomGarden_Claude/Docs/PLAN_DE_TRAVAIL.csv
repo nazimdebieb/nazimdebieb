@@ -1,0 +1,72 @@
+ID,Phase,Tâche,Critère de validation,Statut,Preuve,Responsable
+P0-01,P0,Vérifier Unity Hub / Editor 6+,Capture/version exacte Unity ouverte,Validé,"Unity 6000.6.5f1 (3ff58d469c8a), ProjectSettings/ProjectVersion.txt",Claude Code
+P0-02,P0,Installer les modules Android,SDK/NDK/OpenJDK détectés dans Unity,Validé,"PlaybackEngines/AndroidPlayer/SDK, NDK, OpenJDK présents (Docs/ENVIRONMENT.md)",Claude Code
+P0-03,P0,Vérifier CLI et plugin Unity/MCP,Lecture réelle de la scène test démontrée,Validé,Unity CLI + Pipeline: get_scene_hierarchy sur l éditeur ouvert,Claude Code
+P0-04,P0,Initialiser Git / .gitignore Unity,Commit initial propre sans caches ni secrets,Validé,.gitignore + commit BloomGarden_Claude,Claude Code
+P0-05,P0,Créer la structure des dossiers,Scenes/Scripts/Tests/Docs présents,Validé,Assets/_BloomGarden/*,Claude Code
+P0-06,P0,Fixer orientation portrait / qualité URP,Scene/Player Settings sauvegardés,Validé,"Batchmode ConfigureAll: portrait (defaultScreenOrientation 0), URP_Mobile assigné, Scenes/Game.unity (Logs/p0_setup.log)",Claude Code
+P0-07,P0,Créer Docs/PLAN et Docs/ENVIRONMENT,"Versions, risques, prochaine phase documentés",Validé,"Docs/PLAN.md, Docs/ENVIRONMENT.md, Docs/QA/P0.md",Claude Code
+P1-01,P1,Définir LevelDefinition versionné,Schéma valide et invalides rejetés,Validé,Unity Test Runner EditMode 49/49 (Docs/QA/P1_unity_editmode_results.xml) + dotnet 49/49,Claude Code
+P1-02,P1,Coder GameState immutable/copiable,État clonable et hash déterministe,Validé,Unity Test Runner EditMode 49/49 (Docs/QA/P1_unity_editmode_results.xml) + dotnet 49/49,Claude Code
+P1-03,P1,Coder files et sélection de tête,Pas de sélection hors file,Validé,Unity Test Runner EditMode 49/49 (Docs/QA/P1_unity_editmode_results.xml) + dotnet 49/49,Claude Code
+P1-04,P1,Coder les trois places,Aucune quatrième entrée si slots pleins,Validé,Unity Test Runner EditMode 49/49 (Docs/QA/P1_unity_editmode_results.xml) + dotnet 49/49,Claude Code
+P1-05,P1,Coder cibles visibles par pile,Fleur cachée non arrosable,Validé,Unity Test Runner EditMode 49/49 (Docs/QA/P1_unity_editmode_results.xml) + dotnet 49/49,Claude Code
+P1-06,P1,Coder TurnResolver stable,Même entrée donne même sortie,Validé,Unity Test Runner EditMode 49/49 (Docs/QA/P1_unity_editmode_results.xml) + dotnet 49/49,Claude Code
+P1-07,P1,Coder arrosoir en attente / départ,Charge et place correctes,Validé,Unity Test Runner EditMode 49/49 (Docs/QA/P1_unity_editmode_results.xml) + dotnet 49/49,Claude Code
+P1-08,P1,Coder victoire et blocage,Aucun faux blocage en cours de traitement,Validé,Unity Test Runner EditMode 49/49 (Docs/QA/P1_unity_editmode_results.xml) + dotnet 49/49,Claude Code
+P1-09,P1,Coder UndoHistory,Undo restaure l’état intégral,Validé,Unity Test Runner EditMode 49/49 (Docs/QA/P1_unity_editmode_results.xml) + dotnet 49/49,Claude Code
+P1-10,P1,Tests C# des règles et cas limites,"Tests EditMode verts, log attaché",Validé,Unity Test Runner EditMode 49/49 (Docs/QA/P1_unity_editmode_results.xml) + dotnet 49/49,Claude Code
+P2-01,P2,Importer les 20 JSON de référence,Tous valides dans le projet,Validé,LevelCatalog.asset 20 TextAsset; test Unity Catalog_LoadsTwentyValidLevels_InOrder,Claude Code
+P2-02,P2,Coder validateur de données,IDs/couleurs/capacités contrôlés,Validé,LevelValidator + colonne valid du rapport P2 (Docs/QA/P2_solver_log.txt),Claude Code
+P2-03,P2,Coder solveur BFS C#,Petit niveau solvable détecté,Validé,LevelSolver.cs; solutions et statesExplored identiques au Python (SolverTests),Claude Code
+P2-04,P2,Rejouer les 20 referenceSolution,20 replays aboutissent à la victoire,Validé,40 replays gagnants (20 referenceSolution + 20 solveur),Claude Code
+P2-05,P2,Tester états insolubles et limites,Retour unknown non confondu avec solvable,Validé,Tests Unsolvable (blocage forcé) et Unknown (limite d états),Claude Code
+P2-06,P2,Éditer niveaux tutoriels 1–10,Notions progressives documentées,Validé,Docs/LEVELS.md; niveaux non modifiés (D-107); tranches GDD ch.08 vérifiées par test,Claude Code
+P2-07,P2,Exporter rapport difficulty/solutions,"CSV états explorés, profondeur, résultat",Validé,Docs/QA/P2_difficulty_report.csv,Claude Code
+P3-01,P3,Créer scène Game orthographique,Jeu portrait visible sous Unity,Validé,Docs/QA/captures/P3_level1_start.png,Claude Code
+P3-02,P3,Créer vue de grille et piles,Dessus de chaque pile correctement affiché,Validé,GardenView; captures 3x3 et 4x4,Claude Code
+P3-03,P3,Créer prefab Fleur bouton/éclose,Transition liée aux événements logiques,Validé,FlowerFactory Bud/Bloom; capture P3_level1_tap1_done.png,Claude Code
+P3-04,P3,Créer prefab Arrosoir 4 couleurs,Capacité et couleur lisibles,Validé,CanView: couleur + symbole + gouttes = eau restante,Claude Code
+P3-05,P3,Afficher trois files et têtes,Seules têtes cliquables,Validé,Colliders uniquement sur les têtes; anneau vert si sélectionnable,Claude Code
+P3-06,P3,Afficher places et attente,Occupation et charge lisibles,Validé,Captures P3_level1_tap1_*.png,Claude Code
+P3-07,P3,Relier tap au TurnResolver,Un seul coup logique par tap,Validé,PlayMode TapDuringAnimation_IsExactlyOneMoreMove,Claude Code
+P3-08,P3,Boutons Undo / Restart,Restaurent les états sans désync,Validé,PlayMode UndoAndRestart_RestoreExactStates,Claude Code
+P3-09,P3,Victoire / blocage et transition,Partie peut être terminée normalement,Validé,PlayMode 5/5 (Docs/QA/P3_playmode_results.json),Claude Code
+P3-10,P3,Premier build APK debug,Installé/ou limitation documentée,En cours,APK 0.3.0 construit (Docs/QA/P3_android_build.txt); pas de téléphone détecté (H7),Claude Code
+P4-01,P4,Palette / matériaux cohérents,Rendu homogène sur 2 téléphones,En cours,Captures P4_*.png (éditeur); vérification sur 2 téléphones en attente (H7),Claude Code
+P4-02,P4,Animation gouttes et jet,La logique n’attend pas les particules,Validé,PlayMode Logic_IsResolved_BeforeAnimationsPlay,Claude Code
+P4-03,P4,Éclosion 4 couleurs,États bien différenciés,Validé,Docs/QA/captures/P4_level20_win.png,Claude Code
+P4-04,P4,Déplacement arrosoir vers slot,Trajectoire sans ambiguïté,Validé,Docs/QA/captures/P4_level1_watering.png,Claude Code
+P4-05,P4,Sons interactions / éclosion,Options de volume respectées,Validé,Confirmé à l écoute par l utilisateur sur téléphone (APK 0.4.1); test PlayMode Sounds_AreAudible_AndFollowTheSetting,Claude Code
+P4-06,P4,Animation de victoire jardin complet,"Écran net, aucune surcharge",Validé,Docs/QA/captures/P4_level20_win.png,Claude Code
+P4-07,P4,Mode 2× / animations réduites,Même replay quel que soit mode,Validé,PlayMode SameFinalState_InEveryAnimationMode,Claude Code
+P4-08,P4,Optimisation pooling/VFX,Aucun spike bloquant en cascade,Validé,Docs/QA/P4_perf.txt (éditeur); mesure appareil en P7-03,Claude Code
+P5-01,P5,Menu principal et niveau suivant,Navigation compréhensible,Validé,Docs/QA/captures/P5_home_fr.png; NextLevel après victoire,Claude Code
+P5-02,P5,Sélection des niveaux,Progression correctement verrouillée,Validé,PlayMode Levels_AreLocked_UntilThePreviousOneIsWon,Claude Code
+P5-03,P5,Tutoriel intégré 3 premiers niveaux,Test sans explication possible,En cours,Bulles niveaux 1-4 + tests; validation humaine en P6,Claude Code
+P5-04,P5,Settings audio/animations,Sauvegarde des préférences,Validé,Options son/vitesse/animations/langue sauvegardées,Claude Code
+P5-05,P5,Localisation FR/EN,Tous les écrans traduisibles,Validé,PlayMode BothLanguages_AllScreens_NoTextOverflow,Claude Code
+P5-06,P5,Sauvegarde versionnée,Arrêt/reprise sans perte,Validé,EditMode SaveAndLocalizationTests (6) + PlayMode GameInProgress_ResumesExactly_AfterReload_WithUndo,Claude Code
+P5-07,P5,Gérer pause/arrière-plan,Pas d’état d’animation fantôme,Validé,PlayMode Pause_DuringAnimation_SnapsAndSaves,Claude Code
+P5-08,P5,QA sur appareil Android,"Rapport non-crash, logs, captures",Validé,APK 0.5.0 testé par l utilisateur sur téléphone,Claude Code
+P6-01,P6,Instrumentation locale anonymisée,Événements visibles sans SDK publicitaire,Validé,PlaytestLog + PlayMode PlaytestLogTests (2),Claude Code
+P6-02,P6,Formulaire observation utilisateurs,Protocole reproductible,Validé,Docs/P6/PROTOCOLE_OBSERVATION.md + fiche_observation.csv + playtest_report.py,Claude Code
+P6-03,P6,Test 5 joueurs nouveaux,Frictions enregistrées sans interprétation exagérée,Bloqué,Nécessite 5 testeurs humains (H8); APK 0.6.0 prêt,Utilisateur + Claude Code
+P6-04,P6,Itérer sur tutoriel et UX,Avant/après basé sur retours,À faire,,
+P6-05,P6,Test 20–30 joueurs,Tableau erreurs/abandons,Bloqué,Nécessite 20-30 testeurs humains (H8),Utilisateur + Claude Code
+P7-01,P7,Sélectionner de nouveaux puzzles,100 % résolubles et revus,En cours,30 candidats MVP2 piégés vérifiés C# (CandidateLevelTests); revue humaine à faire,Claude Code
+P7-02,P7,Déployer thème jardin alternatif,"Même gameplay, variété esthétique",Validé,PlayMode EachTheme_BuildsItsOwnDecor; captures P7_theme_*.png,Claude Code
+P7-03,P7,Mesurer FPS / RAM / chauffe,Profiler sur téléphones réels,En cours,perf_sample + 60 fps; mesure sur téléphone au test final,Claude Code
+P7-04,P7,Réduire effets sur entrée de gamme,Mode dégradé stable,Validé,PlayMode EconomyMode_DropsShadowsAndMsaa_SameResult,Claude Code
+P7-05,P7,Préparer compatibilité iOS,Blocage Mac/Xcode explicite,Bloqué,"Docs/IOS.md: module iOS absent, Mac/Xcode requis",Utilisateur + Claude Code
+P8-01,P8,Vérifier nom/marque et licences,Journal d’assets/licences existant,Bloqué,Nom déjà utilisé (Docs/P8/NOM_ET_MARQUE.md); décision D-124,Utilisateur + Claude Code
+P8-02,P8,Contrôler conformité des données,Inventaire SDK et disclosure,Validé,Docs/P8/CONFIDENTIALITE.md; aucun SDK; submitAnalytics=0,Claude Code
+P8-03,P8,Proposer monétisation respectueuse,Aucune intégration sans consentement,Validé,"Docs/P8/MONETISATION.md (proposition, rien intégré)",Claude Code
+P8-04,P8,Préparer fiche store et créas,Screenshots issus du jeu réel,En cours,"Docs/Store: icône, bannière, captures FR/EN, textes",Claude Code
+P8-05,P8,Organiser soft launch plafonné,Budget approuvé explicitement,Bloqué,Budget et comptes à valider (Docs/P8/SOFT_LAUNCH.md),Utilisateur + Claude Code
+P8-06,P8,"Analyser J1/J7, taux de crashs",Décision Go/No-Go motivée,Bloqué,Nécessite un jeu publié,Utilisateur + Claude Code
+P9-01,P9,Documenter release notes et version,Build et version traçables,Validé,Docs/RELEASE_NOTES.md,Claude Code
+P9-02,P9,Surveiller retours utilisateurs,Backlog trié selon sévérité,Bloqué,Nécessite un jeu publié,Utilisateur + Claude Code
+P9-03,P9,Corriger régressions avec tests,Suite automatisée toujours verte,Bloqué,Nécessite un jeu publié,Utilisateur + Claude Code
+P9-04,P9,Calculer coût acquisition vs valeur,"Données réelles, sources indiquées",Bloqué,Nécessite des données réelles,Utilisateur + Claude Code
+P9-05,P9,Décider suite du portefeuille,Maintenir/itérer/arrêter selon preuves,Bloqué,Nécessite des données réelles,Utilisateur + Claude Code

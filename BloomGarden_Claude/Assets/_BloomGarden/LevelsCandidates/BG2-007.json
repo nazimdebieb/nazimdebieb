@@ -1,0 +1,121 @@
+{
+  "id": "BG2-007",
+  "rulesVersion": "0.1.0",
+  "slotCount": 3,
+  "title": "Jardin piégé 07",
+  "grid": {
+    "width": 4,
+    "height": 3,
+    "cells": [
+      [
+        "coral",
+        "yellow"
+      ],
+      [
+        "purple",
+        "blue"
+      ],
+      [
+        "yellow"
+      ],
+      [
+        "purple"
+      ],
+      [
+        "coral"
+      ],
+      [],
+      [],
+      [],
+      [
+        "coral"
+      ],
+      [
+        "blue"
+      ],
+      [
+        "purple",
+        "blue"
+      ],
+      [
+        "yellow",
+        "coral"
+      ]
+    ]
+  },
+  "lanes": [
+    [
+      {
+        "id": "b07",
+        "color": "blue",
+        "capacity": 2
+      },
+      {
+        "id": "c01",
+        "color": "coral",
+        "capacity": 1
+      },
+      {
+        "id": "y05",
+        "color": "yellow",
+        "capacity": 1
+      },
+      {
+        "id": "y04",
+        "color": "yellow",
+        "capacity": 1
+      }
+    ],
+    [
+      {
+        "id": "p02",
+        "color": "purple",
+        "capacity": 1
+      },
+      {
+        "id": "p03",
+        "color": "purple",
+        "capacity": 2
+      }
+    ],
+    [
+      {
+        "id": "y06",
+        "color": "yellow",
+        "capacity": 1
+      },
+      {
+        "id": "c00",
+        "color": "coral",
+        "capacity": 3
+      },
+      {
+        "id": "b08",
+        "color": "blue",
+        "capacity": 1
+      }
+    ]
+  ],
+  "theme": "meadow",
+  "referenceSolution": [
+    0,
+    0,
+    0,
+    0,
+    1,
+    1,
+    2,
+    2,
+    2
+  ],
+  "analysis": {
+    "status": "solvable",
+    "statesExplored": 94,
+    "shortestMoves": 9,
+    "reachableStates": 94,
+    "deadlockStates": 6,
+    "losingMoves": 6,
+    "winnableShare": 0.936,
+    "reviewed": false
+  }
+}

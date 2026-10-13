@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a23cf425f796704aaf628d2585f13bd, type: 3}
+  m_Name: GardenPalette
+  m_EditorClassIdentifier: BloomGarden.Presentation::BloomGarden.Presentation.GardenPalette
+  flowers:
+  - {fileID: 2100000, guid: e0c34e0834908c843b587d73bd4076e6, type: 2}
+  - {fileID: 2100000, guid: 883d409cc1b53774f99fe119ab9b5871, type: 2}
+  - {fileID: 2100000, guid: 98a6ff845d729904d8d6c10e4e828f35, type: 2}
+  - {fileID: 2100000, guid: 0fc5c8f873d4e1d47b7b7631e38b6624, type: 2}
+  soil: {fileID: 2100000, guid: 12834269e9febf0469fd56e37ec120b5, type: 2}
+  grass: {fileID: 2100000, guid: 373af2e6ed5886c42b1bcd95f2d97239, type: 2}
+  leaf: {fileID: 2100000, guid: 112b31d1fae19be4392ff2325585be66, type: 2}
+  slot: {fileID: 2100000, guid: 652fb7d8e859abd48a40000388a5eb01, type: 2}
+  lane: {fileID: 2100000, guid: b92cf56a0139f294592e25f79adeeddf, type: 2}
+  marker: {fileID: 2100000, guid: d75804d761673904e95444e999d0fda6, type: 2}
+  dormant: {fileID: 2100000, guid: ba5f21e79a288a04ea4f77c1e6d2ba36, type: 2}
+  highlight: {fileID: 2100000, guid: a67e6f3fed3680a4586375781b7e28c8, type: 2}
+  flowerHeart: {fileID: 2100000, guid: e9960f2384a29e645bef4f418030c2f6, type: 2}
+  water: {fileID: 2100000, guid: e11e07066918e7647ace49fd1b332cde, type: 2}
+  wood: {fileID: 2100000, guid: 54f7640a1d12ec44c9339f916095e7dc, type: 2}
+  woodDark: {fileID: 2100000, guid: 0f957dca27781dd42bc46ba9d4098ab1, type: 2}
+  stone: {fileID: 2100000, guid: 4c23136e30ccc8d47af4ffc3301abeb8, type: 2}
+  earth: {fileID: 2100000, guid: 785f53b43321b754e841273483838343, type: 2}
+  sand: {fileID: 2100000, guid: 5221a7ac0d843f343a43665aa87b12f2, type: 2}
+  blossom: {fileID: 2100000, guid: f2779f93fbfcd23459874351dca88834, type: 2}
+  pondWater: {fileID: 2100000, guid: b9ba3d0ddd28cee49a4d257aa4986a48, type: 2}
+  lily: {fileID: 2100000, guid: b0f1bc140e4bd8e428b47abaa67a2f80, type: 2}
+  willow: {fileID: 2100000, guid: 0683c84443ae7054ab4244f2aba4ba9a, type: 2}
+  zenSand: {fileID: 2100000, guid: a9d889132f6aa62479165ea7298cd41f, type: 2}
+  zenLine: {fileID: 2100000, guid: 9e274683f34b6b041870857e911b86af, type: 2}
+  maple: {fileID: 2100000, guid: 915d96de153447c43a967bc18fcc1951, type: 2}
+  lantern: {fileID: 2100000, guid: f7d8ba2b37e726d479c8baa33ccaf686, type: 2}
+  bamboo: {fileID: 2100000, guid: 68c09b764adb45448ab2026048644a4c, type: 2}

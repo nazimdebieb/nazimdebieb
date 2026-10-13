@@ -1,0 +1,140 @@
+{
+  "id": "BG2-022",
+  "rulesVersion": "0.1.0",
+  "slotCount": 3,
+  "title": "Jardin piégé 22",
+  "grid": {
+    "width": 4,
+    "height": 4,
+    "cells": [
+      [],
+      [
+        "purple"
+      ],
+      [
+        "yellow",
+        "coral"
+      ],
+      [
+        "purple"
+      ],
+      [],
+      [],
+      [
+        "yellow",
+        "blue"
+      ],
+      [],
+      [],
+      [
+        "purple"
+      ],
+      [],
+      [
+        "yellow"
+      ],
+      [
+        "blue",
+        "yellow",
+        "purple"
+      ],
+      [
+        "coral"
+      ],
+      [
+        "yellow",
+        "coral"
+      ],
+      [
+        "purple"
+      ]
+    ]
+  },
+  "lanes": [
+    [
+      {
+        "id": "b00",
+        "color": "blue",
+        "capacity": 1
+      },
+      {
+        "id": "b01",
+        "color": "blue",
+        "capacity": 1
+      },
+      {
+        "id": "y04",
+        "color": "yellow",
+        "capacity": 2
+      }
+    ],
+    [
+      {
+        "id": "p07",
+        "color": "purple",
+        "capacity": 2
+      },
+      {
+        "id": "p06",
+        "color": "purple",
+        "capacity": 1
+      },
+      {
+        "id": "y02",
+        "color": "yellow",
+        "capacity": 2
+      }
+    ],
+    [
+      {
+        "id": "p05",
+        "color": "purple",
+        "capacity": 1
+      },
+      {
+        "id": "y03",
+        "color": "yellow",
+        "capacity": 1
+      },
+      {
+        "id": "p08",
+        "color": "purple",
+        "capacity": 1
+      },
+      {
+        "id": "c10",
+        "color": "coral",
+        "capacity": 1
+      },
+      {
+        "id": "c09",
+        "color": "coral",
+        "capacity": 2
+      }
+    ]
+  ],
+  "theme": "zen",
+  "referenceSolution": [
+    0,
+    0,
+    0,
+    1,
+    1,
+    1,
+    2,
+    2,
+    2,
+    2,
+    2
+  ],
+  "analysis": {
+    "status": "solvable",
+    "statesExplored": 148,
+    "shortestMoves": 11,
+    "reachableStates": 148,
+    "deadlockStates": 9,
+    "losingMoves": 9,
+    "winnableShare": 0.939,
+    "reviewed": false
+  }
+}

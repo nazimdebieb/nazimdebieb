@@ -1,0 +1,116 @@
+{
+  "id": "BG2-014",
+  "rulesVersion": "0.1.0",
+  "slotCount": 3,
+  "title": "Jardin piégé 14",
+  "grid": {
+    "width": 4,
+    "height": 4,
+    "cells": [
+      [
+        "blue"
+      ],
+      [
+        "purple"
+      ],
+      [],
+      [
+        "coral"
+      ],
+      [
+        "blue"
+      ],
+      [
+        "yellow",
+        "coral",
+        "blue"
+      ],
+      [
+        "blue"
+      ],
+      [],
+      [
+        "purple"
+      ],
+      [
+        "purple"
+      ],
+      [],
+      [],
+      [
+        "coral"
+      ],
+      [],
+      [
+        "yellow",
+        "blue"
+      ],
+      [
+        "blue"
+      ]
+    ]
+  },
+  "lanes": [
+    [
+      {
+        "id": "p01",
+        "color": "purple",
+        "capacity": 2
+      },
+      {
+        "id": "b04",
+        "color": "blue",
+        "capacity": 3
+      },
+      {
+        "id": "p02",
+        "color": "purple",
+        "capacity": 1
+      },
+      {
+        "id": "y00",
+        "color": "yellow",
+        "capacity": 2
+      }
+    ],
+    [
+      {
+        "id": "b05",
+        "color": "blue",
+        "capacity": 1
+      },
+      {
+        "id": "c06",
+        "color": "coral",
+        "capacity": 3
+      }
+    ],
+    [
+      {
+        "id": "b03",
+        "color": "blue",
+        "capacity": 2
+      }
+    ]
+  ],
+  "theme": "pond",
+  "referenceSolution": [
+    0,
+    0,
+    0,
+    0,
+    1,
+    1,
+    2
+  ],
+  "analysis": {
+    "status": "solvable",
+    "statesExplored": 52,
+    "shortestMoves": 7,
+    "reachableStates": 52,
+    "deadlockStates": 4,
+    "losingMoves": 4,
+    "winnableShare": 0.923,
+    "reviewed": false
+  }
+}

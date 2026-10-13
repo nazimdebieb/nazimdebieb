@@ -1,0 +1,128 @@
+{
+  "id": "BG2-025",
+  "rulesVersion": "0.1.0",
+  "slotCount": 3,
+  "title": "Jardin piégé 25",
+  "grid": {
+    "width": 4,
+    "height": 4,
+    "cells": [
+      [],
+      [],
+      [
+        "yellow"
+      ],
+      [
+        "blue",
+        "purple"
+      ],
+      [
+        "blue"
+      ],
+      [],
+      [
+        "blue",
+        "blue",
+        "purple"
+      ],
+      [
+        "blue",
+        "purple"
+      ],
+      [
+        "coral"
+      ],
+      [],
+      [],
+      [
+        "coral"
+      ],
+      [
+        "blue",
+        "blue"
+      ],
+      [
+        "blue",
+        "yellow",
+        "blue"
+      ],
+      [],
+      []
+    ]
+  },
+  "lanes": [
+    [
+      {
+        "id": "c08",
+        "color": "coral",
+        "capacity": 2
+      },
+      {
+        "id": "b00",
+        "color": "blue",
+        "capacity": 2
+      }
+    ],
+    [
+      {
+        "id": "p06",
+        "color": "purple",
+        "capacity": 2
+      },
+      {
+        "id": "b01",
+        "color": "blue",
+        "capacity": 1
+      },
+      {
+        "id": "b02",
+        "color": "blue",
+        "capacity": 3
+      }
+    ],
+    [
+      {
+        "id": "b04",
+        "color": "blue",
+        "capacity": 1
+      },
+      {
+        "id": "y05",
+        "color": "yellow",
+        "capacity": 2
+      },
+      {
+        "id": "p07",
+        "color": "purple",
+        "capacity": 1
+      },
+      {
+        "id": "b03",
+        "color": "blue",
+        "capacity": 2
+      }
+    ]
+  ],
+  "theme": "zen",
+  "referenceSolution": [
+    0,
+    0,
+    1,
+    1,
+    1,
+    2,
+    2,
+    2,
+    2
+  ],
+  "analysis": {
+    "status": "solvable",
+    "statesExplored": 76,
+    "shortestMoves": 9,
+    "reachableStates": 76,
+    "deadlockStates": 10,
+    "losingMoves": 10,
+    "winnableShare": 0.868,
+    "reviewed": false
+  }
+}
