@@ -1,0 +1,112 @@
+{
+  "id": "BG2-004",
+  "rulesVersion": "0.1.0",
+  "slotCount": 3,
+  "title": "Jardin piégé 04",
+  "grid": {
+    "width": 4,
+    "height": 3,
+    "cells": [
+      [
+        "blue"
+      ],
+      [
+        "yellow",
+        "purple"
+      ],
+      [],
+      [
+        "yellow",
+        "yellow"
+      ],
+      [
+        "blue"
+      ],
+      [
+        "coral",
+        "purple"
+      ],
+      [],
+      [
+        "coral",
+        "blue"
+      ],
+      [],
+      [],
+      [],
+      [
+        "yellow",
+        "blue"
+      ]
+    ]
+  },
+  "lanes": [
+    [
+      {
+        "id": "b01",
+        "color": "blue",
+        "capacity": 2
+      }
+    ],
+    [
+      {
+        "id": "c02",
+        "color": "coral",
+        "capacity": 1
+      },
+      {
+        "id": "y07",
+        "color": "yellow",
+        "capacity": 3
+      },
+      {
+        "id": "c03",
+        "color": "coral",
+        "capacity": 1
+      },
+      {
+        "id": "y06",
+        "color": "yellow",
+        "capacity": 1
+      }
+    ],
+    [
+      {
+        "id": "p05",
+        "color": "purple",
+        "capacity": 1
+      },
+      {
+        "id": "p04",
+        "color": "purple",
+        "capacity": 1
+      },
+      {
+        "id": "b00",
+        "color": "blue",
+        "capacity": 2
+      }
+    ]
+  ],
+  "theme": "meadow",
+  "referenceSolution": [
+    0,
+    1,
+    1,
+    1,
+    1,
+    2,
+    2,
+    2
+  ],
+  "analysis": {
+    "status": "solvable",
+    "statesExplored": 50,
+    "shortestMoves": 8,
+    "reachableStates": 50,
+    "deadlockStates": 2,
+    "losingMoves": 2,
+    "winnableShare": 0.96,
+    "reviewed": false
+  }
+}

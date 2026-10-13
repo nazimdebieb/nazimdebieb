@@ -54,19 +54,19 @@ P6-02,P6,Formulaire observation utilisateurs,Protocole reproductible,Validé,Doc
 P6-03,P6,Test 5 joueurs nouveaux,Frictions enregistrées sans interprétation exagérée,Bloqué,Nécessite 5 testeurs humains (H8); APK 0.6.0 prêt,Utilisateur + Claude Code
 P6-04,P6,Itérer sur tutoriel et UX,Avant/après basé sur retours,À faire,,
 P6-05,P6,Test 20–30 joueurs,Tableau erreurs/abandons,Bloqué,Nécessite 20-30 testeurs humains (H8),Utilisateur + Claude Code
-P7-01,P7,Sélectionner de nouveaux puzzles,100 % résolubles et revus,À faire,,
-P7-02,P7,Déployer thème jardin alternatif,"Même gameplay, variété esthétique",À faire,,
-P7-03,P7,Mesurer FPS / RAM / chauffe,Profiler sur téléphones réels,À faire,,
-P7-04,P7,Réduire effets sur entrée de gamme,Mode dégradé stable,À faire,,
-P7-05,P7,Préparer compatibilité iOS,Blocage Mac/Xcode explicite,À faire,,
-P8-01,P8,Vérifier nom/marque et licences,Journal d’assets/licences existant,À faire,,
-P8-02,P8,Contrôler conformité des données,Inventaire SDK et disclosure,À faire,,
-P8-03,P8,Proposer monétisation respectueuse,Aucune intégration sans consentement,À faire,,
-P8-04,P8,Préparer fiche store et créas,Screenshots issus du jeu réel,À faire,,
-P8-05,P8,Organiser soft launch plafonné,Budget approuvé explicitement,À faire,,
-P8-06,P8,"Analyser J1/J7, taux de crashs",Décision Go/No-Go motivée,À faire,,
-P9-01,P9,Documenter release notes et version,Build et version traçables,À faire,,
-P9-02,P9,Surveiller retours utilisateurs,Backlog trié selon sévérité,À faire,,
-P9-03,P9,Corriger régressions avec tests,Suite automatisée toujours verte,À faire,,
-P9-04,P9,Calculer coût acquisition vs valeur,"Données réelles, sources indiquées",À faire,,
-P9-05,P9,Décider suite du portefeuille,Maintenir/itérer/arrêter selon preuves,À faire,,
+P7-01,P7,Sélectionner de nouveaux puzzles,100 % résolubles et revus,En cours,30 candidats MVP2 piégés vérifiés C# (CandidateLevelTests); revue humaine à faire,Claude Code
+P7-02,P7,Déployer thème jardin alternatif,"Même gameplay, variété esthétique",Validé,PlayMode EachTheme_BuildsItsOwnDecor; captures P7_theme_*.png,Claude Code
+P7-03,P7,Mesurer FPS / RAM / chauffe,Profiler sur téléphones réels,En cours,perf_sample + 60 fps; mesure sur téléphone au test final,Claude Code
+P7-04,P7,Réduire effets sur entrée de gamme,Mode dégradé stable,Validé,PlayMode EconomyMode_DropsShadowsAndMsaa_SameResult,Claude Code
+P7-05,P7,Préparer compatibilité iOS,Blocage Mac/Xcode explicite,Bloqué,"Docs/IOS.md: module iOS absent, Mac/Xcode requis",Utilisateur + Claude Code
+P8-01,P8,Vérifier nom/marque et licences,Journal d’assets/licences existant,Bloqué,Nom déjà utilisé (Docs/P8/NOM_ET_MARQUE.md); décision D-124,Utilisateur + Claude Code
+P8-02,P8,Contrôler conformité des données,Inventaire SDK et disclosure,Validé,Docs/P8/CONFIDENTIALITE.md; aucun SDK; submitAnalytics=0,Claude Code
+P8-03,P8,Proposer monétisation respectueuse,Aucune intégration sans consentement,Validé,"Docs/P8/MONETISATION.md (proposition, rien intégré)",Claude Code
+P8-04,P8,Préparer fiche store et créas,Screenshots issus du jeu réel,En cours,"Docs/Store: icône, bannière, captures FR/EN, textes",Claude Code
+P8-05,P8,Organiser soft launch plafonné,Budget approuvé explicitement,Bloqué,Budget et comptes à valider (Docs/P8/SOFT_LAUNCH.md),Utilisateur + Claude Code
+P8-06,P8,"Analyser J1/J7, taux de crashs",Décision Go/No-Go motivée,Bloqué,Nécessite un jeu publié,Utilisateur + Claude Code
+P9-01,P9,Documenter release notes et version,Build et version traçables,Validé,Docs/RELEASE_NOTES.md,Claude Code
+P9-02,P9,Surveiller retours utilisateurs,Backlog trié selon sévérité,Bloqué,Nécessite un jeu publié,Utilisateur + Claude Code
+P9-03,P9,Corriger régressions avec tests,Suite automatisée toujours verte,Bloqué,Nécessite un jeu publié,Utilisateur + Claude Code
+P9-04,P9,Calculer coût acquisition vs valeur,"Données réelles, sources indiquées",Bloqué,Nécessite des données réelles,Utilisateur + Claude Code
+P9-05,P9,Décider suite du portefeuille,Maintenir/itérer/arrêter selon preuves,Bloqué,Nécessite des données réelles,Utilisateur + Claude Code

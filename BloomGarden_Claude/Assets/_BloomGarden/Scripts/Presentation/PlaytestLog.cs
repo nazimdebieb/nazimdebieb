@@ -24,6 +24,7 @@ namespace BloomGarden.Presentation
             "e", "ts", "sid", "app", "platform", "lang", "level_id", "attempt", "resumed", "lane", "color", "cap",
             "turn_index", "ms", "used_slots", "steps", "duration_ms", "undos", "restarts", "deadlocks",
             "last_state_hash", "reason", "setting_name", "value", "hint",
+            "fps_avg", "frame_p95_ms", "managed_mb", "alloc_mb", "ram_gb", "quality",
         };
 
         private readonly string _path;

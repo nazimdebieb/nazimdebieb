@@ -55,6 +55,10 @@ namespace BloomGarden.Presentation
         private float ContentScale => _cell / MaxCellSize * FlowerScale;
 
         private bool Reduced => _settings != null && _settings.ReducedMotion;
+
+        /// <summary>Economy graphics (P7-04): fewer particles. Set by the controller.</summary>
+        public System.Func<bool> EconomyEffects { get; set; }
+        private bool Economy => EconomyEffects != null && EconomyEffects();
         private float Step => stepDuration * (_settings?.DurationScale ?? 1f) * (Reduced ? 0.5f : 1f);
 
         public void Init(GameSettings settings, GardenAudio audio)
@@ -150,7 +154,18 @@ namespace BloomGarden.Presentation
 
             Prim(PrimitiveType.Cube, decor, palette.sand, new Vector3(0f, -1.2f, 0f), new Vector3(40f, 0.2f, 40f)).name = "Ground";
             Prim(PrimitiveType.Cube, decor, palette.earth, new Vector3(0f, -0.62f, _boardCenterZ), new Vector3(halfW * 2f, 0.8f, halfD * 2f), true).name = "Island";
-            Prim(PrimitiveType.Cube, decor, palette.grass, new Vector3(0f, -0.16f, _boardCenterZ), new Vector3(halfW * 2f + 0.1f, 0.14f, halfD * 2f + 0.1f)).name = "Lawn";
+            string theme = level.Theme ?? "meadow";
+            Material lawn = theme == "zen" ? palette.zenSand : palette.grass;
+            Prim(PrimitiveType.Cube, decor, lawn, new Vector3(0f, -0.16f, _boardCenterZ), new Vector3(halfW * 2f + 0.1f, 0.14f, halfD * 2f + 0.1f)).name = "Lawn";
+            if (theme == "zen")
+            {
+                // Raked sand: thin lines between the rows of soil patches.
+                for (int r = 0; r <= level.Height; r++)
+                {
+                    float z = _boardCenterZ + level.Height * _cell / 2f - r * _cell;
+                    Prim(PrimitiveType.Cube, decor, palette.zenLine, new Vector3(0f, -0.085f, z), new Vector3(halfW * 2f - 0.2f, 0.01f, 0.05f)).name = "Rake line";
+                }
+            }
 
             // Stones along the island edge, deterministic sizes.
             int index = 0;
@@ -166,10 +181,27 @@ namespace BloomGarden.Presentation
             }
 
             float top = _boardCenterZ + halfD, bottom = _boardCenterZ - halfD;
-            FlowerFactory.Tree(palette, palette.blossom, decor, 1.0f).transform.localPosition = new Vector3(-halfW - 0.7f, -0.15f, _boardCenterZ - 0.2f);
-            FlowerFactory.Tree(palette, palette.leaf, decor, 0.85f).transform.localPosition = new Vector3(halfW + 0.75f, -0.15f, bottom + 0.9f);
-            FlowerFactory.Bush(palette, decor).transform.localPosition = new Vector3(-halfW - 0.5f, -0.15f, bottom + 0.3f);
-            FlowerFactory.Bush(palette, decor).transform.localPosition = new Vector3(halfW + 0.5f, -0.15f, top - 0.9f);
+            switch (theme)
+            {
+                case "pond":
+                    FlowerFactory.Pond(palette, decor, 1.0f).transform.localPosition = new Vector3(halfW + 0.55f, -1.08f, _boardCenterZ + 0.4f);
+                    FlowerFactory.Tree(palette, palette.willow, decor, 1.0f).transform.localPosition = new Vector3(-halfW - 0.7f, -0.15f, _boardCenterZ - 0.2f);
+                    FlowerFactory.Bush(palette, decor).transform.localPosition = new Vector3(-halfW - 0.5f, -0.15f, bottom + 0.3f);
+                    FlowerFactory.Bush(palette, decor).transform.localPosition = new Vector3(halfW + 0.5f, -0.15f, bottom + 0.4f);
+                    break;
+                case "zen":
+                    FlowerFactory.Lantern(palette, decor).transform.localPosition = new Vector3(-halfW - 0.55f, -0.15f, _boardCenterZ + 0.6f);
+                    FlowerFactory.Tree(palette, palette.maple, decor, 0.9f).transform.localPosition = new Vector3(halfW + 0.75f, -0.15f, bottom + 0.9f);
+                    FlowerFactory.Bamboo(palette, decor).transform.localPosition = new Vector3(halfW + 0.55f, -0.15f, top - 0.8f);
+                    FlowerFactory.Bush(palette, decor).transform.localPosition = new Vector3(-halfW - 0.5f, -0.15f, bottom + 0.3f);
+                    break;
+                default: // meadow
+                    FlowerFactory.Tree(palette, palette.blossom, decor, 1.0f).transform.localPosition = new Vector3(-halfW - 0.7f, -0.15f, _boardCenterZ - 0.2f);
+                    FlowerFactory.Tree(palette, palette.leaf, decor, 0.85f).transform.localPosition = new Vector3(halfW + 0.75f, -0.15f, bottom + 0.9f);
+                    FlowerFactory.Bush(palette, decor).transform.localPosition = new Vector3(-halfW - 0.5f, -0.15f, bottom + 0.3f);
+                    FlowerFactory.Bush(palette, decor).transform.localPosition = new Vector3(halfW + 0.5f, -0.15f, top - 0.9f);
+                    break;
+            }
 
             // Wooden stand for places and lanes.
             float standTop = SlotZ + 0.85f, standBottom = LaneHeadZ - (VisibleCansPerLane - 0.4f) * LaneStep;
@@ -413,7 +445,7 @@ namespace BloomGarden.Presentation
                         bool stackDone = bloomed[e.CellIndex] >= _level.Cells[e.CellIndex].Count;
                         GameObject shown = ShowCell(e.CellIndex, bloomed[e.CellIndex], animate: !stackDone);
                         if (stackDone && !Reduced) StartCoroutine(Unfold(shown, Step * 1.8f));
-                        if (!Reduced) Burst(CellWorld(e.CellIndex) + Vector3.up * 0.5f, e.Color, 6);
+                        if (!Reduced) Burst(CellWorld(e.CellIndex) + Vector3.up * 0.5f, e.Color, Economy ? 3 : 6);
                         _audio?.PlayBloom(cascade++);
                         BloomShown?.Invoke();
                         yield return Wait(Step * 0.6f);
@@ -444,7 +476,7 @@ namespace BloomGarden.Presentation
                 if (flower != null && flower.name.StartsWith("Bloom")) StartCoroutine(Pop(flower, Step * 1.5f));
                 if (i % _level.Width == _level.Width - 1) yield return Wait(Step * 0.35f);
             }
-            for (int i = 0; i < 28; i++)
+            for (int i = 0, petals = Economy ? 12 : 28; i < petals; i++)
             {
                 ColorId color = (ColorId)(i % ColorIds.Count);
                 var petal = _pool.Get("Petal " + color.ToId(), p =>
@@ -506,7 +538,7 @@ namespace BloomGarden.Presentation
         {
             Vector3 start = can.transform.TransformPoint(CanView.SpoutTip);
             Vector3 end = CellWorld(cell) + Vector3.up * 0.6f;
-            const int drops = 5;
+            int drops = Economy ? 3 : 5;
             for (int i = 0; i < drops; i++)
             {
                 var drop = _pool.Get("Drop", p => FlowerFactory.Drop(palette, p), _effectsRoot);

@@ -39,6 +39,10 @@ namespace BloomGarden.EditorTools
             PlayerSettings.allowedAutorotateToPortraitUpsideDown = false;
             PlayerSettings.allowedAutorotateToLandscapeLeft = false;
             PlayerSettings.allowedAutorotateToLandscapeRight = false;
+            // P8-02: no hardware statistics sent to Unity by the player (no public API: serialized field).
+            var player = new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/ProjectSettings.asset")[0]);
+            player.FindProperty("submitAnalytics").boolValue = false;
+            player.ApplyModifiedPropertiesWithoutUndo();
             AssetDatabase.SaveAssets();
             Debug.Log("[BloomGarden] Player settings: portrait, ids set.");
         }
@@ -70,11 +74,65 @@ namespace BloomGarden.EditorTools
         {
             PlayerSettings.SetScriptingBackend(NamedBuildTarget.Android, ScriptingImplementation.IL2CPP);
             PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
-            PlayerSettings.bundleVersion = "0.6.0";
-            PlayerSettings.Android.bundleVersionCode = 7;
+            PlayerSettings.bundleVersion = "0.7.0";
+            PlayerSettings.Android.bundleVersionCode = 8;
             PlayerSettings.Android.useCustomKeystore = false;
+            // App icon rendered from the game's own pieces (StoreArt, P8-04).
+            var icon = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/_BloomGarden/Art/Icon/AppIcon.png");
+            if (icon != null)
+            {
+                PlayerSettings.SetIcons(NamedBuildTarget.Unknown, new[] { icon }, IconKind.Any);
+                // Unity 6 Android uses adaptive icons only: layer 0 = background (our rendered icon), layer 1 =
+                // foreground (transparent). Launchers crop to their mask shape around the centre.
+                Texture2D clear = TransparentLayer();
+                var kind = UnityEditor.Android.AndroidPlatformIconKind.Adaptive;
+                var slots = PlayerSettings.GetPlatformIcons(NamedBuildTarget.Android, kind);
+                foreach (var slot in slots)
+                {
+                    slot.SetTexture(icon, 0);
+                    slot.SetTexture(clear, 1);
+                }
+                PlayerSettings.SetPlatformIcons(NamedBuildTarget.Android, kind, slots);
+            }
             ConfigurePlayerSettings();
-            Debug.Log("[BloomGarden] Android settings: IL2CPP, ARM64, version 0.6.0 (7), debug signing.");
+            Debug.Log("[BloomGarden] Android settings: IL2CPP, ARM64, version 0.7.0 (8), debug signing.");
+        }
+
+        private static Texture2D TransparentLayer()
+        {
+            const string path = "Assets/_BloomGarden/Art/Icon/AppIconForeground.png";
+            if (!System.IO.File.Exists(path))
+            {
+                var tex = new Texture2D(432, 432, TextureFormat.RGBA32, false);
+                var pixels = new Color32[432 * 432];
+                tex.SetPixels32(pixels);
+                System.IO.File.WriteAllBytes(path, tex.EncodeToPNG());
+                Object.DestroyImmediate(tex);
+                AssetDatabase.ImportAsset(path);
+                var importer = (TextureImporter)AssetImporter.GetAtPath(path);
+                importer.alphaIsTransparency = true;
+                importer.mipmapEnabled = false;
+                importer.SaveAndReimport();
+            }
+            return AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+        }
+
+        /// <summary>
+        /// P7-05: iOS player settings prepared in advance (identifier, portrait, minimum iOS, version). They are
+        /// stored in ProjectSettings even without the iOS module; building requires the iOS Build Support module,
+        /// then a Mac with Xcode (or a cloud build service) and an Apple developer account. See Docs/IOS.md.
+        /// </summary>
+        [MenuItem("Bloom Garden/P7 - Reglages iOS")]
+        public static void ConfigureIos()
+        {
+            PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.iOS, "com.nazimdebieb.bloomgarden.claude");
+            PlayerSettings.iOS.targetOSVersionString = "15.0";
+            PlayerSettings.iOS.buildNumber = PlayerSettings.Android.bundleVersionCode.ToString();
+            PlayerSettings.iOS.requiresFullScreen = true;
+            PlayerSettings.iOS.hideHomeButton = false;
+            PlayerSettings.SetScriptingBackend(NamedBuildTarget.iOS, ScriptingImplementation.IL2CPP);
+            ConfigurePlayerSettings();
+            Debug.Log("[BloomGarden] iOS settings prepared: com.nazimdebieb.bloomgarden.claude, iOS 15.0+, portrait.");
         }
 
         [MenuItem("Bloom Garden/P0 - Creer la scene Game")]

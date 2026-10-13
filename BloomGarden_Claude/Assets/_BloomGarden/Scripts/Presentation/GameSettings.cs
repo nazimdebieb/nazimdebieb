@@ -25,6 +25,15 @@ namespace BloomGarden.Presentation
 
         public bool SoundOn => SoundVolume > 0.001f;
 
+        public GraphicsMode Graphics =>
+            _data.graphics == "high" ? GraphicsMode.High : _data.graphics == "economy" ? GraphicsMode.Economy : GraphicsMode.Auto;
+
+        public void SetGraphics(GraphicsMode mode)
+        {
+            _data.graphics = mode == GraphicsMode.High ? "high" : mode == GraphicsMode.Economy ? "economy" : "auto";
+            Notify("graphics", _data.graphics);
+        }
+
         /// <summary>Multiplier applied to every animation duration (1 = normal, 0.5 = fast).</summary>
         public float DurationScale => FastAnimations ? 0.5f : 1f;
 

@@ -46,6 +46,9 @@ namespace BloomGarden.Presentation
         private bool _endShown;
         private int _displayedBloomed;
         private PlaytestLog _log;
+        private GraphicsQuality _quality;
+        private float _nextPerfSample;
+        public const float PerfSampleInterval = 30f;
         private float _attemptStart;
         private int _attemptUndos, _attemptRestarts, _attemptDeadlocks, _attempts;
         private bool _attemptOpen;
@@ -65,6 +68,7 @@ namespace BloomGarden.Presentation
         public GameScreen CurrentScreen { get; private set; }
         public int LevelCount => catalog.Count;
         public PlaytestLog Playtest => _log;
+        public GraphicsQuality Quality => _quality;
 
         private void Awake()
         {
@@ -87,11 +91,15 @@ namespace BloomGarden.Presentation
             _garden.transform.SetParent(transform, false);
             _garden.Palette = palette;
             _garden.Init(Settings, _audio);
+            _quality = gameObject.AddComponent<GraphicsQuality>();
+            _quality.Init(viewCamera, Settings);
+            _quality.AutoSwitched += mode => _log.Write("settings_changed", ("setting_name", "graphics_auto"), ("value", mode));
+            _garden.EconomyEffects = () => _quality.Economy;
             _garden.BloomShown += () => _hud.SetCounter(++_displayedBloomed, _session.Level.TotalBuds);
 
             _hud = new GameObject("UI").AddComponent<HudView>();
             _hud.transform.SetParent(transform, false);
-            _hud.Build(Settings, LaneHeadScreenPosition, _log);
+            _hud.Build(Settings, LaneHeadScreenPosition, _log, _quality);
             _hud.UndoClicked += Undo;
             _hud.RestartClicked += Restart;
             _hud.MenuClicked += ShowHome;
@@ -112,6 +120,11 @@ namespace BloomGarden.Presentation
         private void Update()
         {
             FitCamera();
+            if (CurrentScreen == GameScreen.Playing && Time.realtimeSinceStartup >= _nextPerfSample)
+            {
+                if (_nextPerfSample > 0f) LogPerfSample();
+                _nextPerfSample = Time.realtimeSinceStartup + PerfSampleInterval;
+            }
             if (!Input.GetMouseButtonDown(0)) return;
             if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) return;
             if (Input.touchCount > 0 && EventSystem.current != null && EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId)) return;
@@ -160,7 +173,11 @@ namespace BloomGarden.Presentation
 
         public void ShowLevels()
         {
+            SnapAndPersist();
+            LogAbandon("menu");
             CurrentScreen = GameScreen.Levels;
+            _hud.SetGameLayerVisible(false);
+            _hud.ShowHint(TutorialHint.None);
             _menu.ShowLevels(_save.unlocked, i => _save.IsCompleted(LevelId(i)));
         }
 
@@ -355,6 +372,15 @@ namespace BloomGarden.Presentation
             if (_session.State.IsWon || _session.State.MovesMade == 0) return;
             _log.Write("level_abandoned", ("level_id", _session.Level.Id), ("steps", _session.State.MovesMade), ("duration_ms", ElapsedMs()),
                 ("last_state_hash", _session.State.ComputeHash().ToString("x16")), ("reason", reason));
+        }
+
+        /// <summary>P7-03: frame rate, frame-time p95 and memory, every 30 s of play (and on demand for tests).</summary>
+        public void LogPerfSample()
+        {
+            _log.Write("perf_sample", ("level_id", _session?.Level.Id), ("fps_avg", Mathf.Round(_quality.AverageFps)),
+                ("frame_p95_ms", Mathf.Round(_quality.FrameP95Ms)), ("managed_mb", GraphicsQuality.ManagedMemoryMb),
+                ("alloc_mb", GraphicsQuality.AllocatedMemoryMb), ("ram_gb", GraphicsQuality.DeviceRamGb),
+                ("quality", _quality.Economy ? "economy" : "high"));
         }
 
         private long ElapsedMs() => (long)((Time.realtimeSinceStartup - _attemptStart) * 1000f);

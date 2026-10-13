@@ -1,0 +1,128 @@
+{
+  "id": "BG2-020",
+  "rulesVersion": "0.1.0",
+  "slotCount": 3,
+  "title": "Jardin piégé 20",
+  "grid": {
+    "width": 4,
+    "height": 4,
+    "cells": [
+      [],
+      [
+        "blue"
+      ],
+      [
+        "coral"
+      ],
+      [
+        "blue",
+        "coral"
+      ],
+      [
+        "blue"
+      ],
+      [],
+      [
+        "yellow",
+        "purple"
+      ],
+      [
+        "purple"
+      ],
+      [
+        "coral"
+      ],
+      [
+        "yellow",
+        "purple",
+        "coral"
+      ],
+      [],
+      [],
+      [],
+      [
+        "purple",
+        "purple"
+      ],
+      [],
+      [
+        "blue"
+      ]
+    ]
+  },
+  "lanes": [
+    [
+      {
+        "id": "b03",
+        "color": "blue",
+        "capacity": 1
+      },
+      {
+        "id": "b02",
+        "color": "blue",
+        "capacity": 3
+      },
+      {
+        "id": "c01",
+        "color": "coral",
+        "capacity": 2
+      },
+      {
+        "id": "p04",
+        "color": "purple",
+        "capacity": 2
+      }
+    ],
+    [
+      {
+        "id": "p06",
+        "color": "purple",
+        "capacity": 1
+      },
+      {
+        "id": "c00",
+        "color": "coral",
+        "capacity": 2
+      },
+      {
+        "id": "y08",
+        "color": "yellow",
+        "capacity": 1
+      }
+    ],
+    [
+      {
+        "id": "p05",
+        "color": "purple",
+        "capacity": 2
+      },
+      {
+        "id": "y07",
+        "color": "yellow",
+        "capacity": 1
+      }
+    ]
+  ],
+  "theme": "pond",
+  "referenceSolution": [
+    0,
+    0,
+    0,
+    0,
+    1,
+    1,
+    1,
+    2,
+    2
+  ],
+  "analysis": {
+    "status": "solvable",
+    "statesExplored": 122,
+    "shortestMoves": 9,
+    "reachableStates": 122,
+    "deadlockStates": 2,
+    "losingMoves": 2,
+    "winnableShare": 0.984,
+    "reviewed": false
+  }
+}

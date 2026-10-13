@@ -103,6 +103,14 @@ namespace BloomGarden.EditorTools
             palette.earth = Mat("Earth", "#A87A55");
             palette.sand = Mat("Sand", "#E6D8BF");
             palette.blossom = Mat("Blossom", "#F6B8C8");
+            palette.pondWater = Mat("PondWater", "#7EC4E2");
+            palette.lily = Mat("Lily", "#4E9E6A");
+            palette.willow = Mat("Willow", "#7BAF5E");
+            palette.zenSand = Mat("ZenSand", "#E9DDC2");
+            palette.zenLine = Mat("ZenLine", "#D3C4A3");
+            palette.maple = Mat("Maple", "#D9654B");
+            palette.lantern = Mat("Lantern", "#A39D93");
+            palette.bamboo = Mat("Bamboo", "#8DBA5A");
             EditorUtility.SetDirty(palette);
             AssetDatabase.SaveAssets();
             return palette;

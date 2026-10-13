@@ -5,6 +5,7 @@
         "BloomGarden.Core",
         "BloomGarden.Levels",
         "BloomGarden.Presentation",
+        "Unity.RenderPipelines.Universal.Runtime",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner"
     ],

@@ -20,6 +20,8 @@ namespace BloomGarden.Presentation
         public bool reduced;
         /// <summary>"fr", "en", or empty = follow the device.</summary>
         public string language = "";
+        /// <summary>"auto", "high" or "economy" (P7-04). Empty = auto.</summary>
+        public string graphics = "auto";
     }
 
     [Serializable]
@@ -140,6 +142,7 @@ namespace BloomGarden.Presentation
             data.progress.lanes ??= new List<int>();
             data.progress.levelId ??= "";
             data.settings.language ??= "";
+            if (string.IsNullOrEmpty(data.settings.graphics)) data.settings.graphics = "auto";
             data.settings.volume = Mathf.Clamp01(data.settings.volume);
             data.unlocked = Math.Max(1, data.unlocked);
             return data;

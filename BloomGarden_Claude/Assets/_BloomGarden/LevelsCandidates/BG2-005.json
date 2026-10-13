@@ -1,0 +1,114 @@
+{
+  "id": "BG2-005",
+  "rulesVersion": "0.1.0",
+  "slotCount": 3,
+  "title": "Jardin piégé 05",
+  "grid": {
+    "width": 4,
+    "height": 3,
+    "cells": [
+      [],
+      [],
+      [
+        "blue",
+        "blue"
+      ],
+      [
+        "blue"
+      ],
+      [
+        "purple"
+      ],
+      [],
+      [],
+      [
+        "yellow",
+        "coral"
+      ],
+      [
+        "blue",
+        "purple"
+      ],
+      [
+        "coral"
+      ],
+      [
+        "yellow",
+        "purple"
+      ],
+      [
+        "coral",
+        "yellow"
+      ]
+    ]
+  },
+  "lanes": [
+    [
+      {
+        "id": "p03",
+        "color": "purple",
+        "capacity": 1
+      },
+      {
+        "id": "c07",
+        "color": "coral",
+        "capacity": 1
+      },
+      {
+        "id": "p04",
+        "color": "purple",
+        "capacity": 1
+      },
+      {
+        "id": "p05",
+        "color": "purple",
+        "capacity": 1
+      }
+    ],
+    [
+      {
+        "id": "c06",
+        "color": "coral",
+        "capacity": 2
+      }
+    ],
+    [
+      {
+        "id": "y00",
+        "color": "yellow",
+        "capacity": 3
+      },
+      {
+        "id": "b02",
+        "color": "blue",
+        "capacity": 1
+      },
+      {
+        "id": "b01",
+        "color": "blue",
+        "capacity": 3
+      }
+    ]
+  ],
+  "theme": "meadow",
+  "referenceSolution": [
+    0,
+    0,
+    0,
+    0,
+    2,
+    1,
+    2,
+    2
+  ],
+  "analysis": {
+    "status": "solvable",
+    "statesExplored": 66,
+    "shortestMoves": 8,
+    "reachableStates": 66,
+    "deadlockStates": 4,
+    "losingMoves": 4,
+    "winnableShare": 0.939,
+    "reviewed": false
+  }
+}

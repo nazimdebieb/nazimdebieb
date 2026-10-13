@@ -35,6 +35,9 @@ namespace BloomGarden.Presentation
         private Text _soundLabel, _speedLabel, _motionLabel, _languageLabel, _settingsTitle, _closeLabel;
         private Button _undo, _panelSecondary;
         private GameObject _panel, _settingsPanel, _hint, _playtestPanel;
+        private Text _graphicsLabel, _playtestPerf;
+        private GraphicsQuality _quality;
+        private float _nextPerfRefresh;
         private Text _playtestLabel, _playtestTitle, _playtestPrivacy, _playtestHeader, _playtestBody, _copyLabel, _clearLabel, _playtestCloseLabel;
         private PlaytestLog _playtest;
         private bool _copied;
@@ -52,13 +55,15 @@ namespace BloomGarden.Presentation
         public bool PlaytestVisible => _playtestPanel != null && _playtestPanel.activeSelf;
         public string PlaytestText => _playtestBody != null ? _playtestBody.text : null;
         public bool HintVisible => _hint.activeSelf;
+        public bool GameLayerVisible => _gameLayer.gameObject.activeSelf;
         public string HintKey => _hint.activeSelf ? _hintContent.Key : null;
         public bool ArrowVisible => _arrow.gameObject.activeSelf;
 
         public event Action UndoClicked, RestartClicked, MenuClicked, PanelPrimaryClicked, PanelSecondaryClicked;
 
-        public void Build(GameSettings settings, Func<int, Vector2> laneScreenPosition, PlaytestLog playtest)
+        public void Build(GameSettings settings, Func<int, Vector2> laneScreenPosition, PlaytestLog playtest, GraphicsQuality quality)
         {
+            _quality = quality;
             _settings = settings;
             _playtest = playtest;
             _laneScreenPosition = laneScreenPosition;
@@ -160,7 +165,7 @@ namespace BloomGarden.Presentation
 
             var panel = UiKit.Panel(_safe, "Settings panel", new Color(UiKit.Ivory.r, UiKit.Ivory.g, UiKit.Ivory.b, 0.98f));
             _settingsPanel = panel.gameObject;
-            UiKit.At(panel.rectTransform, 0.5f, 0.5f, new Vector2(0f, 60f), new Vector2(900f, 1040f));
+            UiKit.At(panel.rectTransform, 0.5f, 0.5f, new Vector2(0f, 60f), new Vector2(900f, 1170f));
             _settingsTitle = _ui.Label(panel.transform, "Title", 64, FontStyle.Bold, TextAnchor.MiddleCenter);
             UiKit.Place(_settingsTitle.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, -90f), new Vector2(-60f, 100f));
 
@@ -177,6 +182,8 @@ namespace BloomGarden.Presentation
             Row("Speed", out _speedLabel, () => _settings.SetFastAnimations(!_settings.FastAnimations));
             Row("Motion", out _motionLabel, () => _settings.SetReducedMotion(!_settings.ReducedMotion));
             Row("Language", out _languageLabel, () => _settings.SetLanguage(_settings.Language == Language.French ? Language.English : Language.French));
+            Row("Graphics", out _graphicsLabel, () => _settings.SetGraphics(
+                _settings.Graphics == GraphicsMode.Auto ? GraphicsMode.High : _settings.Graphics == GraphicsMode.High ? GraphicsMode.Economy : GraphicsMode.Auto));
             Row("Playtest", out _playtestLabel, ShowPlaytest);
 
             var close = _ui.Button(panel.transform, "Close", UiKit.Leaf, 46, out _closeLabel);
@@ -196,10 +203,12 @@ namespace BloomGarden.Presentation
             UiKit.Place(_playtestTitle.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, -80f), new Vector2(-60f, 90f));
             _playtestPrivacy = _ui.Label(panel.transform, "Privacy", 32, FontStyle.Italic, TextAnchor.MiddleCenter);
             UiKit.Place(_playtestPrivacy.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, -180f), new Vector2(-80f, 100f));
+            _playtestPerf = _ui.Label(panel.transform, "Perf", 30, FontStyle.Normal, TextAnchor.MiddleCenter);
+            UiKit.Place(_playtestPerf.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(0f, 440f), new Vector2(-80f, 90f));
             _playtestHeader = _ui.Label(panel.transform, "Header", 30, FontStyle.Bold, TextAnchor.MiddleLeft);
             UiKit.Place(_playtestHeader.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, -280f), new Vector2(-80f, 90f));
             _playtestBody = _ui.Label(panel.transform, "Body", 30, FontStyle.Normal, TextAnchor.UpperLeft);
-            UiKit.Place(_playtestBody.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, -800f), new Vector2(-80f, 920f));
+            UiKit.Place(_playtestBody.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, -770f), new Vector2(-80f, 860f));
 
             var copy = _ui.Button(panel.transform, "Copy", UiKit.Leaf, 42, out _copyLabel);
             UiKit.At((RectTransform)copy.transform, 0.5f, 0f, new Vector2(0f, 330f), new Vector2(720f, 110f));
@@ -221,6 +230,13 @@ namespace BloomGarden.Presentation
             UiKit.At((RectTransform)close.transform, 0.5f, 0f, new Vector2(0f, 80f), new Vector2(720f, 100f));
             close.onClick.AddListener(() => _playtestPanel.SetActive(false));
             _playtestPanel.SetActive(false);
+        }
+
+        private void RefreshPerf()
+        {
+            if (_playtestPerf == null || _quality == null) return;
+            _playtestPerf.text = Loc.T("playtest_perf", Mathf.RoundToInt(_quality.AverageFps), Mathf.RoundToInt(_quality.FrameP95Ms),
+                Mathf.Max(GraphicsQuality.AllocatedMemoryMb, GraphicsQuality.ManagedMemoryMb), Loc.T(_quality.Economy ? "quality_economy" : "quality_high"));
         }
 
         public void HideOverlays()
@@ -281,9 +297,14 @@ namespace BloomGarden.Presentation
             ApplyTexts();
         }
 
-        /// <summary>The arrow bounces above the lane head it points at.</summary>
+        /// <summary>The arrow bounces above the lane head it points at; the playtest panel shows live performance.</summary>
         private void Update()
         {
+            if (_playtestPanel != null && _playtestPanel.activeSelf && Time.unscaledTime >= _nextPerfRefresh)
+            {
+                _nextPerfRefresh = Time.unscaledTime + 1f;
+                RefreshPerf();
+            }
             if (!_arrow.gameObject.activeSelf || _laneScreenPosition == null) return;
             Vector2 screen = _laneScreenPosition(_hintContent.Lane);
             var canvasRt = (RectTransform)_arrow.parent;
@@ -320,6 +341,10 @@ namespace BloomGarden.Presentation
             _languageLabel.text = Loc.T("language");
             _closeLabel.text = Loc.T("close");
             _playtestLabel.text = Loc.T("playtest_button");
+            _graphicsLabel.text = Loc.T(_settings.Graphics == GraphicsMode.High ? "graphics_high"
+                : _settings.Graphics == GraphicsMode.Economy ? "graphics_economy"
+                : _quality != null && _quality.AutoDowngraded ? "graphics_auto_eco" : "graphics_auto");
+            RefreshPerf();
             _playtestTitle.text = Loc.T("playtest_button");
             _playtestPrivacy.text = Loc.T("playtest_privacy");
             _playtestHeader.text = Loc.T("playtest_header");

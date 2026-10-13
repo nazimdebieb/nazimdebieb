@@ -120,6 +120,55 @@ namespace BloomGarden.Presentation
             return root;
         }
 
+        public static GameObject Lantern(GardenPalette palette, Transform parent)
+        {
+            var root = new GameObject("Lantern");
+            root.transform.SetParent(parent, false);
+            GardenView.Prim(PrimitiveType.Cylinder, root.transform, palette.lantern, new Vector3(0f, 0.08f, 0f), new Vector3(0.5f, 0.08f, 0.5f), true);
+            GardenView.Prim(PrimitiveType.Cylinder, root.transform, palette.lantern, new Vector3(0f, 0.45f, 0f), new Vector3(0.16f, 0.3f, 0.16f), true);
+            GardenView.Prim(PrimitiveType.Cube, root.transform, palette.lantern, new Vector3(0f, 0.85f, 0f), new Vector3(0.42f, 0.3f, 0.42f), true);
+            GardenView.Prim(PrimitiveType.Cube, root.transform, palette.flowerHeart, new Vector3(0f, 0.85f, -0.16f), new Vector3(0.2f, 0.16f, 0.12f));
+            var roof = GardenView.Prim(PrimitiveType.Cube, root.transform, palette.lantern, new Vector3(0f, 1.08f, 0f), new Vector3(0.62f, 0.1f, 0.62f), true);
+            roof.transform.localRotation = Quaternion.Euler(0f, 45f, 0f);
+            GardenView.Prim(PrimitiveType.Sphere, root.transform, palette.lantern, new Vector3(0f, 1.2f, 0f), Vector3.one * 0.14f, true);
+            return root;
+        }
+
+        public static GameObject Pond(GardenPalette palette, Transform parent, float radius)
+        {
+            var root = new GameObject("Pond");
+            root.transform.SetParent(parent, false);
+            GardenView.Prim(PrimitiveType.Cylinder, root.transform, palette.stone, Vector3.zero, new Vector3(radius * 2f + 0.3f, 0.06f, radius * 1.4f + 0.3f));
+            GardenView.Prim(PrimitiveType.Cylinder, root.transform, palette.pondWater, new Vector3(0f, 0.04f, 0f), new Vector3(radius * 2f, 0.05f, radius * 1.4f));
+            for (int i = 0; i < 3; i++)
+            {
+                var pad = GardenView.Prim(PrimitiveType.Cylinder, root.transform, palette.lily,
+                    new Vector3((i - 1) * radius * 0.55f, 0.1f, (i % 2) * 0.35f - 0.15f), new Vector3(0.42f, 0.015f, 0.42f));
+                pad.name = "Lily pad";
+            }
+            GardenView.Prim(PrimitiveType.Sphere, root.transform, palette.blossom, new Vector3(radius * 0.55f, 0.18f, -0.15f), new Vector3(0.18f, 0.1f, 0.18f), true);
+            for (int i = 0; i < 4; i++)
+            {
+                var reed = GardenView.Prim(PrimitiveType.Capsule, root.transform, palette.leaf,
+                    new Vector3(-radius + 0.1f + i * 0.12f, 0.35f, radius * 0.5f), new Vector3(0.05f, 0.35f + (i % 2) * 0.1f, 0.05f), true);
+                reed.transform.localRotation = Quaternion.Euler(0f, 0f, -8f + i * 5f);
+            }
+            return root;
+        }
+
+        public static GameObject Bamboo(GardenPalette palette, Transform parent)
+        {
+            var root = new GameObject("Bamboo");
+            root.transform.SetParent(parent, false);
+            for (int i = 0; i < 3; i++)
+            {
+                float h = 1.1f + i * 0.25f;
+                GardenView.Prim(PrimitiveType.Cylinder, root.transform, palette.bamboo, new Vector3(i * 0.18f - 0.18f, h / 2f, (i % 2) * 0.15f), new Vector3(0.08f, h / 2f, 0.08f), true);
+                GardenView.Prim(PrimitiveType.Sphere, root.transform, palette.leaf, new Vector3(i * 0.18f - 0.1f, h, (i % 2) * 0.15f), new Vector3(0.3f, 0.06f, 0.12f), true);
+            }
+            return root;
+        }
+
         public static GameObject Stone(GardenPalette palette, Transform parent, float size)
         {
             var stone = GardenView.Prim(PrimitiveType.Sphere, parent, palette.stone, Vector3.zero, new Vector3(1f, 0.55f, 0.85f) * size, true);

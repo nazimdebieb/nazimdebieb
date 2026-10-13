@@ -105,10 +105,41 @@ Tests : PlayMode **14/14**, EditMode **70/70**.
 
 Tests : PlayMode **16/16**, EditMode **70/70**, script de rapport 2/2. **Aucune donnée de joueur n'a été simulée.**
 
+## P7 — Contenu et performance
+
+| ID | Tâche | Statut | Preuve |
+|---|---|---|---|
+| P7-01 | Nouveaux puzzles | **Partiel** | 30 candidats MVP2 avec vrais pièges (`LevelsCandidates/`, `generate_trap_candidates.py`), revérifiés par le solveur C# (`CandidateLevelTests`) ; **revue humaine à faire** ; hors du jeu livré (D-107, D-123) |
+| P7-02 | Thème alternatif | **Validé** | Étang (11–15) et Zen (16–20) ; test `EachTheme_BuildsItsOwnDecor` ; `P7_theme_pond.png`, `P7_theme_zen.png` |
+| P7-03 | FPS / RAM / chauffe sur téléphone | **Partiel** | Cible 60 i/s ; événement `perf_sample` toutes les 30 s (i/s, p95, mémoire, RAM arrondie) + affichage dans Données de test ; chauffe ajoutée à la fiche d'observation ; **mesure réelle au test final** |
+| P7-04 | Mode dégradé | **Validé** | Graphismes auto / élevés / économie ; test `EconomyMode_DropsShadowsAndMsaa_SameResult` (même résultat) et `AutoMode_Downgrades_AndLogsIt_AndPerfSamplesAreRecorded` |
+| P7-05 | Compatibilité iOS | **Bloqué** | Réglages iOS prêts ; module iOS absent, Mac/Xcode et compte Apple requis (`Docs/IOS.md`) |
+
+## P8 — Conformité, monétisation, store
+
+| ID | Tâche | Statut | Preuve |
+|---|---|---|---|
+| P8-01 | Nom / marque / licences | **Bloqué (décision)** | Nom déjà utilisé par un jeu publié (`Docs/P8/NOM_ET_MARQUE.md`, D-124) ; licences : `Docs/LICENSES.md` |
+| P8-02 | Conformité des données | **Validé** | Aucun SDK, aucun envoi réseau, `submitAnalytics` désactivé ; politique de confidentialité FR/EN et réponses « Sécurité des données » (`Docs/P8/CONFIDENTIALITE.md`) |
+| P8-03 | Monétisation respectueuse | **Validé (proposition)** | `Docs/P8/MONETISATION.md` ; **rien n'est intégré** |
+| P8-04 | Fiche store et visuels | **Partiel** | Icône, bannière 1024×500, 6 captures FR + 6 EN issues du jeu, textes FR/EN (`Docs/Store/`) ; à refaire si le nom change |
+| P8-05 | Soft launch plafonné | **Bloqué** | Budget et comptes à valider (`Docs/P8/SOFT_LAUNCH.md`) |
+| P8-06 | Analyse J1/J7 | **Bloqué** | Nécessite un jeu publié |
+
+## P9 — Exploitation
+
+| ID | Tâche | Statut | Preuve |
+|---|---|---|---|
+| P9-01 | Notes de version | **Validé** | `Docs/RELEASE_NOTES.md` (versions 0.3.0 à 0.7.0, procédure AAB et clé de signature) |
+| P9-02 à P9-05 | Retours, régressions, coût d'acquisition, décision | **Bloqué** | Nécessitent un jeu publié et des données réelles |
+
+Tests : PlayMode **19/19**, EditMode **72/72**, script de rapport **2/2**. APK **0.7.0** prêt pour le test final.
+
 ## Interventions humaines nécessaires
 
 | # | Quoi | Pourquoi | Bloque |
 |---|---|---|---|
+| H9 | Choisir le nom définitif (D-124) et, pour publier : compte Play Console, clé de signature, politique en ligne, budget éventuel | Décisions, comptes et dépenses qui t'appartiennent | P8-01, P8-05, P9 |
 | H8 | Faire tester l'APK 0.6.0 à 5 personnes qui ne connaissent pas le jeu (`Docs/P6/PROTOCOLE_OBSERVATION.md`), remplir la fiche, récupérer leurs données (bouton Copier) dans `Docs/P6/donnees/` | Le prompt P6 interdit de simuler des testeurs ; seul un humain peut juger si le tutoriel suffit | P6-03 à P6-05 |
 | H7 | Brancher un téléphone Android en USB avec le **débogage USB** activé (Paramètres > À propos > appuyer 7 fois sur « Numéro de build », puis Options pour les développeurs > Débogage USB) et accepter l'empreinte de l'ordinateur | adb ne voit aucun appareil ; l'installation et le test réel en dépendent | P3-10, P5-08 |
 

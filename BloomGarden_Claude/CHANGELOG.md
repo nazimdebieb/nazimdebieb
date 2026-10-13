@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-10-13 — P7 / P8 / P9 : performance, thèmes, préparation store (0.7.0)
+- 60 images/s (Android imposait 30) ; Options ▸ Graphismes auto / élevés / économie ; mesures de fluidité dans le journal de test.
+- Thèmes Étang (niveaux 11–15) et Jardin zen (16–20).
+- 30 niveaux candidats MVP2 avec vrais pièges, vérifiés par les deux solveurs, hors du jeu livré.
+- Réglages iOS préparés ; plan iOS documenté (Mac requis).
+- Icône de l'application et visuels du store rendus depuis le jeu ; captures FR/EN ; fiche store ; politique de confidentialité ; proposition de monétisation ; plan de soft launch ; notes de version.
+- Statistiques matérielles Unity désactivées.
+- Corrigé : l'écran des niveaux laissait voir l'interface de jeu ; l'icône n'était pas incluse dans l'APK.
+- Alerte : le nom « Bloom Garden » est déjà utilisé par un jeu publié (décision D-124).
+- Tests PlayMode 19/19, EditMode 72/72.
+
 ## 2026-10-13 — P6 : instrumentation de test et protocole (0.6.0)
 - Journal de test local et anonyme (`PlaytestLog`) : début/fin de niveau, arrosoir choisi, annulation, recommencer, blocage, abandon, bulles du tutoriel, réglages ; aucun réseau, aucune donnée personnelle.
 - Options → Données de test : résumé par niveau sur le téléphone, bouton Copier pour envoyer ses données, Effacer.

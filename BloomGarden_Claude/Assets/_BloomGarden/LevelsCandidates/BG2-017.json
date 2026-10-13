@@ -1,0 +1,131 @@
+{
+  "id": "BG2-017",
+  "rulesVersion": "0.1.0",
+  "slotCount": 3,
+  "title": "Jardin piégé 17",
+  "grid": {
+    "width": 4,
+    "height": 4,
+    "cells": [
+      [],
+      [],
+      [],
+      [
+        "purple"
+      ],
+      [],
+      [],
+      [
+        "coral"
+      ],
+      [
+        "purple",
+        "coral",
+        "coral"
+      ],
+      [
+        "purple",
+        "yellow"
+      ],
+      [],
+      [],
+      [
+        "blue",
+        "yellow"
+      ],
+      [],
+      [
+        "coral",
+        "blue"
+      ],
+      [
+        "coral",
+        "blue"
+      ],
+      [
+        "yellow"
+      ]
+    ]
+  },
+  "lanes": [
+    [
+      {
+        "id": "c03",
+        "color": "coral",
+        "capacity": 1
+      },
+      {
+        "id": "c00",
+        "color": "coral",
+        "capacity": 1
+      },
+      {
+        "id": "p09",
+        "color": "purple",
+        "capacity": 2
+      }
+    ],
+    [
+      {
+        "id": "c01",
+        "color": "coral",
+        "capacity": 2
+      },
+      {
+        "id": "p08",
+        "color": "purple",
+        "capacity": 1
+      },
+      {
+        "id": "b06",
+        "color": "blue",
+        "capacity": 2
+      }
+    ],
+    [
+      {
+        "id": "y05",
+        "color": "yellow",
+        "capacity": 1
+      },
+      {
+        "id": "c02",
+        "color": "coral",
+        "capacity": 1
+      },
+      {
+        "id": "b07",
+        "color": "blue",
+        "capacity": 1
+      },
+      {
+        "id": "y04",
+        "color": "yellow",
+        "capacity": 2
+      }
+    ]
+  ],
+  "theme": "pond",
+  "referenceSolution": [
+    0,
+    0,
+    0,
+    1,
+    1,
+    1,
+    2,
+    2,
+    2,
+    2
+  ],
+  "analysis": {
+    "status": "solvable",
+    "statesExplored": 211,
+    "shortestMoves": 10,
+    "reachableStates": 211,
+    "deadlockStates": 30,
+    "losingMoves": 36,
+    "winnableShare": 0.773,
+    "reviewed": false
+  }
+}

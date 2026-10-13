@@ -99,6 +99,8 @@ namespace BloomGarden.Tests
 
             _game.ShowLevels();
             yield return null;
+            Assert.IsFalse(_game.Hud.GameLayerVisible, "the game HUD and its end panel must not show through the level grid");
+            Assert.IsFalse(_game.EndPanelVisible);
             Assert.IsTrue(_game.Menu.IsLevelButtonInteractable(1), "level 2 unlocked after winning level 1");
             Assert.IsFalse(_game.Menu.IsLevelButtonInteractable(2));
 

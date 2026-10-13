@@ -33,6 +33,16 @@ namespace BloomGarden.Presentation
         public Material sand;
         public Material blossom;
 
+        [Header("Themes (P7-02)")]
+        public Material pondWater;
+        public Material lily;
+        public Material willow;
+        public Material zenSand;
+        public Material zenLine;
+        public Material maple;
+        public Material lantern;
+        public Material bamboo;
+
         public Material Flower(ColorId color) => flowers[(int)color];
     }
 }

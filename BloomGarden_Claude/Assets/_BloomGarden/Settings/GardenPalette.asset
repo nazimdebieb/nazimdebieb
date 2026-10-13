@@ -33,3 +33,11 @@ MonoBehaviour:
   earth: {fileID: 2100000, guid: 785f53b43321b754e841273483838343, type: 2}
   sand: {fileID: 2100000, guid: 5221a7ac0d843f343a43665aa87b12f2, type: 2}
   blossom: {fileID: 2100000, guid: f2779f93fbfcd23459874351dca88834, type: 2}
+  pondWater: {fileID: 2100000, guid: b9ba3d0ddd28cee49a4d257aa4986a48, type: 2}
+  lily: {fileID: 2100000, guid: b0f1bc140e4bd8e428b47abaa67a2f80, type: 2}
+  willow: {fileID: 2100000, guid: 0683c84443ae7054ab4244f2aba4ba9a, type: 2}
+  zenSand: {fileID: 2100000, guid: a9d889132f6aa62479165ea7298cd41f, type: 2}
+  zenLine: {fileID: 2100000, guid: 9e274683f34b6b041870857e911b86af, type: 2}
+  maple: {fileID: 2100000, guid: 915d96de153447c43a967bc18fcc1951, type: 2}
+  lantern: {fileID: 2100000, guid: f7d8ba2b37e726d479c8baa33ccaf686, type: 2}
+  bamboo: {fileID: 2100000, guid: 68c09b764adb45448ab2026048644a4c, type: 2}

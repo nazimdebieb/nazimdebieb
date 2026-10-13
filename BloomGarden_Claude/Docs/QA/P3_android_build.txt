@@ -1,5 +1,5 @@
 Bloom Garden (Claude) - Android test build - Unity 6000.6.5f1
-result=Succeeded platform=Android output=BloomGarden_Claude_0.6.0.apk
-size=544,5 MB time=231s errors=0 warnings=1
-version=0.6.0 (7) id=com.nazimdebieb.bloomgarden.claude
+result=Succeeded platform=Android output=BloomGarden_Claude_0.7.0.apk
+size=545,2 MB time=40s errors=0 warnings=13
+version=0.7.0 (8) id=com.nazimdebieb.bloomgarden.claude
 backend=IL2CPP arch=ARM64 development=false signing=Unity debug keystore
