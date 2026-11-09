@@ -11,13 +11,13 @@ Un condensateur, c'est deux plaques métalliques séparées par un isolant. Le c
 On ferme l'interrupteur : les électrons quittent une plaque et s'entassent sur l'autre. Le condensateur se charge.
 
 4
-00:00:18,100 --> 00:00:22,541
+00:00:18,098 --> 00:00:22,539
 Au début, ça va très vite, puis de plus en plus lentement. La tension suit cette courbe.
 
 5
-00:00:22,733 --> 00:00:29,786
+00:00:22,739 --> 00:00:29,792
 Le temps clé, c'est tau, égal à R fois C. Après un tau, on atteint soixante-trois pour cent. Après cinq tau, il est pratiquement plein.
 
 6
-00:00:29,967 --> 00:00:36,471
+00:00:29,973 --> 00:00:36,477
 Exemple : dix kilo-ohms et cent microfarads, ça donne tau égal à une seconde. La prochaine fois : la bobine. Abonne-toi !

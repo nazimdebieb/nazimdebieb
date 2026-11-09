@@ -13,6 +13,52 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "..", "..", "tools"))
 from artronic_style import (ArtronicScene, T, logo, BG, FG, MUTED, CYAN, AMBER, RED, COPPER)  # noqa: E402
 
+# Textes à l'écran (la version darija utilise "en" : termes techniques en anglais)
+LABELS = {
+    "fr": {
+        "title": "Le condensateur",
+        "subtitle": "expliqué simplement",
+        "chap1": "1 · La structure",
+        "plates": "plaques métalliques",
+        "insulator": "isolant",
+        "symbol": "symbole",
+        "chap2": "2 · La charge",
+        "switch": "interrupteur",
+        "chap3": "3 · La tension",
+        "time": "temps",
+        "vc": "tension Vc",
+        "vsrc": "tension de la pile",
+        "chap4": "4 · La constante de temps",
+        "pct63": "63 %",
+        "full": "≈ 99 %  plein !",
+        "chap5": "5 · Exemple",
+        "calc": "τ = 10 000 Ω × 0,000 1 F = 1 s",
+        "next": "Prochain épisode : la bobine",
+        "subscribe": "Abonne-toi  ▶",
+    },
+    "en": {
+        "title": "The Capacitor",
+        "subtitle": "explained simply",
+        "chap1": "1 · Structure",
+        "plates": "metal plates",
+        "insulator": "insulator",
+        "symbol": "symbol",
+        "chap2": "2 · Charging",
+        "switch": "switch",
+        "chap3": "3 · Voltage",
+        "time": "time",
+        "vc": "voltage Vc",
+        "vsrc": "battery voltage",
+        "chap4": "4 · Time constant",
+        "pct63": "63%",
+        "full": "≈ 99%  full!",
+        "chap5": "5 · Example",
+        "calc": "τ = 10,000 Ω × 0.0001 F = 1 s",
+        "next": "Next episode: the inductor",
+        "subscribe": "Subscribe  ▶",
+    },
+}
+
 PLATE_X = 0.45      # demi-écart entre les plaques
 PLATE_H = 3.0
 CY = 0.6            # hauteur du centre des plaques
@@ -31,13 +77,14 @@ def battery(center):
 
 class Condensateur(ArtronicScene):
     episode_dir = HERE
+    labels = LABELS
 
     def construct(self):
         # ------------------------------------------------------------ INTRO
         self.segment("intro")
         lg = logo(1.3).move_to(UP * 0.8)
-        title = T("Le condensateur", 64, FG, weight="BOLD").next_to(lg, DOWN, buff=0.7)
-        sub = T("expliqué simplement", 34, CYAN).next_to(title, DOWN, buff=0.25)
+        title = T(self.tr("title"), 64, FG, weight="BOLD").next_to(lg, DOWN, buff=0.7)
+        sub = T(self.tr("subtitle"), 34, CYAN).next_to(title, DOWN, buff=0.25)
         self.play(Create(lg[0]), FadeIn(lg[1], shift=RIGHT * 0.3), run_time=1.0)
         self.play(Write(title), run_time=1.0)
         self.play(FadeIn(sub, shift=UP * 0.2), run_time=0.6)
@@ -46,26 +93,26 @@ class Condensateur(ArtronicScene):
 
         # ---------------------------------------------------------- PLAQUES
         self.segment("plaques")
-        chap = self.chapter("1 · La structure")
+        chap = self.chapter(self.tr("chap1"))
         left = Rectangle(width=0.18, height=PLATE_H, fill_color=COPPER, fill_opacity=1, stroke_width=0)
         right = left.copy()
         left.move_to([-PLATE_X, CY, 0])
         right.move_to([PLATE_X, CY, 0])
         diel = Rectangle(width=2 * PLATE_X - 0.18, height=PLATE_H, fill_color=CYAN, fill_opacity=0.12,
                          stroke_width=0).move_to([0, CY, 0])
-        lab_plate = T("plaques métalliques", 26, COPPER).move_to([-3.2, CY + 1.0, 0])
+        lab_plate = T(self.tr("plates"), 26, COPPER).move_to([-3.2, CY + 1.0, 0])
         arr1 = Arrow(lab_plate.get_right(), left.get_left() + UP * 0.6, buff=0.15, color=COPPER,
                      stroke_width=3, max_tip_length_to_length_ratio=0.12)
         arr1b = Arrow(lab_plate.get_right(), right.get_top() + DOWN * 0.3 + RIGHT * 0.0, buff=0.15,
                       color=COPPER, stroke_width=3, max_tip_length_to_length_ratio=0.08)
-        lab_diel = T("isolant", 26, CYAN).move_to([3.0, CY - 1.0, 0])
+        lab_diel = T(self.tr("insulator"), 26, CYAN).move_to([3.0, CY - 1.0, 0])
         arr2 = Arrow(lab_diel.get_left(), diel.get_center() + DOWN * 0.5, buff=0.15, color=CYAN,
                      stroke_width=3, max_tip_length_to_length_ratio=0.15)
         # symbole normalisé
         sym = VGroup(Line(LEFT * 0.6, LEFT * 0.12), Line(LEFT * 0.12 + UP * 0.3, LEFT * 0.12 + DOWN * 0.3),
                      Line(RIGHT * 0.12 + UP * 0.3, RIGHT * 0.12 + DOWN * 0.3), Line(RIGHT * 0.12, RIGHT * 0.6))
         sym.set_stroke(FG, 4)
-        sym_box = VGroup(sym, T("symbole", 20, MUTED).next_to(sym, DOWN, buff=0.15)).move_to([4.6, -2.3, 0])
+        sym_box = VGroup(sym, T(self.tr("symbol"), 20, MUTED).next_to(sym, DOWN, buff=0.15)).move_to([4.6, -2.3, 0])
 
         self.play(FadeIn(chap), GrowFromCenter(left), GrowFromCenter(right), run_time=0.9)
         self.play(FadeIn(lab_plate), GrowArrow(arr1), GrowArrow(arr1b), run_time=0.8)
@@ -82,7 +129,7 @@ class Condensateur(ArtronicScene):
 
         # ----------------------------------------------------------- CHARGE
         self.segment("charge")
-        chap = self.chapter("2 · La charge")
+        chap = self.chapter(self.tr("chap2"))
         # fils
         A = np.array([-PLATE_X - 0.09, CY, 0])
         B = np.array([-LOOP_X, CY, 0])
@@ -100,7 +147,7 @@ class Condensateur(ArtronicScene):
         bat = battery(bat_c)
         lever = Line(sw_b, sw_b + np.array([-0.55, 0.75, 0]), color=FG, stroke_width=5)
         pivots = VGroup(Dot(sw_a, radius=0.07, color=FG), Dot(sw_b, radius=0.07, color=FG))
-        lab_sw = T("interrupteur", 22, MUTED).next_to(sw_a + DOWN * 0.45, LEFT, buff=0.45)
+        lab_sw = T(self.tr("switch"), 22, MUTED).next_to(sw_a + DOWN * 0.45, LEFT, buff=0.45)
 
         self.play(FadeIn(chap), Create(wires), FadeIn(bat), FadeIn(pivots), Create(lever), FadeIn(lab_sw),
                   run_time=1.0)
@@ -163,17 +210,17 @@ class Condensateur(ArtronicScene):
         # ------------------------------------------------------------ COURBE
         self.segment("courbe")
         circuit = VGroup(left, right, diel, wires, bat, pivots, closed, plus, minus)
-        new_chap = self.chapter("3 · La tension")
+        new_chap = self.chapter(self.tr("chap3"))
         self.play(circuit.animate.scale(0.5).move_to([-4.3, -0.2, 0]), FadeOut(lab_sw),
                   ReplacementTransform(chap, new_chap), run_time=0.9)
         chap = new_chap
         ax = Axes(x_range=[0, 6.3, 1], y_range=[0, 1.1, 0.25], x_length=7.2, y_length=4.4,
                   axis_config={"color": MUTED, "stroke_width": 2, "include_ticks": False},
                   tips=True).move_to([2.3, -0.3, 0])
-        xl = T("temps", 22, MUTED).next_to(ax.x_axis.get_end(), DOWN, buff=0.25).shift(LEFT * 0.1)
-        yl = T("tension Vc", 22, AMBER).next_to(ax.y_axis.get_end(), RIGHT, buff=0.2)
+        xl = T(self.tr("time"), 22, MUTED).next_to(ax.x_axis.get_end(), DOWN, buff=0.25).shift(LEFT * 0.1)
+        yl = T(self.tr("vc"), 22, AMBER).next_to(ax.y_axis.get_end(), RIGHT, buff=0.2)
         vmax = DashedLine(ax.c2p(0, 1), ax.c2p(6.2, 1), color=MUTED, stroke_width=2, dash_length=0.1)
-        vlab = T("tension de la pile", 20, MUTED).next_to(ax.c2p(6.2, 1), UP, buff=0.12).align_to(ax.c2p(6.2, 1), RIGHT)
+        vlab = T(self.tr("vsrc"), 20, MUTED).next_to(ax.c2p(6.2, 1), UP, buff=0.12).align_to(ax.c2p(6.2, 1), RIGHT)
         curve = ax.plot(lambda t: 1 - math.exp(-t), x_range=[0, 6.1], color=AMBER, stroke_width=6)
         self.play(Create(ax), FadeIn(xl), FadeIn(yl), run_time=0.7)
         self.play(Create(vmax), FadeIn(vlab), run_time=0.4)
@@ -183,7 +230,7 @@ class Condensateur(ArtronicScene):
 
         # --------------------------------------------------------------- TAU
         self.segment("tau")
-        new_chap = self.chapter("4 · La constante de temps")
+        new_chap = self.chapter(self.tr("chap4"))
         formula = T("τ = R × C", 44, AMBER, weight="BOLD").move_to([2.3, 2.6, 0])
         self.play(ReplacementTransform(chap, new_chap), Write(formula), run_time=1.0)
         chap = new_chap
@@ -193,7 +240,7 @@ class Condensateur(ArtronicScene):
         h1 = DashedLine(ax.c2p(0, 1 - math.exp(-1)), p1, color=CYAN, stroke_width=3)
         d1 = Dot(p1, color=CYAN, radius=0.08)
         t1 = T("1τ", 24, CYAN).next_to(ax.c2p(1, 0), DOWN, buff=0.15)
-        l1 = T("63 %", 26, CYAN, weight="BOLD").next_to(p1, RIGHT, buff=0.2).shift(DOWN * 0.15)
+        l1 = T(self.tr("pct63"), 26, CYAN, weight="BOLD").next_to(p1, RIGHT, buff=0.2).shift(DOWN * 0.15)
         self.play(Create(v1), Create(h1), FadeIn(d1, scale=2), FadeIn(t1), run_time=0.8)
         self.play(FadeIn(l1, shift=LEFT * 0.2), Indicate(l1, color=CYAN), run_time=0.9)
         self.wait(0.6)
@@ -201,21 +248,21 @@ class Condensateur(ArtronicScene):
         v5 = DashedLine(ax.c2p(5, 0), p5, color=CYAN, stroke_width=3)
         d5 = Dot(p5, color=CYAN, radius=0.08)
         t5 = T("5τ", 24, CYAN).next_to(ax.c2p(5, 0), DOWN, buff=0.15)
-        l5 = T("≈ 99 %  plein !", 24, CYAN, weight="BOLD").next_to(p5, DOWN, buff=0.35).shift(LEFT * 0.6)
+        l5 = T(self.tr("full"), 24, CYAN, weight="BOLD").next_to(p5, DOWN, buff=0.35).shift(LEFT * 0.6)
         self.play(Create(v5), FadeIn(d5, scale=2), FadeIn(t5), run_time=0.7)
         self.play(FadeIn(l5, shift=UP * 0.2), run_time=0.6)
         self.finish(pad=0.2)
 
         # ----------------------------------------------------------- EXEMPLE
         self.segment("exemple")
-        new_chap = self.chapter("5 · Exemple")
+        new_chap = self.chapter(self.tr("chap5"))
         graph = VGroup(ax, xl, yl, vmax, vlab, curve, v1, h1, d1, t1, l1, v5, d5, t5, l5)
         self.play(FadeOut(graph), FadeOut(circuit), ReplacementTransform(chap, new_chap),
                   formula.animate.move_to([0, 2.0, 0]).scale(1.2), run_time=0.8)
         chap = new_chap
         r = T("R = 10 kΩ", 40, FG).move_to([-2.4, 0.6, 0])
         c = T("C = 100 µF", 40, FG).move_to([2.4, 0.6, 0])
-        calc = T("τ = 10 000 Ω × 0,000 1 F = 1 s", 38, FG).move_to([0, -0.6, 0])
+        calc = T(self.tr("calc"), 38, FG).move_to([0, -0.6, 0])
         calc[-2:].set_color(AMBER)
         self.play(FadeIn(r, shift=RIGHT * 0.3), run_time=0.5)
         self.play(FadeIn(c, shift=LEFT * 0.3), run_time=0.5)
@@ -223,8 +270,8 @@ class Condensateur(ArtronicScene):
         box = SurroundingRectangle(calc[-2:], color=AMBER, buff=0.12, corner_radius=0.08)
         self.play(Create(box), run_time=0.4)
         self.wait(0.6)
-        nxt = T("Prochain épisode : la bobine", 34, CYAN).move_to([0, -2.1, 0])
-        sub = T("Abonne-toi  ▶", 28, FG, weight="BOLD").next_to(nxt, DOWN, buff=0.3)
+        nxt = T(self.tr("next"), 34, CYAN).move_to([0, -2.1, 0])
+        sub = T(self.tr("subscribe"), 28, FG, weight="BOLD").next_to(nxt, DOWN, buff=0.3)
         self.play(FadeIn(nxt, shift=UP * 0.2), run_time=0.6)
         self.play(FadeIn(sub, scale=1.2), run_time=0.5)
         self.finish(pad=0.6)

@@ -41,14 +41,26 @@ def logo(scale=1.0):
     return VGroup(zig, word).scale(scale)
 
 
+# Langue du texte affiché à l'écran selon la langue de la voix off :
+# la darija garde les termes techniques en anglais -> écran en anglais.
+SCREEN_LANG = {"fr": "fr", "en": "en", "dz": "en"}
+
+
 class ArtronicScene(Scene):
     """Scène de base : charge les durées de la voix off et fournit segment()/finish()."""
 
     episode_dir = None  # à définir dans la scène de l'épisode
+    labels = {}         # {"fr": {clé: texte}, "en": {...}} : textes affichés à l'écran
+
+    def tr(self, key):
+        """Texte à l'écran dans la langue de la version rendue."""
+        return self.labels[self.screen_lang][key]
 
     def setup(self):
-        # ARTRONIC_LANG=dz -> voix off darija (audio-dz/), sinon français (audio/)
+        # ARTRONIC_LANG : langue de la voix off (fr -> audio/, en -> audio-en/, dz -> audio-dz/)
         lang = os.environ.get("ARTRONIC_LANG", "fr")
+        self.lang = lang
+        self.screen_lang = SCREEN_LANG.get(lang, "en")
         adir = os.path.join(self.episode_dir, "audio" if lang == "fr" else f"audio-{lang}")
         self.audio_dir = adir
         self.timings = {t["id"]: t for t in json.load(open(os.path.join(adir, "timings.json")))}

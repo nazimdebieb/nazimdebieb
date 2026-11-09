@@ -1,32 +1,13 @@
 {
-  "title": "Le condensateur — version darija",
-  "voice_id": "wZ6E1XvJnMjmRvpvp2vY",
-  "model_id": "eleven_multilingual_v2",
-  "max_pause": 0.3,
+  "title": "Le condensateur — version darija (voix de Nazim)",
+  "voice": "human",
+  "max_pause": 0.35,
   "segments": [
-    {
-      "id": "intro",
-      "text": "السلام عليكم، واش راكم؟ معاكم Artronic! اليوم نفهمو le condensateur، بالساهل."
-    },
-    {
-      "id": "plaques",
-      "text": "Le condensateur، هو زوج plaques تاع المعدن، وبيناتهم isolant. الكوران ما يفوتش… بصح les charges، يقدرو يتلمو."
-    },
-    {
-      "id": "charge",
-      "text": "كي نسكرو l'interrupteur، les électrons يخرجو من plaque ويتلمو في لوخرا. Le condensateur راهو يتشارجا."
-    },
-    {
-      "id": "courbe",
-      "text": "في اللول، تروح بالخف بزاف، ومن بعد بالشوية بالشوية. la tension تتبع هاد la courbe."
-    },
-    {
-      "id": "tau",
-      "text": "الوقت المهم هو tau، يساوي R fois C. بعد tau واحد، نوصلو لثلاثة وستين في المية. وبعد خمسة tau، راهو عامر تقريبا."
-    },
-    {
-      "id": "exemple",
-      "text": "مثال: عشرة كيلو أوم، وميات ميكروفاراد، يعطيونا tau يساوي ثانية وحدة. المرة الجاية: la bobine. ما تنساوش تابونيو!"
-    }
+    {"id": "intro",   "text": "السلام عليكم، واش راكم؟ معاكم Artronic! اليوم نفهمو الـ capacitor، بالساهل."},
+    {"id": "plaques", "text": "الـ capacitor، هو زوج plates تاع المعدن، وبيناتهم insulator. الـ current ما يفوتش… بصح الـ charges، يقدرو يتلمو."},
+    {"id": "charge",  "text": "كي نسكرو الـ switch، الـ electrons يخرجو من plate ويتلمو في لوخرا. الـ capacitor راهو يتشارجا."},
+    {"id": "courbe",  "text": "في اللول، تروح بالخف بزاف، ومن بعد بالشوية بالشوية. الـ voltage تتبع هاد الـ curve."},
+    {"id": "tau",     "text": "الوقت المهم هو tau، يساوي R fois C. بعد tau واحد، نوصلو لـ 63 percent. وبعد 5 tau، راهو تقريبا fully charged."},
+    {"id": "exemple", "text": "مثال: 10 kilo-ohms و 100 microfarads، يعطيونا tau يساوي 1 second. المرة الجاية: الـ inductor. ما تنساوش دير subscribe!"}
   ]
 }

@@ -1,7 +1,10 @@
 """Génère la voix off d'un épisode Artronic avec ElevenLabs.
 
 Usage : python tools/voiceover.py episodes/01-condensateur [langue]
-        (langue : rien = français ; "dz" = script.dz.json -> audio-dz/)
+        (langue : rien = français ; "en" ; "dz" = script.dz.json -> audio-dz/)
+
+Si script.json contient "voice": "human", rien n'est généré : les enregistrements
+viennent de tools/import_voice.py (ta propre voix).
 
 Lit script.json, crée un MP3 par segment dans <episode>/audio/,
 puis écrit audio/timings.json (durée de chaque segment) que la scène
@@ -58,6 +61,8 @@ def main(ep, lang=None):
         mp3 = os.path.join(adir, f"{seg['id']}.mp3")
         raw = os.path.join(adir, f"{seg['id']}.raw.mp3") if max_pause else mp3
         if not os.path.exists(raw):
+            if spec.get("voice") == "human":
+                sys.exit(f"Il manque l'enregistrement « {seg['id']} » : importe-le avec tools/import_voice.py")
             print("voix :", seg["id"])
             tts(seg["text"], spec["voice_id"], spec["model_id"], raw)
         if max_pause:

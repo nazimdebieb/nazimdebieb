@@ -2,31 +2,31 @@
   {
     "id": "intro",
     "file": "intro.mp3",
-    "duration": 6.687347
+    "duration": 5.459592
   },
   {
     "id": "plaques",
     "file": "plaques.mp3",
-    "duration": 8.620408
+    "duration": 9.273469
   },
   {
     "id": "charge",
     "file": "charge.mp3",
-    "duration": 7.314286
+    "duration": 6.530612
   },
   {
     "id": "courbe",
     "file": "courbe.mp3",
-    "duration": 6.896327
+    "duration": 5.01551
   },
   {
     "id": "tau",
     "file": "tau.mp3",
-    "duration": 9.16898
+    "duration": 9.508571
   },
   {
     "id": "exemple",
     "file": "exemple.mp3",
-    "duration": 9.665306
+    "duration": 10.396735
   }
 ]

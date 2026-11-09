@@ -35,28 +35,33 @@ QUALITY=-ql ./build.sh episodes/01-condensateur Condensateur   # aperçu rapide 
 ./build.sh episodes/01-condensateur Condensateur dz             # version darija algérienne
 ```
 
-## Versions en darija (dialecte algérien)
+## Deux chaînes, une seule animation
 
-Même animation, autre voix : `script.dz.json` (texte en darija, termes techniques en français
-comme on parle en Algérie) → `audio-dz/` → `export/Condensateur-dz.mp4` + `sous-titres.dz.srt`.
+| Chaîne | Voix off | Texte à l'écran | Commande |
+|--------|----------|-----------------|----------|
+| **Artronic Electronics** (anglais) | IA ElevenLabs (`script.en.json`) | anglais | `./build.sh … Condensateur en` |
+| **Artronic** (darija) | **ta voix** (`script.dz.json`) | anglais | `./build.sh … Condensateur dz` |
+| (français, démo d'origine) | IA (`script.json`) | français | `./build.sh … Condensateur` |
 
-Voix algériennes natives trouvées dans la bibliothèque ElevenLabs (changer `voice_id`) :
+En darija, les mots techniques restent en anglais (capacitor, plates, switch, voltage…),
+donc l'écran est en anglais pour les deux chaînes. Les textes à l'écran sont dans `LABELS`
+au début de chaque `scene.py`.
 
-| Voix | voice_id |
-|------|----------|
-| Amin – Algerian Darija (utilisée) | `wZ6E1XvJnMjmRvpvp2vY` |
-| Achraf – Darija Accent | `NVRXBDmA6I8ZAldiUWuB` |
-| Ben Chamsou – Podcast Host | `dbXZnF5pfQqN00XGwlRF` |
-| Ilyass – Calm, Clear and Smooth | `jpofSqItAIlT4TLP5CrK` |
+### Ta voix en darija
 
-`"max_pause": 0.3` dans le script raccourcit les pauses trop longues de la voix
-(les MP3 bruts `*.raw.mp3` sont gardés : changer ce réglage ne consomme pas de crédits).
+1. Lis `ENREGISTREMENT-darija.md` de l'épisode : une phrase = un fichier (`1-intro.m4a`, `2-plaques.m4a`…).
+2. `python tools/import_voice.py episodes/01-condensateur dz <dossier des enregistrements>` :
+   nettoyage (souffle, bruit), volume normalisé, silences de début et de fin coupés.
+3. `./build.sh episodes/01-condensateur Condensateur dz` : les pauses trop longues sont raccourcies
+   (`max_pause`) et l'animation se cale sur ta voix.
+
+Une phrase ratée ? Réenregistre seulement ce fichier et relance les étapes 2 et 3.
 
 ## Épisodes
 
 | # | Sujet | Statut |
 |---|-------|--------|
-| 01 | Le condensateur (structure, charge, τ = RC) | démo FR + darija |
+| 01 | Le condensateur / the capacitor (structure, charge, τ = RC) | EN prête · darija : en attente de ta voix · FR démo |
 
 ## Idées pour la suite
 

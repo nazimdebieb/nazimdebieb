@@ -1,0 +1,23 @@
+1
+00:00:00,000 --> 00:00:05,460
+Hey, this is Artronic Electronics! Today: the capacitor, explained simply.
+
+2
+00:00:06,333 --> 00:00:15,606
+A capacitor is just two metal plates, separated by an insulator. Current can't flow through it… but charges can build up on the plates.
+
+3
+00:00:16,200 --> 00:00:22,731
+Close the switch: electrons leave one plate and pile up on the other. The capacitor is charging.
+
+4
+00:00:23,033 --> 00:00:28,049
+It starts fast, then slows down more and more. The voltage follows this curve.
+
+5
+00:00:28,233 --> 00:00:37,742
+The key number is tau, equal to R times C. After one tau, you reach sixty-three percent. After five tau, it's practically full.
+
+6
+00:00:37,933 --> 00:00:48,330
+Example: ten kilo-ohms and one hundred microfarads give a tau of one second. Next time: the inductor. Subscribe so you don't miss it!
