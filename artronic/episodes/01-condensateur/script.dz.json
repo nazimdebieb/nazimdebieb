@@ -1,0 +1,32 @@
+{
+  "title": "Le condensateur — version darija",
+  "voice_id": "wZ6E1XvJnMjmRvpvp2vY",
+  "model_id": "eleven_multilingual_v2",
+  "max_pause": 0.3,
+  "segments": [
+    {
+      "id": "intro",
+      "text": "السلام عليكم، واش راكم؟ معاكم Artronic! اليوم نفهمو le condensateur، بالساهل."
+    },
+    {
+      "id": "plaques",
+      "text": "Le condensateur، هو زوج plaques تاع المعدن، وبيناتهم isolant. الكوران ما يفوتش… بصح les charges، يقدرو يتلمو."
+    },
+    {
+      "id": "charge",
+      "text": "كي نسكرو l'interrupteur، les électrons يخرجو من plaque ويتلمو في لوخرا. Le condensateur راهو يتشارجا."
+    },
+    {
+      "id": "courbe",
+      "text": "في اللول، تروح بالخف بزاف، ومن بعد بالشوية بالشوية. la tension تتبع هاد la courbe."
+    },
+    {
+      "id": "tau",
+      "text": "الوقت المهم هو tau، يساوي R fois C. بعد tau واحد، نوصلو لثلاثة وستين في المية. وبعد خمسة tau، راهو عامر تقريبا."
+    },
+    {
+      "id": "exemple",
+      "text": "مثال: عشرة كيلو أوم، وميات ميكروفاراد، يعطيونا tau يساوي ثانية وحدة. المرة الجاية: la bobine. ما تنساوش تابونيو!"
+    }
+  ]
+}

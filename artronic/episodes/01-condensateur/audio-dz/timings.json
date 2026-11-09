@@ -1,0 +1,32 @@
+[
+  {
+    "id": "intro",
+    "file": "intro.mp3",
+    "duration": 6.687347
+  },
+  {
+    "id": "plaques",
+    "file": "plaques.mp3",
+    "duration": 8.620408
+  },
+  {
+    "id": "charge",
+    "file": "charge.mp3",
+    "duration": 7.314286
+  },
+  {
+    "id": "courbe",
+    "file": "courbe.mp3",
+    "duration": 6.896327
+  },
+  {
+    "id": "tau",
+    "file": "tau.mp3",
+    "duration": 9.16898
+  },
+  {
+    "id": "exemple",
+    "file": "exemple.mp3",
+    "duration": 9.665306
+  }
+]

@@ -47,7 +47,9 @@ class ArtronicScene(Scene):
     episode_dir = None  # à définir dans la scène de l'épisode
 
     def setup(self):
-        adir = os.path.join(self.episode_dir, "audio")
+        # ARTRONIC_LANG=dz -> voix off darija (audio-dz/), sinon français (audio/)
+        lang = os.environ.get("ARTRONIC_LANG", "fr")
+        adir = os.path.join(self.episode_dir, "audio" if lang == "fr" else f"audio-{lang}")
         self.audio_dir = adir
         self.timings = {t["id"]: t for t in json.load(open(os.path.join(adir, "timings.json")))}
         self._seg = None
