@@ -1,0 +1,13 @@
+{
+  "title": "Le condensateur — version darija (voix de Nazim)",
+  "voice": "human",
+  "max_pause": 0.35,
+  "segments": [
+    {"id": "intro",   "text": "السلام عليكم، واش راكم؟ معاكم Artronic! اليوم نفهمو الـ capacitor، بالساهل."},
+    {"id": "plaques", "text": "الـ capacitor، هو زوج plates تاع المعدن، وبيناتهم insulator. الـ current ما يفوتش… بصح الـ charges، يقدرو يتلمو."},
+    {"id": "charge",  "text": "كي نسكرو الـ switch، الـ electrons يخرجو من plate ويتلمو في لوخرا. الـ capacitor راهو يتشارجا."},
+    {"id": "courbe",  "text": "في اللول، تروح بالخف بزاف، ومن بعد بالشوية بالشوية. الـ voltage تتبع هاد الـ curve."},
+    {"id": "tau",     "text": "الوقت المهم هو tau، يساوي R fois C. بعد tau واحد، نوصلو لـ 63 percent. وبعد 5 tau، راهو تقريبا fully charged."},
+    {"id": "exemple", "text": "مثال: 10 kilo-ohms و 100 microfarads، يعطيونا tau يساوي 1 second. المرة الجاية: الـ inductor. ما تنساوش دير subscribe!"}
+  ]
+}
