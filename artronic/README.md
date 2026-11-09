@@ -39,7 +39,7 @@ QUALITY=-ql ./build.sh episodes/01-condensateur Condensateur   # aperçu rapide 
 
 | Chaîne | Voix off | Texte à l'écran | Commande |
 |--------|----------|-----------------|----------|
-| **Artronic Electronics** (anglais) | IA ElevenLabs (`script.en.json`) | anglais | `./build.sh … Condensateur en` |
+| **Artronic Electronics** (anglais) | IA ElevenLabs, voix « Eric » (`script.en.json`) | anglais | `./build.sh … Condensateur en` |
 | **Artronic** (darija) | **ta voix** (`script.dz.json`) | anglais | `./build.sh … Condensateur dz` |
 | (français, démo d'origine) | IA (`script.json`) | français | `./build.sh … Condensateur` |
 
